@@ -1,8 +1,15 @@
 import { Box, Typography, Button, TextField, Link } from "@mui/material";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import login_image from "../images/login_image.avif";
+import Alert from "@mui/material/Alert";
+import Collapse from "@mui/material/Collapse";
+import React from "react";
 
 const Login = () => {
+    const [open, setOpen] = React.useState(false);
+
+    const handleClick = () => setOpen(!open);
+
     return (
         <Box sx={{ display: "flex" }}>
             <Box
@@ -33,7 +40,7 @@ const Login = () => {
                         paddingRight: "15px",
                     }}
                 >
-                    <Typography variant="h6">INSIGHTS</Typography>
+                    <Typography variant="subtitle2">INSIGHTS</Typography>
                 </Box>
                 <Box
                     sx={{
@@ -66,7 +73,23 @@ const Login = () => {
                     ></TextField>
 
                     <Box sx={{ width: "330px" }}>
-                        <Link>Has olvidado tu contraseña?</Link>
+                        <Link onClick={handleClick} sx={{ cursor: "pointer" }}>
+                            Has olvidado tu contraseña?{" "}
+                        </Link>
+                        <Collapse in={open}>
+                            <Alert severity="info">
+                                En caso de olvido o perdida de la contraseña
+                                contacte con tecnologia para el restablecimiento
+                                de la misma en:{" "}
+                                <a
+                                    href="https://helpdesk.cyc-bpo.com/"
+                                    target="_blank"
+                                    rel="noreferrer noopener"
+                                >
+                                    GLPI
+                                </a>
+                            </Alert>
+                        </Collapse>
                     </Box>
                     <Button
                         variant="outlined"

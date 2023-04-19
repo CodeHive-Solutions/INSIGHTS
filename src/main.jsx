@@ -1,8 +1,8 @@
 import "./index.css";
 import React from "react";
-import Root from "./routes/root";
 import ErrorPage from "./error-page";
 import Login from "./routes/Login";
+import Home from "./routes/Home";
 import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -17,7 +17,7 @@ const theme = createTheme({
             '"Segoe UI"',
             "Roboto",
             '"Helvetica Neue"',
-            "Arial",    
+            "Arial",
             "sans-serif",
             '"Apple Color Emoji"',
             '"Segoe UI Emoji"',
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
     },
     {
         path: "/home",
-        element: <Root />,
+        element: <Home />,
         errorElement: <ErrorPage />,
     },
 ]);
