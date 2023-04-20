@@ -12,6 +12,7 @@ node_modules
 dist
 dist-ssr
 *.local
+__pycache__
 
 # Editor directories and files
 .vscode/*
@@ -23,3 +24,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+WSGI
+*.sqlite
+*.sqlite3
