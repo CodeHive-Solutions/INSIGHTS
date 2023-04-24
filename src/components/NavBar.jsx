@@ -30,7 +30,10 @@ const NavBar = () => {
         setSubMenuAnchorEl(null);
     };
     return (
-        <Box position="fixed" sx={{ backgroundColor: "white", width: "100%" }}>
+        <Box
+            position="fixed"
+            sx={{ backgroundColor: "white", width: "100%", top: 0, zIndex: 2 }}
+        >
             <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
                 <Typography variant="h6" sx={{ fontWeight: 500 }}>
                     INSIGHTS
@@ -69,7 +72,6 @@ const NavBar = () => {
                 >
                     <AccountCircleOutlinedIcon />
                 </IconButton>
-
             </Toolbar>
         </Box>
     );
