@@ -29,33 +29,53 @@ const NavBar = () => {
     const handleSubMenuClose = () => {
         setSubMenuAnchorEl(null);
     };
+
     return (
         <Box
             position="fixed"
-            sx={{ backgroundColor: "white", width: "100%", top: 0, zIndex: 2 }}
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                backgroundColor: "white",
+                width: "100%",
+                top: 0,
+                zIndex: 2,
+            }}
         >
-            <Toolbar sx={{ display: "flex", justifyContent: "space-around" }}>
+            <Toolbar
+                sx={{
+                    display: "flex",
+                    maxWidth: "100px",
+                }}
+            >
                 <Typography variant="h6" sx={{ fontWeight: 500 }}>
                     INSIGHTS
                 </Typography>
-                <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                    Formularios
-                </Typography>
-                <Menu
-                    anchorEl={subMenuAnchorEl}
-                    open={Boolean(subMenuAnchorEl)}
-                    onClose={handleSubMenuClose}
+                <Typography
+                    variant="subtitle1"
+                    sx={{ fontWeight: 500 }}
+                    onMouseEnter={handleSubMenuOpen}
+                    onMouseLeave={handleSubMenuClose}
                 >
-                    <MenuItem onClick={handleSubMenuClose}>
-                        Formulario 1
-                    </MenuItem>
-                    <MenuItem onClick={handleSubMenuClose}>
-                        Formulario 2
-                    </MenuItem>
-                    <MenuItem onClick={handleSubMenuClose}>
-                        Formulario 3
-                    </MenuItem>
-                </Menu>
+                    Formularios
+                    <Menu
+                        anchorEl={subMenuAnchorEl}
+                        open={Boolean(subMenuAnchorEl)}
+                        onClose={handleSubMenuClose}
+                        MenuListProps={{ onMouseLeave: handleSubMenuClose }}
+                        elevation={0}
+                    >
+                        <MenuItem onClick={handleSubMenuClose}>
+                            Formulario 1
+                        </MenuItem>
+                        <MenuItem onClick={handleSubMenuClose}>
+                            Formulario 2
+                        </MenuItem>
+                        <MenuItem onClick={handleSubMenuClose}>
+                            Formulario 3
+                        </MenuItem>
+                    </Menu>
+                </Typography>
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                     Blog
                 </Typography>
@@ -72,6 +92,14 @@ const NavBar = () => {
                 >
                     <AccountCircleOutlinedIcon />
                 </IconButton>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleMenuClose}
+                >
+                    <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                    <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+                </Menu>
             </Toolbar>
         </Box>
     );
