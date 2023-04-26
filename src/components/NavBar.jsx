@@ -1,33 +1,21 @@
-import React from "react";
-import AppBar from "@mui/material/AppBar";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
 const NavBar = () => {
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [subMenuAnchorEl, setSubMenuAnchorEl] = React.useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
 
-    const handleMenuOpen = (event) => {
+    const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
-    const handleMenuClose = () => {
+    const handleClose = () => {
         setAnchorEl(null);
-    };
-
-    const handleSubMenuOpen = (event) => {
-        setSubMenuAnchorEl(event.currentTarget);
-    };
-
-    const handleSubMenuClose = () => {
-        setSubMenuAnchorEl(null);
     };
 
     return (
@@ -38,14 +26,15 @@ const NavBar = () => {
                 justifyContent: "center",
                 backgroundColor: "white",
                 width: "100%",
-                top: 0,
                 zIndex: 2,
             }}
         >
             <Toolbar
                 sx={{
+                    width: "100%",
                     display: "flex",
-                    maxWidth: "100px",
+                    gap: "190px",
+                    margin: "0.5em",
                 }}
             >
                 <Typography variant="h6" sx={{ fontWeight: 500 }}>
@@ -53,29 +42,20 @@ const NavBar = () => {
                 </Typography>
                 <Typography
                     variant="subtitle1"
-                    sx={{ fontWeight: 500 }}
-                    onMouseEnter={handleSubMenuOpen}
-                    onMouseLeave={handleSubMenuClose}
+                    sx={{ fontWeight: 500, cursor: "pointer" }}
+                    onClick={handleClick}
                 >
-                    Formularios
-                    <Menu
-                        anchorEl={subMenuAnchorEl}
-                        open={Boolean(subMenuAnchorEl)}
-                        onClose={handleSubMenuClose}
-                        MenuListProps={{ onMouseLeave: handleSubMenuClose }}
-                        elevation={0}
-                    >
-                        <MenuItem onClick={handleSubMenuClose}>
-                            Formulario 1
-                        </MenuItem>
-                        <MenuItem onClick={handleSubMenuClose}>
-                            Formulario 2
-                        </MenuItem>
-                        <MenuItem onClick={handleSubMenuClose}>
-                            Formulario 3
-                        </MenuItem>
-                    </Menu>
+                    Products
                 </Typography>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={handleClose}
+                >
+                    <MenuItem onClick={handleClose}>Product 1</MenuItem>
+                    <MenuItem onClick={handleClose}>Product 2</MenuItem>
+                    <MenuItem onClick={handleClose}>Product 3</MenuItem>
+                </Menu>
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                     Blog
                 </Typography>
@@ -85,21 +65,9 @@ const NavBar = () => {
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
                     Sobre Nosotros
                 </Typography>
-                <IconButton
-                    color="inherit"
-                    aria-label="account"
-                    onClick={handleMenuOpen}
-                >
+                <IconButton color="inherit" aria-label="account">
                     <AccountCircleOutlinedIcon />
                 </IconButton>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    onClose={handleMenuClose}
-                >
-                    <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
-                </Menu>
             </Toolbar>
         </Box>
     );
