@@ -15,16 +15,15 @@ export default function ErrorPage() {
                 justifyContent: "center",
                 height: "100vh",
                 gap: "25px",
-                backgroundColor: "#131313",
             }}
         >
-            <Typography variant="h3" color="white" gutterBottom>
+            <Typography variant="h3" gutterBottom>
                 😔 Oops!
             </Typography>
-            <Typography variant="subtitle1" color="white">
+            <Typography variant="subtitle1">
                 Lo sentimos, se ha producido un error inesperado.
             </Typography>
-            <Typography variant="subtitle2" color="white">
+            <Typography variant="subtitle2">
                 <i>{error.statusText || error.message}</i>
             </Typography>
         </Box>

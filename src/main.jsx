@@ -3,6 +3,7 @@ import React from "react";
 import ErrorPage from "./error-page";
 import Login from "./routes/Login";
 import Home from "./routes/Home";
+import Root from "./routes/root";
 import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -45,9 +46,15 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/home",
-        element: <Home />,
+        path: "/loged",
+        element: <Root />,
         errorElement: <ErrorPage />,
+        children: [
+            {
+                path: "home",
+                element: <Home />,
+            },
+        ],
     },
 ]);
 
