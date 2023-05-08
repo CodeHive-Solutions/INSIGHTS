@@ -7,7 +7,7 @@ import Footer from "../components/Footer";
 const Root = () => {
     return (
         <>
-            <NavBar />
+            <NavBar position="sticky" />
             <Container sx={{ paddingTop: "74px" }}>
                 <Outlet />
             </Container>

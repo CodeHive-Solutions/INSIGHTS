@@ -1,80 +1,133 @@
+import { useState, useEffect, useRef } from "react";
+import { Box, Typography, Button, TextField, Link } from "@mui/material";
+
 const Navbar = () => {
     const menuItems = [
         {
-            title: "Home",
-            url: "/",
-        },
-        {
-            title: "Services",
+            title: "Formularios",
             url: "/services",
             submenu: [
                 {
-                    title: "web design",
+                    title: "Desempeño con personal a cargo",
                     url: "web-design",
                 },
                 {
-                    title: "web development",
+                    title: "Desempeño con cargos gerenciales",
+                    url: "web-design",
+                },
+                {
+                    title: "Desempeño laboral sin personal a cargo",
+                    url: "web-design",
+                },
+                {
+                    title: "Sub-submenu",
                     url: "web-dev",
                     submenu: [
                         {
-                            title: "Frontend",
+                            title: "Sub-suboptions",
                             url: "frontend",
                         },
                         {
-                            title: "Backend",
+                            title: "Sub-suboptions",
                             submenu: [
                                 {
-                                    title: "NodeJS",
+                                    title: "Sub-Sub-suboptions",
                                     url: "node",
                                 },
                                 {
-                                    title: "PHP",
+                                    title: "Sub-Sub-suboptions",
                                     url: "php",
                                 },
                             ],
                         },
                     ],
                 },
-                {
-                    title: "SEO",
-                    url: "seo",
-                },
             ],
         },
         {
-            title: "About",
-            url: "/about",
-            submenu: [
-                {
-                    title: "Who we are",
-                    url: "who-we-are",
-                },
-                {
-                    title: "Our values",
-                    url: "our-values",
-                },
-            ],
+            title: "Blog",
+            url: "/",
+        },
+        {
+            title: "SGC",
+            url: "/",
+        },
+        {
+            title: "Sobre Nosotros",
+            url: "/",
         },
     ];
 
+    const Dropdown = ({ submenus, dropdown, depthLevel }) => {
+        depthLevel = depthLevel + 1;
+        const dropdownClass = depthLevel > 1 ? "dropdown-submenu" : "";
+        return (
+            <ul className={`dropdown ${dropdownClass} ${dropdown ? "show" : ""}`}>
+                {submenus.map((submenu, index) => (
+                    <MenuItems items={submenu} key={index} depthLevel={depthLevel} />
+                ))}
+            </ul>
+        );
+    };
+
+    const MenuItems = ({ items, depthLevel }) => {
+        const [dropdown, setDropdown] = useState(false);
+        let ref = useRef();
+
+        useEffect(() => {
+            const handler = (event) => {
+                if (dropdown && ref.current && !ref.current.contains(event.target)) {
+                    setDropdown(false);
+                }
+            };
+            document.addEventListener("mousedown", handler);
+            document.addEventListener("touchstart", handler);
+            return () => {
+                // Cleanup the event listener
+                document.removeEventListener("mousedown", handler);
+                document.removeEventListener("touchstart", handler);
+            };
+        }, [dropdown]);
+
+        const onMouseEnter = () => {
+            window.innerWidth > 960 && setDropdown(true);
+        };
+
+        const onMouseLeave = () => {
+            window.innerWidth > 960 && setDropdown(false);
+        };
+
+        return (
+            <li className="menu-items" ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+                {items.submenu ? (
+                    <>
+                        <button type="button" aria-haspopup="menu" aria-expanded={dropdown ? "true" : "false"} onClick={() => setDropdown((prev) => !prev)}>
+                            {items.title} {depthLevel > 0 ? <span>&raquo;</span> : <span className="arrow" />}
+                        </button>
+                        <Dropdown submenus={items.submenu} dropdown={dropdown} depthLevel={depthLevel} />
+                    </>
+                ) : (
+                    <a>{items.title}</a>
+                )}
+            </li>
+        );
+    };
+
     return (
         <header>
-            <div className="nav-area">
-                <a href="/" className="logo">
-                    Logo
-                </a>
+            <Box className="nav-area" sx={{ display: "flex", justifyContent: "space-between" }}>
+                <Typography variant="h6" href="/" className="logo" sx={{ color: "primary" }}>
+                    INSIGHTS
+                </Typography>
                 <nav>
-                    <ul className="menus">
+                    <ul className="menus" sx={{ borderRadius: "20px" }}>
                         {menuItems.map((menu, index) => {
-                            return (
-                                <li className="menu-items" key={index}>
-                                    <a href={menu.url}>{menu.title}</a>
-                                </li>
-                            );
+                            const depthLevel = 0;
+                            return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
                         })}
                     </ul>
                 </nav>
-            </div>
+            </Box>
         </header>
     );
 };

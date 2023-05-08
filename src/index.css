@@ -10,6 +10,10 @@ body {
 
 header {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  position: fixed;
+  width: 100%;
+  z-index: 2;
+  background-color: #fff;
   color: #212529;
 }
 
@@ -66,11 +70,13 @@ button span {
 .menu-items button {
   text-align: left;
   padding: 0.7rem 1rem;
+  border-radius: 8px;
 }
 
 .menu-items a:hover,
 .menu-items button:hover {
   background-color: #f2f2f2;
+  cursor: pointer;
 }
 
 .arrow::after {
