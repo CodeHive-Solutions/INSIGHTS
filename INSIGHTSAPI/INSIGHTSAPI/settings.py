@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["172.16.5.10"]
+ALLOWED_HOSTS = ["172.16.5.10", "172.16.0.115"]
 
 
 # Application definition
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'Authentication'
+    'prueba.apps.PruebaConfig'
 ]
 
 MIDDLEWARE = [
@@ -81,18 +81,9 @@ DATABASES = {
         'NAME': 'INSIGHTS',
         'USER': 'root',
         'PASSWORD': os.environ.get('MYSQL_115'),
-        
         'HOST': '172.16.0.115',
         'PORT': '3306',
     }
-    #     'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'insights',
-    #     'USER': 'root',
-    #     'PASSWORD': 'T3cn0l0g142023*',
-    #     'HOST': '172.16.0.115',
-    #     'PORT': '3306',
-    # }
 }
 
 
@@ -120,7 +111,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 

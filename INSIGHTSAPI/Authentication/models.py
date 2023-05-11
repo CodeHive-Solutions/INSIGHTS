@@ -1,10 +1,9 @@
 from django.db import models
 
+
 # Create your models here.
-
-
 class users(models.Model):
-    national_id = models.CharField(max_length=45, primary_key=True)
+    national_id = models.CharField(max_length=45)
     username = models.CharField(max_length=45)
     email_cyc = models.EmailField(max_length=100)
     extension = models.IntegerField(unique=True, null=True)
