@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["172.16.5.10", "172.16.0.115"]
+ALLOWED_HOSTS = ["172.16.5.10", "127.0.0.1", "172.16.0.115"]
 
 
 # Application definition
@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'prueba.apps.PruebaConfig'
+    'company_map.apps.CompanyMapConfig',
+    'rest_framework',
+    'snippets'
 ]
 
 MIDDLEWARE = [
@@ -80,7 +82,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'INSIGHTS',
         'USER': 'root',
-        'PASSWORD': os.environ.get('MYSQL_115'),
+        # 'PASSWORD': os.environ.get('MYSQL_115'),
+        'PASSWORD': "T3cn0l0g142023*",
         'HOST': '172.16.0.115',
         'PORT': '3306',
     }
@@ -127,3 +130,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
