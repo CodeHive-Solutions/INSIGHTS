@@ -1,134 +1,99 @@
-import { useState, useEffect, useRef } from "react";
-import { Box, Typography, Button, TextField, Link } from "@mui/material";
+import { React, useState, useEffect, useRef } from "react";
+import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Link } from "@mui/material";
+import PersonAdd from "@mui/icons-material/PersonAdd";
+import Settings from "@mui/icons-material/Settings";
+import Logout from "@mui/icons-material/Logout";
 
 const Navbar = () => {
-    const menuItems = [
-        {
-            title: "Formularios",
-            url: "/services",
-            submenu: [
-                {
-                    title: "Desempeño con personal a cargo",
-                    url: "web-design",
-                },
-                {
-                    title: "Desempeño con cargos gerenciales",
-                    url: "web-design",
-                },
-                {
-                    title: "Desempeño laboral sin personal a cargo",
-                    url: "web-design",
-                },
-                {
-                    title: "Sub-submenu",
-                    url: "web-dev",
-                    submenu: [
-                        {
-                            title: "Sub-suboptions",
-                            url: "frontend",
-                        },
-                        {
-                            title: "Sub-suboptions",
-                            submenu: [
-                                {
-                                    title: "Sub-Sub-suboptions",
-                                    url: "node",
-                                },
-                                {
-                                    title: "Sub-Sub-suboptions",
-                                    url: "php",
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            title: "Blog",
-            url: "/",
-        },
-        {
-            title: "SGC",
-            url: "/",
-        },
-        {
-            title: "Sobre Nosotros",
-            url: "/",
-        },
-    ];
-
-    const Dropdown = ({ submenus, dropdown, depthLevel }) => {
-        depthLevel = depthLevel + 1;
-        const dropdownClass = depthLevel > 1 ? "dropdown-submenu" : "";
-        return (
-            <ul className={`dropdown ${dropdownClass} ${dropdown ? "show" : ""}`}>
-                {submenus.map((submenu, index) => (
-                    <MenuItems items={submenu} key={index} depthLevel={depthLevel} />
-                ))}
-            </ul>
-        );
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
     };
-
-    const MenuItems = ({ items, depthLevel }) => {
-        const [dropdown, setDropdown] = useState(false);
-        let ref = useRef();
-
-        useEffect(() => {
-            const handler = (event) => {
-                if (dropdown && ref.current && !ref.current.contains(event.target)) {
-                    setDropdown(false);
-                }
-            };
-            document.addEventListener("mousedown", handler);
-            document.addEventListener("touchstart", handler);
-            return () => {
-                // Cleanup the event listener
-                document.removeEventListener("mousedown", handler);
-                document.removeEventListener("touchstart", handler);
-            };
-        }, [dropdown]);
-
-        const onMouseEnter = () => {
-            window.innerWidth > 960 && setDropdown(true);
-        };
-
-        const onMouseLeave = () => {
-            window.innerWidth > 960 && setDropdown(false);
-        };
-
-        return (
-            <li className="menu-items" ref={ref} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-                {items.submenu ? (
-                    <>
-                        <button type="button" aria-haspopup="menu" aria-expanded={dropdown ? "true" : "false"} onClick={() => setDropdown((prev) => !prev)}>
-                            {items.title} {depthLevel > 0 ? <span>&raquo;</span> : <span className="arrow" />}
-                        </button>
-                        <Dropdown submenus={items.submenu} dropdown={dropdown} depthLevel={depthLevel} />
-                    </>
-                ) : (
-                    <a>{items.title}</a>
-                )}
-            </li>
-        );
+    const handleClose = () => {
+        setAnchorEl(null);
     };
-
     return (
-        <header>
-            <Box className="nav-area" sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography variant="h6" href="/" className="logo" sx={{ color: "primary" }}>
-                    INSIGHTS
-                </Typography>
-                <nav>
-                    <ul className="menus" sx={{ borderRadius: "20px" }}>
-                        {menuItems.map((menu, index) => {
-                            const depthLevel = 0;
-                            return <MenuItems items={menu} key={index} depthLevel={depthLevel} />;
-                        })}
-                    </ul>
-                </nav>
+        <>
+            <Box sx={{ display: "flex", justifyContent: "space-around", width: "100%" }}>
+                <Typography sx={{ minWidth: 100 }}>Contact</Typography>
+                <Typography sx={{ minWidth: 100 }}>Profile</Typography>
+
+                <Tooltip title="Account settings">
+                    <IconButton
+                        onClick={handleClick}
+                        size="small"
+                        sx={{ ml: 2 }}
+                        aria-controls={open ? "account-menu" : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? "true" : undefined}
+                    >
+                        <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                    </IconButton>
+                </Tooltip>
             </Box>
-        </header>
+            <Menu
+                anchorEl={anchorEl}
+                id="account-menu"
+                open={open}
+                onClose={handleClose}
+                onClick={handleClose}
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        overflow: "visible",
+                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                        mt: 1.5,
+                        "& .MuiAvatar-root": {
+                            width: 32,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                        },
+                        "&:before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            right: 14,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                        },
+                    },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+                <MenuItem onClick={handleClose}>
+                    <Avatar /> Profile
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <Avatar /> My account
+                </MenuItem>
+                <Divider />
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <PersonAdd fontSize="small" />
+                    </ListItemIcon>
+                    Add another account
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <Settings fontSize="small" />
+                    </ListItemIcon>
+                    Settings
+                </MenuItem>
+                <MenuItem onClick={handleClose}>
+                    <ListItemIcon>
+                        <Logout fontSize="small" />
+                    </ListItemIcon>
+                    Logout
+                </MenuItem>
+            </Menu>
+        </>
     );
 };
 

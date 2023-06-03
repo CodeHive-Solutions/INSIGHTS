@@ -1,21 +1,22 @@
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from rest_framework import permissions
-from authentication.serializers import UserSerializer, GroupSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.contrib.auth import authenticate
+from .serializers import LDAPAuthSerializer
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class LDAPAuthView(APIView):
+    def post(self, request):
+        serializer = LDAPAuthSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
+        username = serializer.validated_data['username']
+        password = serializer.validated_data['password']
 
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            # Authentication successful
+            response_data = {'status': 'success', 'message': 'Authentication successful'}
+        else:
+            # Authentication failed
+            response_data = {'status': 'failure', 'message': user}
+        return Response(response_data)
