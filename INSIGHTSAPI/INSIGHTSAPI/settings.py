@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'company_map.apps.CompanyMapConfig',
+    'corsheaders',
     'authentication',
     'rest_framework',
     'snippets',
@@ -53,7 +53,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    # 'INSIGHTSAPI.custom_middleware.CustomMiddleware'
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3000',
+#     'http://localhost:8000',
+# ]
 
 ROOT_URLCONF = 'INSIGHTSAPI.urls'
 
@@ -137,3 +146,72 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#         'file': {
+#             'level': 'INFO',
+#             'class': 'logging.FileHandler',
+#             'filename': '/INSIGHTS/INSIGHTSAPI/logs/log.log',  # Specify the path to the log file
+#         },
+#     },
+#     'loggers': {
+#         '': {
+#             'handlers': ['file'],  # Specify the handlers to use
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s - %(levelname)s - %(message)s',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+        },
+        'response_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/INSIGHTS/INSIGHTSAPI/logs/log.log',  # Specify the path to the log file
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'goals.views': {
+            'handlers': ['response_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

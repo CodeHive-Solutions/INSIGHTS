@@ -29,3 +29,4 @@ WSGI
 *.sqlite3
 *.pyc
 migrations
+*.xlsx
