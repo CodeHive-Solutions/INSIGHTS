@@ -147,30 +147,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#         },
-#         'file': {
-#             'level': 'INFO',
-#             'class': 'logging.FileHandler',
-#             'filename': '/INSIGHTS/INSIGHTSAPI/logs/log.log',  # Specify the path to the log file
-#         },
-#     },
-#     'loggers': {
-#         '': {
-#             'handlers': ['file'],  # Specify the handlers to use
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
-
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -181,7 +157,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
-        'standard': {
+        'time-lvl-msg': {
             'format': '%(asctime)s - %(levelname)s - %(message)s',
         },
     },
@@ -193,8 +169,14 @@ LOGGING = {
         'response_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/INSIGHTS/INSIGHTSAPI/logs/log.log',  # Specify the path to the log file
-            'formatter': 'standard',
+            'filename': '/INSIGHTS/INSIGHTSAPI/utils/logs/requests.log',  # Specify the path to the log file
+            'formatter': 'time-lvl-msg',
+        },
+        'exception_file': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': '/INSIGHTS/INSIGHTSAPI/utils/logs/exceptions.log',  # Specify the path to the exception log file
+            'formatter': 'time-lvl-msg',
         },
     },
     'loggers': {
@@ -204,7 +186,7 @@ LOGGING = {
             'propagate': True,
         },
         'django.request': {
-            'handlers': ['console'],
+            'handlers': ['exception_file'],
             'level': 'INFO',
             'propagate': False,
         },

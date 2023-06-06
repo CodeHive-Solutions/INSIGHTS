@@ -49,11 +49,9 @@ class GoalAPITestCase(TestCase):
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile("Cierre_Abril_2023_Consolidado_R.xlsx", file_data, content_type="application/vnd.ms-excel")
-    
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse('upload-excel'), {'file': excel_file})
-    
         # Assert the response status code and perform additional assertions for the response data
         print("Excel", response.json())
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 201)
         # Additional assertions for the response data
