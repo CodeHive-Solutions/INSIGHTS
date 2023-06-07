@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Goal, Person
+from .models import Goal, PersonGoals
 
 class GoalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,5 +8,5 @@ class GoalSerializer(serializers.ModelSerializer):
 
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Person
-        fields = ['cedula', 'name','campaign','evaluation','quality','cleand_desk','total']
+        model = PersonGoals
+        fields = ['cedula','job_title','name','campaign','result','evaluation','quality','clean_desk','total']
