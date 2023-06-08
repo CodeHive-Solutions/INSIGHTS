@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'authentication',
     'rest_framework',
-    'snippets',
     'goals'
 ]
 
@@ -129,7 +128,7 @@ TIME_ZONE = 'America/Bogota'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     'authentication.ldap.LDAPBackend',

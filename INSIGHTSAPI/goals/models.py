@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 class Goal(models.Model):
@@ -6,7 +7,7 @@ class Goal(models.Model):
     value = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(excluded_fields=['created_at'])
 
     def __str__(self):
         return self.campaign
@@ -21,6 +22,14 @@ class PersonGoals(models.Model):
     evaluation = models.CharField(max_length=10)
     clean_desk = models.CharField(max_length=10)
     total = models.CharField(max_length=10)
+
+    history = HistoricalRecords()
+
+    def pre_create_historical_record(self):
+        record = super().pre_create_historical_record()
+        record.history_date = timezone.now()
+        record.save()
+        return record
 
     def __str__(self):
         return self.name

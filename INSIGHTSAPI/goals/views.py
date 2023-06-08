@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Goal, PersonGoals
 from .serializers import GoalSerializer, PersonSerializer
+from pytz import timezone as pytz_timezone
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -28,8 +29,9 @@ class GoalViewSet(viewsets.ModelViewSet):
         return super().get_serializer(*args, **kwargs)
 
     def create(self, request, *args, **kwargs):
+        print(timezone.now())
+        print(timezone.get_current_timezone())
         serializer = self.get_serializer(data=request.data, many=isinstance(request.data, list))
-        serializer.is_valid(raise_exception=True)
         data = request.data
         print("data",data)
         if isinstance(data, list):
@@ -39,8 +41,8 @@ class GoalViewSet(viewsets.ModelViewSet):
                 value = data['value']
                 print("Value",value)
                 Goal.objects.update_or_create(
+                    campaign=campaign,
                     defaults={'value': value, 'created_at': timezone.now()},
-                    **{'campaign': campaign}
                 )
         else:
             print("STRING")

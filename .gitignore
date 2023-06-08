@@ -30,3 +30,4 @@ WSGI
 *.pyc
 migrations
 *.xlsx
+venv
