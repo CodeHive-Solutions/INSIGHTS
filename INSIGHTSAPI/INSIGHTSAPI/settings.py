@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["172.16.5.10", "127.0.0.1", "172.16.0.115"]
 
@@ -82,10 +82,18 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'INSIGHTSAPI.wsgi.application'
+# WSGI_APPLICATION = 'INSIGHTSAPI.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_PORT = 587  # Use the appropriate port for your SMTP server
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'aprendizsena@cyc-bpo.com'  # Replace with your Outlook email
+EMAIL_HOST_PASSWORD = 'T3cn0l0g142023+-'  # Replace with your Outlook email password
+DEFAULT_FROM_EMAIL = 'aprendizsena@cyc-bpo.com'  # Replace with your Outlook email
 
 DATABASES = {
     'default': {
@@ -197,3 +205,48 @@ LOGGING = {
         },
     },
 }
+
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'time-lvl-msg': {
+#             'format': '%(asctime)s - %(levelname)s - %(message)s',
+#         },
+#     },
+#     'handlers': {
+#         'console': {
+#             'level': 'INFO',
+#             'class': 'logging.StreamHandler',
+#         },
+#         'request_file': {
+#             'level': 'INFO',
+#             'class': 'logging.FileHandler',
+#             'filename': '/var/www/INSIGHTSAPI/utils/logs/requests.log',
+#             'formatter': 'time-lvl-msg',
+#         },
+#         'exception_file': {
+#             'level': 'ERROR',
+#             'class': 'logging.FileHandler',
+#             'filename': '/var/www/INSIGHTSAPI/utils/logs/exceptions.log',
+#             'formatter': 'time-lvl-msg',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'INFO',
+#             'propagate': True,
+#         },
+#         'django.request': {
+#             'handlers': ['exception_file'],
+#             'level': 'INFO',
+#             'propagate': False,
+#         },
+#         'goals.views': {
+#             'handlers': ['request_file'],
+#             'level': 'INFO',
+#             'propagate': True,
+#         },
+#     },
+# }

@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from .models import Goal, PersonGoals
+from .models import PersonGoals
 
-class GoalSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Goal
-        fields = ['campaign', 'value','created_at']
+# class GoalSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Goal
+#         fields = ['campaign', 'value','created_at']
 
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = PersonGoals
-        fields = ['cedula','job_title','name','campaign','result','evaluation','quality','clean_desk','total']
+        fields = ['cedula','job_title','name','campaign','criteria','quantity','result','evaluation','quality','clean_desk','total','created_at']
