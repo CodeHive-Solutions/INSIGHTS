@@ -1,4 +1,8 @@
 import logging
+from django.utils import timezone
+import ssl
+import ftfy
+from smtplib import SMTP
 import base64
 import mysql.connector
 from reportlab.pdfgen import canvas
@@ -9,9 +13,8 @@ from django.core.exceptions import ValidationError
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import PersonGoals
+from .models import Goals
 from .serializers import PersonSerializer
-from pytz import timezone as pytz_timezone
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -22,16 +25,16 @@ console_handler.setLevel(logging.DEBUG)
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
-class ExcelGoalsViewSet(viewsets.ModelViewSet):
-    queryset = PersonGoals.objects.all()
+class GoalsViewSet(viewsets.ModelViewSet):
+    queryset = Goals.objects.all()
     serializer_class = PersonSerializer
 
     @action(detail=False, methods=['post'])
     def send_email(self, request, *args, **kwargs):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
-        moment = request.POST.get('moment')
-        if pdf_64 and cedula and moment:
+        delivery_type = request.POST.get('delivery_type')
+        if pdf_64 and cedula and delivery_type:
             try:
                 db_connection = mysql.connector.connect(
                 host='172.16.0.6',
@@ -41,31 +44,63 @@ class ExcelGoalsViewSet(viewsets.ModelViewSet):
                 database='userscyc',
                 )
                 db_cursor = db_connection.cursor()
-                db_cursor.execute("SELECT email_user FROM users WHERE `id_user` = %s",[cedula])
+                instance = Goals.objects.get(cedula=cedula)
+                db_cursor.execute("SELECT email_user, pnom_user, pape_user FROM users WHERE `id_user` = %s",[cedula])
                 result = db_cursor.fetchone()
                 if result is not None:
-                    correo = result[0]
-                    decoded_pdf_data = base64.b64decode(pdf_64)
-                    email = EmailMessage(
-                        f'{moment}',
-                        'Attached is the PDF you requested',
-                        f'{moment} <{settings.DEFAULT_FROM_EMAIL}>',
-                        [correo],
-                    )
-                    email.attach(f'{moment}.pdf', decoded_pdf_data, 'application/pdf')
-                    email.send()
-                    return Response({'message': 'Email sent successfully'})
+                    try:
+                        correo = result[0]
+                        nombre = result[1] + ' ' + result[2]
+                        nombre_encoded = ftfy.fix_text(nombre)
+                        decoded_pdf_data = base64.b64decode(pdf_64)
+                        email = EmailMessage(
+                            f'{delivery_type}',
+                                    '<html><body>'
+                                    '<div>'
+                                    f'<p>Estimado/a {nombre_encoded.title()}:</p>'
+                                    f'<p>Se ha procesado su {delivery_type}.<br> Por favor, no responda ni reenvíe este correo. Contiene información confidencial.<br>'
+                                    '<div style="color: black;">Cordialmente,<br>'
+                                    'M.I.S. Management Information System C&C Services</div></p>'
+                                    '</div>'
+                                    '</body></html>',
+                            f'{delivery_type} <{settings.DEFAULT_FROM_EMAIL}>',
+                            [correo],
+                        )
+                        email.content_subtype = "html"
+                        email.attach(f'{delivery_type}.pdf', decoded_pdf_data, "application/pdf")
+                        # Get the underlying EmailMessage object
+                        email_msg = email.message()
+                        # Create an SMTP connection
+                        connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+                        connection.ehlo()
+                        # Wrap the socket with the SSL context
+                        context = ssl.create_default_context()
+                        context.check_hostname = False
+                        context.verify_mode = ssl.CERT_NONE
+                        connection.starttls(context=context)
+                        # Authenticate with the SMTP server
+                        connection.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+                        # Send the email
+                        connection.send_message(email_msg)
+                        # Close the connection
+                        connection.quit()
+                        instance.accepted_at = timezone.now()
+                        instance.save()
+                        return Response({'message': 'Email sent successfully','email': correo})
+                    except Exception as e:
+                        logger.error("Error: %s", str(e), exc_info=True)
+                        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     return Response({'Error': "Email not found"}, status=status.HTTP_400_BAD_REQUEST)
-            except mysql.connector.Error as e:
-                logger.error("Database error: %s", str(e), exc_info=True)
+            except Exception as e:
+                logger.error("Error: %s", str(e), exc_info=True)
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             finally:
                 if db_connection.is_connected():
                     db_cursor.close()
                     db_connection.close()
         else:
-            return Response({'Error': 'PDF not found or cedula not send.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Error': f'{"PDF" if pdf_64 else "Cedula"} not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request, *args, **kwargs):
         file_obj = request.FILES.get('file')
@@ -95,8 +130,7 @@ class ExcelGoalsViewSet(viewsets.ModelViewSet):
                         name = row[name_index].value
                         campaign = row[campaign_index].value
                         criteria = row[criteria_index].value
-                        quantity_cell = row[quantity_index]
-                        quantity = "{:.2%}".format(quantity_cell.value)
+                        quantity = row[quantity_index].value
                         result_cell = row[result_index]
                         result = "{:.2%}".format(result_cell.value)
                         evaluation_cell = row[evaluation_index]
@@ -108,7 +142,7 @@ class ExcelGoalsViewSet(viewsets.ModelViewSet):
                         total_cell = row[total_index]
                         total = "{:.2%}".format(total_cell.value)
                         unique_constraint = 'cedula'
-                        PersonGoals.objects.update_or_create(
+                        Goals.objects.update_or_create(
                             defaults={
                             'name':name,
                             'job_title':cargo,
@@ -131,12 +165,11 @@ class ExcelGoalsViewSet(viewsets.ModelViewSet):
             return Response({"message": "Excel Failed."}, status=status.HTTP_400_BAD_REQUEST)
 
     def finalize_response(self, request, response, *args, **kwargs):
-        if hasattr(request, 'FILES'):
-            logger.debug("Request Attributes: %s", request)
+        logger.debug("Request: %s", request)
+        if hasattr(response, 'data') and response.data:
             logger.debug("Response Content: %s", response.data)
         else:
-            logger.debug("Request Attributes: %s", request)
-            logger.debug("Response Content: %s", response.data)
+            logger.debug("Response: %s", response)
         return super().finalize_response(request, response, *args, **kwargs)
 
 

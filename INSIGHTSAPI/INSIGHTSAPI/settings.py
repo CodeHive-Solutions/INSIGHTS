@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -88,12 +91,12 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-mail.outlook.com'
+EMAIL_HOST = 'mail.cyc-services.com.co'
 EMAIL_PORT = 587  # Use the appropriate port for your SMTP server
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'aprendizsena@cyc-bpo.com'  # Replace with your Outlook email
-EMAIL_HOST_PASSWORD = 'T3cn0l0g142023+-'  # Replace with your Outlook email password
-DEFAULT_FROM_EMAIL = 'aprendizsena@cyc-bpo.com'  # Replace with your Outlook email
+EMAIL_HOST_USER = 'mismetas@cyc-services.com.co'
+EMAIL_HOST_PASSWORD = 'Colombia2023*'
+DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 
 DATABASES = {
     'default': {
