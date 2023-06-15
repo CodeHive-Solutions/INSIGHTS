@@ -34,6 +34,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
         delivery_type = request.POST.get('delivery_type')
+        db_connection = None
+        db_cursor = None
         if pdf_64 and cedula and delivery_type:
             try:
                 db_connection = mysql.connector.connect(
@@ -50,7 +52,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 if result is not None:
                     try:
                         correo = result[0]
-                        nombre = result[1] + ' ' + result[2]
+                        nombre = str(result[1]) + ' ' + str(result[2])
                         nombre_encoded = ftfy.fix_text(nombre)
                         decoded_pdf_data = base64.b64decode(pdf_64)
                         email = EmailMessage(
@@ -64,7 +66,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                     '</div>'
                                     '</body></html>',
                             f'{delivery_type} <{settings.DEFAULT_FROM_EMAIL}>',
-                            [correo],
+                            [str(correo)],
                         )
                         email.content_subtype = "html"
                         email.attach(f'{delivery_type}.pdf', decoded_pdf_data, "application/pdf")
@@ -86,7 +88,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         connection.quit()
                         instance.accepted_at = timezone.now()
                         instance.save()
-                        return Response({'message': 'Email sent successfully','email': correo})
+                        return Response({'email': correo})
                     except Exception as e:
                         logger.error("Error: %s", str(e), exc_info=True)
                         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -96,7 +98,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 logger.error("Error: %s", str(e), exc_info=True)
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             finally:
-                if db_connection.is_connected():
+                if db_connection and db_connection.is_connected() and db_cursor:
                     db_cursor.close()
                     db_connection.close()
         else:
@@ -110,7 +112,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 workbook = load_workbook(file_obj, read_only=True, data_only=True)
                 sheet = workbook.active
                 # Get the column indices based on the header names
-                header_row = next(sheet.iter_rows(values_only=True))
+                header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
                 cedula_index = header_row.index('CEDULA')
                 name_index = header_row.index('NOMBRE')
                 cargo_index = header_row.index('CARGO')
@@ -122,7 +124,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 quality_index = header_row.index('CALIDAD')
                 clean_desk_index = header_row.index('CLEAN DESK')
                 total_index = header_row.index('TOTAL')
-                for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):
+                for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
                     cargo = str(row[cargo_index].value).upper().lstrip('.')
                     cedula = row[cedula_index]
                     if cargo.startswith('ASESOR'):

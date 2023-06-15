@@ -58,10 +58,10 @@ class SendEmailTestCase(TestCase):
         # Send a POST request to the view
         response = self.client.post(self.url, data=payload)
 
+        data = response.json()
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('message', response.data)
-        self.assertIn('email', response.data)
+        self.assertIn('email', data)
 
         # Assert that the email was sent successfully by checking the database or email logs
 
@@ -75,7 +75,8 @@ class SendEmailTestCase(TestCase):
         response = self.client.post(self.url, data=payload)
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn('Error', response.data)
+        data = response.json()
+        self.assertIn('Error', data)
         # Assert that the email was not sent and handle the specific error case
 
     def test_send_email_invalid_cedula(self):
