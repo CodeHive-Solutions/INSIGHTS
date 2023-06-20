@@ -1,4 +1,6 @@
 import logging
+import re
+import traceback
 from django.utils import timezone
 import ssl
 import ftfy
@@ -105,6 +107,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
             return Response({'Error': f'{"PDF" if pdf_64 else "Cedula"} not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request, *args, **kwargs):
+        # Get the file from the request
         file_obj = request.FILES.get('file')
         if file_obj:
             try:
@@ -160,11 +163,23 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             **{unique_constraint:cedula}
                         )
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
+            except ValueError:
+                traceback_msg = traceback.format_exc(limit=1)
+                logger.error("Value error: %s", traceback_msg, exc_info=True)
+                line_match = re.search(r"header_row\.index\('([^']+)'\)", traceback_msg)
+                if line_match:
+                    line_match = line_match.group(1)
+                    return Response({"message": f"Hubo un error al obtener la columna {line_match} asegurate de que este bien escrita."}, status=status.HTTP_400_BAD_REQUEST)
+                else:
+                    return Response({'message':"An error occurred"}, status=status.HTTP_400_BAD_REQUEST)
             except ValidationError as ve:
                 logger.error("Validation error: %s", str(ve), exc_info=True)
                 return Response({"message": "Excel upload Failed.","error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                logger.error("Error: %s", str(e), exc_info=True)
+                return Response({"message": "Excel upload Failed.","error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
-            return Response({"message": "Excel Failed."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Excel no encontrado."}, status=status.HTTP_400_BAD_REQUEST)
 
     def finalize_response(self, request, response, *args, **kwargs):
         logger.debug("Request: %s", request)
