@@ -31,10 +31,15 @@ class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
     serializer_class = PersonSerializer
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post', 'patch'])
     def send_email(self, request, *args, **kwargs):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
+        accepted = request.POST.get('accepted')
+        instace = Goals.objects.get(cedula=cedula)
+        instace.accepted = accepted
+        instace.accepted_at = timezone.now()
+        instace.save() 
         delivery_type = request.POST.get('delivery_type')
         db_connection = None
         db_cursor = None
@@ -89,6 +94,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         # Close the connection
                         connection.quit()
                         instance.accepted_at = timezone.now()
+                        instance.accepted = accepted
                         instance.save()
                         return Response({'email': correo})
                     except Exception as e:
@@ -138,14 +144,19 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         quantity = row[quantity_index].value
                         result_cell = row[result_index]
                         result = "{:.2%}".format(result_cell.value)
+                        # Avoid NoneType error
                         evaluation_cell = row[evaluation_index]
-                        evaluation = "{:.2%}".format(evaluation_cell.value)
-                        quality_cell = row[quality_index]
-                        quality = "{:.2%}".format(quality_cell.value)
-                        clean_desk_cell = row[clean_desk_index]
-                        clean_desk = "{:.2%}".format(clean_desk_cell.value)
-                        total_cell = row[total_index]
-                        total = "{:.2%}".format(total_cell.value)
+                        def format_cell_value(cell):
+                            if cell.value is None:
+                                return ""
+                            else:
+                                return "{:.2%}".format(cell.value)
+
+                        evaluation = format_cell_value(evaluation_cell)
+                        quality = format_cell_value(row[quality_index])
+                        clean_desk = format_cell_value(row[clean_desk_index])
+                        total = format_cell_value(row[total_index])
+                        # Update or create the record
                         unique_constraint = 'cedula'
                         Goals.objects.update_or_create(
                             defaults={
