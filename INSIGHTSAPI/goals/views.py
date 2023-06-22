@@ -35,11 +35,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
     def send_email(self, request, *args, **kwargs):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
-        accepted = request.POST.get('accepted')
-        instace = Goals.objects.get(cedula=cedula)
-        instace.accepted = accepted
-        instace.accepted_at = timezone.now()
-        instace.save() 
         delivery_type = request.POST.get('delivery_type')
         db_connection = None
         db_cursor = None
@@ -93,9 +88,14 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         connection.send_message(email_msg)
                         # Close the connection
                         connection.quit()
-                        instance.accepted_at = timezone.now()
-                        instance.accepted = accepted
-                        instance.save()
+                        if delivery_type == "Ejecución de metas":
+                            instance.accepted_execution_at = timezone.now()
+                            instance.accepted_execution = True
+                            instance.save()
+                        else:
+                            instance.accepted_at = timezone.now()
+                            instance.accepted = True
+                            instance.save()
                         return Response({'email': correo})
                     except Exception as e:
                         logger.error("Error: %s", str(e), exc_info=True)
@@ -108,7 +108,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
             finally:
                 if db_connection and db_connection.is_connected() and db_cursor:
                     db_cursor.close()
-                    db_connection.close()
+                    db_connection.close()   
         else:
             return Response({'Error': f'{"PDF" if pdf_64 else "Cedula"} not found.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -156,23 +156,46 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         quality = format_cell_value(row[quality_index])
                         clean_desk = format_cell_value(row[clean_desk_index])
                         total = format_cell_value(row[total_index])
+                        
+                        goals = Goals.objects.get(cedula=cedula)
+                        if goals.accepted_execution == 0:
+                            goals.accepted_execution_at = None
+                            goals.accepted_execution = None
+                        if goals.accepted == 0:
+                            goals.accepted_at = None
+                            goals.accepted = None
+                        if goals.accepted == 1 and goals.accepted_execution == 1:
+                            goals.accepted_at = None
+                            goals.accepted = None
+                        if goals.accepted_execution == 1 and goals.total != "":
+                            goals.accepted_execution_at = None
+                            goals.accepted_execution = None
+                        goals.save()
                         # Update or create the record
                         unique_constraint = 'cedula'
-                        Goals.objects.update_or_create(
-                            defaults={
-                            'name':name,
-                            'job_title':cargo,
-                            'campaign':campaign,
-                            'criteria':criteria,
-                            'quantity':quantity,
-                            'result':result,
-                            'evaluation':evaluation,
-                            'quality':quality,
-                            'clean_desk':clean_desk,
-                            'total':total
-                            },
-                            **{unique_constraint:cedula}
-                        )
+                        defaults = {}
+                        if name != '':
+                            defaults['name'] = name
+                        if cargo != '':
+                            defaults['job_title'] = cargo
+                        if campaign != '':
+                            defaults['campaign'] = campaign
+                        if criteria != '':
+                            defaults['criteria'] = criteria
+                        if quantity != '':
+                            defaults['quantity'] = quantity
+                        if result != '':
+                            defaults['result'] = result
+                        if evaluation != '':
+                            defaults['evaluation'] = evaluation
+                        if quality != '':
+                            defaults['quality'] = quality
+                        if clean_desk != '':
+                            defaults['clean_desk'] = clean_desk
+                        if total != '':
+                            defaults['total'] = total
+                        Goals.objects.update_or_create(defaults=defaults,**{unique_constraint:cedula})
+                        
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
             except ValueError:
                 traceback_msg = traceback.format_exc(limit=1)

@@ -9,4 +9,4 @@ from .models import Goals
 class PersonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Goals
-        fields = ['cedula','job_title','name','campaign','criteria','quantity','result','evaluation','quality','clean_desk','total','created_at', 'accepted_at', 'accepted_execution_at', 'accepted']
+        fields = ['cedula','job_title','name','campaign','criteria','quantity','result','evaluation','quality','clean_desk','total','created_at', 'accepted_at', 'accepted_execution_at', 'accepted', 'accepted_execution']

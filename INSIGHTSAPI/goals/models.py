@@ -28,6 +28,7 @@ class Goals(models.Model):
     accepted_execution_at = models.DateTimeField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     accepted = models.BooleanField(null=True)
+    accepted_execution = models.BooleanField(null=True)
     history = HistoricalRecords(excluded_fields=['created_at'])
 
     def pre_create_historical_record(self):
