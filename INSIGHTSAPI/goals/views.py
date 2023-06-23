@@ -17,6 +17,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Goals
 from .serializers import PersonSerializer
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -30,8 +31,31 @@ logger.addHandler(console_handler)
 class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
     serializer_class = PersonSerializer
+    
+    # Trying handle get requests
+    def get_queryset(self):
+        queryset = Goals.objects.all()
+        coordinator = self.request.query_params.get('coordinator', None)
+        if coordinator is not None:
+            # split the coordinator name into first name and last name
+            first_name, last_name = coordinator.split(' ', 1)
+            # filter the queryset based on possible name formats
+            queryset = queryset.filter(
+                Q(coordinator=coordinator) |
+                Q(coordinator__startswith=first_name) |
+                Q(coordinator__endswith=last_name)
+            )
+        return queryset
+    
+    # Trying handle patch requests 
+    # def partial_update(self, request, *args, **kwargs):
+        # instance = self.get_object()
+        # serializer = self.get_serializer(instance, data=request.data, partial=True)
+        # serializer.is_valid(raise_exception=True)
+        # self.perform_update(serializer)
+        # return Response(serializer.data)
 
-    @action(detail=False, methods=['post', 'patch'])
+    @action(detail=False, methods=['post'])
     def send_email(self, request, *args, **kwargs):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
@@ -126,6 +150,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 name_index = header_row.index('NOMBRE')
                 cargo_index = header_row.index('CARGO')
                 campaign_index = header_row.index('CAMPAÑA')
+                coordinator_index = header_row.index('Coordinador a Cargo')
                 criteria_index = header_row.index('Descripción de la Variable a Medir')
                 quantity_index = header_row.index('Cantidad')
                 result_index = header_row.index('% CUMPLIMIENTO ')
@@ -139,6 +164,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     if cargo.startswith('ASESOR'):
                         cedula = row[cedula_index].value
                         name = row[name_index].value
+                        coordinator = row[coordinator_index].value
                         campaign = row[campaign_index].value
                         criteria = row[criteria_index].value
                         quantity = row[quantity_index].value
@@ -157,20 +183,23 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         clean_desk = format_cell_value(row[clean_desk_index])
                         total = format_cell_value(row[total_index])
                         
-                        goals = Goals.objects.get(cedula=cedula)
-                        if goals.accepted_execution == 0:
-                            goals.accepted_execution_at = None
-                            goals.accepted_execution = None
-                        if goals.accepted == 0:
-                            goals.accepted_at = None
-                            goals.accepted = None
-                        if goals.accepted == 1 and goals.accepted_execution == 1:
-                            goals.accepted_at = None
-                            goals.accepted = None
-                        if goals.accepted_execution == 1 and goals.total != "":
-                            goals.accepted_execution_at = None
-                            goals.accepted_execution = None
-                        goals.save()
+                        goals = None
+                        if goals:
+                            goals = Goals.objects.get(cedula=cedula)
+                            if goals.accepted_execution == 0:
+                                goals.accepted_execution_at = None
+                                goals.accepted_execution = None
+                            if goals.accepted == 0:
+                                goals.accepted_at = None
+                                goals.accepted = None
+                            if goals.accepted == 1 and goals.accepted_execution == 1:
+                                goals.accepted_at = None
+                                goals.accepted = None
+                            if goals.accepted_execution == 1 and goals.total != "":
+                                goals.accepted_execution_at = None
+                                goals.accepted_execution = None
+                            goals.save()
+                        # Update or create the record
                         # Update or create the record
                         unique_constraint = 'cedula'
                         defaults = {}
@@ -180,6 +209,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             defaults['job_title'] = cargo
                         if campaign != '':
                             defaults['campaign'] = campaign
+                        if coordinator != '':
+                            defaults['coordinator'] = coordinator
                         if criteria != '':
                             defaults['criteria'] = criteria
                         if quantity != '':
