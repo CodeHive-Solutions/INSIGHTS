@@ -33,19 +33,19 @@ class GoalsViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     
     # Trying handle get requests
-    def get_queryset(self):
-        queryset = Goals.objects.all()
-        coordinator = self.request.query_params.get('coordinator', None)
-        if coordinator is not None:
-            # split the coordinator name into first name and last name
-            first_name, last_name = coordinator.split(' ', 1)
-            # filter the queryset based on possible name formats
-            queryset = queryset.filter(
-                Q(coordinator=coordinator) |
-                Q(coordinator__startswith=first_name) |
-                Q(coordinator__endswith=last_name)
-            )
-        return queryset
+    # def get_queryset(self):
+    #     queryset = Goals.objects.all()
+    #     coordinator = self.request.query_params.get('coordinator', None)
+    #     if coordinator is not None:
+    #         # split the coordinator name into first name and last name
+    #         first_name, last_name = coordinator.split(' ', 1)
+    #         # filter the queryset based on possible name formats
+    #         queryset = queryset.filter(
+    #             Q(coordinator=coordinator) |
+    #             Q(coordinator__startswith=first_name) |
+    #             Q(coordinator__endswith=last_name)
+    #         )
+    #     return queryset
     
     # Trying handle patch requests 
     # def partial_update(self, request, *args, **kwargs):
@@ -58,6 +58,10 @@ class GoalsViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def send_email(self, request, *args, **kwargs):
         pdf_64 = request.POST.get('pdf')
+        print(pdf_64)
+        decoded_pdf_data = base64.b64decode(pdf_64)
+        with open('output.pdf', 'wb') as f:
+            f.write(decoded_pdf_data)
         cedula = request.POST.get('cedula')
         delivery_type = request.POST.get('delivery_type')
         db_connection = None
