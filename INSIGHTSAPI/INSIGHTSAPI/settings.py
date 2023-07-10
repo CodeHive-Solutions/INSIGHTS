@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["172.16.5.10", "172.16.5.11", "127.0.0.1", "172.16.0.115", "localhost"]
+ALLOWED_HOSTS = ["172.16.0.114", "172.16.5.10", "172.16.5.11", "127.0.0.1", "172.16.0.115", "localhost", "insights-api.cyc-bpo.com"]
 
 
 # Application definition
@@ -92,20 +92,19 @@ TEMPLATES = [
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.cyc-services.com.co'
-EMAIL_PORT = 587  # Use the appropriate port for your SMTP server
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mismetas@cyc-services.com.co'
-EMAIL_HOST_PASSWORD = 'Colombia2023*'
+EMAIL_HOST_PASSWORD = os.environ.get('C_2023')
 DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'INSIGHTS',
-        'USER': 'root',
-        # 'PASSWORD': os.environ.get('MYSQL_115'),
-        'PASSWORD': "T3cn0l0g142023*",
-        'HOST': '172.16.0.115',
+        'NAME': 'insights',
+        'USER': 'INSIGHTSUSER',
+        'PASSWORD': os.environ.get('MYSQL_118'),
+        'HOST': '172.16.0.118',
         'PORT': '3306',
     }
 }
@@ -180,13 +179,13 @@ LOGGING = {
         'response_file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/INSIGHTS/INSIGHTSAPI/utils/logs/requests.log',  # Specify the path to the log file
+            'filename': '/var/www/INSIGHTSAPI/utils/logs/requests.log',
             'formatter': 'time-lvl-msg',
         },
         'exception_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/INSIGHTS/INSIGHTSAPI/utils/logs/exceptions.log',  # Specify the path to the exception log file
+            'filename': '/var/www/INSIGHTSAPI/utils/logs/exceptions.log',
             'formatter': 'time-lvl-msg',
         },
     },

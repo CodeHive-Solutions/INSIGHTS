@@ -2,35 +2,25 @@ from django.db import models
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
-# class Goal(models.Model):
-#     campaign = models.CharField(max_length=100, primary_key=True)
-#     value = models.FloatField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     history = HistoricalRecords(excluded_fields=['created_at'])
-
-#     def __str__(self):
-#         return self.campaign
-
 class Goals(models.Model):
     cedula = models.CharField(max_length=100, primary_key=True)
-    job_title = models.CharField(max_length=100)
     name = models.CharField(max_length=100)
+    job_title = models.CharField(max_length=100)
     campaign = models.CharField(max_length=100)
+    coordinator = models.CharField(max_length=100, null=True)
     criteria = models.CharField(max_length=100)
     quantity = models.CharField(max_length=20)
-    result = models.CharField(max_length=10)
-    quality = models.CharField(max_length=10)
-    evaluation = models.CharField(max_length=10)
-    clean_desk = models.CharField(max_length=10)
-    total = models.CharField(max_length=10)
-    accepted_at = models.DateTimeField(null=True)
-    accepted_execution_at = models.DateTimeField(null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    result = models.CharField(max_length=10, blank=True)
+    quality = models.CharField(max_length=10, blank=True)
+    evaluation = models.CharField(max_length=10, blank=True)
+    clean_desk = models.CharField(max_length=10, blank=True)
+    total = models.CharField(max_length=10, blank=True)
     accepted = models.BooleanField(null=True)
+    accepted_at = models.DateTimeField(null=True)
     accepted_execution = models.BooleanField(null=True)
-    coordinator = models.CharField(max_length=100, null=True)
-    history = HistoricalRecords(excluded_fields=['created_at'])
+    accepted_execution_at = models.DateTimeField(null=True)
+    last_update = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords(excluded_fields=['last_update'])
 
     def pre_create_historical_record(self):
         record = super().pre_create_historical_record()

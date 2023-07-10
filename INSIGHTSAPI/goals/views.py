@@ -1,4 +1,5 @@
 import logging
+import os
 import re
 import traceback
 from django.utils import timezone
@@ -7,7 +8,6 @@ import ftfy
 from smtplib import SMTP
 import base64
 import mysql.connector
-from reportlab.pdfgen import canvas
 from django.conf import settings
 from django.core.mail import EmailMessage
 from openpyxl import load_workbook
@@ -17,7 +17,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Goals
 from .serializers import PersonSerializer
-from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -31,37 +30,19 @@ logger.addHandler(console_handler)
 class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
     serializer_class = PersonSerializer
-    
-    # Trying handle get requests
-    # def get_queryset(self):
-    #     queryset = Goals.objects.all()
-    #     coordinator = self.request.query_params.get('coordinator', None)
-    #     if coordinator is not None:
-    #         # split the coordinator name into first name and last name
-    #         first_name, last_name = coordinator.split(' ', 1)
-    #         # filter the queryset based on possible name formats
-    #         queryset = queryset.filter(
-    #             Q(coordinator=coordinator) |
-    #             Q(coordinator__startswith=first_name) |
-    #             Q(coordinator__endswith=last_name)
-    #         )
-    #     return queryset
-    
-    # Trying handle patch requests 
-    # def partial_update(self, request, *args, **kwargs):
-        # instance = self.get_object()
-        # serializer = self.get_serializer(instance, data=request.data, partial=True)
-        # serializer.is_valid(raise_exception=True)
-        # self.perform_update(serializer)
-        # return Response(serializer.data)
+
+    #Esta funcion permite buscar por el nombre del coordinador
+    def get_queryset(self):
+        queryset = Goals.objects.all()
+        coordinator = self.request.GET.get('coordinator', None)
+        if coordinator is not None:
+            # filter the queryset based on possible name formats
+            queryset = queryset.filter(coordinator=coordinator)
+        return queryset
 
     @action(detail=False, methods=['post'])
     def send_email(self, request, *args, **kwargs):
         pdf_64 = request.POST.get('pdf')
-        print(pdf_64)
-        decoded_pdf_data = base64.b64decode(pdf_64)
-        with open('output.pdf', 'wb') as f:
-            f.write(decoded_pdf_data)
         cedula = request.POST.get('cedula')
         delivery_type = request.POST.get('delivery_type')
         db_connection = None
@@ -71,8 +52,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 db_connection = mysql.connector.connect(
                 host='172.16.0.6',
                 user='root',
-                password='*4b0g4d0s4s*',
-                # password='os.environ.get('MYSQL_6')',
+                password=os.environ.get('LEYES'),
                 database='userscyc',
                 )
                 db_cursor = db_connection.cursor()
@@ -138,11 +118,12 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     db_cursor.close()
                     db_connection.close()   
         else:
-            return Response({'Error': f'{"PDF" if pdf_64 else "Cedula"} not found.'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Error': f'{"PDF" if not pdf_64 else "Cedula"} not found in the request.'}, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request, *args, **kwargs):
         # Get the file from the request
         file_obj = request.FILES.get('file')
+        logger.debug("File: %s", file_obj)
         if file_obj:
             try:
                 # Read the Excel file using openpyxl
@@ -166,6 +147,12 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     cargo = str(row[cargo_index].value).upper().lstrip('.')
                     cedula = row[cedula_index]
                     if cargo.startswith('ASESOR'):
+                        # Avoid NoneType error
+                        def format_cell_value(cell):
+                            if cell.value is None or "":
+                                return ""
+                            else:
+                                return "{:.2%}".format(cell.value)
                         cedula = row[cedula_index].value
                         name = row[name_index].value
                         coordinator = row[coordinator_index].value
@@ -173,64 +160,43 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         criteria = row[criteria_index].value
                         quantity = row[quantity_index].value
                         result_cell = row[result_index]
-                        result = "{:.2%}".format(result_cell.value)
-                        # Avoid NoneType error
+                        result = format_cell_value(result_cell)
                         evaluation_cell = row[evaluation_index]
-                        def format_cell_value(cell):
-                            if cell.value is None:
-                                return ""
-                            else:
-                                return "{:.2%}".format(cell.value)
-
+                        
+                        
                         evaluation = format_cell_value(evaluation_cell)
                         quality = format_cell_value(row[quality_index])
                         clean_desk = format_cell_value(row[clean_desk_index])
                         total = format_cell_value(row[total_index])
-                        
-                        goals = None
-                        if goals:
-                            goals = Goals.objects.get(cedula=cedula)
-                            if goals.accepted_execution == 0:
-                                goals.accepted_execution_at = None
-                                goals.accepted_execution = None
-                            if goals.accepted == 0:
-                                goals.accepted_at = None
-                                goals.accepted = None
-                            if goals.accepted == 1 and goals.accepted_execution == 1:
-                                goals.accepted_at = None
-                                goals.accepted = None
-                            if goals.accepted_execution == 1 and goals.total != "":
-                                goals.accepted_execution_at = None
-                                goals.accepted_execution = None
-                            goals.save()
-                        # Update or create the record
+                        # Clean the registers for the new import
+                        goal = Goals.objects.filter(cedula=cedula).first()
+                        if goal is not None:
+                            # Evalua si la ejecucion fue aceptada y si el registro que esta siendo subido es la entrega
+                            if goal.accepted_execution == 1 and total == "":
+                                goal.accepted = None
+                                goal.accepted_at = None
+                            elif goal.accepted_at == 1 and total != "":
+                                goal.accepted_execution = None
+                                goal.accepted_execution_at = None
+                            goal.save()
                         # Update or create the record
                         unique_constraint = 'cedula'
-                        defaults = {}
-                        if name != '':
-                            defaults['name'] = name
-                        if cargo != '':
-                            defaults['job_title'] = cargo
-                        if campaign != '':
-                            defaults['campaign'] = campaign
-                        if coordinator != '':
-                            defaults['coordinator'] = coordinator
-                        if criteria != '':
-                            defaults['criteria'] = criteria
-                        if quantity != '':
-                            defaults['quantity'] = quantity
-                        if result != '':
-                            defaults['result'] = result
-                        if evaluation != '':
-                            defaults['evaluation'] = evaluation
-                        if quality != '':
-                            defaults['quality'] = quality
-                        if clean_desk != '':
-                            defaults['clean_desk'] = clean_desk
-                        if total != '':
-                            defaults['total'] = total
-                        Goals.objects.update_or_create(defaults=defaults,**{unique_constraint:cedula})
-                        
+                        default_value = {
+                            'name': name,
+                            'job_title': cargo,
+                            'campaign': campaign,
+                            'coordinator': coordinator,
+                            'criteria': criteria,
+                            'quantity': quantity,
+                            'result': result,
+                            'quality': quality,
+                            'evaluation': evaluation,
+                            'clean_desk': clean_desk,
+                            'total': total
+                        }
+                        # Remove empty values from default_value dictionary
+                        default_value = {k: v for k, v in default_value.items() if v}
+                        Goals.objects.update_or_create(defaults=default_value,**{unique_constraint:cedula})
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
             except ValueError:
                 traceback_msg = traceback.format_exc(limit=1)
@@ -252,57 +218,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
     def finalize_response(self, request, response, *args, **kwargs):
         logger.debug("Request: %s", request)
-        if hasattr(response, 'data') and response.data:
+        if hasattr(response, 'data') and response.data and request.resolver_match.route != "goals/$":
             logger.debug("Response Content: %s", response.data)
         else:
             logger.debug("Response: %s", response)
         return super().finalize_response(request, response, *args, **kwargs)
-
-
-# class GoalViewSet(viewsets.ModelViewSet):
-#     queryset = Goal.objects.all()
-#     serializer_class = GoalSerializer
-
-#     def get_serializer(self, *args, **kwargs):
-#         if isinstance(kwargs.get('data', {}), list):
-#             kwargs['many'] = True
-#         return super().get_serializer(*args, **kwargs)
-
-#     def create(self, request, *args, **kwargs):
-#         print(timezone.now())
-#         print(timezone.get_current_timezone())
-#         serializer = self.get_serializer(data=request.data, many=isinstance(request.data, list))
-#         data = request.data
-#         print("data",data)
-#         if isinstance(data, list):
-#             for data in data:
-#                 campaign = data['campaign']
-#                 print("Campaign",campaign)
-#                 value = data['value']
-#                 print("Value",value)
-#                 Goal.objects.update_or_create(
-#                     campaign=campaign,
-#                     defaults={'value': value, 'created_at': timezone.now()},
-#                 )
-#         else:
-#             print("STRING")
-#             campaign = data['campaign']
-#             value = data['value']
-#             Goal.objects.update_or_create(
-#                 campaign=campaign,
-#                 defaults={'value': value, 'created_at': timezone.now()}
-#             )
-#         status_code = status.HTTP_201_CREATED
-#         return Response(status=status_code)
-
-
-
-
-#     def finalize_response(self, request, response, *args, **kwargs):
-#         if hasattr(response, 'data'):
-#             logger.debug("Request Attributes: %s", request.data)
-#             logger.debug("Response Content: %s", response.data)
-#         else:
-#             logger.debug("Request Attributes: %s", request.data)
-#             logger.debug("Response Content: %s", response.content)
-#         return super().finalize_response(request, response, *args, **kwargs)
