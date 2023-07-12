@@ -4,8 +4,11 @@ django-cors-headers==4.1.0
 django-simple-history==3.3.0
 djangorestframework==3.14.0
 gunicorn==20.1.0
-mysqlclient==2.2.0
+mysqlclient==2.1.1
 Pillow==10.0.0
 pytz==2023.3
 sqlparse==0.4.4
 typing_extensions==4.7.1
+ftfy
+openpyxl
+dotenv

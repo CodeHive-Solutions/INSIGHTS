@@ -1,4 +1,5 @@
 import logging
+from django.db import connections
 import os
 import re
 import traceback
@@ -18,14 +19,8 @@ from rest_framework.response import Response
 from .models import Goals
 from .serializers import PersonSerializer
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
-console_handler.setFormatter(formatter)
-logger.addHandler(console_handler)
+logger = logging.getLogger("requests")
+console = logging.getLogger("console")
 
 class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
@@ -45,21 +40,20 @@ class GoalsViewSet(viewsets.ModelViewSet):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
         delivery_type = request.POST.get('delivery_type')
-        db_connection = None
-        db_cursor = None
         if pdf_64 and cedula and delivery_type:
             try:
                 db_connection = mysql.connector.connect(
-                host='172.16.0.6',
-                user='root',
-                password=os.environ.get('LEYES'),
-                database='userscyc',
-                )
+                    host="172.16.0.6",
+                    user="root",
+                    password=os.getenv('LEYES'),
+                    database="userscyc",
+                    port="3306"
+                    )
                 db_cursor = db_connection.cursor()
-                instance = Goals.objects.get(cedula=cedula)
+                instance = Goals.objects.filter(cedula=cedula).first()
                 db_cursor.execute("SELECT email_user, pnom_user, pape_user FROM users WHERE `id_user` = %s",[cedula])
                 result = db_cursor.fetchone()
-                if result is not None:
+                if result is not None and instance is not None:
                     try:
                         correo = result[0]
                         nombre = str(result[1]) + ' ' + str(result[2])
@@ -104,26 +98,31 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             instance.accepted_at = timezone.now()
                             instance.accepted = True
                             instance.save()
-                        return Response({'email': correo})
+                        print("Email sent successfully")
+                        return Response({'email': correo}, status=status.HTTP_200_OK)
                     except Exception as e:
-                        logger.error("Error: %s", str(e), exc_info=True)
+                        logger.setLevel(logging.ERROR)
+                        logger.exception("Error: %s", str(e))
+                        print("Error: %s", str(e))
                         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 else:
                     return Response({'Error': "Email not found"}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                logger.error("Error: %s", str(e), exc_info=True)
+                logger.setLevel(logging.ERROR)
+                logger.exception("Error: %s", str(e))
+                print("Error: %s", str(e))
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            finally:
-                if db_connection and db_connection.is_connected() and db_cursor:
-                    db_cursor.close()
-                    db_connection.close()   
+            # finally:
+                
+            #         db_cursor.close()
+            #         db_connection.close()   
         else:
             return Response({'Error': f'{"PDF" if not pdf_64 else "Cedula"} not found in the request.'}, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request, *args, **kwargs):
         # Get the file from the request
         file_obj = request.FILES.get('file')
-        logger.debug("File: %s", file_obj)
+        console.info("File: %s", file_obj)
         if file_obj:
             try:
                 # Read the Excel file using openpyxl
@@ -135,14 +134,22 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 name_index = header_row.index('NOMBRE')
                 cargo_index = header_row.index('CARGO')
                 campaign_index = header_row.index('CAMPAÑA')
-                coordinator_index = header_row.index('Coordinador a Cargo')
-                criteria_index = header_row.index('Descripción de la Variable a Medir')
-                quantity_index = header_row.index('Cantidad')
-                result_index = header_row.index('% CUMPLIMIENTO ')
-                evaluation_index = header_row.index('EVALUACION')
-                quality_index = header_row.index('CALIDAD')
-                clean_desk_index = header_row.index('CLEAN DESK')
-                total_index = header_row.index('TOTAL')
+                coordinator_index = header_row.index('COORDINADOR A CARGO')
+                criteria_index = header_row.index('DESCRIPCION DE LA VARIABLE A MEDIR')
+                quantity_index = header_row.index('CANTIDAD')
+                file_name = file_obj.name
+                if file_name.startswith('Ejecución'):
+                    result_index = header_row.index('% CUMPLIMIENTO ')
+                    evaluation_index = header_row.index('EVALUACION')
+                    quality_index = header_row.index('CALIDAD')
+                    clean_desk_index = header_row.index('CLEAN DESK')
+                    total_index = header_row.index('TOTAL')
+                else:
+                    result_index = None
+                    evaluation_index = None
+                    quality_index = None
+                    clean_desk_index = None
+                    total_index = None
                 for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
                     cargo = str(row[cargo_index].value).upper().lstrip('.')
                     cedula = row[cedula_index]
@@ -159,23 +166,25 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         campaign = row[campaign_index].value
                         criteria = row[criteria_index].value
                         quantity = row[quantity_index].value
-                        result_cell = row[result_index]
-                        result = format_cell_value(result_cell)
-                        evaluation_cell = row[evaluation_index]
-                        
-                        
-                        evaluation = format_cell_value(evaluation_cell)
-                        quality = format_cell_value(row[quality_index])
-                        clean_desk = format_cell_value(row[clean_desk_index])
-                        total = format_cell_value(row[total_index])
+                        if file_name.startswith('Ejecución'):
+                            result_cell = row[result_index]
+                            result = format_cell_value(result_cell)
+                            evaluation_cell = row[evaluation_index]
+                            evaluation = format_cell_value(evaluation_cell)
+                            quality = format_cell_value(row[quality_index])
+                            clean_desk = format_cell_value(row[clean_desk_index])
+                            total = format_cell_value(row[total_index])
+                        else:
+                            result = None
+                            evaluation = None
+                            quality = None
+                            clean_desk = None
+                            total = None
                         # Clean the registers for the new import
                         goal = Goals.objects.filter(cedula=cedula).first()
                         if goal is not None:
                             # Evalua si la ejecucion fue aceptada y si el registro que esta siendo subido es la entrega
-                            if goal.accepted_execution == 1 and total == "":
-                                goal.accepted = None
-                                goal.accepted_at = None
-                            elif goal.accepted_at == 1 and total != "":
+                            if file_name.startswith('Ejecución'):
                                 goal.accepted_execution = None
                                 goal.accepted_execution_at = None
                             goal.save()
@@ -196,11 +205,14 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         }
                         # Remove empty values from default_value dictionary
                         default_value = {k: v for k, v in default_value.items() if v}
+                        if file_name.startswith('Entrega') and i == 2:
+                                Goals.objects.all().delete()
                         Goals.objects.update_or_create(defaults=default_value,**{unique_constraint:cedula})
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
             except ValueError:
                 traceback_msg = traceback.format_exc(limit=1)
-                logger.error("Value error: %s", traceback_msg, exc_info=True)
+                logger.setLevel(logging.ERROR)
+                logger.exception("Value error: %s", traceback_msg)
                 line_match = re.search(r"header_row\.index\('([^']+)'\)", traceback_msg)
                 if line_match:
                     line_match = line_match.group(1)
@@ -208,18 +220,20 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 else:
                     return Response({'message':"An error occurred"}, status=status.HTTP_400_BAD_REQUEST)
             except ValidationError as ve:
-                logger.error("Validation error: %s", str(ve), exc_info=True)
+                logger.setLevel(logging.ERROR)
+                logger.exception("Validation error: %s", str(ve))
                 return Response({"message": "Excel upload Failed.","error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                logger.error("Error: %s", str(e), exc_info=True)
+                logger.setLevel(logging.ERROR)
+                logger.exception("Error: %s", str(e))
                 return Response({"message": "Excel upload Failed.","error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({"message": "Excel no encontrado."}, status=status.HTTP_400_BAD_REQUEST)
 
-    def finalize_response(self, request, response, *args, **kwargs):
-        logger.debug("Request: %s", request)
-        if hasattr(response, 'data') and response.data and request.resolver_match.route != "goals/$":
-            logger.debug("Response Content: %s", response.data)
-        else:
-            logger.debug("Response: %s", response)
-        return super().finalize_response(request, response, *args, **kwargs)
+    # def finalize_response(self, request, response, *args, **kwargs):
+    #     logger.info("Request: %s", request)
+    #     if hasattr(response, 'data') and response.data and request.resolver_match.route != "goals/$":
+    #         logger.info("Response Content: %s", response.data)
+    #     else:
+    #         logger.info("Response: %s", response)
+    #     return super().finalize_response(request, response, *args, **kwargs)

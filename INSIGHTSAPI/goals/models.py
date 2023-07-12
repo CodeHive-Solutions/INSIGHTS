@@ -23,7 +23,7 @@ class Goals(models.Model):
     history = HistoricalRecords(excluded_fields=['last_update'])
 
     def pre_create_historical_record(self):
-        record = super().pre_create_historical_record()
+        record = super().pre_create_historical_record() #type: ignore
         record.history_date = timezone.now()
         record.save()
         return record
