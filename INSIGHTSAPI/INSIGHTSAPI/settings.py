@@ -11,8 +11,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os
 import ssl
+
+if not os.path.isfile('/var/env/environment.env'):
+    raise FileNotFoundError('The env file was not found.')
+
+load_dotenv("/var/env/environment.env")
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -29,7 +35,7 @@ SECRET_KEY = 'django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["172.16.0.114", "172.16.5.10", "172.16.5.11", "127.0.0.1", "172.16.0.115", "localhost", "insights-api.cyc-bpo.com"]
+ALLOWED_HOSTS = ["172.16.0.114", "172.16.5.10", "172.16.5.11", "127.0.0.1", "172.16.0.115", "localhost", "insights-api.cyc-bpo.com","insights-api-dev.cyc-bpo.com"]
 
 
 # Application definition
@@ -43,7 +49,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'simple_history',
     'corsheaders',
-    'authentication',
     'rest_framework',
     'goals'
 ]
@@ -52,20 +57,20 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'INSIGHTSAPI.middleware.logging.LoggingMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
-    # 'INSIGHTSAPI.custom_middleware.CustomMiddleware'
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost:3000',
-#     'http://localhost:8000',
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://localhost:3000',
+    'http://localhost:8000',
+]
 
 ROOT_URLCONF = 'INSIGHTSAPI.urls'
 
@@ -95,18 +100,28 @@ EMAIL_HOST = 'mail.cyc-services.com.co'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mismetas@cyc-services.com.co'
-EMAIL_HOST_PASSWORD = os.environ.get('C_2023')
+EMAIL_HOST_PASSWORD = os.getenv('C_2023')
 DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'insights',
-        'USER': 'INSIGHTSUSER',
-        'PASSWORD': os.environ.get('MYSQL_118'),
-        'HOST': '172.16.0.118',
+        # 'HOST': '172.16.0.118',
+        # 'PASSWORD': os.getenv('MYSQL_118'),
+        'HOST': '172.16.0.115',
         'PORT': '3306',
-    }
+        'USER': 'INSIGHTSUSER',
+        'PASSWORD': os.getenv('MYSQL_115'),
+        'NAME': 'insights',
+    },
+    # '172.16.0.6': {
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'HOST': '172.16.0.6',
+    #     'PORT': '3306',
+    #     'USER': 'root',
+    #     'PASSWORD': os.getenv('LEYES'),
+    #     'NAME': 'userscyc'
+    # }
 }
 
 
@@ -141,7 +156,6 @@ USE_I18N = True
 USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
-    'authentication.ldap.LDAPBackend',
     # Add other authentication backends as needed
     'django.contrib.auth.backends.ModelBackend',
 ]
@@ -177,19 +191,29 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'response_file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/INSIGHTSAPI/utils/logs/requests.log',
+            'filename': '/var/www/INSIGHTS/INSIGHTSAPI/utils/logs/requests.log',
             'formatter': 'time-lvl-msg',
         },
         'exception_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/INSIGHTSAPI/utils/logs/exceptions.log',
+            'filename': '/var/www/INSIGHTS/INSIGHTSAPI/utils/logs/exceptions.log',
             'formatter': 'time-lvl-msg',
         },
     },
     'loggers': {
+        'requests': {
+            'handlers': ['response_file', 'exception_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'console': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         'django': {
             'handlers': ['console'],
             'level': 'INFO',
@@ -199,11 +223,6 @@ LOGGING = {
             'handlers': ['exception_file'],
             'level': 'INFO',
             'propagate': False,
-        },
-        'goals.views': {
-            'handlers': ['response_file'],
-            'level': 'DEBUG',
-            'propagate': True,
         },
     },
 }

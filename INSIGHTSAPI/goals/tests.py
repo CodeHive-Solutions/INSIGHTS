@@ -15,18 +15,50 @@ class GoalAPITestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_excel_upload(self):
+    def test_metas_upload(self):
         # Create a SimpleUploadedFile instance from the Excel file
-        file_path = '/var/www/INSIGHTSAPI/goals/Cierre_Abril_2023_Consolidado_R.xlsx'
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Entrega de metas.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
-        excel_file = SimpleUploadedFile("Cierre_Abril_2023_Consolidado_R.xlsx", file_data, content_type="application/vnd.ms-excel")
+        excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse('goal-list'), {'file': excel_file})
         # Assert the response status code and perform additional assertions for the response data
-        print("Excel", response.json())
+        number_goals = Goals.objects.all().count()
+        self.assertTrue(number_goals > 0)
         self.assertEqual(response.status_code, 201)
-        # Additional assertions for the response data
+
+    def test_ejecucion_upload(self):
+        # Create a SimpleUploadedFile instance from the Excel file
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Ejecución de metas.xlsx'
+        with open(file_path, 'rb') as file_obj:
+            file_data = file_obj.read()
+        excel_file = SimpleUploadedFile("Ejecución de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
+        # Send the POST request to the upload-excel URL with the Excel file data
+        response = self.client.post(reverse('goal-list'), {'file': excel_file})
+        # Assert the response status code and perform additional assertions for the response data
+        self.assertEqual(response.status_code, 201)
+        count = Goals.objects.exclude(total='').count()
+        self.assertTrue(count > 0)
+
+
+    def test_borrado_metas(self):
+        # Sube registros que despues borrar
+        self.test_ejecucion_upload()
+        # Create a SimpleUploadedFile instance from the Excel file
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Entrega de metas.xlsx'
+        with open(file_path, 'rb') as file_obj:
+            file_data = file_obj.read()
+        excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
+        # Send the POST request to the upload-excel URL with the Excel file data
+        response = self.client.post(reverse('goal-list'), {'file': excel_file})
+        # Assert the response status code and perform additional assertions for the response data
+        self.assertEqual(response.status_code, 201)
+        
+        count = Goals.objects.exclude(total='').count()
+        self.assertTrue(count == 0)
+        number_goals = Goals.objects.all().count()
+        self.assertTrue(number_goals > 0)
 
 class SendEmailTestCase(TestCase):
     def setUp(self):
@@ -42,7 +74,7 @@ class SendEmailTestCase(TestCase):
             clean_desk = '100',
             total = '100',
             job_title = 'Developer',
-            created_at = timezone.now(),
+            last_update = timezone.now(),
             criteria = '100',
             quantity = '100',
         )
@@ -57,7 +89,6 @@ class SendEmailTestCase(TestCase):
 
         # Send a POST request to the view
         response = self.client.post(self.url, data=payload)
-
         data = response.json()
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -89,4 +120,4 @@ class SendEmailTestCase(TestCase):
         # Send a POST request to the view
         response = self.client.post(self.url, data=payload)
         # Assert the response status code and content
-        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
