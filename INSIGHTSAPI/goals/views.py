@@ -17,14 +17,14 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Goals
-from .serializers import PersonSerializer
+from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
 console = logging.getLogger("console")
 
 class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
-    serializer_class = PersonSerializer
+    serializer_class = GoalSerializer
 
     #Esta funcion permite buscar por el nombre del coordinador
     def get_queryset(self):
@@ -105,6 +105,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         logger.exception("Error: %s", str(e))
                         print("Error: %s", str(e))
                         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                elif (GoalSerializer.is_valid(request.data)):
+                    print("Entro al else")
                 else:
                     return Response({'Error': "Email not found"}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
@@ -206,7 +208,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         # Remove empty values from default_value dictionary
                         default_value = {k: v for k, v in default_value.items() if v}
                         if file_name.startswith('Entrega') and i == 2:
-                                Goals.objects.all().delete()
+                            Goals.objects.all().update(accepted=None, accepted_at=None)
+                        if file_name.startswith('Ejecución') and i == 2:
+                            Goals.objects.all().update(accepted_execution=None, accepted_execution_at=None)
                         Goals.objects.update_or_create(defaults=default_value,**{unique_constraint:cedula})
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
             except ValueError:
@@ -226,7 +230,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 logger.setLevel(logging.ERROR)
                 logger.exception("Error: %s", str(e))
+                my_model_instance = Goals(field1="value1", field2="value2")
+                is_valid = my_model_instance.clean()
                 return Response({"message": "Excel upload Failed.","error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        # elif Goals.validate()
+        
         else:
             return Response({"message": "Excel no encontrado."}, status=status.HTTP_400_BAD_REQUEST)
 

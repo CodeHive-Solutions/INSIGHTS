@@ -56,9 +56,9 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'INSIGHTSAPI.middleware.logging.LoggingMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -92,8 +92,6 @@ TEMPLATES = [
 
 # WSGI_APPLICATION = 'INSIGHTSAPI.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.cyc-services.com.co'
@@ -103,26 +101,22 @@ EMAIL_HOST_USER = 'mismetas@cyc-services.com.co'
 EMAIL_HOST_PASSWORD = os.getenv('C_2023')
 DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '172.16.0.118',
-        # 'HOST': '172.16.0.115',
         'PORT': '3306',
         'USER': 'INSIGHTSUSER',
-        'PASSWORD': os.getenv('MYSQL_118'),
-        # 'PASSWORD': os.getenv('MYSQL_115'),
+        'HOST': '172.16.0.115',
+        # 'HOST': '172.16.0.118',
+        'PASSWORD': os.getenv('MYSQL_115'),
+        # 'PASSWORD': os.getenv('MYSQL_118'),
         'NAME': 'insights',
-    },
-    # '172.16.0.6': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'HOST': '172.16.0.6',
-    #     'PORT': '3306',
-    #     'USER': 'root',
-    #     'PASSWORD': os.getenv('LEYES'),
-    #     'NAME': 'userscyc'
-    # }
+    }
 }
+
 
 
 # Password validation

@@ -60,6 +60,28 @@ class GoalAPITestCase(TestCase):
         number_goals = Goals.objects.all().count()
         self.assertTrue(number_goals > 0)
 
+    def test_create_one(self):
+        valid_payload = {
+            'cedula':'1000065648',
+            'name': 'Heibert',
+            'campaign': 'Base Test Goal',
+            'result': '100',
+            'evaluation': '100',
+            'quality': '100',
+            'clean_desk': '100',
+            'total': '100',
+            'job_title': 'Developer',
+            'last_update': timezone.now(),
+            'criteria': '100',
+            'quantity': '100',
+        }
+        # Send a POST request to the view with the valid data
+        response = self.client.post('/your-api-endpoint/', valid_payload, format='json')
+        # Assert that the response status code is 200 OK or as expected
+        self.assertEqual(response.status_code, 200)
+        # Assert that the response data or content is as expected
+        self.assertEqual(response.data, "Data is valid") #type: ignore
+
 class SendEmailTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
