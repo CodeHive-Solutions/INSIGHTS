@@ -5,6 +5,7 @@ from rest_framework import status
 from django.urls import reverse
 from rest_framework.test import APIClient
 from .models import Goals
+import unittest
 
 class GoalAPITestCase(TestCase):
     # @classmethod
@@ -14,51 +15,63 @@ class GoalAPITestCase(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+    
+    def test_metas_upload(self,called=False):
+        if called:
+            # Create a SimpleUploadedFile instance from the Excel file
+            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Entrega de metas.xlsx'
+            with open(file_path, 'rb') as file_obj:
+                file_data = file_obj.read()
+            excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
+            # Send the POST request to the upload-excel URL with the Excel file data
+            response = self.client.post(reverse('goal-list'), {'file': excel_file})
+            # Assert the response status code and perform additional assertions for the response data
+            number_goals = Goals.objects.all().count()
+            self.assertTrue(number_goals > 0)
+            self.assertEqual(response.status_code, 201)
 
-    def test_metas_upload(self):
-        # Create a SimpleUploadedFile instance from the Excel file
-        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Entrega de metas.xlsx'
-        with open(file_path, 'rb') as file_obj:
-            file_data = file_obj.read()
-        excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
-        # Send the POST request to the upload-excel URL with the Excel file data
-        response = self.client.post(reverse('goal-list'), {'file': excel_file})
-        # Assert the response status code and perform additional assertions for the response data
-        number_goals = Goals.objects.all().count()
-        self.assertTrue(number_goals > 0)
-        self.assertEqual(response.status_code, 201)
-
-    def test_ejecucion_upload(self):
-        # Create a SimpleUploadedFile instance from the Excel file
-        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Ejecución de metas.xlsx'
-        with open(file_path, 'rb') as file_obj:
-            file_data = file_obj.read()
-        excel_file = SimpleUploadedFile("Ejecución de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
-        # Send the POST request to the upload-excel URL with the Excel file data
-        response = self.client.post(reverse('goal-list'), {'file': excel_file})
-        # Assert the response status code and perform additional assertions for the response data
-        self.assertEqual(response.status_code, 201)
-        count = Goals.objects.exclude(total='').count()
-        self.assertTrue(count > 0)
+    def test_ejecucion_upload(self, called=False):
+        if called:
+            # Create a SimpleUploadedFile instance from the Excel file
+            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Ejecución de metas.xlsx'
+            with open(file_path, 'rb') as file_obj:
+                file_data = file_obj.read()
+            excel_file = SimpleUploadedFile("Ejecución de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
+            # Send the POST request to the upload-excel URL with the Excel file data
+            response = self.client.post(reverse('goal-list'), {'file': excel_file})
+            # Assert the response status code and perform additional assertions for the response data
+            self.assertEqual(response.status_code, 201)
+            count = Goals.objects.exclude(total='').count()
+            self.assertTrue(count > 0)
 
 
-    def test_borrado_metas(self):
+    def test_borrado_accepted(self):
         # Sube registros que despues borrar
-        self.test_ejecucion_upload()
         # Create a SimpleUploadedFile instance from the Excel file
         file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Entrega de metas.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
-        # Send the POST request to the upload-excel URL with the Excel file data
-        response = self.client.post(reverse('goal-list'), {'file': excel_file})
-        # Assert the response status code and perform additional assertions for the response data
-        self.assertEqual(response.status_code, 201)
-        
-        count = Goals.objects.exclude(total='').count()
-        self.assertTrue(count == 0)
+        # Invoke the test_metas_upload() method to have data in the database and some goals like accepted
+        self.test_metas_upload(called=True)
+        # See if there are goals created
         number_goals = Goals.objects.all().count()
         self.assertTrue(number_goals > 0)
+        # put accepted to True and accepted_at to now() to Goals
+        Goals.objects.all().update(accepted=True,accepted_at=timezone.now())
+        # Send the POST request to the upload-excel URL with the Excel file data
+        response = self.client.post(reverse('goal-list'), {'file': excel_file})
+        self.assertEqual(response.status_code, 201)
+        # See if the accepted goals were deleted
+        count = Goals.objects.exclude(accepted='').count()
+        count_at = Goals.objects.exclude(accepted_at=None).count()
+        self.assertEqual((count, count_at), (0, 0))
+        #Do the same verifications but with execution
+        Goals.objects.all().update(accepted_execution=True,accepted_execution_at=timezone.now())
+        self.test_ejecucion_upload(called=True)
+        count_execution = Goals.objects.exclude(accepted_execution='').count()
+        count_at_execution = Goals.objects.exclude(accepted_execution_at=None).count()
+        self.assertEqual((count_execution, count_at_execution), (0, 0))
 
     def test_create_one(self):
         valid_payload = {

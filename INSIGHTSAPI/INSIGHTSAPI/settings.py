@@ -14,11 +14,12 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 import ssl
+import ldap
 
-if not os.path.isfile('/var/env/environment.env'):
+if not os.path.isfile('/var/env/INSIGHTS.env'):
     raise FileNotFoundError('The env file was not found.')
 
-load_dotenv("/var/env/environment.env")
+load_dotenv("/var/env/INSIGHTS.env")
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    "django_auth_ldap",
     'simple_history',
     'corsheaders',
     'rest_framework',
@@ -107,6 +109,8 @@ DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        # 'HOST': '172.16.0.118',
+        'HOST': '172.16.0.115',
         'PORT': '3306',
         'USER': 'INSIGHTSUSER',
         'HOST': '172.16.0.115',
@@ -150,8 +154,8 @@ USE_I18N = True
 USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
-    # Add other authentication backends as needed
-    'django.contrib.auth.backends.ModelBackend',
+    'django_auth_ldap.backend.LDAPBackend',
+    'django.contrib.auth.backends.ModelBackend'
 ]
 
 
@@ -221,47 +225,14 @@ LOGGING = {
     },
 }
 
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'time-lvl-msg': {
-#             'format': '%(asctime)s - %(levelname)s - %(message)s',
-#         },
-#     },
-#     'handlers': {
-#         'console': {
-#             'level': 'INFO',
-#             'class': 'logging.StreamHandler',
-#         },
-#         'request_file': {
-#             'level': 'INFO',
-#             'class': 'logging.FileHandler',
-#             'filename': '/var/www/INSIGHTSAPI/utils/logs/requests.log',
-#             'formatter': 'time-lvl-msg',
-#         },
-#         'exception_file': {
-#             'level': 'ERROR',
-#             'class': 'logging.FileHandler',
-#             'filename': '/var/www/INSIGHTSAPI/utils/logs/exceptions.log',
-#             'formatter': 'time-lvl-msg',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'INFO',
-#             'propagate': True,
-#         },
-#         'django.request': {
-#             'handlers': ['exception_file'],
-#             'level': 'INFO',
-#             'propagate': False,
-#         },
-#         'goals.views': {
-#             'handlers': ['request_file'],
-#             'level': 'INFO',
-#             'propagate': True,
-#         },
-#     },
-# }
+# LDAP configuration
+AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
+AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGIA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"  # The LDAP user to bind with for authentication
+AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")  # Password for the bind user
+
+AUTH_LDAP_USER_SEARCH = ("OU=Users,DC=CYC-SERVICES,DC=COM,DC=CO", ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)")
+
+AUTH_LDAP_USER_ATTR_MAP = {
+    "username": "sAMAccountName",
+    "name": 'name',
+}
