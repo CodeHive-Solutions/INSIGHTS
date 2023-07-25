@@ -1,5 +1,4 @@
 import logging
-from django.db import connections
 import os
 import re
 import traceback
@@ -41,6 +40,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
         delivery_type = request.POST.get('delivery_type')
+        db_connection = None
         if pdf_64 and cedula and delivery_type:
             try:
                 db_connection = mysql.connector.connect(
@@ -116,10 +116,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 logger.exception("Error: %s", str(e))
                 print("Error: %s", str(e))
                 return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            # finally:
-                
-            #         db_cursor.close()
-            #         db_connection.close()   
+            finally:
+                if db_connection is not None and db_connection.is_connected():
+                    db_connection.close()   
         else:
             return Response({'Error': f'{"PDF" if not pdf_64 else "Cedula"} not found in the request.'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -258,14 +257,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             quality = None
                             clean_desk = None
                             total = None
-                        # Clean the registers for the new import
-                        goal = Goals.objects.filter(cedula=cedula).first()
-                        if goal is not None:
-                            # Evalua si la ejecucion fue aceptada y si el registro que esta siendo subido es la entrega
-                            if file_name.startswith('Ejecución'):
-                                goal.accepted_execution = None
-                                goal.accepted_execution_at = None
-                            goal.save()
                         # Update or create the record
                         unique_constraint = 'cedula'
                         default_value = {
