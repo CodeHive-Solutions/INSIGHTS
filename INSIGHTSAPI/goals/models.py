@@ -30,3 +30,20 @@ class Goals(models.Model):
 
     def __str__(self):
         return self.name
+
+class MultipleGoals(models.Model):
+    goals = models.ForeignKey(Goals, on_delete=models.CASCADE, related_name='additional_info')
+    # Add your additional fields here, for example:
+    age_news = models.CharField(max_length=100)
+    diary_goal = models.IntegerField()
+    days = models.IntegerField()
+    month_goal = models.IntegerField()
+    hours = models.IntegerField()
+    observation = models.CharField(max_length=350)
+    history = HistoricalRecords()
+
+    def pre_create_historical_record(self):
+        record = super().pre_create_historical_record() #type: ignore
+        record.history_date = timezone.now()
+        record.save()
+        return record
