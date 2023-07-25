@@ -5,7 +5,6 @@ from rest_framework import status
 from django.urls import reverse
 from rest_framework.test import APIClient
 from .models import Goals
-import unittest
 
 class GoalAPITestCase(TestCase):
     # @classmethod
@@ -19,7 +18,7 @@ class GoalAPITestCase(TestCase):
     def test_metas_upload(self,called=False):
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
-            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Entrega de metas.xlsx'
+            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas.xlsx'
             with open(file_path, 'rb') as file_obj:
                 file_data = file_obj.read()
             excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
@@ -27,13 +26,13 @@ class GoalAPITestCase(TestCase):
             response = self.client.post(reverse('goal-list'), {'file': excel_file})
             # Assert the response status code and perform additional assertions for the response data
             number_goals = Goals.objects.all().count()
-            self.assertTrue(number_goals > 0)
             self.assertEqual(response.status_code, 201)
+            self.assertTrue(number_goals > 0)
 
     def test_ejecucion_upload(self, called=False):
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
-            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Ejecución de metas.xlsx'
+            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Ejecución de metas.xlsx'
             with open(file_path, 'rb') as file_obj:
                 file_data = file_obj.read()
             excel_file = SimpleUploadedFile("Ejecución de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
@@ -48,7 +47,7 @@ class GoalAPITestCase(TestCase):
     def test_borrado_accepted(self):
         # Sube registros que despues borrar
         # Create a SimpleUploadedFile instance from the Excel file
-        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/goals/excels/Entrega de metas.xlsx'
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
@@ -73,27 +72,39 @@ class GoalAPITestCase(TestCase):
         count_at_execution = Goals.objects.exclude(accepted_execution_at=None).count()
         self.assertEqual((count_execution, count_at_execution), (0, 0))
 
-    def test_create_one(self):
-        valid_payload = {
-            'cedula':'1000065648',
-            'name': 'Heibert',
-            'campaign': 'Base Test Goal',
-            'result': '100',
-            'evaluation': '100',
-            'quality': '100',
-            'clean_desk': '100',
-            'total': '100',
-            'job_title': 'Developer',
-            'last_update': timezone.now(),
-            'criteria': '100',
-            'quantity': '100',
-        }
-        # Send a POST request to the view with the valid data
-        response = self.client.post('/your-api-endpoint/', valid_payload, format='json')
-        # Assert that the response status code is 200 OK or as expected
-        self.assertEqual(response.status_code, 200)
-        # Assert that the response data or content is as expected
-        self.assertEqual(response.data, "Data is valid") #type: ignore
+    # def test_create_one(self):
+    #     valid_payload = {
+    #         'cedula':'1000065648',
+    #         'name': 'Heibert',
+    #         'campaign': 'Base Test Goal',
+    #         'result': '100',
+    #         'evaluation': '100',
+    #         'quality': '100',
+    #         'clean_desk': '100',
+    #         'total': '100',
+    #         'job_title': 'Developer',
+    #         'last_update': timezone.now(),
+    #         'criteria': '100',
+    #         'quantity': '100',
+    #     }
+    #     # Send a POST request to the view with the valid data
+    #     response = self.client.post('/your-api-endpoint/', valid_payload, format='json')
+    #     # Assert that the response status code is 200 OK or as expected
+    #     self.assertEqual(response.status_code, 200)
+    #     # Assert that the response data or content is as expected
+    #     self.assertEqual(response.data, "Data is valid") #type: ignore
+
+    def test_multiple_upload(self):
+        # Create a SimpleUploadedFile instance from the Excel file
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas Claro.xlsx'
+        with open(file_path, 'rb') as file_obj:
+            file_data = file_obj.read()
+        excel_file = SimpleUploadedFile("Entrega de metas Claro.xlsx", file_data, content_type="application/vnd.ms-excel")
+        # Send the POST request to the upload-excel URL with the Excel file data
+        response = self.client.post(reverse('goal-list'), {'file': excel_file})
+        # Assert the response status code and perform additional assertions for the response data
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(Goals.objects.all().exclude(additional_info=None).count() > 0)
 
 class SendEmailTestCase(TestCase):
     def setUp(self):
