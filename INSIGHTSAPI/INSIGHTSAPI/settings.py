@@ -15,10 +15,10 @@ from dotenv import load_dotenv
 import os
 import ssl
 
-if not os.path.isfile('/var/env/environment.env'):
+if not os.path.isfile('/var/env/INSIGHTS.env'):
     raise FileNotFoundError('The env file was not found.')
 
-load_dotenv("/var/env/environment.env")
+load_dotenv("/var/env/INSIGHTS.env")
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
