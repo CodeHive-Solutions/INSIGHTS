@@ -9,7 +9,7 @@ class LoggingMiddleware:
     def __call__(self, request):
         logger.info("Request: %s", request)
         response = self.get_response(request)
-        if hasattr(response, 'data') and response.data:
+        if hasattr(response, 'data') and response.data and request.resolver_match.route != "goals/$":
             logger.info("Response Content: %s", response.data)
         else:
             logger.info("Response: %s", response)
