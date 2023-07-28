@@ -33,12 +33,12 @@ class Goals(models.Model):
 
 class MultipleGoals(models.Model):
     goals = models.ForeignKey(Goals, on_delete=models.CASCADE, related_name='additional_info')
-    # Add your additional fields here, for example:
-    age_news = models.CharField(max_length=100)
+    fringe = models.CharField(max_length=100)
     diary_goal = models.IntegerField()
-    days = models.IntegerField()
+    days = models.CharField(max_length=350)
     month_goal = models.IntegerField()
     hours = models.IntegerField()
+    collection_account = models.IntegerField()
     observation = models.CharField(max_length=350)
     history = HistoricalRecords()
 

@@ -20,7 +20,6 @@ from .models import Goals, MultipleGoals
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
-console = logging.getLogger("console")
 
 class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
@@ -107,8 +106,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         logger.exception("Error: %s", str(e))
                         print("Error: %s", str(e))
                         return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                elif (request_goal.is_valid()):
-                    print("Entro al else")
+                # elif (request_goal.is_valid()):
+                #     print("Entro al else")
                 else:
                     return Response({'Error': "Email not found"}, status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
@@ -125,7 +124,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         # Get the file from the request
         file_obj = request.FILES.get('file')
-        console.info("File: %s", file_obj)
         if file_obj:
             file_name = str(file_obj.name)
             try:
@@ -145,24 +143,24 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 cargo_index = header_row.index('CARGO')
                 campaign_index = header_row.index('CAMPAÑA')
                 coordinator_index = header_row.index('COORDINADOR A CARGO')
-                if file_name.find('Claro') != -1:
-                    print('Entro al if')
+                if file_name.upper().find('CLARO') != -1:
                     header_names = {
-                        'EDAD NUEVO', 'META DIARIA', 'DIAS', 'META MES CON PAGO', 'POR HORA', 'OBSERVACIÓN'
+                        'FRANJA', 'META DIARIA', 'DÍAS HÁBILES', 'META MES CON PAGO', 'POR HORA','RECAUDO POR CUENTA', 'OBSERVACIÓN'
                     }
                     missing_headers = header_names - set(header_row)
                     if missing_headers:
-                        return Response({"message": f"Headers are missing in the Excel file: {', '.join(missing_headers)}"}, status=status.HTTP_400_BAD_REQUEST)
-                    new_age_index = header_row.index('EDAD NUEVO')
+                        return Response({"message": f"Estos encabezados no fueron encontrados: {', '.join(missing_headers)}"}, status=status.HTTP_400_BAD_REQUEST)
+                    fringe_index = header_row.index('FRANJA')
                     diary_goal_index = header_row.index('META DIARIA')
-                    days_index = header_row.index('DIAS')
+                    days_index = header_row.index('DÍAS HÁBILES')
                     month_goal_index = header_row.index('META MES CON PAGO')
                     hours_index = header_row.index('POR HORA')
+                    collection_account_index = header_row.index('RECAUDO POR CUENTA')
                     observation_index = header_row.index('OBSERVACIÓN')
                     for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
                         cargo = str(row[cargo_index].value).upper().lstrip('.')
                         cedula = row[cedula_index]
-                        if cargo.find('ASESOR'):
+                        if cargo.upper().find('ASESOR') != -1:
                             # Avoid NoneType error
                             def format_cell_value(cell):
                                 if cell.value is None or "":
@@ -189,22 +187,24 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                         print(MultipleGoals.objects.all().count())
                                     goals_instance, _ = Goals.objects.update_or_create(defaults=default_value, **{unique_constraint: cedula})
                                     # Create the additional info record
-                                    age_news = row[new_age_index].value
-                                    diary_goal = row[diary_goal_index].value
+                                    fringe = row[fringe_index].value
+                                    diary_goal = row[diary_goal_index].value  
                                     days = row[days_index].value
                                     month_goal = row[month_goal_index].value
                                     hours = row[hours_index].value
+                                    collection_account = row[collection_account_index].value
                                     observation = row[observation_index].value
                                     MultipleGoals.objects.create(
                                         goals=goals_instance,
-                                        age_news=age_news,
+                                        fringe=fringe,
                                         diary_goal=diary_goal,
                                         days=days,
                                         month_goal=month_goal,
                                         hours=hours,
+                                        collection_account=collection_account,
                                         observation=observation,
                                     )
-                            except ValidationError as ve:
+                            except ValidationError as ve: 
                                 logger.setLevel(logging.ERROR)
                                 logger.exception("Validation error: %s", str(ve))
                                 return Response({"message": "Excel upload Failed.","error": str(ve)}, status=status.HTTP_400_BAD_REQUEST)
@@ -215,7 +215,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
                 criteria_index = header_row.index('DESCRIPCION DE LA VARIABLE A MEDIR')
                 quantity_index = header_row.index('CANTIDAD')
-                if file_name.find('Ejecución'):
+                if file_name.upper().find('EJECUCIÓN') != -1 or file_name.upper().find('EJECUCION') != -1:
                     result_index = header_row.index('% CUMPLIMIENTO ')
                     evaluation_index = header_row.index('EVALUACION')
                     quality_index = header_row.index('CALIDAD')
@@ -228,9 +228,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     clean_desk_index = None
                     total_index = None
                 for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
-                    cargo = str(row[cargo_index].value).upper().lstrip('.')
+                    cargo = str(row[cargo_index].value)
                     cedula = row[cedula_index]
-                    if cargo.find('ASESOR'):
+                    if cargo.upper().find('ASESOR') != -1:
                         # Avoid NoneType error
                         def format_cell_value(cell):
                             if cell.value is None or "":
@@ -243,7 +243,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         campaign = row[campaign_index].value
                         criteria = row[criteria_index].value
                         quantity = row[quantity_index].value
-                        if file_name.find('Ejecución'):
+                        if file_name.upper().find('EJECUCION') != -1 or file_name.upper().find('EJECUCIÓN') != -1:
                             result_cell = row[result_index]
                             result = format_cell_value(result_cell)
                             evaluation_cell = row[evaluation_index]
@@ -274,9 +274,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         }
                         # Remove empty values from default_value dictionary
                         default_value = {k: v for k, v in default_value.items() if v}
-                        if file_name.find('entrega') and i == 2:
+                        if file_name.upper().find('ENTREGA') != -1 and i == 2:
                             Goals.objects.all().update(accepted=None, accepted_at=None)
-                        if file_name.find('ejecucion') and i == 2:
+                        if (file_name.upper().find('EJECUCION') != -1 or file_name.upper().find('EJECUCIÓN')) != -1 and i == 2:
                             Goals.objects.all().update(accepted_execution=None, accepted_execution_at=None)
                         Goals.objects.update_or_create(defaults=default_value,**{unique_constraint:cedula})
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
@@ -287,18 +287,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
             except Exception as e:
                 logger.setLevel(logging.ERROR)
                 logger.exception("Error: %s", str(e))
-                my_model_instance = Goals(field1="value1", field2="value2")
-                is_valid = my_model_instance.clean()
                 return Response({"message": "Excel upload Failed.","error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        # elif Goals.validate()
-        
         else:
             return Response({"message": "Excel no encontrado."}, status=status.HTTP_400_BAD_REQUEST)
-
-    # def finalize_response(self, request, response, *args, **kwargs):
-    #     logger.info("Request: %s", request)
-    #     if hasattr(response, 'data') and response.data and request.resolver_match.route != "goals/$":
-    #         logger.info("Response Content: %s", response.data)
-    #     else:
-    #         logger.info("Response: %s", response)
-    #     return super().finalize_response(request, response, *args, **kwargs)
