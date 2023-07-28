@@ -162,7 +162,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
                         cargo = str(row[cargo_index].value).upper().lstrip('.')
                         cedula = row[cedula_index]
-                        if cargo.startswith('ASESOR'):
+                        if cargo.find('ASESOR'):
                             # Avoid NoneType error
                             def format_cell_value(cell):
                                 if cell.value is None or "":
@@ -215,7 +215,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
                 criteria_index = header_row.index('DESCRIPCION DE LA VARIABLE A MEDIR')
                 quantity_index = header_row.index('CANTIDAD')
-                if file_name.startswith('Ejecución'):
+                if file_name.find('Ejecución'):
                     result_index = header_row.index('% CUMPLIMIENTO ')
                     evaluation_index = header_row.index('EVALUACION')
                     quality_index = header_row.index('CALIDAD')
@@ -230,7 +230,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
                     cargo = str(row[cargo_index].value).upper().lstrip('.')
                     cedula = row[cedula_index]
-                    if cargo.startswith('ASESOR'):
+                    if cargo.find('ASESOR'):
                         # Avoid NoneType error
                         def format_cell_value(cell):
                             if cell.value is None or "":
@@ -243,7 +243,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         campaign = row[campaign_index].value
                         criteria = row[criteria_index].value
                         quantity = row[quantity_index].value
-                        if file_name.startswith('Ejecución'):
+                        if file_name.find('Ejecución'):
                             result_cell = row[result_index]
                             result = format_cell_value(result_cell)
                             evaluation_cell = row[evaluation_index]
@@ -274,9 +274,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         }
                         # Remove empty values from default_value dictionary
                         default_value = {k: v for k, v in default_value.items() if v}
-                        if file_name.startswith('Entrega') and i == 2:
+                        if file_name.find('entrega') and i == 2:
                             Goals.objects.all().update(accepted=None, accepted_at=None)
-                        if file_name.startswith('Ejecución') and i == 2:
+                        if file_name.find('ejecucion') and i == 2:
                             Goals.objects.all().update(accepted_execution=None, accepted_execution_at=None)
                         Goals.objects.update_or_create(defaults=default_value,**{unique_constraint:cedula})
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)

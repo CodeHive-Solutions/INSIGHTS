@@ -109,14 +109,13 @@ DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 'HOST': '172.16.0.118',
-        'HOST': '172.16.0.115',
         'PORT': '3306',
         'USER': 'INSIGHTSUSER',
-        'HOST': '172.16.0.115',
-        # 'HOST': '172.16.0.118',
-        'PASSWORD': os.getenv('MYSQL_115'),
-        # 'PASSWORD': os.getenv('MYSQL_118'),
+        'HOST': '172.16.0.118',
+        # 'HOST': '172.16.0.115',
+        'HOST': '172.16.0.118',
+        # 'PASSWORD': os.getenv('MYSQL_115'),
+        'PASSWORD': os.getenv('MYSQL_118'),
         'NAME': 'insights',
     }
 }
