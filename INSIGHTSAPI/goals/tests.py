@@ -94,7 +94,7 @@ class GoalAPITestCase(TestCase):
     #     # Assert that the response data or content is as expected
     #     self.assertEqual(response.data, "Data is valid") #type: ignore
 
-    def test_multiple_upload(self):
+    def test_claro_upload(self):
         # Create a SimpleUploadedFile instance from the Excel file
         file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas Claro.xlsx'
         with open(file_path, 'rb') as file_obj:

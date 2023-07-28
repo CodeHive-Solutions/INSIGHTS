@@ -5,6 +5,8 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Typography, Button, Box } from "@mui/material";
+import imageExample from "../images/example-image.jpg";
+import imageExample2 from "../images/example-image2.jpg";
 
 const Home = () => {
     return (
@@ -27,12 +29,8 @@ const Home = () => {
                 </Typography>
             </Box>
             <Box sx={{ display: "flex", widht: "100%", justifyContent: "space-between" }}>
-                <Card sx={{ maxWidth: 345 }}>
-                    <CardMedia
-                        sx={{ height: 140 }}
-                        image="https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                        title="green iguana"
-                    />
+                <Card sx={{ maxWidth: 350 }}>
+                    <CardMedia sx={{ height: 350 }} image="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg" title="green iguana" />
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
                             Juan
@@ -44,12 +42,8 @@ const Home = () => {
                         </Typography>
                     </CardContent>
                 </Card>{" "}
-                <Card sx={{ maxWidth: 345 }}>
-                    <CardMedia
-                        sx={{ height: 140 }}
-                        image="https://images.pexels.com/photos/3715457/pexels-photo-3715457.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                        title="green iguana"
-                    />
+                <Card sx={{ maxWidth: 350 }}>
+                    <CardMedia sx={{ height: 350 }} image={imageExample2} title="green iguana" />
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
                             Camila
@@ -61,8 +55,8 @@ const Home = () => {
                         </Typography>
                     </CardContent>
                 </Card>{" "}
-                <Card sx={{ maxWidth: 345 }}>
-                    <CardMedia sx={{ height: 140 }} image="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg" title="green iguana" />
+                <Card sx={{ maxWidth: 350 }}>
+                    <CardMedia sx={{ height: 350 }} image={imageExample} title="green iguana" />
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
                             Jessica
