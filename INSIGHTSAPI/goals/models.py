@@ -3,7 +3,7 @@ from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 class Goals(models.Model):
-    cedula = models.CharField(max_length=100, primary_key=True)
+    cedula = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     job_title = models.CharField(max_length=100)
     campaign = models.CharField(max_length=100)

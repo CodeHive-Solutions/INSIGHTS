@@ -212,10 +212,22 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                 logger.exception("Error: %s", str(e))
                                 return Response({"message": "Excel upload Failed.","error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                     return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
+                header_names = {
+                    'DESCRIPCION DE LA VARIABLE A MEDIR', 'CANTIDAD'
+                }
+                missing_headers = header_names - set(header_row)
+                if missing_headers:
+                    return Response({"message": f"Estos encabezados no fueron encontrados: {', '.join(missing_headers)}"}, status=status.HTTP_400_BAD_REQUEST)
                 criteria_index = header_row.index('DESCRIPCION DE LA VARIABLE A MEDIR')
                 quantity_index = header_row.index('CANTIDAD')
                 if file_name.upper().find('EJECUCIÓN') != -1 or file_name.upper().find('EJECUCION') != -1:
-                    result_index = header_row.index('% CUMPLIMIENTO ')
+                    header_names = {
+                        '% CUMPLIMIENTO', 'EVALUACION', 'CALIDAD', 'CLEAN DESK', 'TOTAL'
+                    }
+                    missing_headers = header_names - set(header_row)
+                    if missing_headers:
+                        return Response({"message": f"Estos encabezados no fueron encontrados: {', '.join(missing_headers)}"}, status=status.HTTP_400_BAD_REQUEST)
+                    result_index = header_row.index('% CUMPLIMIENTO')
                     evaluation_index = header_row.index('EVALUACION')
                     quality_index = header_row.index('CALIDAD')
                     clean_desk_index = header_row.index('CLEAN DESK')
