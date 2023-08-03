@@ -114,8 +114,15 @@ DATABASES = {
         # 'HOST': '172.16.0.115',
         'HOST': '172.16.0.118',
         # 'PASSWORD': os.getenv('MYSQL_115'),
-        'PASSWORD': os.getenv('MYSQL_118'),
+        'PASSWORD': os.getenv('INSIGHTSMYSQL'),
         'NAME': 'insights',
+    },
+    'intranet': {
+        'host':"172.16.0.6",
+        'user':"root",
+        'password':os.getenv('LEYES'),
+        'database':"userscyc",
+        'port':"3306"
     }
 }
 

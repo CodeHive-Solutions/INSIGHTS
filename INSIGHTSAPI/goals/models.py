@@ -15,6 +15,8 @@ class Goals(models.Model):
     evaluation = models.CharField(max_length=10, blank=True)
     clean_desk = models.CharField(max_length=10, blank=True)
     total = models.CharField(max_length=10, blank=True)
+    goal_date = models.CharField(max_length=20)
+    execution_date = models.CharField(max_length=20)
     accepted = models.BooleanField(null=True)
     accepted_at = models.DateTimeField(null=True)
     accepted_execution = models.BooleanField(null=True)

@@ -1,13 +1,11 @@
 import logging
-import os
 import re
-import traceback
 from django.utils import timezone
 import ssl
 import ftfy
 from smtplib import SMTP
 import base64
-import mysql.connector
+from django.db import connections
 from django.conf import settings
 from django.core.mail import EmailMessage
 from openpyxl import load_workbook
@@ -42,14 +40,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
         db_connection = None
         if pdf_64 and cedula and delivery_type:
             try:
-                db_connection = mysql.connector.connect(
-                    host="172.16.0.6",
-                    user="root",
-                    password=os.getenv('LEYES'),
-                    database="userscyc",
-                    port="3306"
-                    )
-                db_cursor = db_connection.cursor()
+                db_cursor = connections['intranet'].cursor()
                 instance = Goals.objects.filter(cedula=cedula).first()
                 db_cursor.execute("SELECT email_user, pnom_user, pape_user FROM users WHERE `id_user` = %s",[cedula])
                 result = db_cursor.fetchone()
@@ -126,7 +117,14 @@ class GoalsViewSet(viewsets.ModelViewSet):
         file_obj = request.FILES.get('file')
         if file_obj:
             file_name = str(file_obj.name)
+            year_pattern = r'\b\d{4}\b'
+            month_pattern = r'(?i)(ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE)'
+            if not re.search(month_pattern, file_name):
+                return Response({"message": "Mes no encontrado en el nombre del archivo."}, status=status.HTTP_400_BAD_REQUEST)
+            elif not re.search(year_pattern, file_name):
+                return Response({"message": "Año no encontrado en el nombre del archivo."}, status=status.HTTP_400_BAD_REQUEST)
             try:
+                date = file_name.split('-')[1].upper() + "-"+ file_name.split('-')[2].split('.')[0]
                 # Read the Excel file using openpyxl
                 workbook = load_workbook(file_obj, read_only=True, data_only=True)
                 sheet = workbook.active
@@ -137,7 +135,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 }
                 missing_headers = header_names - set(header_row)
                 if missing_headers:
-                    return Response({"message": f"Headers are missing in the Excel file: {', '.join(missing_headers)}"}, status=status.HTTP_400_BAD_REQUEST)
+                    return Response({"message": f"Encabezados de columna no encontrados: {', '.join(missing_headers)}"}, status=status.HTTP_400_BAD_REQUEST)
                 cedula_index = header_row.index('CEDULA')
                 name_index = header_row.index('NOMBRE')
                 cargo_index = header_row.index('CARGO')
@@ -178,6 +176,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                 'job_title': cargo,
                                 'campaign': campaign,
                                 'coordinator': coordinator,
+                                'goal_date': date,
                             }
                             try:
                                 with transaction.atomic():
@@ -251,12 +250,14 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             quality = format_cell_value(row[quality_index])
                             clean_desk = format_cell_value(row[clean_desk_index])
                             total = format_cell_value(row[total_index])
+                            # default_value['execution_date'] = date
                         else:
                             result = None
                             evaluation = None
                             quality = None
                             clean_desk = None
                             total = None
+
                         # Update or create the record
                         unique_constraint = 'cedula'
                         default_value = {
@@ -274,9 +275,15 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         }
                         # Remove empty values from default_value dictionary
                         default_value = {k: v for k, v in default_value.items() if v}
+
+                        if file_name.upper().find('ENTREGA') != -1:
+                            default_value['goal_date'] = date
+                        elif file_name.upper().find('EJECUCION') != -1 or file_name.upper().find('EJECUCIÓN') != -1:
+                            default_value['execution_date'] = date
+                        
                         if file_name.upper().find('ENTREGA') != -1 and i == 2:
                             Goals.objects.all().update(accepted=None, accepted_at=None)
-                        if (file_name.upper().find('EJECUCION') != -1 or file_name.upper().find('EJECUCIÓN')) != -1 and i == 2:
+                        elif (file_name.upper().find('EJECUCION') != -1 or file_name.upper().find('EJECUCIÓN')) != -1 and i == 2:
                             Goals.objects.all().update(accepted_execution=None, accepted_execution_at=None)
                         Goals.objects.update_or_create(defaults=default_value,**{unique_constraint:cedula})
                 return Response({"message": "Excel file uploaded and processed successfully."}, status=status.HTTP_201_CREATED)
