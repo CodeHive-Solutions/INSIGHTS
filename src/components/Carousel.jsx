@@ -1,42 +1,29 @@
 import React from "react";
 import Carousel from "react-material-ui-carousel";
-import { Paper, Button, Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 function CarouselComponent(props) {
-    var items = [
-        {
-            image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true",
-        },
-        {
-            image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true",
-        },
-        {
-            image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true",
-        },
-        {
-            image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true",
-        },
-    ];
+    const { items, height, width } = props;
 
     return (
-        <Carousel>
+        <Carousel sx={{ width: width}}>
             {items.map((item, i) => (
-                <Item key={i} item={item} />
+                <Item key={i} item={item} height={height} />
             ))}
         </Carousel>
     );
 }
 
 function Item(props) {
-    const { item } = props;
+    const { item, height, width } = props;
     const { name, description, image } = item;
 
     return (
         <Box>
             <Box
                 sx={{
-                    height: "80vh",
-                    width: "100%",
+                    height: height,
+                    width: width,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundImage: `url(${image})`,

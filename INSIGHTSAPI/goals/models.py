@@ -15,12 +15,14 @@ class Goals(models.Model):
     evaluation = models.CharField(max_length=10, blank=True)
     clean_desk = models.CharField(max_length=10, blank=True)
     total = models.CharField(max_length=10, blank=True)
+    table = models.CharField(max_length=100, blank=True)
     goal_date = models.CharField(max_length=20)
     execution_date = models.CharField(max_length=20)
     accepted = models.BooleanField(null=True)
     accepted_at = models.DateTimeField(null=True)
     accepted_execution = models.BooleanField(null=True)
     accepted_execution_at = models.DateTimeField(null=True)
+    status = models.CharField(max_length=50)
     last_update = models.DateTimeField(auto_now=True)
     history = HistoricalRecords(excluded_fields=['last_update'])
 
@@ -35,13 +37,15 @@ class Goals(models.Model):
 
 class MultipleGoals(models.Model):
     goals = models.ForeignKey(Goals, on_delete=models.CASCADE, related_name='additional_info')
+    goal_type = models.CharField(max_length=100)
     fringe = models.CharField(max_length=100)
     diary_goal = models.IntegerField()
     days = models.CharField(max_length=350)
     month_goal = models.IntegerField()
     hours = models.IntegerField()
     collection_account = models.IntegerField()
-    observation = models.CharField(max_length=350)
+    observation = models.CharField(max_length=350,null=True)
+    status = models.CharField(max_length=100)
     history = HistoricalRecords()
 
     def pre_create_historical_record(self):

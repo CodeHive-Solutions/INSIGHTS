@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import logo_CYC from "../images/logo_CYC.avif";
+import logo_CYC from "../images/logo-cyc.webp";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 
 const Footer = () => {

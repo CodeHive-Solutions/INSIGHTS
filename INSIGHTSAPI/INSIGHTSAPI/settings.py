@@ -111,19 +111,20 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'PORT': '3306',
         'USER': 'INSIGHTSUSER',
-        # 'HOST': '172.16.0.115',
-        'HOST': '172.16.0.118',
-        # 'PASSWORD': os.getenv('MYSQL_115'),
-        'PASSWORD': os.getenv('INSIGHTSMYSQL'),
+        'HOST': '172.16.0.115',
+        # 'HOST': '172.16.0.118',
+        'PASSWORD': os.getenv('MYSQL_115'),
+        # 'PASSWORD': os.getenv('INSIGHTSMYSQL'),
         'NAME': 'insights',
     },
-    'intranet': {
-        'host':"172.16.0.6",
-        'user':"root",
-        'password':os.getenv('LEYES'),
-        'database':"userscyc",
-        'port':"3306"
-    }
+    # 'intranet': { # mysql too old
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'HOST':"172.16.0.6",
+    #     'USER':"root",
+    #     'PASSWORD':os.getenv('LEYES'),
+    #     'NAME':"userscyc",
+    #     'port':"3306"
+    # }
 }
 
 

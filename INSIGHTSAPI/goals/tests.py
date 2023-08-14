@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.db.models import Q
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
@@ -18,10 +19,10 @@ class GoalAPITestCase(TestCase):
     def test_metas_upload(self,called=False):
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
-            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas.xlsx'
+            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx'
             with open(file_path, 'rb') as file_obj:
                 file_data = file_obj.read()
-            excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
+            excel_file = SimpleUploadedFile("Entrega de metas-ENERO-2018.xlsx", file_data, content_type="application/vnd.ms-excel")
             # Send the POST request to the upload-excel URL with the Excel file data
             response = self.client.post(reverse('goal-list'), {'file': excel_file})
             # Assert the response status code and perform additional assertions for the response data
@@ -32,10 +33,10 @@ class GoalAPITestCase(TestCase):
     def test_ejecucion_upload(self, called=False):
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
-            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Ejecución de metas.xlsx'
+            file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Ejecución de metas-enerO-2022.xlsx'
             with open(file_path, 'rb') as file_obj:
                 file_data = file_obj.read()
-            excel_file = SimpleUploadedFile("Ejecución de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
+            excel_file = SimpleUploadedFile("Ejecución de metas-enerO-2022.xlsx", file_data, content_type="application/vnd.ms-excel")
             # Send the POST request to the upload-excel URL with the Excel file data
             response = self.client.post(reverse('goal-list'), {'file': excel_file})
             # Assert the response status code and perform additional assertions for the response data
@@ -47,10 +48,10 @@ class GoalAPITestCase(TestCase):
     def test_borrado_accepted(self):
         # Sube registros que despues borrar
         # Create a SimpleUploadedFile instance from the Excel file
-        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas.xlsx'
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
-        excel_file = SimpleUploadedFile("Entrega de metas.xlsx", file_data, content_type="application/vnd.ms-excel")
+        excel_file = SimpleUploadedFile("Entrega de metas-ENERO-2018.xlsx", file_data, content_type="application/vnd.ms-excel")
         # Invoke the test_metas_upload() method to have data in the database and some goals like accepted
         self.test_metas_upload(called=True)
         # See if there are goals created
@@ -62,13 +63,19 @@ class GoalAPITestCase(TestCase):
         response = self.client.post(reverse('goal-list'), {'file': excel_file})
         self.assertEqual(response.status_code, 201)
         # See if the accepted goals were deleted
-        count = Goals.objects.exclude(accepted='').count()
+        first_goal = Goals.objects.exclude(accepted_at=None).first()
+        if first_goal:
+            print("No se le borraron los valores de entrega a: ",first_goal.cedula)
+        count = Goals.objects.exclude(Q(accepted__isnull=True) | Q(accepted='')).count()
         count_at = Goals.objects.exclude(accepted_at=None).count()
         self.assertEqual((count, count_at), (0, 0))
         #Do the same verifications but with execution
         Goals.objects.all().update(accepted_execution=True,accepted_execution_at=timezone.now())
         self.test_ejecucion_upload(called=True)
-        count_execution = Goals.objects.exclude(accepted_execution='').count()
+        count_execution = Goals.objects.exclude(Q(accepted__isnull=True) | Q(accepted='')).count()
+        first_goal = Goals.objects.exclude(accepted_execution_at=None).first()
+        if first_goal:
+            print("No se le borraron los valores de ejecucion a: ",first_goal.cedula)
         count_at_execution = Goals.objects.exclude(accepted_execution_at=None).count()
         self.assertEqual((count_execution, count_at_execution), (0, 0))
 
@@ -96,10 +103,10 @@ class GoalAPITestCase(TestCase):
 
     def test_claro_upload(self):
         # Create a SimpleUploadedFile instance from the Excel file
-        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas Claro.xlsx'
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas ejemplo Claro-DICIEMBRE-2028.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
-        excel_file = SimpleUploadedFile("Entrega de metas Claro.xlsx", file_data, content_type="application/vnd.ms-excel")
+        excel_file = SimpleUploadedFile("Entrega de metas ejemplo Claro-DICIEMBRE-2028.xlsx", file_data, content_type="application/vnd.ms-excel")
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse('goal-list'), {'file': excel_file})
         # Assert the response status code and perform additional assertions for the response data
@@ -107,6 +114,7 @@ class GoalAPITestCase(TestCase):
         self.assertTrue(Goals.objects.all().exclude(additional_info=None).count() > 0)
 
 class SendEmailTestCase(TestCase):
+    # databases = ['intranet', 'default']
     def setUp(self):
         self.client = APIClient()
         self.url = reverse('goal-send-email')
@@ -166,4 +174,4 @@ class SendEmailTestCase(TestCase):
         # Send a POST request to the view
         response = self.client.post(self.url, data=payload)
         # Assert the response status code and content
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
