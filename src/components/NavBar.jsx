@@ -7,6 +7,11 @@ import RequestPageIcon from "@mui/icons-material/RequestPage";
 import FeedIcon from "@mui/icons-material/Feed";
 import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import HomeIcon from "@mui/icons-material/Home";
+import InfoIcon from '@mui/icons-material/Info';
+import ChecklistIcon from "@mui/icons-material/Checklist";
+import ArticleIcon from "@mui/icons-material/Article";
+import FolderZipIcon from "@mui/icons-material/FolderZip";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -48,7 +53,7 @@ const Navbar = () => {
                         <Typography sx={{ minWidth: 100 }}>SGC</Typography>
                         <Typography sx={{ minWidth: 100 }}>Sobre Nosotros</Typography>
                         <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Tooltip title="Account settings">
+                            <Tooltip title="Configuración de cuenta">
                                 <IconButton
                                     onClick={handleClick}
                                     size="small"
@@ -191,7 +196,7 @@ const Navbar = () => {
                     SGC
                 </MenuItem>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <Tooltip title="Account settings">
+                    <Tooltip title="Configuración de cuenta">
                         <IconButton
                             onClick={handleClick}
                             size="small"

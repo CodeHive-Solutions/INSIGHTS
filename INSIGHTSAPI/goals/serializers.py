@@ -1,13 +1,14 @@
 from rest_framework import serializers
-from .models import Goals, MultipleGoals
+from .models import Goals, TableInfo
 
-class MultipleGoalsSerializer(serializers.ModelSerializer):
+class TableGoalsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = MultipleGoals
+        model = TableInfo
         fields = '__all__'
 
 class GoalSerializer(serializers.ModelSerializer):
-    additional_info = MultipleGoalsSerializer(many=True, read_only=True)
+    table_goal = TableGoalsSerializer()
+
     class Meta:
         model = Goals
-        fields = ['cedula','job_title','name','campaign','criteria', 'coordinator', 'quantity','result','evaluation','quality','clean_desk','total','goal_date','execution_date','last_update','accepted','accepted_at','accepted_execution','accepted_execution_at','additional_info']
+        fields = ['cedula','job_title','name','campaign','criteria', 'coordinator', 'quantity','result','evaluation','quality','clean_desk','total','goal_date','execution_date','last_update','accepted','accepted_at','accepted_execution','accepted_execution_at','table_goal_id']

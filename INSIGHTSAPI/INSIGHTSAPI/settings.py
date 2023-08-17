@@ -109,12 +109,10 @@ DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
+        'HOST': os.environ['SERVER_DB'],
         'PORT': '3306',
         'USER': 'INSIGHTSUSER',
-        'HOST': '172.16.0.115',
-        # 'HOST': '172.16.0.118',
-        'PASSWORD': os.getenv('MYSQL_115'),
-        # 'PASSWORD': os.getenv('INSIGHTSMYSQL'),
+        'PASSWORD': os.environ['INSIGHTSMYSQL'],
         'NAME': 'insights',
     },
     # 'intranet': { # mysql too old

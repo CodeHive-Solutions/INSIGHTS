@@ -7,10 +7,16 @@ class LoggingMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        logger.info("Request: %s", request)
         response = self.get_response(request)
-        if hasattr(response, 'data') and response.data and request.resolver_match.route != "goals/$":
-            logger.info("Response: %s, Response Content: %s", response,response.data)
+        logger.info("Request: %s", request)
+        if hasattr(response, 'data'):
+            response_data = response.data
+            route = getattr(request.resolver_match, 'route', None)
+
+            if route != "goals/$" or any(keyword in response_data for keyword in ['Error', 'message']):
+                logger.info("Response: %s, Response Content: %s", response, response_data)
+            else:
+                logger.info("Response: %s", response)
         else:
             logger.info("Response: %s", response)
 

@@ -8,6 +8,7 @@ import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
+import AboutUs from "./routes/AboutUs";
 
 const theme = createTheme({
     typography: {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
             {
                 path: "home",
                 element: <Home />,
+            },
+            {
+                path: "about-us",
+                element: <AboutUs />,
             },
         ],
     },
