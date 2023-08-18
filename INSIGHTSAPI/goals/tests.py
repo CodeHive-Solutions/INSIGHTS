@@ -92,39 +92,12 @@ class GoalAPITestCase(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertTrue(Goals.objects.all().count() > 0)
         self.assertTrue(TableInfo.objects.all().count() > 0)
-        # self.assertTrue(Goals.objects.all().exclude(table_goals=None).count() > 0)
-        # goal = Goals.objects.create(
-        #     cedula=123456789,
-        #     name="John Doe",
-        #     job_title="Software Engineer",
-        #     campaign="Summer Campaign",
-        #     coordinator="Jane Smith",
-        #     criteria="Performance",
-        #     quantity="100",
-        #     result="80",
-        #     quality="90",
-        #     evaluation="90",
-        #     clean_desk="90",
-        #     total="85",
-        #     goal_date="2023-08-31",
-        #     execution_date="2023-08-30",
-        #     accepted=True,
-        #     accepted_at=timezone.now(),
-        #     accepted_execution=True,
-        #     accepted_execution_at=timezone.now(),
-        # )
-        # TableInfo.objects.create(
-        #     fringe="Extra Benefits",
-        #     diary_goal=5,
-        #     days="Monday, Wednesday, Friday",
-        #     month_goal=20,
-        #     hours=40,
-        #     collection_account=123456,
-        # )
-        # excel_file = SimpleUploadedFile("Entrega de metas ejemplo Claro-DICIEMBRE-2028.xlsx", file_data, content_type="application/vnd.ms-excel")
-        # Goals.objects.filter()
+        self.assertTrue(Goals.objects.all().exclude(table_goal=None).count() > 0)
 
-    
+    def test_serializer(self):
+        self.test_claro_upload()
+        response = self.client.get(reverse('goal-list'))
+        self.assertEqual(response.status_code, 200)
 
 class SendEmailTestCase(TestCase):
     # databases = ['intranet', 'default']

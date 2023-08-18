@@ -4,9 +4,11 @@ import login_image from "../images/ALE02974.webp";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [open, setOpen] = React.useState(false);
+    const navigate = useNavigate();
 
     const handleClick = () => setOpen(!open);
 
@@ -72,7 +74,7 @@ const Login = () => {
                             </Alert>
                         </Collapse>
                     </Box>
-                    <Button variant="outlined" startIcon={<LoginOutlinedIcon />}>
+                    <Button variant="outlined" startIcon={<LoginOutlinedIcon />} onClick={() => navigate("/loged/home", { replace: true })}>
                         Iniciar Sesion
                     </Button>
                 </Box>

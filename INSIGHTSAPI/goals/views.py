@@ -21,12 +21,12 @@ from .serializers import GoalSerializer
 logger = logging.getLogger("requests")
 
 class GoalsViewSet(viewsets.ModelViewSet):
-    queryset = Goals.objects.all()
+    # queryset = Goals.objects.all()
     serializer_class = GoalSerializer
 
     #Esta funcion permite buscar por el nombre del coordinador
     def get_queryset(self):
-        queryset = Goals.objects.all()
+        queryset = Goals.objects.select_related('table_goal__table_info').all()
         coordinator = self.request.GET.get('coordinator', None)
         if coordinator is not None:
             # filter the queryset based on possible name formats
@@ -176,6 +176,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     sheet = workbook[workbook.sheetnames[0]]
                     for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
                         cargo = str(row[cargo_index].value).upper().lstrip('.')
+                        if i == 2:
+                            TableName.objects.all().delete()
                         if cargo.find('ASESOR') != -1:
                             # Avoid NoneType error
                             def format_cell_value(cell):

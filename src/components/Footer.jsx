@@ -5,6 +5,7 @@ import logo_CYC from "../images/logo-cyc.webp";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 
 const Footer = () => {
+
     return (
         <Box
             component="footer"
@@ -14,6 +15,8 @@ const Footer = () => {
                 padding: "25px",
                 marginTop: "15px",
                 justifyContent: "space-evenly",
+                gap: "2rem",
+                flexWrap: "wrap",
             }}
         >
             <Box sx={{ display: "flex", flexDirection: "Column", gap: "15px" }}>
@@ -30,11 +33,8 @@ const Footer = () => {
 
             <Box sx={{ display: "flex", alignItems: "center", width: "350px" }}>
                 <Typography variant="body2" color="white">
-                    Al acceder a la intranet de C&C SERVICES S.A.S, usted acepta
-                    respetar la confidencialidad, la ética y la legalidad de la
-                    información que maneja, así como cumplir con las políticas y
-                    normas internas de la empresa. C&C SERVICES S.A.S se reserva
-                    el derecho de monitorear y restringir su acceso a la
+                    Al acceder a la intranet de C&C SERVICES S.A.S, usted acepta respetar la confidencialidad, la ética y la legalidad de la información que maneja, así
+                    como cumplir con las políticas y normas internas de la empresa. C&C SERVICES S.A.S se reserva el derecho de monitorear y restringir su acceso a la
                     intranet por motivos de seguridad o incumplimiento.
                 </Typography>
             </Box>
