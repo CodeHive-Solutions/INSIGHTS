@@ -15,7 +15,8 @@ class Goals(models.Model):
     evaluation = models.CharField(max_length=10, blank=True)
     clean_desk = models.CharField(max_length=10, blank=True)
     total = models.CharField(max_length=10, blank=True)
-    table_goal = models.ForeignKey('TableName', on_delete=models.DO_NOTHING, null=True)
+    # table_goal = models.ForeignKey('TableName', on_delete=models.DO_NOTHING, null=True)
+    table_goal = models.CharField(max_length=50, null=True)
     goal_date = models.CharField(max_length=20)
     execution_date = models.CharField(max_length=20)
     observation = models.CharField(max_length=350,null=True)
@@ -35,7 +36,8 @@ class Goals(models.Model):
         return self.name
 
 class TableInfo(models.Model):
-    name = models.ForeignKey('TableName', on_delete=models.DO_NOTHING)
+    # name = models.ForeignKey('TableName', on_delete=models.DO_NOTHING)
+    name = models.CharField(max_length=50)
     fringe = models.CharField(max_length=100)
     diary_goal = models.IntegerField()
     days = models.CharField(max_length=350)
@@ -53,7 +55,8 @@ class TableInfo(models.Model):
         record.save()
         return record
 
-class TableName(models.Model):
-    name = models.CharField(max_length=50, primary_key=True)
-    def __str__(self):
-        return self.name
+# class TableName(models.Model):
+    # name = models.CharField(max_length=50, primary_key=True)
+
+    # def __str__(self):
+        # return self.name

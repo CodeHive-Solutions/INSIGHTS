@@ -15,7 +15,7 @@ from rest_framework import viewsets, status as framework_status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import transaction
-from .models import Goals, TableInfo, TableName
+from .models import Goals, TableInfo
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
@@ -26,10 +26,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
     #Esta funcion permite buscar por el nombre del coordinador
     def get_queryset(self):
-        queryset = Goals.objects.select_related('table_goal__table_info').all()
+        queryset = Goals.objects.all()
         coordinator = self.request.GET.get('coordinator', None)
         if coordinator is not None:
-            # filter the queryset based on possible name formats
             queryset = queryset.filter(coordinator=coordinator)
         return queryset
 
@@ -150,70 +149,67 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 status_index = header_row.index('ESTADO')
                 observation_index = header_row.index('OBSERVACIONES')
                 if file_name.upper().find('CLARO') != -1:
-                    header_names = {
-                        'TABLA'
-                    }
-                    header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
-                    missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
-                    if missing_headers:
-                        return Response({"message": f"Encabezados no encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
-                    table_index = header_row.index('TABLA')
-                    sheet = workbook['Tabla_de_valores']
-                    header_names = {
-                        'NOMBRE_TABLA','FRANJA', 'META DIARIA', 'DIAS', 'META MES CON PAGO', 'POR HORA','RECAUDO POR CUENTA'
-                    }
-                    header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
-                    missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
-                    if missing_headers:
-                        return Response({"message": f"Encabezados no encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
-                    table_name_index = header_row.index('NOMBRE_TABLA')
-                    fringe_index = header_row.index('FRANJA')
-                    diary_goal_index = header_row.index('META DIARIA')
-                    days_index = header_row.index('DIAS')
-                    month_goal_index = header_row.index('META MES CON PAGO')
-                    hours_index = header_row.index('POR HORA')
-                    collection_account_index = header_row.index('RECAUDO POR CUENTA')
-                    sheet = workbook[workbook.sheetnames[0]]
-                    for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
-                        cargo = str(row[cargo_index].value).upper().lstrip('.')
-                        if i == 2:
-                            TableName.objects.all().delete()
-                        if cargo.find('ASESOR') != -1:
-                            # Avoid NoneType error
-                            def format_cell_value(cell):
-                                if cell.value is None or "":
-                                    return ""
+                    with transaction.atomic():
+                        header_names = {
+                            'TABLA'
+                        }
+                        header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
+                        missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
+                        if missing_headers:
+                            return Response({"message": f"Encabezados no encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
+                        table_index = header_row.index('TABLA')
+                        sheet = workbook['Tabla_de_valores']
+                        header_names = {
+                            'NOMBRE_TABLA','FRANJA', 'META DIARIA', 'DIAS', 'META MES CON PAGO', 'POR HORA','RECAUDO POR CUENTA'
+                        }
+                        header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
+                        missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
+                        if missing_headers:
+                            return Response({"message": f"Encabezados no encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
+                        table_name_index = header_row.index('NOMBRE_TABLA')
+                        fringe_index = header_row.index('FRANJA')
+                        diary_goal_index = header_row.index('META DIARIA')
+                        days_index = header_row.index('DIAS')
+                        month_goal_index = header_row.index('META MES CON PAGO')
+                        hours_index = header_row.index('POR HORA')
+                        collection_account_index = header_row.index('RECAUDO POR CUENTA')
+                        sheet = workbook[workbook.sheetnames[0]]
+                        for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
+                            cargo = str(row[cargo_index].value).upper().lstrip('.')
+                            if cargo.find('ASESOR') != -1:
+                                # Avoid NoneType error
+                                def format_cell_value(cell):
+                                    if cell.value is None or "":
+                                        return ""
+                                    else:
+                                        return "{:.2%}".format(cell.value)
+                                cedula = row[cedula_index].value
+                                name = row[name_index].value
+                                coordinator = row[coordinator_index].value
+                                campaign = row[campaign_index].value
+                                observation = row[observation_index].value
+                                table = row[table_index].value
+                                status = row[status_index].value
+                                logger.info("Status: %s", status)
+                                if str(status).upper() == 'ACTIVO':
+                                    status = True
+                                elif str(status).upper() == 'RETIRADO':
+                                    status = False
                                 else:
-                                    return "{:.2%}".format(cell.value)
-                            cedula = row[cedula_index].value
-                            name = row[name_index].value
-                            coordinator = row[coordinator_index].value
-                            campaign = row[campaign_index].value
-                            observation = row[observation_index].value
-                            table = row[table_index].value
-                            status = row[status_index].value
-                            logger.info("Status: %s", status)
-                            if str(status).upper() == 'ACTIVO':
-                                status = True
-                            elif str(status).upper() == 'RETIRADO':
-                                status = False
-                            else:
-                                return Response({"message": "Se encontraron asesores sin estado."}, status=framework_status.HTTP_400_BAD_REQUEST)
-                            # Update or create the record
-                            unique_constraint = 'cedula'
-                            default_value = {
-                                'name': name,
-                                'job_title': cargo,
-                                'campaign': campaign,
-                                'coordinator': coordinator,
-                                'goal_date': date,
-                                'status': status,
-                                'observation':observation
-                            }
-                            try:
-                                table_instance, _ = TableName.objects.get_or_create(name=table)
-                                default_value['table_goal'] = table_instance
-                                with transaction.atomic():
+                                    return Response({"message": "Se encontraron asesores sin estado."}, status=framework_status.HTTP_400_BAD_REQUEST)
+                                # Update or create the record
+                                unique_constraint = 'cedula'
+                                default_value = {
+                                    'name': name,
+                                    'job_title': cargo,
+                                    'campaign': campaign,
+                                    'coordinator': coordinator,
+                                    'goal_date': date,
+                                    'status': status,
+                                    'observation':observation,
+                                    'table_goal': table
+                                }
+                                try:
                                     instance = Goals.objects.filter(cedula=cedula) 
                                     if instance.exists():
                                         instance.update(accepted=None, accepted_at=None)
@@ -221,21 +217,20 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                         defaults=default_value,
                                         **{unique_constraint: cedula}
                                     )
-                            except ValidationError as ve: 
-                                logger.setLevel(logging.ERROR)
-                                logger.exception("Validation error: %s", str(ve))
-                                return Response({"message": "Excel upload Failed.","error": str(ve)}, status=framework_status.HTTP_400_BAD_REQUEST)
-                            except Exception as e:
-                                logger.setLevel(logging.ERROR)
-                                logger.exception("Error: %s", str(e))
-                                return Response({"message": "Excel upload Failed.","error": str(e)}, status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    sheet = workbook['Tabla_de_valores']
-                    table_name = None
-                    for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
-                        if i == 2:
-                            TableInfo.objects.all().delete()
-                        try:
-                            with transaction.atomic():
+                                except ValidationError as ve: 
+                                    logger.setLevel(logging.ERROR)
+                                    logger.exception("Validation error: %s", str(ve))
+                                    return Response({"message": "Excel upload Failed.","error": str(ve)}, status=framework_status.HTTP_400_BAD_REQUEST)
+                                except Exception as e:
+                                    logger.setLevel(logging.ERROR)
+                                    logger.exception("Error: %s", str(e))
+                                    return Response({"message": "Excel upload Failed.","error": str(e)}, status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        sheet = workbook['Tabla_de_valores']
+                        table_name = None
+                        for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
+                            if i == 2:
+                                TableInfo.objects.all().delete()
+                            try:
                                 if row[table_name_index].value is not None or "":
                                     table_name = row[table_name_index].value
                                 if table_name:
@@ -247,7 +242,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                     collection_account_str = str(row[collection_account_index].value)
                                     collection_account = re.sub(r'[^0-9]', '', collection_account_str)
                                     TableInfo.objects.create(
-                                        name=table_instance,
+                                        name=table_name,
                                         fringe=fringe,
                                         diary_goal=diary_goal,
                                         days=days,
@@ -255,11 +250,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                         hours=hours,
                                         collection_account=collection_account,
                                     )
-                        except Exception as e:
-                            logger.setLevel(logging.ERROR)
-                            logger.exception("Error: %s", str(e))
-                            return Response({"message": "Excel upload Failed.","error": str(e)}, status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
-                    return Response({"message": "Excel file uploaded and processed successfully."}, status=framework_status.HTTP_201_CREATED)
+                            except Exception as e:
+                                logger.setLevel(logging.ERROR)
+                                logger.exception("Error: %s", str(e))
+                                return Response({"message": "Excel upload Failed.","error": str(e)}, status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
+                        return Response({"message": "Excel file uploaded and processed successfully."}, status=framework_status.HTTP_201_CREATED)
                 header_names = {
                     'DESCRIPCION DE LA VARIABLE A MEDIR', 'CANTIDAD'
                 }

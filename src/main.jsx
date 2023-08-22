@@ -6,7 +6,7 @@ import Home from "./routes/Home";
 import Root from "./routes/root";
 import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import AboutUs from "./routes/AboutUs";
 
@@ -40,34 +40,42 @@ const theme = createTheme({
     },
 });
 
-const router = createBrowserRouter([
-    {
-        path: "/",
-        element: <Login />,
-        errorElement: <ErrorPage />,
-    },
-    {
-        path: "/loged",
-        element: <Root />,
-        errorElement: <ErrorPage />,
-        children: [
-            {
-                path: "home",
-                element: <Home />,
-            },
-            {
-                path: "about-us",
-                element: <AboutUs />,
-            },
-        ],
-    },
-]);
+// const router = createBrowserRouter([
+//     {
+//         path: "/",
+//         element: <Login />,
+//         errorElement: <ErrorPage />,
+//     },
+//     {
+//         path: "/loged",
+//         element: <Root />,
+//         errorElement: <ErrorPage />,
+//         children: [
+//             {
+//                 path: "home",
+//                 element: <Home />,
+//             },
+//             {
+//                 path: "about-us",
+//                 element: <AboutUs />,
+//             },
+//         ],
+//     },
+// ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>
-                <RouterProvider router={router} />
+                <Router>
+                    <Routes>
+                        <Route path="/" element={<Login />} />
+                        <Route path="/loged/*" element={<Root />}>
+                            <Route path="home" element={<Home />} />
+                            <Route path="about-us" element={<AboutUs />} />
+                        </Route>
+                    </Routes>
+                </Router>
             </CssBaseline>
         </ThemeProvider>
     </React.StrictMode>
