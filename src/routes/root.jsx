@@ -8,7 +8,7 @@ const Root = () => {
     return (
         <>
             <NavBar position="sticky" />
-            <Container sx={{ paddingTop: "74px" }}>
+            <Container>
                 <Outlet />
             </Container>
             <Footer />

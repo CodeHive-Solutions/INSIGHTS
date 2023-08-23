@@ -1,12 +1,14 @@
 import { Box, Typography, Button, TextField, Link } from "@mui/material";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import login_image from "../images/login_image.avif";
+import login_image from "../images/ALE02974.webp";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [open, setOpen] = React.useState(false);
+    const navigate = useNavigate();
 
     const handleClick = () => setOpen(!open);
 
@@ -55,22 +57,9 @@ const Login = () => {
                         Iniciar Sesion
                     </Typography>
 
-                    <TextField
-                        sx={{ width: "330px" }}
-                        label="Usuario"
-                        variant="outlined"
-                        autoComplete="off"
-                        spellCheck={false}
-                    ></TextField>
+                    <TextField sx={{ width: "330px" }} label="Usuario" variant="outlined" autoComplete="off" spellCheck={false}></TextField>
 
-                    <TextField
-                        sx={{ width: "330px" }}
-                        label="Contraseña"
-                        type="password"
-                        variant="outlined"
-                        autoComplete="off"
-                        spellCheck={false}
-                    ></TextField>
+                    <TextField sx={{ width: "330px" }} label="Contraseña" type="password" variant="outlined" autoComplete="off" spellCheck={false}></TextField>
 
                     <Box sx={{ width: "330px" }}>
                         <Link onClick={handleClick} sx={{ cursor: "pointer" }}>
@@ -78,23 +67,14 @@ const Login = () => {
                         </Link>
                         <Collapse in={open}>
                             <Alert severity="info">
-                                En caso de olvido o perdida de la contraseña
-                                contacte con tecnologia para el restablecimiento
-                                de la misma en:{" "}
-                                <a
-                                    href="https://helpdesk.cyc-bpo.com/"
-                                    target="_blank"
-                                    rel="noreferrer noopener"
-                                >
+                                En caso de olvido o perdida de la contraseña contacte con tecnologia para el restablecimiento de la misma en:{" "}
+                                <a href="https://helpdesk.cyc-bpo.com/" target="_blank" rel="noreferrer noopener">
                                     GLPI
                                 </a>
                             </Alert>
                         </Collapse>
                     </Box>
-                    <Button
-                        variant="outlined"
-                        startIcon={<LoginOutlinedIcon />}
-                    >
+                    <Button variant="outlined" startIcon={<LoginOutlinedIcon />} onClick={() => navigate("/loged/home", { replace: true })}>
                         Iniciar Sesion
                     </Button>
                 </Box>
@@ -108,9 +88,7 @@ const Login = () => {
                         paddingRight: "15px",
                     }}
                 >
-                    <Typography variant="subtitle2">
-                        C&C SERVICES © - Bogotá D.C. / Colombia.
-                    </Typography>
+                    <Typography variant="subtitle2">C&C SERVICES © - Bogotá D.C. / Colombia.</Typography>
                 </Box>
             </Box>
         </Box>
