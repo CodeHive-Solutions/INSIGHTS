@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from django_auth_ldap.config import LDAPSearch
+import ldap3
 from pathlib import Path
 from dotenv import load_dotenv
 import os
 import ssl
-import ldap
 
 if not os.path.isfile('/var/env/INSIGHTS.env'):
     raise FileNotFoundError('The env file was not found.')
@@ -231,12 +232,11 @@ LOGGING = {
 
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
-AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGIA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"  # The LDAP user to bind with for authentication
-AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")  # Password for the bind user
+AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGIA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
+AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 
-AUTH_LDAP_USER_SEARCH = ("OU=Users,DC=CYC-SERVICES,DC=COM,DC=CO", ldap.SCOPE_SUBTREE, "(sAMAccountName=%(user)s)")
-
-AUTH_LDAP_USER_ATTR_MAP = {
-    "username": "sAMAccountName",
-    "name": 'name',
-}
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    "OU=Users,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+    ldap3.SUBTREE,  # Search scope
+    "(sAMAccountName=%(user)s)"  # Search filter
+)

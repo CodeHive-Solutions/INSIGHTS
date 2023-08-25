@@ -15,22 +15,49 @@ from rest_framework import viewsets, status as framework_status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import transaction
+from django.db.models import Q
 from .models import Goals, TableInfo
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
 
 class GoalsViewSet(viewsets.ModelViewSet):
-    # queryset = Goals.objects.all()
+    queryset = Goals.objects.all()
     serializer_class = GoalSerializer
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     month = self.request.GET.get('month', None)
+    #     if month is not None:
+    #         instance = self.get_object()
+    #         history_records = instance.history.filter(
+    #             Q(execution_date=month) | Q(goal_date=month),
+    #             history_type='~'
+    #         )
+    #         serializer = self.get_serializer(instance)
+    #         history_serializer = GoalSerializer(history_records, many=True)
+
+    #         return Response({
+    #             'instance': serializer.data,
+    #             'history_records': history_serializer.data
+    #         })
+    #     else:
+    #         # Call the original 'retrieve' to get the serialized data
+    #         return super().retrieve(request, *args, **kwargs)
 
     #Esta funcion permite buscar por el nombre del coordinador
     def get_queryset(self):
-        queryset = Goals.objects.all()
         coordinator = self.request.GET.get('coordinator', None)
+        month = self.request.GET.get('month', None)
         if coordinator is not None:
-            queryset = queryset.filter(coordinator=coordinator)
-        return queryset
+            return self.queryset.filter(coordinator=coordinator)
+        elif month is not None:
+            return self.queryset.filter(Q(execution_date=month) | Q(goal_date=month))
+            history_serializer = GoalSerializer(self.queryset, many=True)
+            return Response({
+                'history_records': history_serializer.data
+            })
+        else:
+            return self.queryset
 
     @action(detail=False, methods=['post'])
     def send_email(self, request, *args, **kwargs):

@@ -6,7 +6,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CarouselComponent from "../components/Carousel";
 import { useMediaQuery } from "@mui/material";
-
+import Container from "@mui/material/Container";
 const AboutUs = () => {
     const homeImages = [
         { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -18,8 +18,8 @@ const AboutUs = () => {
     const isSmallScreen = useMediaQuery("(max-width:600px)");
 
     return (
-        <Box sx={{ display: "flex", gap: "5rem", flexDirection: "column" }}>
-            <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px" }}>
+        <Box sx={{ display: "flex", gap: "5rem", flexDirection: "column", width: "100%", marginTop: "6rem" }}>
+            <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px", fontFamily: "Poppins" }}>
                 Sobre Nosotros
             </Typography>
             <Box sx={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
@@ -58,11 +58,23 @@ const AboutUs = () => {
                 </Typography>
             </Box>
 
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem", flexWrap: "wrap" }}>
+            <Container
+                disableGutters
+                maxWidth={false}
+                sx={{
+                    backgroundColor: "#0076A8",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "2rem",
+                    flexWrap: "wrap",
+                    py: "2rem",
+                }}
+            >
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem", width: "25rem" }}>
                     <Card sx={{ minWidth: 275 }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Nuestra Visión
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>
@@ -73,7 +85,7 @@ const AboutUs = () => {
                     </Card>
                     <Card sx={{ minWidth: 275 }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Nuestra Misión{" "}
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>
@@ -86,7 +98,7 @@ const AboutUs = () => {
                 <Box sx={{ width: "25rem" }}>
                     <Card sx={{ minWidth: 275 }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Nuestros Valores Corporativos
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>
@@ -99,10 +111,10 @@ const AboutUs = () => {
                         </CardContent>
                     </Card>
                 </Box>
-            </Box>
+            </Container>
 
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px" }}>
+                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px", fontFamily: "Poppins" }}>
                     Nuestras Sedes
                 </Typography>
                 <Box sx={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
@@ -112,12 +124,22 @@ const AboutUs = () => {
                 </Box>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem", alignItems: "center" }}>
-                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px" }}>
+                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px", fontFamily: "Poppins" }}>
                     Organigrama de la empresa
                 </Typography>
                 <Box sx={{ borderRadius: "2rem", width: "100%", height: "40rem", border: "2px solid gray" }}>
                     {isSmallScreen ? (
-                        <Typography sx={{ fontSize: "1.5rem", display: "flex", justifyContent: "center", alignItems: "center", height: "100%", color: "gray" }}>
+                        <Typography
+                            sx={{
+                                fontSize: "1.5rem",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: "100%",
+                                color: "gray",
+                                fontFamily: "Poppins",
+                            }}
+                        >
                             Imagen Organigrama
                         </Typography>
                     ) : (
@@ -129,14 +151,14 @@ const AboutUs = () => {
                     )}
                 </Box>
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px" }}>
+            <Box sx={{ backgroundColor: "#59CBE8", display: "flex", flexDirection: "column", gap: "2rem" }}>
+                <Typography color="white" sx={{ textAlign: "center", fontWeight: 600, fontSize: "30px", fontFamily: "Poppins", py: "2rem" }}>
                     Nuestras Gerencias
                 </Typography>
                 <Box sx={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
                     <Card sx={{ minWidth: "30rem", maxWidth: "30rem" }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Gerencia General
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>
@@ -149,7 +171,7 @@ const AboutUs = () => {
                     </Card>
                     <Card sx={{ minWidth: "30rem", maxWidth: "30rem" }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Gerencia de Cuenta
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>
@@ -163,7 +185,7 @@ const AboutUs = () => {
                     </Card>
                     <Card sx={{ minWidth: "30rem", maxWidth: "30rem" }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Gerencia de Servicios
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>
@@ -175,7 +197,7 @@ const AboutUs = () => {
                     </Card>
                     <Card sx={{ minWidth: "30rem", maxWidth: "30rem" }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Gerencia Legal y Riesgo
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>
@@ -188,7 +210,7 @@ const AboutUs = () => {
                     </Card>
                     <Card sx={{ minWidth: "30rem", maxWidth: "30rem" }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography sx={{ fontFamily: "Poppins" }} variant="h5" component="div">
                                 Gerencia Administrativa
                             </Typography>
                             <Typography variant="body2" sx={{ textAlign: "justify" }}>

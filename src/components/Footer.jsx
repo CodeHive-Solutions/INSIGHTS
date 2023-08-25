@@ -3,8 +3,11 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import logo_CYC from "../images/logo-cyc.webp";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
-
+import { useNavigate } from "react-router-dom";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import InstagramIcon from "@mui/icons-material/Instagram";
 const Footer = () => {
+    const navigate = useNavigate();
 
     return (
         <Box
@@ -20,15 +23,27 @@ const Footer = () => {
             }}
         >
             <Box sx={{ display: "flex", flexDirection: "Column", gap: "15px" }}>
-                <img src={logo_CYC} style={{ width: 200 }} alt="logo_CYC" />
-
+                <img onClick={() => window.open("https://www.cyc-bpo.com/", "_blank")} src={logo_CYC} style={{ width: 200, cursor: "pointer" }} alt="logo_CYC" />
                 <Typography variant="body2" color="white">
-                    Calle 19 No. 3 – 16 Piso 3CC Barichara – Bogotá D. C.
+                    Calle 19 No. 3 - 16 Piso 3CC Barichara - Bogotá D. C.
                 </Typography>
                 <Typography variant="body2" color="white">
                     © 2010 - {new Date().getFullYear()}
                 </Typography>
-                <FacebookOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
+                <Box sx={{ display: "flex", gap: "1rem" }}>
+                    <FacebookOutlinedIcon
+                        onClick={() => window.open("https://www.facebook.com/cycservicesbpo/", "_blank")}
+                        sx={{ cursor: "pointer", fontSize: 35, color: "white" }}
+                    />
+                    <LinkedInIcon
+                        onClick={() => window.open("https://www.linkedin.com/company/c-c-services-sas/", "_blank")}
+                        sx={{ cursor: "pointer", fontSize: 35, color: "white" }}
+                    />
+                    <InstagramIcon
+                        onClick={() => window.open("https://instagram.com/cycservicessas?igshid=MzRlODBiNWFlZA==", "_blank")}
+                        sx={{ cursor: "pointer", fontSize: 35, color: "white" }}
+                    />
+                </Box>
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", width: "350px" }}>
@@ -47,16 +62,16 @@ const Footer = () => {
                     gap: "15px",
                 }}
             >
-                <Typography variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/loged/about-us", { replace: true })} variant="subtitle2" color="white">
                     Sobre Nosotros
                 </Typography>
-                <Typography variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} variant="subtitle2" color="white">
                     Blog
                 </Typography>
-                <Typography variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} variant="subtitle2" color="white">
                     PQR
                 </Typography>
-                <Typography variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} variant="subtitle2" color="white">
                     SGC
                 </Typography>
             </Box>

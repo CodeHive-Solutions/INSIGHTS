@@ -7,10 +7,8 @@ import Footer from "../components/Footer";
 const Root = () => {
     return (
         <>
-            <NavBar position="sticky" />
-            <Container>
-                <Outlet />
-            </Container>
+            <NavBar />
+            <Outlet />
             <Footer />
         </>
     );

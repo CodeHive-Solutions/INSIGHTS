@@ -8,16 +8,18 @@ import FeedIcon from "@mui/icons-material/Feed";
 import { useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
-import InfoIcon from '@mui/icons-material/Info';
+import InfoIcon from "@mui/icons-material/Info";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import ArticleIcon from "@mui/icons-material/Article";
 import FolderZipIcon from "@mui/icons-material/FolderZip";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const openMenu = Boolean(anchorElMenu);
     const open = Boolean(anchorEl);
+    const navigate = useNavigate();
 
     const handleClickMenu = (event) => {
         setAnchorElMenu(event.currentTarget);
@@ -38,36 +40,63 @@ const Navbar = () => {
 
     return (
         <>
-            <Box sx={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", py: "2rem" }}>
-                <Typography variant="h5" sx={{ minWidth: 100 }}>
-                    INSIGHTS
-                </Typography>
-                {isMobile ? (
-                    <IconButton onClick={handleClickMenu} size="small">
-                        <MenuIcon />
-                    </IconButton>
-                ) : (
-                    <>
-                        <Typography sx={{ minWidth: 100 }}>Formularios</Typography>
-                        <Typography sx={{ minWidth: 100 }}>Blog</Typography>
-                        <Typography sx={{ minWidth: 100 }}>SGC</Typography>
-                        <Typography sx={{ minWidth: 100 }}>Sobre Nosotros</Typography>
-                        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                            <Tooltip title="Configuración de cuenta">
-                                <IconButton
-                                    onClick={handleClick}
-                                    size="small"
-                                    sx={{ ml: 2 }}
-                                    aria-controls={open ? "account-menu" : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={open ? "true" : undefined}
-                                >
-                                    <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                    </>
-                )}
+            <Box
+                sx={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    backdropFilter: "blur(10px)",
+                    zIndex: 1000,
+                }}
+            >
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "space-evenly",
+                        alignItems: "center",
+                        padding: "1rem 0",
+                        backgroundColor: "rgba(255,255,255, 0.9)",
+                        backdropFilter: "blur(10px)",
+                    }}
+                >
+                    <Typography
+                        variant="h5"
+                        color="primary"
+                        onClick={() => navigate("/loged/home", { replace: true })}
+                        sx={{ minWidth: 100, cursor: "pointer", fontWeight: "500", fontFamily: "Poppins" }}
+                    >
+                        INSIGHTS
+                    </Typography>
+                    {isMobile ? (
+                        <IconButton onClick={handleClickMenu} size="small">
+                            <MenuIcon />
+                        </IconButton>
+                    ) : (
+                        <>
+                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>Formularios</Typography>
+                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>Blog</Typography>
+                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>SGC</Typography>
+                            <Typography onClick={() => navigate("/loged/about-us", { replace: true })} sx={{ cursor: "pointer", minWidth: 100 }}>
+                                Sobre Nosotros
+                            </Typography>
+                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                                <Tooltip title="Configuración de cuenta">
+                                    <IconButton
+                                        onClick={handleClick}
+                                        size="small"
+                                        sx={{ ml: 2 }}
+                                        aria-controls={open ? "account-menu" : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? "true" : undefined}
+                                    >
+                                        <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
+                        </>
+                    )}
+                </Box>
             </Box>
             <Menu
                 anchorEl={anchorEl}
@@ -129,7 +158,7 @@ const Navbar = () => {
                     </ListItemIcon>
                     Configuración
                 </MenuItem>
-                <MenuItem onClick={handleClose}>
+                <MenuItem onClick={() => navigate("/", { replace: true })}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
