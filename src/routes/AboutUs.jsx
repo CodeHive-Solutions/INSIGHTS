@@ -23,11 +23,15 @@ const AboutUs = () => {
 
     const managements = [
         { name: "Sandoval Cabra Melida", management: "Gerencia Administrativa", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-        { name: "Example2", management: "Gerencia de Legal y Riesgo", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
+        { name: "Gonzales Mora Diego Fernando", management: "Gerencia de Legal y Riesgo", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
         { name: "Giraldo Castaño Luz Yarime", management: "Gerencia de Mercadeo", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
         { name: "Paez Castiblanco Adriana Nataly", management: "Gerencia Operaciones", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-        { name: "Example5", management: "Gerencia Planeación", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-        { name: "Example6", management: "Gerencia de Riesgo y Control Interno", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
+        { name: "Duran Gutierrez Angela Maria", management: "Gerencia Planeación", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
+        {
+            name: "Giron Salazar Mario Ernesto",
+            management: "Gerencia de Riesgo y Control Interno",
+            image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true",
+        },
         { name: "Torres Naranjo Javier Mauricio", management: "Gerencia de Tecnología", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
         { name: "Garzon Navas Cesar Alberto", management: "Gerencia General", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
         { name: "Ferrucho Seguro Maria Fernanda", management: "Gerencia Gestión Humana", image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
