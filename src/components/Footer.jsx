@@ -6,6 +6,8 @@ import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import { useNavigate } from "react-router-dom";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
+import WebIcon from "@mui/icons-material/Web";
+
 const Footer = () => {
     const navigate = useNavigate();
 
@@ -22,7 +24,7 @@ const Footer = () => {
                 flexWrap: "wrap",
             }}
         >
-            <Box sx={{ display: "flex", flexDirection: "Column", gap: "15px" }}>
+            <Box sx={{ display: "flex",  flexDirection: "Column", gap: "15px" }}>
                 <img onClick={() => window.open("https://www.cyc-bpo.com/", "_blank")} src={logo_CYC} style={{ width: 200, cursor: "pointer" }} alt="logo_CYC" />
                 <Typography variant="body2" color="white">
                     Calle 19 No. 3 - 16 Piso 3CC Barichara - Bogotá D. C.
@@ -31,6 +33,7 @@ const Footer = () => {
                     © 2010 - {new Date().getFullYear()}
                 </Typography>
                 <Box sx={{ display: "flex", gap: "1rem" }}>
+                    <WebIcon onClick={() => window.open("https://www.cyc-bpo.com/", "_blank")} sx={{ cursor: "pointer", fontSize: 35, color: "white" }} />
                     <FacebookOutlinedIcon
                         onClick={() => window.open("https://www.facebook.com/cycservicesbpo/", "_blank")}
                         sx={{ cursor: "pointer", fontSize: 35, color: "white" }}

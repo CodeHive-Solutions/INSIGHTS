@@ -82,10 +82,10 @@ class GoalAPITestCase(TestCase):
 
     def test_claro_upload(self):
         # Create a SimpleUploadedFile instance from the Excel file
-        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas ejemplo Claro-DICIEMBRE-2028.xlsx'
+        file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
-        excel_file = SimpleUploadedFile("Entrega de metas ejemplo Claro-DICIEMBRE-2028.xlsx", file_data, content_type="application/vnd.ms-excel")
+        excel_file = SimpleUploadedFile("Entrega de metas ejemplo Claro-ENERO-2028.xlsx", file_data, content_type="application/vnd.ms-excel")
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse('goal-list'), {'file': excel_file})
         # Assert the response status code and perform additional assertions for the response data

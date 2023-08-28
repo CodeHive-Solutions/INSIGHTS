@@ -1,4 +1,5 @@
 import logging
+from simple_history.models import HistoricalRecords
 import os
 import re
 from django.utils import timezone
@@ -15,7 +16,7 @@ from rest_framework import viewsets, status as framework_status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, OuterRef, Subquery
 from .models import Goals, TableInfo
 from .serializers import GoalSerializer
 
@@ -51,11 +52,12 @@ class GoalsViewSet(viewsets.ModelViewSet):
         if coordinator is not None:
             return self.queryset.filter(coordinator=coordinator)
         elif month is not None:
-            return self.queryset.filter(Q(execution_date=month) | Q(goal_date=month))
-            history_serializer = GoalSerializer(self.queryset, many=True)
-            return Response({
-                'history_records': history_serializer.data
-            })
+
+            return Goals.history.filter(
+    cedula=OuterRef('cedula'),
+    execution_date=month,
+    history_type='~'
+).order_by('cedula', '-execution_date', '-goal_date')[:1]
         else:
             return self.queryset
 
@@ -80,6 +82,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 db_cursor.execute("SELECT email_user, pnom_user, pape_user FROM users WHERE `id_user` = %s",[cedula])
                 result = db_cursor.fetchone()
                 if result is not None and instance is not None:
+                    
                     try:
                         correo = result[0]
                         nombre = str(result[1]) + ' ' + str(result[2])
@@ -125,7 +128,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             instance.accepted = True
                             instance.save()
                         print("Email sent successfully")
-                        return Response({'email': correo}, status=framework_status.HTTP_200_OK)
+                        return Response({'email': correo}, status=framework_status.HTTP_200_OK) 
                     except Exception as e:
                         logger.setLevel(logging.ERROR)
                         logger.exception("Error: %s", str(e))

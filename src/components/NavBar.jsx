@@ -13,6 +13,7 @@ import ChecklistIcon from "@mui/icons-material/Checklist";
 import ArticleIcon from "@mui/icons-material/Article";
 import FolderZipIcon from "@mui/icons-material/FolderZip";
 import { useNavigate } from "react-router-dom";
+import logotipo from "../images/logotipo-navbar - copia.png";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -60,14 +61,15 @@ const Navbar = () => {
                         backdropFilter: "blur(10px)",
                     }}
                 >
-                    <Typography
+                    {/* <Typography
                         variant="h5"
                         color="primary"
                         onClick={() => navigate("/loged/home", { replace: true })}
                         sx={{ minWidth: 100, cursor: "pointer", fontWeight: "500", fontFamily: "Poppins" }}
                     >
                         INSIGHTS
-                    </Typography>
+                    </Typography> */}
+                    <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/loged/home", { replace: true })} />
                     {isMobile ? (
                         <IconButton onClick={handleClickMenu} size="small">
                             <MenuIcon />

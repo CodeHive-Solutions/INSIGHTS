@@ -40,14 +40,14 @@ const Home = () => {
             </Box>
             <Grow in={inView}>
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-                    <Card sx={{ maxWidth: 350, width: 350, height: 500 }}>
-                        <Typography
+                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                        {/* <Typography
                             variant="h4"
                             color="primary"
                             sx={{ display: "flex", width: "100%", justifyContent: "center", padding: "0.5rem", fontFamily: "Poppins" }}
                         >
                             Ayer
-                        </Typography>
+                        </Typography> */}
                         <CardMedia sx={{ height: 350 }} image={image2} />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
@@ -58,14 +58,14 @@ const Home = () => {
                             </Typography>
                         </CardContent>
                     </Card>{" "}
-                    <Card sx={{ maxWidth: 350, width: 350, height: 500 }}>
-                        <Typography
+                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                        {/* <Typography
                             variant="h4"
                             color="primary"
                             sx={{ display: "flex", width: "100%", justifyContent: "center", padding: "0.5rem", fontFamily: "Poppins" }}
                         >
                             Hoy
-                        </Typography>
+                        </Typography> */}
                         <CardMedia sx={{ height: 350 }} image={imageExample2} />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
@@ -76,14 +76,14 @@ const Home = () => {
                             </Typography>
                         </CardContent>
                     </Card>{" "}
-                    <Card sx={{ maxWidth: 350, width: 350, height: 500 }}>
-                        <Typography
+                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                        {/* <Typography
                             variant="h4"
                             color="primary"
                             sx={{ display: "flex", width: "100%", justifyContent: "center", padding: "0.5rem", fontFamily: "Poppins" }}
                         >
                             Mañana
-                        </Typography>
+                        </Typography> */}
                         <CardMedia sx={{ height: 350 }} image={image3} />
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="div">
