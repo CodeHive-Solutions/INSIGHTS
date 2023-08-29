@@ -33,18 +33,18 @@ const Footer = () => {
                     © 2010 - {new Date().getFullYear()}
                 </Typography>
                 <Box sx={{ display: "flex", gap: "1rem" }}>
-                    <WebIcon onClick={() => window.open("https://www.cyc-bpo.com/", "_blank")} sx={{ cursor: "pointer", fontSize: 35, color: "white" }} />
+                    <WebIcon onClick={() => window.open("https://www.cyc-bpo.com/", "_blank")} sx={{ cursor: "pointer", fontSize: 25, color: "white" }} />
                     <FacebookOutlinedIcon
                         onClick={() => window.open("https://www.facebook.com/cycservicesbpo/", "_blank")}
-                        sx={{ cursor: "pointer", fontSize: 35, color: "white" }}
+                        sx={{ cursor: "pointer", fontSize: 25, color: "white" }}
                     />
                     <LinkedInIcon
                         onClick={() => window.open("https://www.linkedin.com/company/c-c-services-sas/", "_blank")}
-                        sx={{ cursor: "pointer", fontSize: 35, color: "white" }}
+                        sx={{ cursor: "pointer", fontSize: 25, color: "white" }}
                     />
                     <InstagramIcon
                         onClick={() => window.open("https://instagram.com/cycservicessas?igshid=MzRlODBiNWFlZA==", "_blank")}
-                        sx={{ cursor: "pointer", fontSize: 35, color: "white" }}
+                        sx={{ cursor: "pointer", fontSize: 25, color: "white" }}
                     />
                 </Box>
             </Box>
