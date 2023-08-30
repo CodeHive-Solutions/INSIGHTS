@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
 import cyclogo from "../images/img-about.jpg";
@@ -13,7 +13,12 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import ImageStock from "../images/stock.jpg";
 import logoTipo from "../images/logotipo.png";
+
 const AboutUs = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const homeImages = [
         { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
         { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },

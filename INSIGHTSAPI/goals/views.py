@@ -52,7 +52,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
         if coordinator is not None:
             return self.queryset.filter(coordinator=coordinator)
         elif month is not None:
-
             return Goals.history.filter(
     cedula=OuterRef('cedula'),
     execution_date=month,
