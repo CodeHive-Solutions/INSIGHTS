@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from django_auth_ldap.config import LDAPSearch
-import ldap3
+import ldap
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -227,6 +227,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': False,
         },
+        'django_auth_ldap': {
+            'handlers': ['console','response_file', 'exception_file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }
 
@@ -236,7 +241,8 @@ AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGIA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,
 AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    "OU=Users,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
-    ldap3.SUBTREE,  # Search scope
+    "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+    # "OU=Users,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+    ldap.SCOPE_SUBTREE,  # Search scope
     "(sAMAccountName=%(user)s)"  # Search filter
 )

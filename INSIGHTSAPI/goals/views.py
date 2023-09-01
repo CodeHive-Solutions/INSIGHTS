@@ -26,37 +26,21 @@ class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
     serializer_class = GoalSerializer
 
-    # def retrieve(self, request, *args, **kwargs):
-    #     month = self.request.GET.get('month', None)
-    #     if month is not None:
-    #         instance = self.get_object()
-    #         history_records = instance.history.filter(
-    #             Q(execution_date=month) | Q(goal_date=month),
-    #             history_type='~'
-    #         )
-    #         serializer = self.get_serializer(instance)
-    #         history_serializer = GoalSerializer(history_records, many=True)
-
-    #         return Response({
-    #             'instance': serializer.data,
-    #             'history_records': history_serializer.data
-    #         })
-    #     else:
-    #         # Call the original 'retrieve' to get the serialized data
-    #         return super().retrieve(request, *args, **kwargs)
-
-    #Esta funcion permite buscar por el nombre del coordinador
     def get_queryset(self):
         coordinator = self.request.GET.get('coordinator', None)
         month = self.request.GET.get('month', None)
         if coordinator is not None:
             return self.queryset.filter(coordinator=coordinator)
         elif month is not None:
-            return Goals.history.filter(
-    cedula=OuterRef('cedula'),
-    execution_date=month,
-    history_type='~'
-).order_by('cedula', '-execution_date', '-goal_date')[:1]
+            latest_goals = Goals.history.filter( # type: ignore <- this supress the warning
+                Q(goal_date=month) |
+                Q(execution_date = month),
+                cedula=OuterRef('cedula')
+            ).order_by('-history_date')
+            unique_goals = Goals.history.filter( # type: ignore <- this supress the warning
+                history_date=Subquery(latest_goals.values('history_date')[:1]),
+            )
+            return unique_goals
         else:
             return self.queryset
 
@@ -219,7 +203,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                 observation = row[observation_index].value
                                 table = row[table_index].value
                                 status = row[status_index].value
-                                logger.info("Status: %s", status)
                                 if str(status).upper() == 'ACTIVO':
                                     status = True
                                 elif str(status).upper() == 'RETIRADO':
@@ -287,7 +270,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 header_names = {
                     'DESCRIPCION DE LA VARIABLE A MEDIR', 'CANTIDAD'
                 }
-                missing_headers = header_names - set(header_row)
+                missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
                 if missing_headers:
                     return Response({"message": f"Estos encabezados no fueron encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
                 criteria_index = header_row.index('DESCRIPCION DE LA VARIABLE A MEDIR')
@@ -296,7 +279,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     header_names = {
                         '% CUMPLIMIENTO', 'EVALUACION', 'CALIDAD', 'CLEAN DESK', 'TOTAL'
                     }
-                    missing_headers = header_names - set(header_row)
+                    missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
                     if missing_headers:
                         return Response({"message": f"Estos encabezados no fueron encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
                     result_index = header_row.index('% CUMPLIMIENTO')
@@ -329,13 +312,13 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         observation = row[observation_index].value
                         status = row[status_index].value
                         if file_name.upper().find('EJECUCION') != -1 or file_name.upper().find('EJECUCIÓN') != -1:
-                            result_cell = row[result_index]
+                            result_cell = row[result_index] # type: ignore <- this supress the warning
                             result = format_cell_value(result_cell)
-                            evaluation_cell = row[evaluation_index]
+                            evaluation_cell = row[evaluation_index] # type: ignore <- this supress the warning
                             evaluation = format_cell_value(evaluation_cell)
-                            quality = format_cell_value(row[quality_index])
-                            clean_desk = format_cell_value(row[clean_desk_index])
-                            total = format_cell_value(row[total_index])
+                            quality = format_cell_value(row[quality_index]) # type: ignore <- this supress the warning
+                            clean_desk = format_cell_value(row[clean_desk_index]) # type: ignore <- this supress the warning
+                            total = format_cell_value(row[total_index]) # type: ignore <- this supress the warning
                             # default_value['execution_date'] = date
                         else:
                             result = None

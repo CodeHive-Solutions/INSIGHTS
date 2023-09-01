@@ -16,6 +16,11 @@ class GoalAPITestCase(TestCase):
 
     def setUp(self):
         self.client = APIClient()
+
+    def test_serializer(self):
+        self.test_claro_upload()
+        response = self.client.get(reverse('goal-list'))
+        self.assertEqual(response.status_code, 200)
     
     def test_metas_upload(self,called=False):
         if called:
@@ -94,10 +99,16 @@ class GoalAPITestCase(TestCase):
         self.assertTrue(TableInfo.objects.all().count() > 0)
         self.assertTrue(Goals.objects.all().exclude(table_goal=None).count() > 0)
 
-    def test_serializer(self):
+    def test_get_history(self):
         self.test_claro_upload()
-        response = self.client.get(reverse('goal-list'))
+        self.test_ejecucion_upload()
+        response = self.client.get('/goals/?month=DICIembre-2028')
         self.assertEqual(response.status_code, 200)
+        self.assertFalse(len(response.data) > 0) # type: ignore
+        response = self.client.get('/goals/?month=ENERO-2028')
+        self.assertTrue(len(response.data) > 0) # type: ignore
+        self.assertIsNotNone(response.data[0].get('history_date')) # type: ignore
+
 
 class SendEmailTestCase(TestCase):
     # databases = ['intranet', 'default']
