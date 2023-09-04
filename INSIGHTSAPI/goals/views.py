@@ -1,5 +1,4 @@
 import logging
-from simple_history.models import HistoricalRecords
 import os
 import re
 from django.utils import timezone
@@ -42,7 +41,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
             )
             return unique_goals
         else:
-            return self.queryset
+            # With out the .all() method, the queryset will be evaluated lazily
+            return self.queryset.all()
 
     @action(detail=False, methods=['post'])
     def send_email(self, request, *args, **kwargs):
