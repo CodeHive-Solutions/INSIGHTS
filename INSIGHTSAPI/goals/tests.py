@@ -1,5 +1,4 @@
 from django.test import TestCase
-
 from django.db.models import Q
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile

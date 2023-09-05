@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState, createContext } from "react";
 import { Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 
@@ -6,29 +6,27 @@ function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function SnackbarAlert({ message, severity }) {
-    const [open, setOpen] = useState(false);
-
-    const handleClick = () => {
-        setOpen(true);
-    };
+const SnackbarAlert = ({ message, severity, handleClickSnack }) => {
+    const [openSnack, setOpenSnack] = useState(false);
 
     const handleClose = (event, reason) => {
         if (reason === "clickaway") {
             return;
         }
 
-        setOpen(false);
+        setOpenSnack(false);
     };
 
+    // Use the handleClickSnack prop to trigger the function
+    handleClickSnack();
+
     return (
-        <div>
-            <button onClick={handleClick}>Open simple snackbar</button>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-                <Alert onClose={handleClose} severity={severity}>
-                    {message}
-                </Alert>
-            </Snackbar>
-        </div>
+        <Snackbar open={openSnack} autoHideDuration={6000} onClose={handleClose}>
+            <Alert onClose={handleClose} severity={severity}>
+                {message}
+            </Alert>
+        </Snackbar>
     );
-}
+};
+
+export default SnackbarAlert;

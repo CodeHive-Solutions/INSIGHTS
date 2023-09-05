@@ -35,15 +35,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ["172.16.0.114", "172.16.5.10", "172.16.5.11", "127.0.0.1", "172.16.0.115", "localhost", "insights-api.cyc-bpo.com","insights-api-dev.cyc-bpo.com"]
-
+ALLOWED_HOSTS = ["insights-api.cyc-bpo.com",'insights-api-dev.cyc-bpo.com']
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -53,7 +51,9 @@ INSTALLED_APPS = [
     'simple_history',
     'corsheaders',
     'rest_framework',
-    'goals'
+    'rest_framework.authtoken',
+    'goals',
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -70,10 +70,10 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://localhost:8000',
-]
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3000',
+#     'http://localhost:8000',
+# ]
 
 ROOT_URLCONF = 'INSIGHTSAPI.urls'
 
@@ -92,9 +92,6 @@ TEMPLATES = [
         },
     },
 ]
-
-# WSGI_APPLICATION = 'INSIGHTSAPI.wsgi.application'
-
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.cyc-services.com.co'
@@ -131,20 +128,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#     },
+# ]
 
 
 # Internationalization
@@ -177,7 +174,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
 LOGGING = {
@@ -235,6 +235,8 @@ LOGGING = {
     },
 }
 
+# AUTH_USER_MODEL = 'users.User'
+
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
 AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGIA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
@@ -242,7 +244,6 @@ AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
-    # "OU=Users,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
     ldap.SCOPE_SUBTREE,  # Search scope
     "(sAMAccountName=%(user)s)"  # Search filter
 )
