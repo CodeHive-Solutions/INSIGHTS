@@ -1,27 +1,28 @@
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import logout
 
 class AuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        # Authenticate with LDAP
-        ldap_username = request.data.get('username')
-        password = request.data.get('password')
-        ldap_user = authenticate(request, ldap_username=ldap_username, password=password)
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user'] # type: ignore
+        token, created = Token.objects.get_or_create(user=user)
+        # Set the token as a cookie in the response
+        response = super().post(request, *args, **kwargs)
+        response.set_cookie('authentication_token', token.key, max_age=30*24*60*60, secure=True, httponly=True, samesite='Lax')
+        return response
 
-        if ldap_user:
-            return Response({'token': "something"})
-            # Check if a local user with the same LDAP username exists
-            try:
-                local_user = User.objects.get(ldap_username=ldap_username)
-                # Generate a token for the local user
-                token, created = Token.objects.get_or_create(user=local_user)
-                return Response({'token': token.key})
-            except User.DoesNotExist:
-                return Response({'error': 'Credenciales'}, status=status.HTTP_404_NOT_FOUND)
-
-        # If LDAP authentication fails or local user not found, use the default ObtainAuthToken behavior
-        return super().post(request, *args, **kwargs)
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    logout(request)
+    auth_header = request.META.get('HTTP_AUTHORIZATION')
+    token_key = auth_header.split(' ')[1]
+    Token.objects.get(key=token_key).delete()
+    response = Response({'message': 'Logout successful'})
+    response.delete_cookie('authentication_token')
+    return response

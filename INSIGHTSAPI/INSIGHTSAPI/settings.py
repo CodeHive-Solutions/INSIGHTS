@@ -68,12 +68,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
 
-# CORS_ORIGIN_WHITELIST = [
-#     'http://localhost:3000',
-#     'http://localhost:8000',
-# ]
+CORS_ORIGIN_WHITELIST = [
+    'http://172.16.0.115:8000',
+    'https://insights-dev.cyc-bpo.com'
+]
 
 ROOT_URLCONF = 'INSIGHTSAPI.urls'
 
@@ -247,3 +247,4 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
     ldap.SCOPE_SUBTREE,  # Search scope
     "(sAMAccountName=%(user)s)"  # Search filter
 )
+

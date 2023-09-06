@@ -14,6 +14,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import FolderZipIcon from "@mui/icons-material/FolderZip";
 import { useNavigate } from "react-router-dom";
 import logotipo from "../images/logotipo-navbar - copia.png";
+import SnackbarAlert from "../components/SnackBarAlert";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -21,6 +22,13 @@ const Navbar = () => {
     const openMenu = Boolean(anchorElMenu);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [severity, setSeverity] = useState("success");
+    const [message, setMessage] = useState();
+    const [openSnack, setOpenSnack] = useState(false);
+
+    const handleCloseSnack = () => setOpenSnack(false);
+    const handleOpenSnack = () => setOpenSnack(true);
 
     const handleClickMenu = (event) => {
         setAnchorElMenu(event.currentTarget);
@@ -35,6 +43,36 @@ const Navbar = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const showSnack = (severity, message, error) => {
+        setSeverity(severity);
+        setMessage(message);
+        setOpenSnack(true);
+        if (error) {
+            console.error("error:", message);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/logout/", {
+                method: "POST",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.detail);
+            }
+
+            if (response.status === 200) {
+                navigate("/loged/home", { replace: true });
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
     };
 
     const isMobile = useMediaQuery("(max-width: 600px)");
@@ -160,7 +198,7 @@ const Navbar = () => {
                     </ListItemIcon>
                     Configuración
                 </MenuItem>
-                <MenuItem onClick={() => navigate("/", { replace: true })}>
+                <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
@@ -241,6 +279,7 @@ const Navbar = () => {
                     </Tooltip>
                 </Box>
             </Menu>
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
 };

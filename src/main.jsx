@@ -9,8 +9,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import AboutUs from "./routes/AboutUs";
-import ScrollToTop from "./components/ScrollToTop";
-// import App from "./components/example";
+// import ScrollToTop from "./components/ScrollToTop";
 
 const theme = createTheme({
     typography: {

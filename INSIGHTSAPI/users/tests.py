@@ -50,14 +50,39 @@ class LDAPAuthenticationTest(TestCase):
             if conn:
                 conn.unbind()
 
-    def test_login_django(self):
+    def test_login_django(self, called=False):
+        if called:
+            username = "heibert.mogollon"
+            password = "Password4"
+            data = {
+                'username': username,
+                'password': password,
+            }
+            response = self.client.post(reverse('token_auth'), data)
+            self.assertEqual(response.status_code, 200)
+            token = json.loads(response.content.decode('utf-8')).get('token')
+            self.assertIsNotNone(token, "No authentication token found in the response")
+            return response
+
+    def test_login_fail(self):
         username = "heibert.mogollon"
-        password = "Password4"
+        password = "WrongPassword"
         data = {
             'username': username,
             'password': password,
         }
         response = self.client.post(reverse('token_auth'), data)
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         token = json.loads(response.content.decode('utf-8')).get('token')
-        self.assertIsNotNone(token, "No authentication token found in the response")
+        self.assertIsNone(token, "Authentication token found in the response")
+
+    def test_logout(self):
+        response = self.test_login_django(called=True)
+        token = json.loads(response.content.decode('utf-8')).get('token') # type: ignore
+        # Make a request that requires authentication
+        response = self.client.get('/goals/', HTTP_AUTHORIZATION=f'Token {token}')
+        self.assertEqual(response.status_code, 200)
+        reponse2 = self.client.post('/logout/', HTTP_AUTHORIZATION=f'Token {token}')
+        self.assertEqual(reponse2.status_code, 200)
+        response3 = self.client.get('/goals/', HTTP_AUTHORIZATION=f'Token {token}')
+        self.assertEqual(response3.status_code, 401)

@@ -18,6 +18,8 @@ from django.db import transaction
 from django.db.models import Q, OuterRef, Subquery
 from .models import Goals, TableInfo
 from .serializers import GoalSerializer
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.decorators import permission_classes
 
 logger = logging.getLogger("requests")
 

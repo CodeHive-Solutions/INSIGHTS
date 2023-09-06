@@ -3,19 +3,18 @@ import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import login_image from "../images/ALE02974.webp";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
-import { React, createContext } from "react";
+import { React } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { useState } from "react";
 import SnackbarAlert from "../components/SnackBarAlert";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Requerido"),
     password: Yup.string().required("Requerido"),
 });
-
-const SnackContext = createContext();
 
 const FormikTextField = ({ label, type, ...props }) => {
     const [field, meta] = useField(props);
@@ -24,43 +23,57 @@ const FormikTextField = ({ label, type, ...props }) => {
 };
 
 const Login = () => {
-    const [open, setOpen] = React.useState(false);
+    const [open, setOpen] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
+    const [loadingBar, setLoadingBar] = useState(false);
 
-    const handleClickSnack = () => setOpenSnack(true);
+    const handleCloseSnack = () => setOpenSnack(false);
+
+    const handleOpenSnack = () => setOpenSnack(true);
+
+    const showSnack = (severity, message, error) => {
+        setSeverity(severity);
+        setMessage(message);
+        setOpenSnack(true);
+        if (error) {
+            console.error("error:", message);
+        }
+    };
 
     const handleSubmit = async (values) => {
-        setIsSubmitting(true); // Set isSubmitting to true when submitting the form
+        setIsSubmitting(true);
+        setLoadingBar(true);
 
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/", {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/get-token/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
             });
 
+            setLoadingBar(false);
             setIsSubmitting(false);
 
             if (!response.ok) {
-                throw new Error("Network response was not ok");
+                const data = await response.json();
+                throw new Error(data.non_field_errors);
             }
-
-            const data = await response.json();
 
             if (response.status === 200) {
-                handleClickSnack();
-                setMessage("Bienvenido a la intranet de C&C SERVICES S.A.S");
-                // navigate("/loged/home", { replace: true });
-            } else {
-                console.error(response.status + response.statusText);
-                setShowSnackAlert("error", "Por favor envia este error a desarrollo: " + response.statusText, true);
+                navigate("/loged/home", { replace: true });
             }
         } catch (error) {
-            setShowSnackAlert("error", "Por favor envia este error a desarrollo: " + error, true);
+            console.error(error);
+            if (error.message === "Unable to log in with provided credentials.") {
+                showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
+            } else {
+                showSnack("error", error.message);
+            }
+            setLoadingBar(false);
         }
     };
 
@@ -149,10 +162,12 @@ const Login = () => {
                     <Typography variant="subtitle2">C&C SERVICES © - Bogotá D.C. / Colombia.</Typography>
                 </Box>
             </Box>
-            <SnackContext.Provider value={{ openSnack, setOpenSnack }}>
-                <button onClick={() => setOpenSnack(true)}>Click me</button>
-                <SnackbarAlert />
-            </SnackContext.Provider>
+            {loadingBar && (
+                <Box sx={{ width: "100vw", position: "absolute", zIndex: 1000 }}>
+                    <LinearProgress variant="indeterminate" />
+                </Box>
+            )}
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </Box>
     );
 };

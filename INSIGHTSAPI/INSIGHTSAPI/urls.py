@@ -15,11 +15,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import include, path
-# from rest_framework.authtoken.views import ObtainAuthToken
-
-from users.views import AuthToken
+from users.views import AuthToken, logout_view
 
 urlpatterns = [
     path("goals/", include("goals.urls")),
-    path('token/', AuthToken.as_view(), name='token_auth'),
+    path('get-token/', AuthToken.as_view(), name='token_auth'),
+    path('logout/', logout_view, name='logout'),
 ]
