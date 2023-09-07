@@ -9,7 +9,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import AboutUs from "./routes/AboutUs";
-// import ScrollToTop from "./components/ScrollToTop";
+import ScrollToTop from "./components/ScrollToTop";
+import UploadGoals from "./routes/UploadGoals";
+import GoalsStats from "./routes/GoalsStats";
 
 const theme = createTheme({
     typography: {
@@ -59,6 +61,14 @@ const router = createBrowserRouter([
             {
                 path: "about-us",
                 element: <AboutUs />,
+            },
+            {
+                path: "upload-goals",
+                element: <UploadGoals />,
+            },
+            {
+                path: "goals-stats",
+                element: <GoalsStats />,
             },
         ],
     },

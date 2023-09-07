@@ -9,7 +9,10 @@ class LoggingMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         cedula = request.GET.get('cedula', "user not found")
-        logger.info(f"User: {cedula} Request: {request}")
+        if request.data:
+            logger.info(f"User: {cedula} Request: {request}, Request Data: {request.data}")
+        else:
+            logger.info(f"User: {cedula} Request: {request}")
         if hasattr(response, 'data'):
             response_data = response.data
             route = getattr(request.resolver_match, 'route', None)
