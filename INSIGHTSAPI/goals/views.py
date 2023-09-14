@@ -1,4 +1,6 @@
 import logging
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 import os
 import re
 from django.utils import timezone
@@ -28,19 +30,25 @@ class GoalsViewSet(viewsets.ModelViewSet):
     serializer_class = GoalSerializer
 
     def get_queryset(self):
+        user_id = self.request.session.get('user_id')
+        username = self.request.session.get('username')
+        context = {
+            'user_id': user_id,
+            'username': username,
+        }
+        logger.info("context: %s", context)
         coordinator = self.request.GET.get('coordinator', None)
         month = self.request.GET.get('month', None)
         if coordinator is not None:
             return self.queryset.filter(coordinator=coordinator)
         elif month is not None:
-            latest_goals = Goals.history.filter( # type: ignore <- this supress the warning
-                Q(goal_date=month) |
-                Q(execution_date = month),
-                cedula=OuterRef('cedula')
-            ).order_by('-history_date')
-            unique_goals = Goals.history.filter( # type: ignore <- this supress the warning
-                history_date=Subquery(latest_goals.values('history_date')[:1]),
-            )
+            latest_history_date = Goals.history.filter( # type: ignore
+                Q(goal_date=month) | Q(execution_date=month)
+            ).order_by('-history_date').values('history_date')[:1]
+
+            # Filter records with the latest history_date
+            unique_goals = Goals.history.filter(history_date=Subquery(latest_history_date)) # type: ignore
+
             return unique_goals
         else:
             # With out the .all() method, the queryset will be evaluated lazily
@@ -373,3 +381,17 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 return Response({"message": "Excel upload Failed.","Error": str(e)}, status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({"message": "Excel no encontrado."}, status=framework_status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_user_info(request):
+    request.session['UwU'] = 'OwO'
+    user_id = request.session.get('user_id')
+    username = request.session.get('username')
+    request.session['info'] = 'informacion'
+    context = {
+        'user_id': user_id,
+        'username': username,
+    }
+    print("Contexto:",context)
+    return Response(context, status=framework_status.HTTP_200_OK)

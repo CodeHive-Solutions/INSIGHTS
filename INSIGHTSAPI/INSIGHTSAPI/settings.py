@@ -10,10 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from django_auth_ldap.config import LDAPSearch
-import ldap
+from django_auth_ldap.config import LDAPSearch # type: ignore
+import ldap # type: ignore
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta, datetime
+from logging.handlers import RotatingFileHandler
 import os
 import ssl
 
@@ -47,12 +49,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "django_auth_ldap",
-    'simple_history',
     'corsheaders',
+    'django_auth_ldap',
+    'simple_history',
     'rest_framework',
-    'rest_framework.authtoken',
     'goals',
+    'api_token',
     'users'
 ]
 
@@ -68,7 +70,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
-# CORS_ORIGIN_ALLOW_ALL = True
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'INSIGHTSAPI.middleware.cookie_JWT.CookieJWTAuthentication',
+    ),
+}
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
 
 CORS_ORIGIN_WHITELIST = [
     'http://172.16.0.115:8000',
@@ -171,14 +184,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-}
+year = datetime.now().year
+month = datetime.now().strftime("%B")
+log_dir = os.path.join(BASE_DIR, 'utils','logs',month)
+os.makedirs(log_dir, exist_ok=True)
 
 LOGGING = {
     'version': 1,
@@ -196,13 +205,13 @@ LOGGING = {
         'response_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/INSIGHTS/INSIGHTSAPI/utils/logs/requests.log',
+            'filename': os.path.join(log_dir, 'requests.log'),
             'formatter': 'time-lvl-msg',
         },
         'exception_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/INSIGHTS/INSIGHTSAPI/utils/logs/exceptions.log',
+            'filename': os.path.join(log_dir, 'exceptions.log'),
             'formatter': 'time-lvl-msg',
         },
     },
@@ -235,7 +244,7 @@ LOGGING = {
     },
 }
 
-# AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'
 
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
@@ -248,3 +257,11 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "(sAMAccountName=%(user)s)"  # Search filter
 )
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
+    'SLIDING_TOKEN_REFRESH_ON_LOGIN': True,
+    'SLIDING_TOKEN_REFRESH_ON_REFRESH': True,
+    'AUTH_COOKIE': 'access_token'
+}

@@ -12,8 +12,8 @@ import SnackbarAlert from "../components/SnackBarAlert";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const validationSchema = Yup.object().shape({
-    username: Yup.string().required("Requerido"),
-    password: Yup.string().required("Requerido"),
+    username: Yup.string().required("Campo requerido"),
+    password: Yup.string().required("Campo requerido"),
 });
 
 const FormikTextField = ({ label, type, ...props }) => {
@@ -49,8 +49,9 @@ const Login = () => {
         setLoadingBar(true);
 
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/get-token/", {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/obtain/", {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
             });
@@ -58,11 +59,11 @@ const Login = () => {
             setLoadingBar(false);
             setIsSubmitting(false);
 
+            const data = await response.json();
             if (!response.ok) {
                 const data = await response.json();
                 throw new Error(data.non_field_errors);
             }
-
             if (response.status === 200) {
                 navigate("/loged/home", { replace: true });
             }

@@ -56,7 +56,7 @@ const Navbar = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/logout/", {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/destroy/", {
                 method: "POST",
                 credentials: "include",
             });
@@ -67,7 +67,7 @@ const Navbar = () => {
             }
 
             if (response.status === 200) {
-                navigate("/loged/home", { replace: true });
+                navigate("/", { replace: true });
             }
         } catch (error) {
             console.error(error);
@@ -94,19 +94,10 @@ const Navbar = () => {
                         display: "flex",
                         justifyContent: "space-evenly",
                         alignItems: "center",
-                        padding: "1rem 0",
                         backgroundColor: "rgba(255,255,255, 0.9)",
                         backdropFilter: "blur(10px)",
                     }}
                 >
-                    {/* <Typography
-                        variant="h5"
-                        color="primary"
-                        onClick={() => navigate("/loged/home", { replace: true })}
-                        sx={{ minWidth: 100, cursor: "pointer", fontWeight: "500", fontFamily: "Poppins" }}
-                    >
-                        INSIGHTS
-                    </Typography> */}
                     <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/loged/home", { replace: true })} />
                     {isMobile ? (
                         <IconButton onClick={handleClickMenu} size="small">
@@ -114,12 +105,27 @@ const Navbar = () => {
                         </IconButton>
                     ) : (
                         <>
-                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>Formularios</Typography>
+                            <Typography
+                                onClick={() => navigate("/loged/sgc", { replace: true })}
+                                sx={{
+                                    minWidth: 100,
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    borderBottom: "2px solid transparent", // Add a transparent bottom border
+                                    transition: "border-color 0.3s ease",
+                                    padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
+                                    "&:hover": {
+                                        borderBottomColor: "#0076A8", // Change the background color on hover
+                                    },
+                                }}
+                            >
+                                SGC
+                            </Typography>
                             <Typography sx={{ minWidth: 100, cursor: "pointer" }}>Blog</Typography>
-                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>SGC</Typography>
                             <Typography onClick={() => navigate("/loged/about-us", { replace: true })} sx={{ cursor: "pointer", minWidth: 100 }}>
                                 Sobre Nosotros
                             </Typography>
+                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>Utilitarios</Typography>
                             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                 <Tooltip title="Configuración de cuenta">
                                     <IconButton

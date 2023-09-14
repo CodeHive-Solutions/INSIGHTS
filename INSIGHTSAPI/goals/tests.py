@@ -1,4 +1,4 @@
-from django.test import TestCase
+from rest_framework.test import APITestCase
 from django.db.models import Q
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -7,7 +7,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from .models import Goals, TableInfo
 
-class GoalAPITestCase(TestCase):
+class GoalAPITestCase(APITestCase):
     # @classmethod
     # def setUpTestData(cls):
         # cls.goal = Goal.objects.create(campaign='Base Test Goal', value='99999.99')
@@ -109,7 +109,7 @@ class GoalAPITestCase(TestCase):
         self.assertIsNotNone(response.data[0].get('history_date')) # type: ignore
 
 
-class SendEmailTestCase(TestCase):
+class SendEmailTestCase(APITestCase):
     # databases = ['intranet', 'default']
     def setUp(self):
         self.client = APIClient()

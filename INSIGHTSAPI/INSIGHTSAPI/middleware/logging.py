@@ -9,7 +9,7 @@ class LoggingMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         cedula = request.GET.get('cedula', "user not found")
-        if request.data:
+        if hasattr(request, 'data'):
             logger.info(f"User: {cedula} Request: {request}, Request Data: {request.data}")
         else:
             logger.info(f"User: {cedula} Request: {request}")

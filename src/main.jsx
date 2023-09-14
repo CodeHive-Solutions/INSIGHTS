@@ -12,6 +12,7 @@ import AboutUs from "./routes/AboutUs";
 import ScrollToTop from "./components/ScrollToTop";
 import UploadGoals from "./routes/UploadGoals";
 import GoalsStats from "./routes/GoalsStats";
+import Sgc from "./routes/Sgc";
 
 const theme = createTheme({
     typography: {
@@ -61,6 +62,10 @@ const router = createBrowserRouter([
             {
                 path: "about-us",
                 element: <AboutUs />,
+            },
+            {
+                path: "sgc",
+                element: <Sgc />,
             },
             {
                 path: "upload-goals",
