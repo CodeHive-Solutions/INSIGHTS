@@ -17,11 +17,9 @@ from rest_framework import viewsets, status as framework_status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import transaction
-from django.db.models import Q, OuterRef, Subquery
+from django.db.models import Q, Subquery
 from .models import Goals, TableInfo
 from .serializers import GoalSerializer
-# from rest_framework.permissions import IsAuthenticated
-# from rest_framework.decorators import permission_classes
 
 logger = logging.getLogger("requests")
 
@@ -120,7 +118,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             instance.accepted_at = timezone.now()
                             instance.accepted = True
                             instance.save()
-                        print("Email sent successfully")
                         return Response({'email': correo}, status=framework_status.HTTP_200_OK) 
                     except Exception as e:
                         logger.setLevel(logging.ERROR)

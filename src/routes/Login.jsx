@@ -65,7 +65,7 @@ const Login = () => {
                 throw new Error(data.non_field_errors);
             }
             if (response.status === 200) {
-                navigate("/loged/home", { replace: true });
+                navigate("/logged/home");
             }
         } catch (error) {
             console.error(error);
@@ -124,7 +124,7 @@ const Login = () => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 500 }} variant="h4">
-                                Iniciar Sesion
+                                Iniciar Sesión
                             </Typography>
 
                             <FormikTextField type="text" name="username" label="Usuario" autoComplete="off" spellCheck={false} />
@@ -137,7 +137,7 @@ const Login = () => {
                                 </Link>
                                 <Collapse in={open}>
                                     <Alert severity="info">
-                                        En caso de olvido o perdida de la contraseña contacte con tecnologia para el restablecimiento de la misma en:{" "}
+                                        En caso de olvido o perdida de la contraseña contacte con tecnología para el restablecimiento de la misma en:{" "}
                                         <a href="https://helpdesk.cyc-bpo.com/" target="_blank" rel="noreferrer noopener">
                                             GLPI
                                         </a>
@@ -145,7 +145,7 @@ const Login = () => {
                                 </Collapse>
                             </Box>
                             <Button type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
-                                Iniciar Sesion
+                                Iniciar Sesión
                             </Button>
                         </Box>
                     </Form>

@@ -1,7 +1,7 @@
 import { React, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
-import cyclogo from "../images/img-about.jpg";
+import cycLogo from "../images/img-about.jpg";
 import CarouselComponent from "../components/Carousel";
 import { useMediaQuery } from "@mui/material";
 import Container from "@mui/material/Container";
@@ -11,7 +11,6 @@ import image3 from "../images/image-values.jpg";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import ImageStock from "../images/stock.jpg";
 import logoTipo from "../images/logotipo.png";
 import cesarGarzon from "../images/managers/cesar-garzon.jpg";
 import javierTorres from "../images/managers/javier-torres.jpeg";
@@ -21,6 +20,7 @@ import adrianaPaez from "../images/managers/adriana-paez.jpg";
 import diegoGonzales from "../images/managers/diego-gonzales.jpg";
 import marioGiron from "../images/managers/mario-giron.jpg";
 import melidaSandoval from "../images/managers/melida-sandoval.jpg";
+import hectorSotelo from "../images/managers/hector-sotelo.png";
 
 const AboutUs = () => {
     useEffect(() => {
@@ -40,6 +40,7 @@ const AboutUs = () => {
         { name: "Maria Ferrucho ", management: "Gerente de Gestión Humana", image: mariaFerrucho },
         { name: "Angela Duran", management: "Gerente de Planeación", image: angelaDuran },
         { name: "Adriana Paez", management: "Gerente de Operaciones", image: adrianaPaez },
+        { name: "Hector Sotelo", management: "Gerente de Operaciones de Ventas", image: hectorSotelo },
         { name: "Diego Gonzales", management: "Gerente de Legal y Riesgo", image: diegoGonzales },
         {
             name: "Mario Giron",
@@ -47,7 +48,6 @@ const AboutUs = () => {
             image: marioGiron,
         },
         { name: " Melida Sandoval", management: "Gerente Administrativa", image: melidaSandoval },
-        { name: "Luz Giraldo", management: "Gerente de Mercadeo", image: "" },
     ];
 
     const isSmallScreen = useMediaQuery("(max-width:600px)");
@@ -58,11 +58,11 @@ const AboutUs = () => {
                 Sobre Nosotros
             </Typography>
             <Box sx={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
-                <Box>{isSmallScreen ? <img width={300} src={cyclogo} alt="" /> : <img width={500} src={cyclogo} alt="" />}</Box>
+                <Box>{isSmallScreen ? <img width={300} src={cycLogo} alt="" /> : <img width={500} src={cycLogo} alt="" />}</Box>
                 <Box sx={{ width: "35rem" }}>
                     <Typography sx={{ color: "gray" }}>
                         C&C Services S.A.S., desde 2005, ofrece soluciones para fortalecer los ciclos de riesgo de las empresas a través de un modelo de gestión BPO
-                        innovador y eficiente. Con tres líneas de negocio: Services, Risk y Legal, cubrimos los procesos de originación, mantenimiento y recuperación de
+                        innovador y eficiente. Con tres líneas de negocio: Services, Risk y Legal, cubrimos los procesos de creación, mantenimiento y recuperación de
                         clientes. Nos caracterizamos por estrictos controles, autoevaluación constante, alta efectividad y tecnología avanzada, todo con el objetivo de
                         abrir nuevas posibilidades en el mercado.
                     </Typography>

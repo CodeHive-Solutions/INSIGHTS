@@ -35,7 +35,7 @@ class GoalAPITestCase(APITestCase):
             self.assertEqual(response.status_code, 201)
             self.assertTrue(number_goals > 0)
 
-    def test_ejecucion_upload(self, called=False):
+    def test_execution_upload(self, called=False):
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
             file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Ejecución de metas-enerO-2022.xlsx'
@@ -51,8 +51,7 @@ class GoalAPITestCase(APITestCase):
 
 
     def test_borrado_accepted(self):
-        # Sube registros que despues borrar
-        # Create a SimpleUploadedFile instance from the Excel file
+        # Sube registros que después los borra
         file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
@@ -76,11 +75,11 @@ class GoalAPITestCase(APITestCase):
         self.assertEqual((count, count_at), (0, 0))
         #Do the same verifications but with execution
         Goals.objects.all().update(accepted_execution=True,accepted_execution_at=timezone.now())
-        self.test_ejecucion_upload(called=True)
+        self.test_execution_upload(called=True)
         count_execution = Goals.objects.exclude(Q(accepted__isnull=True) | Q(accepted='')).count()
         first_goal = Goals.objects.exclude(accepted_execution_at=None).first()
         if first_goal:
-            print("No se le borraron los valores de ejecucion a: ",first_goal.cedula)
+            print("No se le borraron los valores de ejecución a: ",first_goal.cedula)
         count_at_execution = Goals.objects.exclude(accepted_execution_at=None).count()
         self.assertEqual((count_execution, count_at_execution), (0, 0))
 
@@ -100,7 +99,7 @@ class GoalAPITestCase(APITestCase):
 
     def test_get_history(self):
         self.test_claro_upload()
-        self.test_ejecucion_upload()
+        self.test_execution_upload()
         response = self.client.get('/goals/?month=DICIembre-2028')
         self.assertEqual(response.status_code, 200)
         self.assertFalse(len(response.data) > 0) # type: ignore

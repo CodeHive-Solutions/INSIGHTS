@@ -13,6 +13,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import UploadGoals from "./routes/UploadGoals";
 import GoalsStats from "./routes/GoalsStats";
 import Sgc from "./routes/Sgc";
+import { AnimatePresence, motion, useIsPresent } from "framer-motion";
+import "./index.css";
 
 const theme = createTheme({
     typography: {
@@ -51,7 +53,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: "/loged",
+        path: "/logged",
         element: <Root />,
         errorElement: <ErrorPage />,
         children: [
@@ -87,9 +89,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>
-                <RouterProvider router={router}>
-                    <ScrollToTop />
-                </RouterProvider>
+                <AnimatePresence mode="wait">
+                    <RouterProvider router={router}>
+                        <ScrollToTop />
+                    </RouterProvider>
+                </AnimatePresence>
             </CssBaseline>
         </ThemeProvider>
     </React.StrictMode>

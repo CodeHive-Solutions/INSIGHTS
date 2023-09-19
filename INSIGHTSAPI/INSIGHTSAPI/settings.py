@@ -15,7 +15,6 @@ import ldap # type: ignore
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta, datetime
-from logging.handlers import RotatingFileHandler
 import os
 import ssl
 
@@ -55,7 +54,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'goals',
     'api_token',
-    'users'
+    'hierarchy',
+    'sgc',
+    # 'users'
 ]
 
 MIDDLEWARE = [
@@ -244,11 +245,11 @@ LOGGING = {
     },
 }
 
-AUTH_USER_MODEL = 'users.User'
+# AUTH_USER_MODEL = 'users.User'
 
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
-AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGIA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
+AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGÍA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
 AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
@@ -258,7 +259,8 @@ AUTH_LDAP_USER_SEARCH = LDAPSearch(
 )
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
     'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
     'SLIDING_TOKEN_REFRESH_ON_LOGIN': True,

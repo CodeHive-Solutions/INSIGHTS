@@ -4,14 +4,24 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Typography, Box } from "@mui/material";
+import { motion, useIsPresent } from "framer-motion";
 import imageExample from "../images/example-image.jpg";
 import imageExample2 from "../images/example-image2.jpg";
 import image2 from "../images/image2.jpg";
 import image3 from "../images/image3.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
+import "../index.css";
+
+// images
+import barbaraVanegas from "../images/birthdays/barbara-vanegas.jpeg";
+import cristianGonzales from "../images/birthdays/cristian-gonzales.jpeg";
+import tuliaCalderon from "../images/birthdays/tulia-calderon.jpeg";
+import carolGuerrero from "../images/birthdays/carol-guerrero.jpeg";
 
 const Home = () => {
+    const isPresent = useIsPresent();
+
     const homeImages = [
         { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
         { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -20,9 +30,22 @@ const Home = () => {
     ];
 
     const birthdays = [
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true", name: "Ejemplo Name", description: "Gerencia Ejemplo" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true", name: "Ejemplo Name", description: "Gerencia Ejemplo" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true", name: "Ejemplo Name", description: "Gerencia Ejemplo" },
+        { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
+        { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
+        { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
+        { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
+    ];
+    const birthdays2 = [
+        { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
+        { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
+        { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
+        { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
+    ];
+    const birthdays3 = [
+        { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
+        { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
+        { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
+        { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
     ];
 
     const [ref, inView] = useInView({
@@ -32,8 +55,15 @@ const Home = () => {
 
     return (
         <>
+            <motion.div
+                initial={{ scaleX: 1 }}
+                animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
+                exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
+                style={{ originX: isPresent ? 0 : 1 }}
+                className="privacy-screen"
+            />
             <Box sx={{ mt: "4rem" }}>
-                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"80vh"} widht={"100%"} />
+                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"80vh"} width={"100%"} />
             </Box>
             <Box
                 sx={{
@@ -63,13 +93,13 @@ const Home = () => {
             <Grow in={inView}>
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                     <Card sx={{ maxWidth: 250, width: 250, height: 450 }}>
-                        <CarouselComponent items={birthdays} day={"Ayer"} height={"280px"} widht={"100%"} />
+                        <CarouselComponent items={birthdays} day={"Ayer"} height={"280px"} width={"100%"} />
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
-                        <CarouselComponent items={birthdays} day={"Hoy"} height={"280px"} widht={"100%"} />
+                        <CarouselComponent items={birthdays2} day={"Hoy"} height={"280px"} width={"100%"} />
                     </Card>{" "}
                     <Card sx={{ maxWidth: 250, width: 250, height: 450 }}>
-                        <CarouselComponent items={birthdays} day={"Mañana"} height={"280px"} widht={"100%"} />
+                        <CarouselComponent items={birthdays3} day={"Mañana"} height={"280px"} width={"100%"} />
                     </Card>{" "}
                 </Box>
             </Grow>

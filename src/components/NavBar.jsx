@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useRef } from "react";
-import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Link } from "@mui/material";
+import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField } from "@mui/material";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
@@ -12,8 +12,8 @@ import InfoIcon from "@mui/icons-material/Info";
 import ChecklistIcon from "@mui/icons-material/Checklist";
 import ArticleIcon from "@mui/icons-material/Article";
 import FolderZipIcon from "@mui/icons-material/FolderZip";
-import { useNavigate } from "react-router-dom";
-import logotipo from "../images/logotipo-navbar - copia.png";
+import { useNavigate, useMatch } from "react-router-dom";
+import logotipo from "../images/logotipo-navbar-copia.webp";
 import SnackbarAlert from "../components/SnackBarAlert";
 
 const Navbar = () => {
@@ -26,6 +26,52 @@ const Navbar = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
+
+    function CustomNavLink({ to, children }) {
+        let match = useMatch(to);
+        return (
+            <Typography
+                onClick={() => navigate(to, { replace: true })}
+                sx={{
+                    minWidth: 100,
+                    textAlign: "center",
+                    cursor: "pointer",
+                    borderBottom: "2px solid transparent", // Add a transparent bottom border
+                    transition: "all 0.3s ease",
+                    padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
+                    borderBottomColor: match ? "#0076A8" : "transparent",
+                    color: match ? "#0076A8" : "inherit",
+                    "&:hover": {
+                        color: "#0076A8",
+                        borderBottomColor: "#0076A8", // Change the background color on hover
+                    },
+                }}
+            >
+                {children}
+            </Typography>
+        );
+    }
+
+    const linkStyle = {
+        minWidth: 100,
+        textDecoration: "none",
+        color: "#131313",
+        textAlign: "center",
+        cursor: "pointer",
+        borderBottom: "2px solid transparent", // Add a transparent bottom border
+        transition: "all 0.3s ease",
+        padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
+        "&:hover": {
+            color: "#0076A8",
+            borderBottomColor: "#0076A8", // Change the background color on hover
+        },
+    };
+
+    const activeLinkStyle = {
+        ...linkStyle,
+        borderBottomColor: "#0076A8",
+        color: "#0076A8", // Change the background color on hover
+    };
 
     const handleCloseSnack = () => setOpenSnack(false);
     const handleOpenSnack = () => setOpenSnack(true);
@@ -54,9 +100,9 @@ const Navbar = () => {
         }
     };
 
-    const handleLogout = async () => {
+    const refreshToken = async () => {
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/destroy/", {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/refresh/", {
                 method: "POST",
                 credentials: "include",
             });
@@ -66,8 +112,39 @@ const Navbar = () => {
                 throw new Error(data.detail);
             }
 
+            const data = await response.json();
             if (response.status === 200) {
+                console.log("refresh token success");
+            } else if (response.status === 401 && data.detail === "Authentication credentials were not provided") {
                 navigate("/", { replace: true });
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/destroy/", {
+                method: "POST",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                if (response.status === 401 && data.detail === "Authentication credentials were not provided.") {
+                    refreshToken();
+                }
+                throw new Error(data.detail);
+            }
+
+            const data = await response.json();
+            if (response.status === 200) {
+                refreshToken();
+                console.log("logout success");
+                navigate("/", { replace: true });
+            } else if (response.status === 401 && data.detail === "Authentication credentials were not provided") {
             }
         } catch (error) {
             console.error(error);
@@ -80,13 +157,14 @@ const Navbar = () => {
     return (
         <>
             <Box
+                className="navbar"
                 sx={{
                     position: "fixed",
                     top: 0,
                     left: 0,
                     width: "100vw",
                     backdropFilter: "blur(10px)",
-                    zIndex: 1000,
+                    zIndex: 50,
                 }}
             >
                 <Box
@@ -98,34 +176,17 @@ const Navbar = () => {
                         backdropFilter: "blur(10px)",
                     }}
                 >
-                    <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/loged/home", { replace: true })} />
+                    <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/logged/home")} />
                     {isMobile ? (
                         <IconButton onClick={handleClickMenu} size="small">
                             <MenuIcon />
                         </IconButton>
                     ) : (
                         <>
-                            <Typography
-                                onClick={() => navigate("/loged/sgc", { replace: true })}
-                                sx={{
-                                    minWidth: 100,
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    borderBottom: "2px solid transparent", // Add a transparent bottom border
-                                    transition: "border-color 0.3s ease",
-                                    padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
-                                    "&:hover": {
-                                        borderBottomColor: "#0076A8", // Change the background color on hover
-                                    },
-                                }}
-                            >
-                                SGC
-                            </Typography>
-                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>Blog</Typography>
-                            <Typography onClick={() => navigate("/loged/about-us", { replace: true })} sx={{ cursor: "pointer", minWidth: 100 }}>
-                                Sobre Nosotros
-                            </Typography>
-                            <Typography sx={{ minWidth: 100, cursor: "pointer" }}>Utilitarios</Typography>
+                            <CustomNavLink to="/logged/sgc">SGC</CustomNavLink>
+                            <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
+                            <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
+                            <CustomNavLink to="/logged/utilitarios">Utilitarios</CustomNavLink>
                             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                 <Tooltip title="Configuración de cuenta">
                                     <IconButton
