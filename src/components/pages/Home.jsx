@@ -1,52 +1,55 @@
 import React, { useEffect } from "react";
-import CarouselComponent from "../components/Carousel";
+import CarouselComponent from "../shared/Carousel";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Typography, Box } from "@mui/material";
 import { motion, useIsPresent } from "framer-motion";
-import imageExample from "../images/example-image.jpg";
-import imageExample2 from "../images/example-image2.jpg";
-import image2 from "../images/image2.jpg";
-import image3 from "../images/image3.jpg";
+import imageExample from "../../images/example-image.jpg";
+import imageExample2 from "../../images/example-image2.jpg";
+import image2 from "../../images/image2.jpg";
+import image3 from "../../images/image3.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
-import "../index.css";
+import "../../index.css";
 
 // images
-import barbaraVanegas from "../images/birthdays/barbara-vanegas.jpeg";
-import cristianGonzales from "../images/birthdays/cristian-gonzales.jpeg";
-import tuliaCalderon from "../images/birthdays/tulia-calderon.jpeg";
-import carolGuerrero from "../images/birthdays/carol-guerrero.jpeg";
+import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
+import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
+import tuliaCalderon from "../../images/birthdays/tulia-calderon.jpeg";
+import carolGuerrero from "../../images/birthdays/carol-guerrero.jpeg";
+
+const homeImages = [
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
+];
+const birthdays = [
+    { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
+    { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
+    { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
+    { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
+];
+const birthdays2 = [
+    { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
+    { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
+    { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
+    { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
+];
+const birthdays3 = [
+    { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
+    { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
+    { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
+    { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
+];
 
 const Home = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const isPresent = useIsPresent();
-
-    const homeImages = [
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
-    ];
-
-    const birthdays = [
-        { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
-        { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
-        { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
-        { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
-    ];
-    const birthdays2 = [
-        { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
-        { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
-        { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
-        { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
-    ];
-    const birthdays3 = [
-        { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
-        { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
-        { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
-        { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
-    ];
 
     const [ref, inView] = useInView({
         triggerOnce: true,

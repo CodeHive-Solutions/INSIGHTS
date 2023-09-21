@@ -9,6 +9,11 @@ class LoggingMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         cedula = request.GET.get('cedula', "user not found")
+        request_file = request.FILES.get('file', None)
+        if request_file:
+            logger.info("Response: %s, Response Content: %s, File: %s", response, response_data, request_file.name)
+        else:
+            logger.info("Response: %s, Response Content: %s", response, response_data)
         if hasattr(request, 'data'):
             logger.info(f"User: {cedula} Request: {request}, Request Data: {request.data}")
         else:

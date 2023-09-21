@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useRef } from "react";
-import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField } from "@mui/material";
+import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover } from "@mui/material";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
@@ -13,11 +13,14 @@ import ChecklistIcon from "@mui/icons-material/Checklist";
 import ArticleIcon from "@mui/icons-material/Article";
 import FolderZipIcon from "@mui/icons-material/FolderZip";
 import { useNavigate, useMatch } from "react-router-dom";
-import logotipo from "../images/logotipo-navbar-copia.webp";
-import SnackbarAlert from "../components/SnackBarAlert";
+import logotipo from "../../images/logotipo-navbar-copia.webp";
+import SnackbarAlert from "./SnackBarAlert";
+import FlagIcon from "@mui/icons-material/Flag";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorElUtils, setAnchorElUtils] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
     const openMenu = Boolean(anchorElMenu);
     const open = Boolean(anchorEl);
@@ -26,12 +29,21 @@ const Navbar = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
+    const openUtils = Boolean(anchorElUtils);
 
-    function CustomNavLink({ to, children }) {
+    const handleUtilitariosMenuOpen = (event) => {
+        setAnchorElUtils(event.currentTarget);
+    };
+
+    const handleUtilitariosMenuClose = () => {
+        setAnchorElUtils(null);
+    };
+
+    function CustomNavLink({ to, children, onMouseEnter, anchor }) {
         let match = useMatch(to);
         return (
             <Typography
-                onClick={() => navigate(to, { replace: true })}
+                onClick={() => navigate(to)}
                 sx={{
                     minWidth: 100,
                     textAlign: "center",
@@ -52,39 +64,27 @@ const Navbar = () => {
         );
     }
 
-    const linkStyle = {
-        minWidth: 100,
-        textDecoration: "none",
-        color: "#131313",
-        textAlign: "center",
-        cursor: "pointer",
-        borderBottom: "2px solid transparent", // Add a transparent bottom border
-        transition: "all 0.3s ease",
-        padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
-        "&:hover": {
-            color: "#0076A8",
-            borderBottomColor: "#0076A8", // Change the background color on hover
-        },
-    };
-
-    const activeLinkStyle = {
-        ...linkStyle,
-        borderBottomColor: "#0076A8",
-        color: "#0076A8", // Change the background color on hover
-    };
-
     const handleCloseSnack = () => setOpenSnack(false);
     const handleOpenSnack = () => setOpenSnack(true);
 
     const handleClickMenu = (event) => {
         setAnchorElMenu(event.currentTarget);
     };
+
     const handleCloseMenu = () => {
         setAnchorElMenu(null);
     };
 
+    const handleCloseUtils = () => {
+        setAnchorElUtils(null);
+    };
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
+    };
+
+    const handleClickUtils = (event) => {
+        setAnchorElUtils(event.currentTarget);
     };
 
     const handleClose = () => {
@@ -142,7 +142,6 @@ const Navbar = () => {
             const data = await response.json();
             if (response.status === 200) {
                 refreshToken();
-                console.log("logout success");
                 navigate("/", { replace: true });
             } else if (response.status === 401 && data.detail === "Authentication credentials were not provided") {
             }
@@ -166,6 +165,7 @@ const Navbar = () => {
                     backdropFilter: "blur(10px)",
                     zIndex: 50,
                 }}
+                onMouseEnter={handleCloseUtils}
             >
                 <Box
                     sx={{
@@ -186,7 +186,22 @@ const Navbar = () => {
                             <CustomNavLink to="/logged/sgc">SGC</CustomNavLink>
                             <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                             <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
-                            <CustomNavLink to="/logged/utilitarios">Utilitarios</CustomNavLink>
+                            <Typography
+                                onMouseEnter={handleUtilitariosMenuOpen}
+                                anchorEl={anchorElUtils}
+                                sx={{
+                                    minWidth: 100,
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    borderBottom: "2px solid transparent", // Add a transparent bottom border
+                                    transition: "all 0.3s ease",
+                                    padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
+                                    borderBottomColor: "transparent",
+                                }}
+                            >
+                                Utilitarios
+                            </Typography>
+
                             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                                 <Tooltip title="Configuración de cuenta">
                                     <IconButton
@@ -346,6 +361,55 @@ const Navbar = () => {
                     </Tooltip>
                 </Box>
             </Menu>
+            <Menu
+                anchorEl={anchorElUtils}
+                open={openUtils}
+                onClose={handleCloseUtils}
+                id="account-menu-utils"
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        overflow: "visible",
+                        filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                        "& .MuiAvatar-root": {
+                            width: 32,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                        },
+                        "&:before": {
+                            content: '""',
+                            display: "block",
+                            position: "absolute",
+                            top: 0,
+                            right: 14,
+                            width: 10,
+                            height: 10,
+                            bgcolor: "background.paper",
+                            transform: "translateY(-50%) rotate(45deg)",
+                            zIndex: 0,
+                        },
+                    },
+                }}
+                transformOrigin={{ horizontal: "right", vertical: "top" }}
+                anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+                <Box onMouseLeave={handleCloseUtils}>
+                    <MenuItem onClick={() => navigate("/logged/goals-stats")}>
+                        <ListItemIcon>
+                            <FlagIcon fontSize="small" />
+                        </ListItemIcon>
+                        Análisis de metas
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/logged/upload-goals")}>
+                        <ListItemIcon>
+                            <UploadFileIcon fontSize="small" />
+                        </ListItemIcon>
+                        Cargue de archivos
+                    </MenuItem>
+                </Box>
+            </Menu>
+
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

@@ -112,7 +112,7 @@ EMAIL_HOST = 'mail.cyc-services.com.co'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mismetas@cyc-services.com.co'
-EMAIL_HOST_PASSWORD = os.getenv('C_2023')
+EMAIL_HOST_PASSWORD = os.environ['C_2023']
 DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 
 # Database
@@ -127,17 +127,25 @@ DATABASES = {
         'PASSWORD': os.environ['INSIGHTSMYSQL'],
         'NAME': 'insights',
     },
-    # 'intranet': { # mysql too old
+    'staffnet': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': os.environ['SERVER_DB'],
+        'PORT': '3306',
+        'USER': 'INSIGHTSUSER',
+        'PASSWORD': os.environ['INSIGHTSMYSQL'],
+        'NAME': 'staffnet',
+        'TEST': {'MIRROR': 'staffnet'}
+    },
+    # 'llamadas': {
     #     'ENGINE': 'django.db.backends.mysql',
-    #     'HOST':"172.16.0.6",
-    #     'USER':"root",
-    #     'PASSWORD':os.getenv('LEYES'),
-    #     'NAME':"userscyc",
-    #     'port':"3306"
+    #     'HOST': '172.16.0.9',
+    #     'PORT': '3306',
+    #     'USER': 'blacklistuser',
+    #     # 'PASSWORD': os.environ['black_list_pass'],
+    #     'PASSWORD': 'a4dnAGc-',
+    #     'NAME': 'asteriskdb',
     # }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

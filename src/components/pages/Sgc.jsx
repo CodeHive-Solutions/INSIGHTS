@@ -4,9 +4,14 @@ import { Typography } from "@mui/material";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { motion, useIsPresent } from "framer-motion";
-import "../index.css";
+import "../../index.css";
+import { useEffect } from "react";
 
 export const Sgc = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const isPresent = useIsPresent();
     const columns = [
         { field: "id", headerName: "ID", width: 70 },

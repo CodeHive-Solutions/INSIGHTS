@@ -1,5 +1,5 @@
 import { Container, Typography, Box } from "@mui/material";
-import SnackbarAlert from "../components/SnackBarAlert";
+import SnackbarAlert from "../common/SnackBarAlert";
 import { useState, useEffect, useCallback, useRef } from "react";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import {
@@ -22,6 +22,10 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 
 const AnalisisMetas = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [snackbarMessage, setSnackbarMessage] = useState("");

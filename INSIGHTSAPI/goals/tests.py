@@ -1,4 +1,5 @@
 from rest_framework.test import APITestCase
+from django.test.utils import override_settings
 from django.db.models import Q
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -107,9 +108,9 @@ class GoalAPITestCase(APITestCase):
         self.assertTrue(len(response.data) > 0) # type: ignore
         self.assertIsNotNone(response.data[0].get('history_date')) # type: ignore
 
-
+@override_settings(DATABASES={'default': 'your_real_db_alias'})
 class SendEmailTestCase(APITestCase):
-    # databases = ['intranet', 'default']
+    databases = ['staffnet','default'] # type: ignore
     def setUp(self):
         self.client = APIClient()
         self.url = reverse('goal-send-email')
@@ -135,15 +136,11 @@ class SendEmailTestCase(APITestCase):
             'cedula': '1000065648',
             'delivery_type': 'Testing'
         }
-
-        # Send a POST request to the view
         response = self.client.post(self.url, data=payload)
         data = response.json()
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('email', data)
-
-        # Assert that the email was sent successfully by checking the database or email logs
 
     def test_send_email_missing_data(self):
         # Prepare the request with missing data

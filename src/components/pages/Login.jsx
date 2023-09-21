@@ -1,14 +1,14 @@
 import { Box, Typography, Button, TextField, Link } from "@mui/material";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import login_image from "../images/ALE02974.webp";
+import login_image from "../../images/ALE02974.webp";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
 import { React } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
-import SnackbarAlert from "../components/SnackBarAlert";
+import { useState, useEffect } from "react";
+import SnackbarAlert from "../common/SnackBarAlert";
 import LinearProgress from "@mui/material/LinearProgress";
 
 const validationSchema = Yup.object().shape({
@@ -23,6 +23,10 @@ const FormikTextField = ({ label, type, ...props }) => {
 };
 
 const Login = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const [open, setOpen] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const navigate = useNavigate();

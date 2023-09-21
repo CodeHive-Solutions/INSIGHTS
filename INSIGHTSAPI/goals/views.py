@@ -1,6 +1,4 @@
 import logging
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes
 import os
 import re
 from django.utils import timezone
@@ -8,7 +6,7 @@ import ssl
 import ftfy
 from smtplib import SMTP
 import base64
-import mysql.connector
+from django.db import connections
 from django.conf import settings
 from django.core.mail import EmailMessage
 from openpyxl import load_workbook
@@ -57,83 +55,68 @@ class GoalsViewSet(viewsets.ModelViewSet):
         pdf_64 = request.POST.get('pdf')
         cedula = request.POST.get('cedula')
         delivery_type = request.POST.get('delivery_type')
-        db_connection = None
         if pdf_64 and cedula and delivery_type:
             try:
-                intranet_config = {
-                    'host': '172.16.0.6',
-                    'user': 'root',
-                    'password': os.getenv('LEYES'),
-                    'database': 'userscyc',
-                    'port': '3306',
-                }
-                intranet_db = mysql.connector.connect(**intranet_config)
-                db_cursor = intranet_db.cursor()
-                instance = Goals.objects.filter(cedula=cedula).first()
-                db_cursor.execute("SELECT email_user, pnom_user, pape_user FROM users WHERE `id_user` = %s",[cedula])
-                result = db_cursor.fetchone()
-                if result is not None and instance is not None:
-                    
-                    try:
-                        correo = result[0]
-                        nombre = str(result[1]) + ' ' + str(result[2])
-                        nombre_encoded = ftfy.fix_text(nombre)
-                        decoded_pdf_data = base64.b64decode(pdf_64)
-                        email = EmailMessage(
-                            f'{delivery_type}',
-                                    '<html><body>'
-                                    '<div>'
-                                    f'<p>Estimado/a {nombre_encoded.title()}:</p>'
-                                    f'<p>Se ha procesado su {delivery_type}.<br> Por favor, no responda ni reenvíe este correo. Contiene información confidencial.<br>'
-                                    '<div style="color: black;">Cordialmente,<br>'
-                                    'M.I.S. Management Information System C&C Services</div></p>'
-                                    '</div>'
-                                    '</body></html>',
-                            f'{delivery_type} <{settings.DEFAULT_FROM_EMAIL}>',
-                            [str(correo)],
-                        )
-                        email.content_subtype = "html"
-                        email.attach(f'{delivery_type}.pdf', decoded_pdf_data, "application/pdf")
-                        # Get the underlying EmailMessage object
-                        email_msg = email.message()
-                        # Create an SMTP connection
-                        connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
-                        connection.ehlo()
-                        # Wrap the socket with the SSL context
-                        context = ssl.create_default_context()
-                        context.check_hostname = False
-                        context.verify_mode = ssl.CERT_NONE
-                        connection.starttls(context=context)
-                        # Authenticate with the SMTP server
-                        connection.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
-                        # Send the email
-                        connection.send_message(email_msg)
-                        # Close the connection
-                        connection.quit()
-                        if delivery_type == "Ejecución de metas":
-                            instance.accepted_execution_at = timezone.now()
-                            instance.accepted_execution = True
+                with connections['staffnet'].cursor() as db_connection:
+                    instance = Goals.objects.filter(cedula=cedula).first()
+                    db_connection.execute("SELECT correo,nombre FROM personal_information WHERE cedula = %s", [cedula])
+                    result = db_connection.fetchone()
+                    if result is not None and instance is not None:
+                        try:
+                            correo = result[0]
+                            nombre = str(result[1])
+                            decoded_pdf_data = base64.b64decode(pdf_64)
+                            email = EmailMessage(
+                                f'{delivery_type}',
+                                '<html><body>'
+                                '<div>'
+                                f'<p>Estimado/a {nombre}:</p>'
+                                f'<p>Se ha procesado su {delivery_type}.<br> Por favor, no responda ni reenvíe este correo. Contiene información confidencial.<br>'
+                                '<div style="color: black;">Cordialmente,<br>'
+                                'M.I.S. Management Information System C&C Services</div></p>'
+                                '</div>'
+                                '</body></html>',
+                                f'{delivery_type} <{settings.DEFAULT_FROM_EMAIL}>',
+                                [str(correo)],
+                            )
+                            email.content_subtype = "html"
+                            email.attach(f'{delivery_type}.pdf', decoded_pdf_data, "application/pdf")
+                            # Get the underlying EmailMessage object
+                            email_msg = email.message()
+                            # Create an SMTP connection
+                            connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+                            connection.ehlo()
+                            # Wrap the socket with the SSL context
+                            context = ssl.create_default_context()
+                            context.check_hostname = False
+                            context.verify_mode = ssl.CERT_NONE
+                            connection.starttls(context=context)
+                            # Authenticate with the SMTP server
+                            connection.login(settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD)
+                            # Send the email
+                            connection.send_message(email_msg)
+                            # Close the connection
+                            connection.quit()
+                            if delivery_type == "Ejecución de metas":
+                                instance.accepted_execution_at = timezone.now()
+                                instance.accepted_execution = True
+                            else:
+                                instance.accepted_at = timezone.now()
+                                instance.accepted = True
                             instance.save()
-                        else:
-                            instance.accepted_at = timezone.now()
-                            instance.accepted = True
-                            instance.save()
-                        return Response({'email': correo}, status=framework_status.HTTP_200_OK) 
-                    except Exception as e:
-                        logger.setLevel(logging.ERROR)
-                        logger.exception("Error: %s", str(e))
-                        print("Error: %s", str(e))
-                        return Response(status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
-                else:
-                    return Response({'Error': "Email not found"}, status=framework_status.HTTP_404_NOT_FOUND)
+                            return Response({'email': correo}, status=framework_status.HTTP_200_OK) 
+                        except Exception as e:
+                            logger.setLevel(logging.ERROR)
+                            logger.exception("Error: %s", str(e))
+                            print("Error: %s", str(e))
+                            return Response(status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    else:
+                        return Response({'Error': "Email not found"}, status=framework_status.HTTP_404_NOT_FOUND)
             except Exception as e:
                 logger.setLevel(logging.ERROR)
                 logger.exception("Error: %s", str(e))
                 print("Error: %s", str(e))
                 return Response(status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
-            finally:
-                if db_connection is not None and db_connection.is_connected():
-                    db_connection.close()   
         else:
             return Response({'Error': f'{"PDF" if not pdf_64 else "Cedula"} not found in the request.'}, status=framework_status.HTTP_400_BAD_REQUEST)
 
@@ -154,11 +137,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 workbook = load_workbook(file_obj, read_only=True, data_only=True)
                 sheet = workbook[workbook.sheetnames[0]]
                 # Get the column indices based on the header names
-                header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
+                header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this suppress the warning
                 header_names = {
                     'CEDULA', 'NOMBRE', 'CARGO', 'CAMPAÑA', 'COORDINADOR A CARGO','ESTADO','OBSERVACIONES'
                 }
-                missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
+                missing_headers = header_names - set(header_row) # type: ignore <- this suppress the warning
                 if missing_headers:
                     return Response({"message": f"Encabezados de columna no encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
                 cedula_index = header_row.index('CEDULA')
@@ -173,8 +156,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         header_names = {
                             'TABLA'
                         }
-                        header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
-                        missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
+                        header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this suppress the warning
+                        missing_headers = header_names - set(header_row) # type: ignore <- this suppress the warning
                         if missing_headers:
                             return Response({"message": f"Encabezados no encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
                         table_index = header_row.index('TABLA')
@@ -182,8 +165,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         header_names = {
                             'NOMBRE_TABLA','FRANJA', 'META DIARIA', 'DIAS', 'META MES CON PAGO', 'POR HORA','RECAUDO POR CUENTA'
                         }
-                        header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this supress the warning
-                        missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
+                        header_row = next(sheet.iter_rows(values_only=True))# type: ignore <- this suppress the warning
+                        missing_headers = header_names - set(header_row) # type: ignore <- this suppress the warning
                         if missing_headers:
                             return Response({"message": f"Encabezados no encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
                         table_name_index = header_row.index('NOMBRE_TABLA')
@@ -194,7 +177,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         hours_index = header_row.index('POR HORA')
                         collection_account_index = header_row.index('RECAUDO POR CUENTA')
                         sheet = workbook[workbook.sheetnames[0]]
-                        for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
+                        for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this suppress the warning
                             cargo = str(row[cargo_index].value).upper().lstrip('.')
                             if cargo.find('ASESOR') != -1:
                                 # Avoid NoneType error
@@ -219,7 +202,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                 # Update or create the record
                                 unique_constraint = 'cedula'
                                 default_value = {
-                                    'name': name,
+                                    'name': str(name).upper(),
                                     'job_title': cargo,
                                     'campaign': campaign,
                                     'coordinator': coordinator,
@@ -246,7 +229,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                     return Response({"message": "Excel upload Failed.","error": str(e)}, status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
                         sheet = workbook['Tabla_de_valores']
                         table_name = None
-                        for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
+                        for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this suppress the warning
                             if i == 2:
                                 TableInfo.objects.all().delete()
                             try:
@@ -261,7 +244,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                     collection_account_str = str(row[collection_account_index].value)
                                     collection_account = re.sub(r'[^0-9]', '', collection_account_str)
                                     TableInfo.objects.create(
-                                        name=table_name,
+                                        name=str(table_name).upper(),
                                         fringe=fringe,
                                         diary_goal=diary_goal,
                                         days=days,
@@ -277,7 +260,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 header_names = {
                     'DESCRIPCION DE LA VARIABLE A MEDIR', 'CANTIDAD'
                 }
-                missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
+                missing_headers = header_names - set(header_row) # type: ignore <- this suppress the warning
                 if missing_headers:
                     return Response({"message": f"Estos encabezados no fueron encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
                 criteria_index = header_row.index('DESCRIPCION DE LA VARIABLE A MEDIR')
@@ -286,7 +269,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     header_names = {
                         '% CUMPLIMIENTO', 'EVALUACION', 'CALIDAD', 'CLEAN DESK', 'TOTAL'
                     }
-                    missing_headers = header_names - set(header_row) # type: ignore <- this supress the warning
+                    missing_headers = header_names - set(header_row) # type: ignore <- this suppress the warning
                     if missing_headers:
                         return Response({"message": f"Estos encabezados no fueron encontrados: {', '.join(missing_headers)}"}, status=framework_status.HTTP_400_BAD_REQUEST)
                     result_index = header_row.index('% CUMPLIMIENTO')
@@ -300,7 +283,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     quality_index = None
                     clean_desk_index = None
                     total_index = None
-                for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this supress the warning
+                for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):# type: ignore <- this suppress the warning
                     cargo = str(row[cargo_index].value)
                     cedula = row[cedula_index]
                     if cargo.upper().find('ASESOR') != -1:
@@ -319,13 +302,13 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         observation = row[observation_index].value
                         status = row[status_index].value
                         if file_name.upper().find('EJECUCION') != -1 or file_name.upper().find('EJECUCIÓN') != -1:
-                            result_cell = row[result_index] # type: ignore <- this supress the warning
+                            result_cell = row[result_index] # type: ignore <- this suppress the warning
                             result = format_cell_value(result_cell)
-                            evaluation_cell = row[evaluation_index] # type: ignore <- this supress the warning
+                            evaluation_cell = row[evaluation_index] # type: ignore <- this suppress the warning
                             evaluation = format_cell_value(evaluation_cell)
-                            quality = format_cell_value(row[quality_index]) # type: ignore <- this supress the warning
-                            clean_desk = format_cell_value(row[clean_desk_index]) # type: ignore <- this supress the warning
-                            total = format_cell_value(row[total_index]) # type: ignore <- this supress the warning
+                            quality = format_cell_value(row[quality_index]) # type: ignore <- this suppress the warning
+                            clean_desk = format_cell_value(row[clean_desk_index]) # type: ignore <- this suppress the warning
+                            total = format_cell_value(row[total_index]) # type: ignore <- this suppress the warning
                             # default_value['execution_date'] = date
                         else:
                             result = None
@@ -378,17 +361,3 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 return Response({"message": "Excel upload Failed.","Error": str(e)}, status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
         else:
             return Response({"message": "Excel no encontrado."}, status=framework_status.HTTP_400_BAD_REQUEST)
-
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def get_user_info(request):
-    request.session['UwU'] = 'OwO'
-    user_id = request.session.get('user_id')
-    username = request.session.get('username')
-    request.session['info'] = 'informacion'
-    context = {
-        'user_id': user_id,
-        'username': username,
-    }
-    print("Contexto:",context)
-    return Response(context, status=framework_status.HTTP_200_OK)

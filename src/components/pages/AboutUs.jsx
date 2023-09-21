@@ -1,55 +1,54 @@
 import { React, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
-import cycLogo from "../images/img-about.jpg";
-import CarouselComponent from "../components/Carousel";
+import cycLogo from "../../images/img-about.jpg";
+import CarouselComponent from "../shared/Carousel";
 import { useMediaQuery } from "@mui/material";
 import Container from "@mui/material/Container";
-import image1 from "../images/image-vision.jpg";
-import image2 from "../images/image-mision.png";
-import image3 from "../images/image-values.jpg";
+import image1 from "../../images/image-vision.jpg";
+import image2 from "../../images/image-mision.png";
+import image3 from "../../images/image-values.jpg";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import logoTipo from "../images/logotipo.png";
-import cesarGarzon from "../images/managers/cesar-garzon.jpg";
-import javierTorres from "../images/managers/javier-torres.jpeg";
-import mariaFerrucho from "../images/managers/maria-ferrucho.jpg";
-import angelaDuran from "../images/managers/angela-duran.jpeg";
-import adrianaPaez from "../images/managers/adriana-paez.jpg";
-import diegoGonzales from "../images/managers/diego-gonzales.jpg";
-import marioGiron from "../images/managers/mario-giron.jpg";
-import melidaSandoval from "../images/managers/melida-sandoval.jpg";
-import hectorSotelo from "../images/managers/hector-sotelo.png";
+import logoTipo from "../../images/logotipo.png";
+import cesarGarzon from "../../images/managers/cesar-garzon.jpg";
+import javierTorres from "../../images/managers/javier-torres.jpeg";
+import mariaFerrucho from "../../images/managers/maria-ferrucho.jpg";
+import angelaDuran from "../../images/managers/angela-duran.jpeg";
+import adrianaPaez from "../../images/managers/adriana-paez.jpg";
+import diegoGonzales from "../../images/managers/diego-gonzales.jpg";
+import marioGiron from "../../images/managers/mario-giron.jpg";
+import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
+import hectorSotelo from "../../images/managers/hector-sotelo.png";
+
+const homeImages = [
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
+];
+
+const managements = [
+    { name: "Cesar Garzon", management: "Gerente General", image: cesarGarzon },
+    { name: "Javier Torres", management: "Gerente de Tecnología", image: javierTorres },
+    { name: "Maria Ferrucho ", management: "Gerente de Gestión Humana", image: mariaFerrucho },
+    { name: "Angela Duran", management: "Gerente de Planeación", image: angelaDuran },
+    { name: "Adriana Paez", management: "Gerente de Operaciones", image: adrianaPaez },
+    { name: "Hector Sotelo", management: "Gerente de Operaciones de Ventas", image: hectorSotelo },
+    { name: "Diego Gonzales", management: "Gerente de Legal y Riesgo", image: diegoGonzales },
+    {
+        name: "Mario Giron",
+        management: "Gerente de Riesgo y Control Interno",
+        image: marioGiron,
+    },
+    { name: " Melida Sandoval", management: "Gerente Administrativa", image: melidaSandoval },
+];
 
 const AboutUs = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
-
-    const homeImages = [
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
-    ];
-
-    const managements = [
-        { name: "Cesar Garzon", management: "Gerente General", image: cesarGarzon },
-        { name: "Javier Torres", management: "Gerente de Tecnología", image: javierTorres },
-        { name: "Maria Ferrucho ", management: "Gerente de Gestión Humana", image: mariaFerrucho },
-        { name: "Angela Duran", management: "Gerente de Planeación", image: angelaDuran },
-        { name: "Adriana Paez", management: "Gerente de Operaciones", image: adrianaPaez },
-        { name: "Hector Sotelo", management: "Gerente de Operaciones de Ventas", image: hectorSotelo },
-        { name: "Diego Gonzales", management: "Gerente de Legal y Riesgo", image: diegoGonzales },
-        {
-            name: "Mario Giron",
-            management: "Gerente de Riesgo y Control Interno",
-            image: marioGiron,
-        },
-        { name: " Melida Sandoval", management: "Gerente Administrativa", image: melidaSandoval },
-    ];
-
     const isSmallScreen = useMediaQuery("(max-width:600px)");
 
     return (

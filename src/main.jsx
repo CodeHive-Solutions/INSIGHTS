@@ -1,20 +1,20 @@
 import "./index.css";
 import React from "react";
-import ErrorPage from "./error-page";
-import Login from "./routes/Login";
-import Home from "./routes/Home";
-import Root from "./routes/root";
+import ErrorPage from "./components/pages/ErrorPage";
+import Login from "./components/pages/Login";
+import Home from "./components/pages/Home";
+import Root from "./components/container/root";
 import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import AboutUs from "./routes/AboutUs";
-import ScrollToTop from "./components/ScrollToTop";
-import UploadGoals from "./routes/UploadGoals";
-import GoalsStats from "./routes/GoalsStats";
-import Sgc from "./routes/Sgc";
-import { AnimatePresence, motion, useIsPresent } from "framer-motion";
+import AboutUs from "./components/pages/AboutUs";
+import UploadGoals from "./components/pages/UploadGoals";
+import GoalsStats from "./components/pages/GoalsStats";
+import Sgc from "./components/pages/Sgc";
+import { AnimatePresence } from "framer-motion";
 import "./index.css";
+import Test from "./components/pages/Test";
 
 const theme = createTheme({
     typography: {
@@ -50,7 +50,11 @@ const router = createBrowserRouter([
     {
         path: "/",
         element: <Login />,
-        errorElement: <ErrorPage />,
+        errorElement: <ErrorPage isLogin={true} />,
+    },
+    {
+        path: "test",
+        element: <Test />,
     },
     {
         path: "/logged",
@@ -89,10 +93,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>
-                <AnimatePresence mode="wait">
-                    <RouterProvider router={router}>
-                        <ScrollToTop />
-                    </RouterProvider>
+                <AnimatePresence mode="wait" initial={false}>
+                    <RouterProvider router={router} />
                 </AnimatePresence>
             </CssBaseline>
         </ThemeProvider>
