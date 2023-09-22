@@ -89,8 +89,7 @@ const Home = () => {
                     Cumpleaños
                 </Typography>
                 <Typography sx={{ color: "gray", display: "flex", width: "50%", justifyContent: "center", padding: "1em", fontWeight: 500, fontSize: "16px" }}>
-                    ¡Celebremos juntos los destellos de vida que iluminan nuestro camino laboral! 🎉🌟 En esta sección, honramos a quienes hacen que cada día en la
-                    empresa sea especial. ¡Feliz cumpleaños a nuestros brillantes compañeros que llenan nuestros días de alegría y éxito! 🎂🎈
+                    `¡Feliz cumpleaños a nuestros brillantes compañeros que llenan nuestros días de alegría y éxito! 🎂🎈`
                 </Typography>
             </Box>
             <Grow in={inView}>

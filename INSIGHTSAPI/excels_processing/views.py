@@ -1,8 +1,8 @@
-from .excel_functions import upload_df_to_table, file_to_data_frame
+import logging
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-import logging
 import mysql.connector
+from .excel_functions import upload_df_to_table, file_to_data_frame
 
 logger = logging.getLogger(__name__)
 
@@ -30,5 +30,5 @@ def robinson_list(request):
         logger.error(error)
         return Response(error, status=500)
     finally:
-        if (connection.is_connected()):
+        if connection.is_connected():
             connection.close()

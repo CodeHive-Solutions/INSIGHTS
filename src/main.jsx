@@ -8,11 +8,10 @@ import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import AboutUs from "./components/pages/AboutUs";
+import AboutUs from "./components/pages/About";
 import UploadGoals from "./components/pages/UploadGoals";
 import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
-import { AnimatePresence } from "framer-motion";
 import "./index.css";
 import Test from "./components/pages/Test";
 
@@ -46,7 +45,7 @@ const theme = createTheme({
     },
 });
 
-const router = createBrowserRouter([
+const routes = [
     {
         path: "/",
         element: <Login />,
@@ -81,9 +80,15 @@ const router = createBrowserRouter([
                 path: "goals-stats",
                 element: <GoalsStats />,
             },
+            {
+                path: "blog",
+                element: <ErrorPage />,
+            },
         ],
     },
-]);
+];
+
+const router = createBrowserRouter([]);
 
 if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
@@ -93,9 +98,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>
-                <AnimatePresence mode="wait" initial={false}>
-                    <RouterProvider router={router} />
-                </AnimatePresence>
+                <RouterProvider router={router} />
             </CssBaseline>
         </ThemeProvider>
     </React.StrictMode>

@@ -8,23 +8,29 @@ class LoggingMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
-        cedula = request.GET.get('cedula', "user not found")
         request_file = request.FILES.get('file', None)
+
+
+        log_info = {
+            "Request": request,
+            "Response": response,
+        }
+
         if request_file:
-            logger.info("Response: %s, Response Content: %s, File: %s", response, response_data, request_file.name)
-        else:
-            logger.info("Response: %s, Response Content: %s", response, response_data)
+            log_info["File"] = request_file.name
+
         if hasattr(request, 'data'):
-            logger.info(f"User: {cedula} Request: {request}, Request Data: {request.data}")
-        else:
-            logger.info(f"User: {cedula} Request: {request}")
+            log_info["Request Data"] = request.data
+
         if hasattr(response, 'data'):
-            response_data = response.data
+            data = response.data
             route = getattr(request.resolver_match, 'route', None)
-            if route != "goals/$" or any(keyword in response_data for keyword in ['Error', 'message']):
-                logger.info("Response: %s, Response Content: %s", response, response_data)
-            else:
-                logger.info("Response: %s", response)
-        else:
-            logger.info("Response: %s", response)
+            no_log_routes = {'goals/$', '/token/obtain','token/refresh'}
+            if ((route not in no_log_routes) and 'message' in data) or 'Error' in data:
+                log_info["Response Content"] = data
+
+        logger.info("{}".format(
+            ", ".join([f"{key}: {value}" for key, value in log_info.items()])
+        ))
+
         return response
