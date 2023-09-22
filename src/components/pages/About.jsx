@@ -1,47 +1,54 @@
 import { React, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
-import cyclogo from "../images/img-about.jpg";
-import CarouselComponent from "../components/Carousel";
+import cycLogo from "../../images/img-about.jpg";
+import CarouselComponent from "../shared/Carousel";
 import { useMediaQuery } from "@mui/material";
 import Container from "@mui/material/Container";
-import image1 from "../images/image-vision.jpg";
-import image2 from "../images/image-mision.png";
-import image3 from "../images/image-values.jpg";
+import image1 from "../../images/image-vision.jpg";
+import image2 from "../../images/image-mision.png";
+import image3 from "../../images/image-values.jpg";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import ImageStock from "../images/stock.jpg";
-import logoTipo from "../images/logotipo.png";
+import logoTipo from "../../images/logotipo.png";
+import cesarGarzon from "../../images/managers/cesar-garzon.jpg";
+import javierTorres from "../../images/managers/javier-torres.jpeg";
+import mariaFerrucho from "../../images/managers/maria-ferrucho.jpg";
+import angelaDuran from "../../images/managers/angela-duran.jpeg";
+import adrianaPaez from "../../images/managers/adriana-paez.jpg";
+import diegoGonzales from "../../images/managers/diego-gonzales.jpg";
+import marioGiron from "../../images/managers/mario-giron.jpg";
+import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
+import hectorSotelo from "../../images/managers/hector-sotelo.png";
+
+const homeImages = [
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
+];
+
+const managements = [
+    { name: "Cesar Garzon", management: "Gerente General", image: cesarGarzon },
+    { name: "Javier Torres", management: "Gerente de Tecnología", image: javierTorres },
+    { name: "Maria Ferrucho ", management: "Gerente de Gestión Humana", image: mariaFerrucho },
+    { name: "Angela Duran", management: "Gerente de Planeación", image: angelaDuran },
+    { name: "Adriana Paez", management: "Gerente de Operaciones", image: adrianaPaez },
+    { name: "Hector Sotelo", management: "Gerente de Operaciones de Ventas", image: hectorSotelo },
+    { name: "Diego Gonzales", management: "Gerente de Legal y Riesgo", image: diegoGonzales },
+    {
+        name: "Mario Giron",
+        management: "Gerente de Riesgo y Control Interno",
+        image: marioGiron,
+    },
+    { name: " Melida Sandoval", management: "Gerente Administrativa", image: melidaSandoval },
+];
 
 const AboutUs = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
-
-    const homeImages = [
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
-        { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
-    ];
-
-    const managements = [
-        { name: "Sandoval Cabra Melida", management: "Gerente Administrativa", image: "" },
-        { name: "Gonzales Mora Diego Fernando", management: "Gerente de Legal y Riesgo", image: "" },
-        { name: "Giraldo Castaño Luz Yarime", management: "Gerente de Mercadeo", image: "" },
-        { name: "Paez Castiblanco Adriana Nataly", management: "Gerente de Operaciones", image: "" },
-        { name: "Duran Gutierrez Angela Maria", management: "Gerente de Planeación", image: "" },
-        {
-            name: "Giron Salazar Mario Ernesto",
-            management: "Gerente de Riesgo y Control Interno",
-            image: "",
-        },
-        { name: "Torres Naranjo Javier Mauricio", management: "Gerente de Tecnología", image: "" },
-        { name: "Garzon Navas Cesar Alberto", management: "Gerente General", image: "" },
-        { name: "Ferrucho Seguro Maria Fernanda", management: "Gerente de Gestión Humana", image: "" },
-    ];
-
     const isSmallScreen = useMediaQuery("(max-width:600px)");
 
     return (
@@ -50,11 +57,11 @@ const AboutUs = () => {
                 Sobre Nosotros
             </Typography>
             <Box sx={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
-                <Box>{isSmallScreen ? <img width={300} src={cyclogo} alt="" /> : <img width={500} src={cyclogo} alt="" />}</Box>
+                <Box>{isSmallScreen ? <img width={300} src={cycLogo} alt="" /> : <img width={500} src={cycLogo} alt="" />}</Box>
                 <Box sx={{ width: "35rem" }}>
                     <Typography sx={{ color: "gray" }}>
                         C&C Services S.A.S., desde 2005, ofrece soluciones para fortalecer los ciclos de riesgo de las empresas a través de un modelo de gestión BPO
-                        innovador y eficiente. Con tres líneas de negocio: Services, Risk y Legal, cubrimos los procesos de originación, mantenimiento y recuperación de
+                        innovador y eficiente. Con tres líneas de negocio: Services, Risk y Legal, cubrimos los procesos de creación, mantenimiento y recuperación de
                         clientes. Nos caracterizamos por estrictos controles, autoevaluación constante, alta efectividad y tecnología avanzada, todo con el objetivo de
                         abrir nuevas posibilidades en el mercado.
                     </Typography>
@@ -186,7 +193,7 @@ const AboutUs = () => {
                             sx={{
                                 maxWidth: 350,
                                 width: 350,
-                                height: 500,
+                                height: 450,
                                 position: "relative",
                                 overflow: "hidden",
                                 "&::before": {
@@ -199,7 +206,7 @@ const AboutUs = () => {
                                     backgroundImage: `url(${logoTipo})`,
                                     backgroundRepeat: "no-repeat",
                                     backgroundSize: "contain",
-                                    opacity: 0.1, // adjust this value to change the opacity
+                                    opacity: 0, // adjust this value to change the opacity
                                 },
                             }}
                         >
@@ -208,7 +215,7 @@ const AboutUs = () => {
                                 <Typography gutterBottom variant="h5" component="div">
                                     {item.name}
                                 </Typography>
-                                <Typography variant="body2" color="text.secondary">
+                                <Typography variant="body2" color="gray">
                                     {item.management}
                                 </Typography>
                             </CardContent>

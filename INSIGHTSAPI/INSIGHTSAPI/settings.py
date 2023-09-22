@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from django_auth_ldap.config import LDAPSearch
-import ldap
+from django_auth_ldap.config import LDAPSearch # type: ignore
+import ldap # type: ignore
 from pathlib import Path
 from dotenv import load_dotenv
+from datetime import timedelta, datetime
 import os
 import ssl
 
@@ -35,25 +36,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('DEBUG')
 
-ALLOWED_HOSTS = ["172.16.0.114", "172.16.5.10", "172.16.5.11", "127.0.0.1", "172.16.0.115", "localhost", "insights-api.cyc-bpo.com","insights-api-dev.cyc-bpo.com"]
-
+ALLOWED_HOSTS = ["insights-api.cyc-bpo.com",'insights-api-dev.cyc-bpo.com']
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    "django_auth_ldap",
-    'simple_history',
     'corsheaders',
+    'django_auth_ldap',
+    'simple_history',
     'rest_framework',
-    'goals'
+    'goals',
+    'api_token',
+    'hierarchy',
+    'sgc',
+    # 'users'
 ]
 
 MIDDLEWARE = [
@@ -68,11 +71,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'INSIGHTSAPI.middleware.cookie_JWT.CookieJWTAuthentication',
+    ),
+}
+
 CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
 
 CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000',
-    'http://localhost:8000',
+    'http://172.16.0.115:8000',
+    'https://insights-dev.cyc-bpo.com'
 ]
 
 ROOT_URLCONF = 'INSIGHTSAPI.urls'
@@ -93,15 +107,12 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'INSIGHTSAPI.wsgi.application'
-
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.cyc-services.com.co'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'mismetas@cyc-services.com.co'
-EMAIL_HOST_PASSWORD = os.getenv('C_2023')
+EMAIL_HOST_PASSWORD = os.environ['C_2023']
 DEFAULT_FROM_EMAIL = 'mismetas@cyc-services.com.co'
 
 # Database
@@ -116,35 +127,43 @@ DATABASES = {
         'PASSWORD': os.environ['INSIGHTSMYSQL'],
         'NAME': 'insights',
     },
-    # 'intranet': { # mysql too old
+    'staffnet': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': os.environ['SERVER_DB'],
+        'PORT': '3306',
+        'USER': 'INSIGHTSUSER',
+        'PASSWORD': os.environ['INSIGHTSMYSQL'],
+        'NAME': 'staffnet',
+        'TEST': {'MIRROR': 'staffnet'}
+    },
+    # 'llamadas': {
     #     'ENGINE': 'django.db.backends.mysql',
-    #     'HOST':"172.16.0.6",
-    #     'USER':"root",
-    #     'PASSWORD':os.getenv('LEYES'),
-    #     'NAME':"userscyc",
-    #     'port':"3306"
+    #     'HOST': '172.16.0.9',
+    #     'PORT': '3306',
+    #     'USER': 'blacklistuser',
+    #     # 'PASSWORD': os.environ['black_list_pass'],
+    #     'PASSWORD': 'a4dnAGc-',
+    #     'NAME': 'asteriskdb',
     # }
 }
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#     },
+# ]
 
 
 # Internationalization
@@ -174,11 +193,10 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': [
-        'rest_framework.renderers.JSONRenderer',
-    ]
-}
+year = datetime.now().year
+month = datetime.now().strftime("%B")
+log_dir = os.path.join(BASE_DIR, 'utils','logs',month)
+os.makedirs(log_dir, exist_ok=True)
 
 LOGGING = {
     'version': 1,
@@ -196,13 +214,13 @@ LOGGING = {
         'response_file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/INSIGHTS/INSIGHTSAPI/utils/logs/requests.log',
+            'filename': os.path.join(log_dir, 'requests.log'),
             'formatter': 'time-lvl-msg',
         },
         'exception_file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': '/var/www/INSIGHTS/INSIGHTSAPI/utils/logs/exceptions.log',
+            'filename': os.path.join(log_dir, 'exceptions.log'),
             'formatter': 'time-lvl-msg',
         },
     },
@@ -235,14 +253,25 @@ LOGGING = {
     },
 }
 
+# AUTH_USER_MODEL = 'users.User'
+
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
-AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGIA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
+AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGÍA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
 AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
-    # "OU=Users,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
     ldap.SCOPE_SUBTREE,  # Search scope
     "(sAMAccountName=%(user)s)"  # Search filter
 )
+
+SIMPLE_JWT = {
+    # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=10),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
+    'SLIDING_TOKEN_REFRESH_ON_LOGIN': True,
+    'SLIDING_TOKEN_REFRESH_ON_REFRESH': True,
+    'AUTH_COOKIE': 'access_token'
+}

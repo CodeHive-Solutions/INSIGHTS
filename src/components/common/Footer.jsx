@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import logo_CYC from "../images/logo-cyc.webp";
+import logo_CYC from "../../images/logo-cyc.webp";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import { useNavigate } from "react-router-dom";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -65,7 +65,7 @@ const Footer = () => {
                     gap: "15px",
                 }}
             >
-                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/loged/about-us", { replace: true })} variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/about-us")} variant="subtitle2" color="white">
                     Sobre Nosotros
                 </Typography>
                 <Typography sx={{ cursor: "pointer" }} variant="subtitle2" color="white">

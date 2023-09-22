@@ -1,16 +1,19 @@
 import "./index.css";
 import React from "react";
-import ErrorPage from "./error-page";
-import Login from "./routes/Login";
-import Home from "./routes/Home";
-import Root from "./routes/root";
+import ErrorPage from "./components/pages/ErrorPage";
+import Login from "./components/pages/Login";
+import Home from "./components/pages/Home";
+import Root from "./components/container/root";
 import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import AboutUs from "./routes/AboutUs";
-import ScrollToTop from "./components/ScrollToTop";
-// import App from "./components/example";
+import AboutUs from "./components/pages/About";
+import UploadGoals from "./components/pages/UploadGoals";
+import GoalsStats from "./components/pages/GoalsStats";
+import Sgc from "./components/pages/Sgc";
+import "./index.css";
+import Test from "./components/pages/Test";
 
 const theme = createTheme({
     typography: {
@@ -42,14 +45,18 @@ const theme = createTheme({
     },
 });
 
-const router = createBrowserRouter([
+const routes = [
     {
         path: "/",
         element: <Login />,
-        errorElement: <ErrorPage />,
+        errorElement: <ErrorPage isLogin={true} />,
     },
     {
-        path: "/loged",
+        path: "test",
+        element: <Test />,
+    },
+    {
+        path: "/logged",
         element: <Root />,
         errorElement: <ErrorPage />,
         children: [
@@ -61,9 +68,27 @@ const router = createBrowserRouter([
                 path: "about-us",
                 element: <AboutUs />,
             },
+            {
+                path: "sgc",
+                element: <Sgc />,
+            },
+            {
+                path: "upload-goals",
+                element: <UploadGoals />,
+            },
+            {
+                path: "goals-stats",
+                element: <GoalsStats />,
+            },
+            {
+                path: "blog",
+                element: <ErrorPage />,
+            },
         ],
     },
-]);
+];
+
+const router = createBrowserRouter([]);
 
 if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
@@ -73,9 +98,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>
-                <RouterProvider router={router}>
-                    <ScrollToTop />
-                </RouterProvider>
+                <RouterProvider router={router} />
             </CssBaseline>
         </ThemeProvider>
     </React.StrictMode>

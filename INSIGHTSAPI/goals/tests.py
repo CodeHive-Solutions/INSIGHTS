@@ -1,5 +1,5 @@
-from django.test import TestCase
-
+from rest_framework.test import APITestCase
+from django.test.utils import override_settings
 from django.db.models import Q
 from django.utils import timezone
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -8,7 +8,7 @@ from django.urls import reverse
 from rest_framework.test import APIClient
 from .models import Goals, TableInfo
 
-class GoalAPITestCase(TestCase):
+class GoalAPITestCase(APITestCase):
     # @classmethod
     # def setUpTestData(cls):
         # cls.goal = Goal.objects.create(campaign='Base Test Goal', value='99999.99')
@@ -36,7 +36,7 @@ class GoalAPITestCase(TestCase):
             self.assertEqual(response.status_code, 201)
             self.assertTrue(number_goals > 0)
 
-    def test_ejecucion_upload(self, called=False):
+    def test_execution_upload(self, called=False):
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
             file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Ejecución de metas-enerO-2022.xlsx'
@@ -52,8 +52,7 @@ class GoalAPITestCase(TestCase):
 
 
     def test_borrado_accepted(self):
-        # Sube registros que despues borrar
-        # Create a SimpleUploadedFile instance from the Excel file
+        # Sube registros que después los borra
         file_path = '/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx'
         with open(file_path, 'rb') as file_obj:
             file_data = file_obj.read()
@@ -77,11 +76,11 @@ class GoalAPITestCase(TestCase):
         self.assertEqual((count, count_at), (0, 0))
         #Do the same verifications but with execution
         Goals.objects.all().update(accepted_execution=True,accepted_execution_at=timezone.now())
-        self.test_ejecucion_upload(called=True)
+        self.test_execution_upload(called=True)
         count_execution = Goals.objects.exclude(Q(accepted__isnull=True) | Q(accepted='')).count()
         first_goal = Goals.objects.exclude(accepted_execution_at=None).first()
         if first_goal:
-            print("No se le borraron los valores de ejecucion a: ",first_goal.cedula)
+            print("No se le borraron los valores de ejecución a: ",first_goal.cedula)
         count_at_execution = Goals.objects.exclude(accepted_execution_at=None).count()
         self.assertEqual((count_execution, count_at_execution), (0, 0))
 
@@ -101,7 +100,7 @@ class GoalAPITestCase(TestCase):
 
     def test_get_history(self):
         self.test_claro_upload()
-        self.test_ejecucion_upload()
+        self.test_execution_upload()
         response = self.client.get('/goals/?month=DICIembre-2028')
         self.assertEqual(response.status_code, 200)
         self.assertFalse(len(response.data) > 0) # type: ignore
@@ -109,9 +108,9 @@ class GoalAPITestCase(TestCase):
         self.assertTrue(len(response.data) > 0) # type: ignore
         self.assertIsNotNone(response.data[0].get('history_date')) # type: ignore
 
-
-class SendEmailTestCase(TestCase):
-    # databases = ['intranet', 'default']
+@override_settings(DATABASES={'default': 'your_real_db_alias'})
+class SendEmailTestCase(APITestCase):
+    databases = ['staffnet','default'] # type: ignore
     def setUp(self):
         self.client = APIClient()
         self.url = reverse('goal-send-email')
@@ -137,15 +136,11 @@ class SendEmailTestCase(TestCase):
             'cedula': '1000065648',
             'delivery_type': 'Testing'
         }
-
-        # Send a POST request to the view
         response = self.client.post(self.url, data=payload)
         data = response.json()
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('email', data)
-
-        # Assert that the email was sent successfully by checking the database or email logs
 
     def test_send_email_missing_data(self):
         # Prepare the request with missing data
