@@ -8,3 +8,5 @@ Pillow==10.0.0
 ftfy
 openpyxl
 python-dotenv
+djangorestframework-simplejwt
+pandas

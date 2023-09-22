@@ -8,12 +8,15 @@ import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
-import AboutUs from "./components/pages/About";
+import About from "./components/pages/About";
 import UploadGoals from "./components/pages/UploadGoals";
 import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
 import "./index.css";
 import Test from "./components/pages/Test";
+import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useOutlet } from "react-router-dom";
 
 const theme = createTheme({
     typography: {
@@ -45,7 +48,7 @@ const theme = createTheme({
     },
 });
 
-const routes = [
+const router = createBrowserRouter([
     {
         path: "/",
         element: <Login />,
@@ -66,7 +69,7 @@ const routes = [
             },
             {
                 path: "about-us",
-                element: <AboutUs />,
+                element: <About />,
             },
             {
                 path: "sgc",
@@ -80,25 +83,34 @@ const routes = [
                 path: "goals-stats",
                 element: <GoalsStats />,
             },
-            {
-                path: "blog",
-                element: <ErrorPage />,
-            },
         ],
     },
-];
-
-const router = createBrowserRouter([]);
+]);
 
 if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
+}
+
+function AnimatedRoutes() {
+    const outlet = useOutlet();
+    const key = outlet ? outlet.key : "";
+
+    return (
+        <motion.div key={key} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+            {outlet}
+        </motion.div>
+    );
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>
-                <RouterProvider router={router} />
+                <RouterProvider router={router}>
+                    <AnimatePresence mode="wait">
+                        <AnimatedRoutes />
+                    </AnimatePresence>
+                </RouterProvider>
             </CssBaseline>
         </ThemeProvider>
     </React.StrictMode>
