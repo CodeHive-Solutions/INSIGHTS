@@ -13,18 +13,19 @@ import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
 
+//images test
+import imageTest from "../../images/test/image00001.jpeg";
+import imageTest1 from "../../images/test/image00002.jpeg";
+import imageTest2 from "../../images/test/image00003.jpeg";
+import imageTest3 from "../../images/test/image00004.jpeg";
+
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
 import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
 import tuliaCalderon from "../../images/birthdays/tulia-calderon.jpeg";
 import carolGuerrero from "../../images/birthdays/carol-guerrero.jpeg";
 
-const homeImages = [
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
-];
+const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }];
 const birthdays = [
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
