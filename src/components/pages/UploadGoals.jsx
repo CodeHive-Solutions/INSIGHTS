@@ -62,7 +62,7 @@ const UploadGoals = () => {
             if (selectedFile.name.includes("meta")) {
                 path = "https://insights-api-dev.cyc-bpo.com/goals/";
             } else if (selectedFile.name.includes("robinson")) {
-                path = "https://insights-api-dev.cyc-bpo.com/robinson-list/";
+                path = "https://insights-api-dev.cyc-bpo.com/files/robinson-list/";
             }
             try {
                 const response = await fetch(path, {

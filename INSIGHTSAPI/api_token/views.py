@@ -1,9 +1,11 @@
+"""Views for the api_token app."""
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.conf import settings
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    """Custom token obtain view modified to send the token info in cookies."""
     # This change is to allow cookies to be set in the response
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
@@ -32,6 +34,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         return response
 
 class CustomTokenRefreshView(TokenRefreshView):
+    """Custom token refresh view modified to allow cookies."""
     # This change is to allow cookies to be set in the response
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get('refresh_token')

@@ -1,6 +1,8 @@
+"""This file is used to authenticate the user using JWT token from a cookie"""
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class CookieJWTAuthentication(JWTAuthentication):
+    """Class to authenticate the user using JWT token from a cookie"""
     def authenticate(self, request):
         header = self.get_header(request)
         if header is None:

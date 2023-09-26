@@ -3,7 +3,7 @@ import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import login_image from "../../images/ALE02974.webp";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
-import { React } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import * as Yup from "yup";
@@ -23,10 +23,6 @@ const FormikTextField = ({ label, type, ...props }) => {
 };
 
 const Login = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     const [open, setOpen] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const navigate = useNavigate();
@@ -36,8 +32,6 @@ const Login = () => {
     const [loadingBar, setLoadingBar] = useState(false);
 
     const handleCloseSnack = () => setOpenSnack(false);
-
-    const handleOpenSnack = () => setOpenSnack(true);
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -65,17 +59,17 @@ const Login = () => {
 
             const data = await response.json();
             if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.non_field_errors);
+                throw new Error(data.detail);
             }
             if (response.status === 200) {
                 navigate("/logged/home");
             }
         } catch (error) {
             console.error(error);
-            if (error.message === "Unable to log in with provided credentials.") {
+            if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
                 showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
             } else {
+                console.log(error.message);
                 showSnack("error", error.message);
             }
             setLoadingBar(false);
@@ -128,7 +122,7 @@ const Login = () => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 500 }} variant="h4">
-                                Iniciar Sesión
+                                Intranet
                             </Typography>
 
                             <FormikTextField type="text" name="username" label="Usuario" autoComplete="off" spellCheck={false} />

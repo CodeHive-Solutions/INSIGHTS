@@ -46,7 +46,7 @@ def upload_df_to_table(
         return True
     except Exception as error:
         logger.exception(error)
-        raise ValueError(f"Error reading Excel file: {str(error)}") from error
+        raise Exception(f"Error reading Excel file: {str(error)}") from error
 
 
 def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:

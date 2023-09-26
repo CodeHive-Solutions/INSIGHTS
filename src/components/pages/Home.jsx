@@ -67,7 +67,7 @@ const Home = () => {
                 className="privacy-screen"
             /> */}
             <Box sx={{ mt: "4rem" }}>
-                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"80vh"} width={"100%"} />
+                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"100vh"} width={"100%"} />
             </Box>
             <Box
                 sx={{

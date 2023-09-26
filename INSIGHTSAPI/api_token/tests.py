@@ -18,14 +18,14 @@ class LDAPAuthenticationTest(APITestCase):
         try:
             conn = ldap.initialize(ldap_server_uri)
             conn.simple_bind_s(ldap_bind_dn, ldap_bind_password)
-            self.assertTrue(True, "LDAP connection successful.")
-        except ldap.LDAPError as e:
-            self.fail("Error: %s" % e)
+        except ldap.LDAPError as err:
+            self.fail(f"Error: {err}")
         finally:
             if conn:
                 conn.unbind_s()
 
     def test_token_obtain(self):
+        """Test that the token obtain endpoint works correctly."""
         client = self.client
         url = reverse('obtain_token')
         client.post(url, {'username': 'heibert.mogollon', 'password': 'Password4'}, format='json')
@@ -33,6 +33,7 @@ class LDAPAuthenticationTest(APITestCase):
         self.assertIn('refresh_token', client.cookies)
 
     def test_token_refresh(self):
+        """Test that the refresh token endpoint works correctly."""
         client = self.client
         url = reverse('refresh_token')
         self.test_token_obtain()
@@ -44,6 +45,7 @@ class LDAPAuthenticationTest(APITestCase):
         self.assertNotEqual(old_access_token, client.cookies['access_token'].value)
 
     def test_logout(self):
+        """Test that the logout endpoint works correctly."""
         client = self.client
         self.test_token_obtain()
         url = reverse('destroy_token')
