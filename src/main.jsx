@@ -3,6 +3,8 @@ import React from "react";
 import ErrorPage from "./components/pages/ErrorPage";
 import Login from "./components/pages/Login";
 import Home from "./components/pages/Home";
+import Blog from "./components/pages/Blog";
+import Article from "./components/pages/Article";
 import Root from "./components/container/root";
 import ReactDOM from "react-dom/client";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -75,6 +77,15 @@ const router = createBrowserRouter([
                 path: "sgc",
                 element: <Sgc />,
             },
+            {
+                path: "blog",
+                element: <Blog />,
+            },
+            {
+                path: "blog/article/:articleId",
+                element: <Article />,
+            },
+
             {
                 path: "upload-goals",
                 element: <UploadGoals />,

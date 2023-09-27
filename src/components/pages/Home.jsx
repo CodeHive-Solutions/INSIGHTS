@@ -7,14 +7,12 @@ import { Typography, Box } from "@mui/material";
 import { motion, useIsPresent } from "framer-motion";
 import imageExample from "../../images/example-image.jpg";
 import imageExample2 from "../../images/example-image2.jpg";
-import image2 from "../../images/image2.jpg";
-import image3 from "../../images/image3.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
 
 //images test
-import imageTest from "../../images/test/image00001.jpeg";
+import imageTest from "../../images/test/test.jpeg";
 import imageTest1 from "../../images/test/image00002.jpeg";
 import imageTest2 from "../../images/test/image00003.jpeg";
 import imageTest3 from "../../images/test/image00004.jpeg";
@@ -66,8 +64,8 @@ const Home = () => {
                 style={{ originX: isPresent ? 0 : 1 }}
                 className="privacy-screen"
             /> */}
-            <Box sx={{ mt: "4rem" }}>
-                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"100vh"} width={"100%"} />
+            <Box sx={{ display: "flex", mt: "4rem", textAlign: "center", justifyContent: "center" }}>
+                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"80vh"} width={"100%"} />
             </Box>
             <Box
                 sx={{

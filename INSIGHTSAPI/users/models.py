@@ -10,10 +10,11 @@ def validate_file_extension(value):
     elif value.size > 5000000:
         raise ValidationError("El archivo no puede pesar mas de 5MB")
 
-class CustomUser(AbstractUser):
+class User(AbstractUser):
     """Custom user model."""
     profile_picture = models.ImageField(upload_to='images/pictures/', validators=[validate_file_extension])
     email = models.EmailField(unique=True, blank=True)
     password = None
     date_joined = None
     last_login = None
+    is_active = None

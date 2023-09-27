@@ -196,6 +196,10 @@ const About = () => {
                                 height: 450,
                                 position: "relative",
                                 overflow: "hidden",
+                                transition: "transform 0.3s ease",
+                                "&:hover": {
+                                    transform: "scale(1.05)",
+                                },
                                 "&::before": {
                                     content: '""',
                                     position: "absolute",

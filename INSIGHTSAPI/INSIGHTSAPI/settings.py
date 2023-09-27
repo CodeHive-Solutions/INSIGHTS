@@ -177,7 +177,7 @@ USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
-    "django.contrib.auth.backends.ModelBackend",
+    # "django.contrib.auth.backends.ModelBackend",
 ]
 
 
@@ -245,42 +245,43 @@ LOGGING = {
         },
         "django_auth_ldap": {
             "handlers": ["console", "response_file", "exception_file"],
-            "level": "DEBUG",
+            "level": "INFO",
             "propagate": True,
         },
     },
 }
 
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.User"
 
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
 AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGÍA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
 AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 
-# AUTH_LDAP_USER_SEARCH = LDAPSearch(
-#     "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
-#     ldap.SCOPE_SUBTREE,  # Search scope
-#     "(sAMAccountName=%(user)s)"  # Search filter
-# )
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+    "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+    ldap.SCOPE_SUBTREE,  # Search scope
+    "(sAMAccountName=%(user)s)"  # Search filter
+)
 
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
     "last_name": "sn",
-    "email": "mail",
+    "email": "mail"
 }
 
-# This works faster in ldap but i don't know how implement it
-# AUTH_LDAP_USER_DN_TEMPLATE = 'sAMAccountName=%(user)s,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
-AUTH_LDAP_USER_DN_TEMPLATE = "sAMAccountName=%(user)s,DC=CYC-SERVICES,DC=COM,DC=CO"
+# This works faster in ldap but i don't know how implement it with the sAMAcountName
+# AUTH_LDAP_USER_DN_TEMPLATE = 'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
+# AUTH_LDAP_USER_DN_TEMPLATE = '(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 SIMPLE_JWT = {
-    # 'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    # "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
     "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
     "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
     "AUTH_COOKIE": "access_token",
+    "USER_AUTHENTICATION_RULE": "INSIGHTSAPI.middleware.cookie_JWT.always_true"
 }

@@ -1,3 +1,4 @@
+"""This module contains the url patterns for the api_token app."""
 from django.urls import path
 from .views import CustomTokenObtainPairView, logout_view, CustomTokenRefreshView
 
