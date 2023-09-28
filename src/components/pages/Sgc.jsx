@@ -35,6 +35,15 @@ const initialRows = [
     { id: 4, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
     { id: 5, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
     { id: 6, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 7, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 8, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 9, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 10, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 11, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 12, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 13, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 14, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
+    { id: 15, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
 ];
 
 export const Sgc = () => {
@@ -44,6 +53,7 @@ export const Sgc = () => {
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
+    const [editAccess, setEditAccess] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
 
     useEffect(() => {
@@ -147,18 +157,18 @@ export const Sgc = () => {
             headerName: "Area",
             width: 70,
             type: "singleSelect",
-            editable: true,
+            editable: editAccess,
             valueOptions: ["DE", "GA", "GC", "GH", "GL", "GP", "GR", "GS", "GT", "SG-SST"],
         },
 
-        { field: "tipo", headerName: "Tipo", width: 70, type: "singleSelect", editable: true, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
-        { field: "subtipo", headerName: "Subtipo", width: 70, editable: true },
-        { field: "nombre", headerName: "Nombre", width: 600, editable: true },
-        { field: "version", headerName: "Version", width: 70, editable: true },
+        { field: "tipo", headerName: "Tipo", width: 70, type: "singleSelect", editable: editAccess, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
+        { field: "subtipo", headerName: "Subtipo", width: 70, editable: editAccess },
+        { field: "nombre", headerName: "Nombre", width: 700, editable: editAccess },
+        { field: "version", headerName: "Version", width: 70, editable: editAccess },
         {
             field: "archivo",
             headerName: "Archivo",
-            width: 100,
+            width: 80,
             type: "actions",
             cellClassName: "actions",
             getActions: ({ id }) => {
@@ -191,7 +201,10 @@ export const Sgc = () => {
                 ];
             },
         },
-        {
+    ];
+
+    if (editAccess) {
+        columns.push({
             field: "actions",
             headerName: "Acciones",
             width: 100,
@@ -228,8 +241,12 @@ export const Sgc = () => {
                     <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={handleDeleteClick(id)} />,
                 ];
             },
-        },
-    ];
+        });
+        const nombreColumn = columns.find((column) => column.field === "nombre");
+        if (nombreColumn) {
+            nombreColumn.width -= 100; // Adjust the width as needed
+        }
+    }
 
     return (
         <>

@@ -67,6 +67,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "INSIGHTSAPI.middleware.logging.LoggingMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
+    "INSIGHTSAPI.middleware.response_redirect.RedirectMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -77,8 +78,11 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "INSIGHTSAPI.middleware.cookie_JWT.CookieJWTAuthentication",
+        "api_token.cookie_JWT.CookieJWTAuthentication",
     ),
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ],
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
@@ -218,7 +222,7 @@ LOGGING = {
         "exception_file": {
             "level": "ERROR",
             "class": "logging.FileHandler",
-            "filename": os.path.join(log_dir, "exceptions.log"),
+            "filename": os.path.join(BASE_DIR, "utils", "logs", "exceptions.log"),
             "formatter": "time-lvl-msg",
         },
     },
@@ -283,5 +287,5 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
     "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
     "AUTH_COOKIE": "access_token",
-    "USER_AUTHENTICATION_RULE": "INSIGHTSAPI.middleware.cookie_JWT.always_true"
+    "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true"
 }

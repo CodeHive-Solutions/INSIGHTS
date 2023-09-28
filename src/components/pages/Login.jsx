@@ -10,6 +10,7 @@ import * as Yup from "yup";
 import { useState, useEffect } from "react";
 import SnackbarAlert from "../common/SnackBarAlert";
 import LinearProgress from "@mui/material/LinearProgress";
+import apiRequest from "../../assets/apiRequest";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),
@@ -47,31 +48,25 @@ const Login = () => {
         setLoadingBar(true);
 
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/obtain/", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-            });
+            // Use the apiRequest function to make the API request
+            const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
 
             setLoadingBar(false);
             setIsSubmitting(false);
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            }
             if (response.status === 200) {
                 navigate("/logged/home");
             }
         } catch (error) {
             console.error(error);
+
             if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
                 showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
             } else {
                 console.log(error.message);
                 showSnack("error", error.message);
             }
+
             setLoadingBar(false);
         }
     };

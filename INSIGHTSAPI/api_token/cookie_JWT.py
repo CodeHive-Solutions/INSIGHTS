@@ -1,19 +1,13 @@
-"""This module contains the CookieJWTAuthentication class, which is used to authenticate requests through a JSON web token."""
+"""
+This module contains the CookieJWTAuthentication class, which is used to authenticate requests through a JSON web token.
+"""
+import logging
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import AuthenticationFailed
+
+logger = logging.getLogger("requests")
 
 class CookieJWTAuthentication(JWTAuthentication):
     """An authentication plugin that authenticates requests through a JSON web"""
-    # def get_customuser(self, validated_token):
-    #     """Get the user from the validated token."""
-    #     try:
-    #         user = super().get_user(validated_token)
-    #     except AuthenticationFailed as err:
-    #         user = None
-    #         print("llegue 1")
-    #         print(err.detail["detail"])
-    #     # Bypass the is_active check (consider potential security implications)
-    #     return user
 
     def authenticate(self, request):
         header = self.get_header(request)
@@ -28,4 +22,6 @@ class CookieJWTAuthentication(JWTAuthentication):
 
 def always_true(var):
     """This function always return True"""
+    logger.info("This is a test")
+    logger.info(var)
     return True

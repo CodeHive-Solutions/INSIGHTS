@@ -3,15 +3,21 @@ import logging
 import os
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 import mysql.connector
 from .excel_functions import upload_df_to_table, file_to_data_frame
 
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger("requests")
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def robinson_list(request):
     """Uploads a file to the server and inserts its data into the database."""
+    logger.info("This is a test")
+    logger.info(request.user)
     file = request.FILES["file"]
     data_f = file_to_data_frame(file)
     if not "DETALLE_DATO_CONTACTO" in data_f.columns:
@@ -30,8 +36,11 @@ def robinson_list(request):
     connection = None
     try:
         connection = mysql.connector.connect(**db_config)
-        if upload_df_to_table(filtered_df, connection, "blacklist", columns_mapping):
-            return Response("File uploaded successfully")
+        rows = upload_df_to_table(filtered_df, connection, "blacklist", columns_mapping)
+        if rows > 0:
+            return Response({"message":"File processed successfully.", "rows_updated":rows}, status=201)
+        else:
+            return Response({"message":"No data was inserted."}, status=200)
     except Exception as error:
         logger.error(error)
         return Response(str(error), status=500)

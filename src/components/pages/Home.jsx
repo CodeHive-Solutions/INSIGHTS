@@ -36,6 +36,7 @@ const birthdays2 = [
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
 ];
+
 const birthdays3 = [
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },

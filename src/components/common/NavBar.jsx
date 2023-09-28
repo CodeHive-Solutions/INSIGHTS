@@ -100,30 +100,6 @@ const Navbar = () => {
         }
     };
 
-    const refreshToken = async () => {
-        try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/refresh/", {
-                method: "POST",
-                credentials: "include",
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.detail);
-            }
-
-            const data = await response.json();
-            if (response.status === 200) {
-                console.log("refresh token success");
-            } else if (response.status === 401 && data.detail === "Authentication credentials were not provided") {
-                navigate("/", { replace: true });
-            }
-        } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
-        }
-    };
-
     const handleLogout = async () => {
         try {
             const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/destroy/", {
@@ -133,17 +109,11 @@ const Navbar = () => {
 
             if (!response.ok) {
                 const data = await response.json();
-                if (response.status === 401 && data.detail === "Authentication credentials were not provided.") {
-                    refreshToken();
-                }
                 throw new Error(data.detail);
             }
 
-            const data = await response.json();
             if (response.status === 200) {
-                refreshToken();
                 navigate("/", { replace: true });
-            } else if (response.status === 401 && data.detail === "Authentication credentials were not provided") {
             }
         } catch (error) {
             console.error(error);

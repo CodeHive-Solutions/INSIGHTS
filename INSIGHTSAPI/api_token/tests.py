@@ -70,5 +70,5 @@ class LDAPAuthenticationTest(APITestCase):
         url = reverse('destroy_token')
         response = client.post(url, {}, cookies=client.cookies)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = client.post(url, {}, format='json', cookies=client.cookies)
+        response = client.post(reverse('robinson-list'), {}, format='json', cookies=client.cookies)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

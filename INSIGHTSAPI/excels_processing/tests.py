@@ -29,7 +29,7 @@ class FilesTestCase(TestCase):
         cursor = self.cursor
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx"
         file_obj = open(file_path, "rb")
-        response = self.client.post(reverse("robinson_list"), {"file": file_obj})
+        response = self.client.post(reverse("robinson-list"), {"file": file_obj})
         self.assertEqual(response.status_code, 200)
         self.connection.commit()
         cursor.execute(self.select_query)

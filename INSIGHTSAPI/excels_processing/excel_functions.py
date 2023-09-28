@@ -4,7 +4,7 @@ import logging
 from typing import BinaryIO
 import pandas as pd
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("requests")
 
 
 def upload_df_to_table(
@@ -43,7 +43,7 @@ def upload_df_to_table(
         cursor.executemany(query, [tuple(d.values()) for d in data_dicts])
         # Commit the transaction to save changes
         connection.commit()
-        return True
+        return cursor.rowcount
     except Exception as error:
         logger.exception(error)
         raise Exception(f"Error reading Excel file: {str(error)}") from error
