@@ -16,8 +16,6 @@ logger = logging.getLogger("requests")
 @permission_classes([IsAuthenticated])
 def robinson_list(request):
     """Uploads a file to the server and inserts its data into the database."""
-    logger.info("This is a test")
-    logger.info(request.user)
     file = request.FILES["file"]
     data_f = file_to_data_frame(file)
     if not "DETALLE_DATO_CONTACTO" in data_f.columns:

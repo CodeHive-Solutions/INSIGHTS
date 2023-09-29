@@ -43,31 +43,46 @@ class LDAPAuthenticationTest(APITestCase):
     #         if conn:
     #             conn.unbind_s()
 
+class TokenCheckTest(APITestCase):
+    """Test the token authentication."""
+
+    def setUp(self):
+        self.client = APIClient()
+
+
     def test_token_obtain(self):
         """Test that the token obtain endpoint works correctly."""
         client = self.client
-        url = reverse('obtain_token')
+        url = reverse('obtain-token')
         response = client.post(url, {'username': 'heibert.mogollon', 'password': 'Password4'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('access_token', client.cookies)
-        self.assertIn('refresh_token', client.cookies)
+        self.assertIn('access-token', client.cookies)
+        self.assertIn('refresh-token', client.cookies)
+
+    def test_token_obtain_fail(self):
+        """Test that the token obtain endpoint works correctly."""
+        client = self.client
+        url = reverse('obtain-token')
+        response = client.post(url, {'username': 'heibert.mogollon', 'password': 'TEST'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertNotIn('access-token', client.cookies)
+        self.assertNotIn('refresh-token', client.cookies)
 
     def test_token_refresh(self):
         """Test that the refresh token endpoint works correctly."""
         client = self.client
-        url = reverse('refresh_token')
         self.test_token_obtain()
-        old_access_token = client.cookies['access_token'].value
-        response = client.post(url, {}, format='json', cookies=client.cookies) # type: ignore
+        old_access_token = client.cookies['access-token'].value
+        response = client.post(reverse('refresh-token'), {}, format='json', cookies=client.cookies) # type: ignore
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn('access_token', client.cookies)
-        self.assertNotEqual(old_access_token, client.cookies['access_token'].value)
+        self.assertIn('access-token', client.cookies)
+        self.assertNotEqual(old_access_token, client.cookies['access-token'].value)
 
     def test_logout(self):
         """Test that the logout endpoint works correctly."""
         client = self.client
         self.test_token_obtain()
-        url = reverse('destroy_token')
+        url = reverse('destroy-token')
         response = client.post(url, {}, cookies=client.cookies)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = client.post(reverse('robinson-list'), {}, format='json', cookies=client.cookies)

@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import SnackbarAlert from "../common/SnackBarAlert";
 import LinearProgress from "@mui/material/LinearProgress";
 import apiRequest from "../../assets/apiRequest";
+import { useCookies } from "react-cookie";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),
@@ -31,6 +32,7 @@ const Login = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [loadingBar, setLoadingBar] = useState(false);
+    const [cookies, setCookie] = useCookies(["refresh-timer"]);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
@@ -49,12 +51,29 @@ const Login = () => {
 
         try {
             // Use the apiRequest function to make the API request
-            const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
+            // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
+
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/obtain/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(values),
+                credentials: "include",
+            });
 
             setLoadingBar(false);
             setIsSubmitting(false);
 
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail);
+            }
+
             if (response.status === 200) {
+                console.log("entrando");
+                const expires = new Date();
+                expires.setTime(expires.getTime() + 15 * 60 * 60 * 1000);
+                setCookie("refresh-timer", "", { path: "/", expires });
                 navigate("/logged/home");
             }
         } catch (error) {

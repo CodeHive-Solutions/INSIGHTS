@@ -66,8 +66,8 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "INSIGHTSAPI.middleware.logging.LoggingMiddleware",
+    # "INSIGHTSAPI.middleware.response_redirect.RedirectMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
-    "INSIGHTSAPI.middleware.response_redirect.RedirectMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -280,12 +280,12 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # AUTH_LDAP_USER_DN_TEMPLATE = '(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=15),
     # "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
     "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
     "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
-    "AUTH_COOKIE": "access_token",
+    "AUTH_COOKIE": "access-token",
     "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true"
 }

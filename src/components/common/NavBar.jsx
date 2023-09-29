@@ -17,6 +17,7 @@ import logotipo from "../../images/logotipo-navbar-copia.webp";
 import SnackbarAlert from "./SnackBarAlert";
 import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { useCookies } from "react-cookie";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -30,6 +31,7 @@ const Navbar = () => {
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
+    const [cookies, setCookie, removeCookie] = useCookies(["refresh-timer"]);
 
     const handleUtilitariosMenuOpen = (event) => {
         setAnchorElUtils(event.currentTarget);
@@ -113,6 +115,7 @@ const Navbar = () => {
             }
 
             if (response.status === 200) {
+                removeCookie("refresh-timer");
                 navigate("/", { replace: true });
             }
         } catch (error) {

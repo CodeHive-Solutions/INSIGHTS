@@ -13,7 +13,7 @@ const apiRequest = async (url, method, data, contentType) => {
             headers: { "Content-Type": contentType },
             body: data,
         });
-
+        
         const responseData = await response.json();
 
         if (!response.ok) {
