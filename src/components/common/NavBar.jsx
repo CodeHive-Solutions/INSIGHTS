@@ -18,6 +18,8 @@ import SnackbarAlert from "./SnackBarAlert";
 import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { useCookies } from "react-cookie";
+import FeedbackIcon from "@mui/icons-material/Feedback";
+import Goals from "../shared/Goals";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -234,6 +236,7 @@ const Navbar = () => {
                 <MenuItem onClick={handleClose}>
                     <Avatar /> Mi cuenta
                 </MenuItem>
+                <Goals />
                 <Divider />
                 <MenuItem onClick={handleClose}>
                     <ListItemIcon>
@@ -368,17 +371,23 @@ const Navbar = () => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <Box onMouseLeave={handleCloseUtils}>
+                    <MenuItem onClick={() => navigate("/logged/sugerencias")}>
+                        <ListItemIcon>
+                            <FeedbackIcon fontSize="small" />
+                        </ListItemIcon>
+                        Sugerencias
+                    </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
-                        Análisis de metas
+                        Análisis de Metas
                     </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/upload-goals")}>
                         <ListItemIcon>
                             <UploadFileIcon fontSize="small" />
                         </ListItemIcon>
-                        Cargue de archivos
+                        Cargue de Archivos
                     </MenuItem>
                 </Box>
             </Menu>

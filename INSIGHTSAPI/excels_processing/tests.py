@@ -11,6 +11,7 @@ class FilesTestCase(TestCase):
     """Test case for the files endpoint"""
 
     def setUp(self):
+        """Set up the test case """
         self.client = APIClient()
         db_config = {
             "user": "blacklistuser",
@@ -33,6 +34,7 @@ class FilesTestCase(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["rows_updated"], 1)
         self.connection.commit()
+        file_obj.seek(0)
         response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["message"], "No data was inserted.")

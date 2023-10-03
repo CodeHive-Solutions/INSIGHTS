@@ -70,7 +70,6 @@ const Login = () => {
             }
 
             if (response.status === 200) {
-                console.log("entrando");
                 const expires = new Date();
                 expires.setTime(expires.getTime() + 15 * 60 * 60 * 1000);
                 setCookie("refresh-timer", "", { path: "/", expires });

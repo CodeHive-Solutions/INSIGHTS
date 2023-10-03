@@ -14,6 +14,7 @@ logger = logging.getLogger("requests")
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
+
 def robinson_list(request):
     """Uploads a file to the server and inserts its data into the database."""
     file = request.FILES["file"]

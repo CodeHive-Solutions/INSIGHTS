@@ -19,6 +19,7 @@ import Test from "./components/pages/Test";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";
+import Suggestions from "./components/pages/Suggestions";
 
 const theme = createTheme({
     typography: {
@@ -85,10 +86,13 @@ const router = createBrowserRouter([
                 path: "blog/article/:articleId",
                 element: <Article />,
             },
-
             {
                 path: "upload-goals",
                 element: <UploadGoals />,
+            },
+            {
+                path: "sugerencias",
+                element: <Suggestions />,
             },
             {
                 path: "goals-stats",

@@ -68,7 +68,7 @@ def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:
     print(data_frame)
     """
     try:
-        data_f = pd.read_excel(file)
+        data_f = pd.read_excel(file, engine='openpyxl')
         return data_f
     except Exception as error:
         raise ValueError(f"Error reading Excel file: {str(error)}") from error

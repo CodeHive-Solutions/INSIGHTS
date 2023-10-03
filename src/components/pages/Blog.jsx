@@ -64,7 +64,7 @@ const Blog = () => {
             }}
         >
             <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                BLOG
+                Blog
             </Typography>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
                 <MediaCard

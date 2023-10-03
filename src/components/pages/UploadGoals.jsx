@@ -115,7 +115,7 @@ const UploadGoals = () => {
     return (
         <Box sx={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
             <Typography variant="h6" sx={{ color: "primary.main", mb: "55px", fontSize: "30px" }}>
-                CARGUE DE ARCHIVOS
+                Cargue de Archivos
             </Typography>
             <Box
                 sx={{
