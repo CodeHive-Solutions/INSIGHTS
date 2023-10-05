@@ -18,3 +18,9 @@ class User(AbstractUser):
     date_joined = None
     last_login = None
     is_active = None
+
+    class Meta:
+        """Meta class."""
+        permissions = [
+            ('upload_robinson_list', 'Can upload robinson list')
+        ]

@@ -68,7 +68,7 @@ const UploadGoals = () => {
             let path;
             if (selectedFile.name.includes("meta")) {
                 path = "https://insights-api-dev.cyc-bpo.com/goals/";
-            } else if (selectedFile.name.includes("robinson")) {
+            } else if (selectedFile.name.includes("ROBINSON").uppercase()) {
                 path = "https://insights-api-dev.cyc-bpo.com/files/robinson-list/";
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");

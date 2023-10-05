@@ -26,20 +26,20 @@ class FilesTestCase(TestCase):
 
     def test_upload_file(self):
         """Test uploading a file to the server"""
-        TokenCheckTest.test_token_obtain(self)
+        TokenCheckTest.test_token_obtain(self) # type: ignore
         cursor = self.cursor
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx"
         file_obj = open(file_path, "rb")
-        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies)
+        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["rows_updated"], 1)
+        self.assertEqual(response.data["rows_updated"], 1) # type: ignore
         self.connection.commit()
         file_obj.seek(0)
-        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies)
+        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["message"], "No data was inserted.")
+        self.assertEqual(response.data["message"], "No data was inserted.") # type: ignore
         cursor.execute(self.select_query)
-        self.assertEqual(cursor.fetchone()[0], 3103233724)
+        self.assertEqual(cursor.fetchone()[0], 3103233724) # type: ignore
 
     def tearDown(self):
         self.cursor.execute(

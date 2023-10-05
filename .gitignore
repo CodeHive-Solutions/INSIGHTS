@@ -31,3 +31,4 @@ WSGI
 migrations
 *.xlsx
 venv
+.venv

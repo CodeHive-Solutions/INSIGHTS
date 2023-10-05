@@ -54,7 +54,7 @@ class TokenCheckTest(APITestCase):
         """Test that the token obtain endpoint works correctly."""
         client = self.client
         url = reverse('obtain-token')
-        response = client.post(url, {'username': 'heibert.mogollon', 'password': 'Password4'}, format='json')
+        response = client.post(url, {'username': 'heibert.mogollon', 'password': 'Password5'}, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access-token', client.cookies)
         self.assertIn('refresh-token', client.cookies)
@@ -83,7 +83,7 @@ class TokenCheckTest(APITestCase):
         client = self.client
         self.test_token_obtain()
         url = reverse('destroy-token')
-        response = client.post(url, {}, cookies=client.cookies)
+        response = client.post(url, {}, cookies=client.cookies) # type: ignore
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = client.post(reverse('robinson-list'), {}, format='json', cookies=client.cookies)
+        response = client.post(reverse('robinson-list'), {}, format='json', cookies=client.cookies) # type: ignore
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

@@ -31,8 +31,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
     serializer_class = GoalSerializer
 
     def get_queryset(self):
-        user_id = self.request.session.get("user_id")
-        username = self.request.session.get("username")
+        """This view should return a list of all the goals"""
+        # user_id = self.request.session.get("user_id")
+        # username = self.request.session.get("username")
         coordinator = self.request.GET.get("coordinator", None)
         month = self.request.GET.get("month", None)
         if coordinator is not None:

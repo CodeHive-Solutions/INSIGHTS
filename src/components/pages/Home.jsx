@@ -9,6 +9,7 @@ import imageExample from "../../images/example-image.jpg";
 import imageExample2 from "../../images/example-image2.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
+import f43 from "../../images/test/43.jpeg";
 import "../../index.css";
 
 //images test
@@ -22,6 +23,20 @@ import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
 import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
 import tuliaCalderon from "../../images/birthdays/tulia-calderon.jpeg";
 import carolGuerrero from "../../images/birthdays/carol-guerrero.jpeg";
+import benefit1 from "../../images/benefits-vacancies/MicrosoftTeams-image4.png";
+import benefit2 from "../../images/benefits-vacancies/MicrosoftTeams-image5.png";
+import benefit3 from "../../images/benefits-vacancies/MicrosoftTeams-image6.png";
+import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png";
+
+const benefits = [
+    { image: benefit1, title: "Beneficio 1" },
+    { image: benefit2, title: "Beneficio 2" },
+];
+
+const vacancies = [
+    { image: benefit3, title: "Vacante 1" },
+    { image: benefit4, title: "Vacante 2" },
+];
 
 const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }];
 const birthdays = [
@@ -114,7 +129,7 @@ const Home = () => {
                     >
                         Vacantes
                     </Typography>
-                    <CarouselComponent items={homeImages} height={"80vh"} width={"100%"} />
+                    <CarouselComponent items={vacancies} height={"80vh"} width={"100%"} />
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "2rem" }}>
                     <Typography
@@ -124,7 +139,7 @@ const Home = () => {
                     >
                         Beneficios
                     </Typography>
-                    <CarouselComponent items={homeImages} height={"80vh"} width={"100%"} />
+                    <CarouselComponent items={benefits} height={"70vh"} width={"80%"} />
                 </Box>
             </Box>
         </>
