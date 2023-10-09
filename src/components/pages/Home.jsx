@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CarouselComponent from "../shared/Carousel";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Dialog } from "@mui/material";
 import { motion, useIsPresent } from "framer-motion";
 import imageExample from "../../images/example-image.jpg";
 import imageExample2 from "../../images/example-image2.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
-import f43 from "../../images/test/43.jpeg";
 import "../../index.css";
 
 //images test
@@ -60,6 +59,9 @@ const birthdays3 = [
 ];
 
 const Home = () => {
+    const [openDialog, setOpenDialog] = useState(false);
+    const handleOpenDialog = () => setOpenDialog(true);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -142,6 +144,10 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"70vh"} width={"80%"} />
                 </Box>
             </Box>
+            <Dialog open={openDialog} title={"example title"}>
+                <p>HOLA</p>
+            </Dialog>
+            <button onClick={handleOpenDialog}>open</button>
         </>
     );
 };

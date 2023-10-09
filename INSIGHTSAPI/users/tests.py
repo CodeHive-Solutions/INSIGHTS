@@ -1,8 +1,8 @@
 """Tests for the users app."""
 import json
-from django.contrib.auth.models import Permission
 from users.models import User
 import ldap
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.conf import settings
 from django.urls import reverse
@@ -119,6 +119,9 @@ class LDAPAuthenticationTest(TestCase):
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()
+        user.refresh_from_db()
         print(user.user_permissions.all())
+        print(user.get_all_permissions())
+        print(user.has_perm("users.upload_robinson_list"))
         response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 400)

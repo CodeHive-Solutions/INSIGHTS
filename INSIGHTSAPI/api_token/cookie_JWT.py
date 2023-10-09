@@ -12,7 +12,7 @@ class CookieJWTAuthentication(JWTAuthentication):
     def authenticate(self, request):
         header = self.get_header(request)
         if header is None:
-            raw_token = request.COOKIES.get('access-token')  # or 'refresh', depending on your needs
+            raw_token = request.COOKIES.get('access-token')
         else:
             raw_token = self.get_raw_token(header)
         if raw_token is None:

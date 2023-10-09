@@ -1,7 +1,7 @@
 """This module contains the views for the excels_processing app. """
 import logging
 import os
-from users.models import User
+# from users.models import User
 from django.contrib.auth.models import Permission
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -18,7 +18,6 @@ logger = logging.getLogger("requests")
 @permission_classes([IsAuthenticated])
 def robinson_list(request):
     """Uploads a file to the server and inserts its data into the database."""
-
     if not request.user.has_perm("users.upload_robinson_list"):
         return Response(request.user.get_all_permissions(), status=403)
     file = request.FILES["file"]

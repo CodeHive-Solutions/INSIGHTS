@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useRef } from "react";
-import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover } from "@mui/material";
+import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover, Dialog } from "@mui/material";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
@@ -34,6 +34,9 @@ const Navbar = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
     const [cookies, setCookie, removeCookie] = useCookies(["refresh-timer"]);
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleOpenDialog = () => setOpenDialog(true);
 
     const handleUtilitariosMenuOpen = (event) => {
         setAnchorElUtils(event.currentTarget);
@@ -236,7 +239,12 @@ const Navbar = () => {
                 <MenuItem onClick={handleClose}>
                     <Avatar /> Mi cuenta
                 </MenuItem>
-                <Goals />
+                <MenuItem onClick={handleOpenDialog}>
+                    <ListItemIcon>
+                        <FlagIcon fontSize="small" />
+                    </ListItemIcon>
+                    Mi Meta: $250.000.000
+                </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleClose}>
                     <ListItemIcon>
@@ -391,7 +399,7 @@ const Navbar = () => {
                     </MenuItem>
                 </Box>
             </Menu>
-
+            <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

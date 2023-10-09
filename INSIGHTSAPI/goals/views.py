@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMessage
 from django.db import connections, transaction
-from django.db.models import Q, Subquery
+from django.db.models import Q, Subquery, Max
 from django.utils import timezone
 from openpyxl import load_workbook
 from rest_framework import status as framework_status
@@ -16,7 +16,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import Goals, TableInfo
+from .models import Goals, TableInfo, HistoricalGoals
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
@@ -31,24 +31,30 @@ class GoalsViewSet(viewsets.ModelViewSet):
     serializer_class = GoalSerializer
 
     def get_queryset(self):
-        """This view should return a list of all the goals"""
-        # user_id = self.request.session.get("user_id")
-        # username = self.request.session.get("username")
+        user_id = self.request.session.get("user_id")
+        username = self.request.session.get("username")
         coordinator = self.request.GET.get("coordinator", None)
         month = self.request.GET.get("month", None)
         if coordinator is not None:
             return self.queryset.filter(coordinator=coordinator)
         elif month is not None:
-            latest_history_date = (
-                Goals.history.filter(  # type: ignore
+            latest_history_dates = (
+                HistoricalGoals.objects.filter(
                     Q(goal_date=month) | Q(execution_date=month)
                 )
-                .order_by("-history_date")
-                .values("history_date")[:1]
+                .values("cedula")
+                .annotate(max_history_date=Max("history_date"))
             )
 
             # Filter records with the latest history_date
-            unique_goals = Goals.history.filter(history_date=Subquery(latest_history_date))  # type: ignore
+            unique_goals = HistoricalGoals.objects.filter(
+                Q(
+                    history_date__in=Subquery(
+                        latest_history_dates.values("max_history_date")
+                    )
+                )
+                & Q(cedula__in=latest_history_dates.values("cedula"))
+            )
 
             return unique_goals
         else:
@@ -202,7 +208,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     "ESTADO",
                     "OBSERVACIONES",
                 }
-                missing_headers = header_names - set(header_row) # type: ignore
+                missing_headers = header_names - set(header_row)  # type: ignore
                 if missing_headers:
                     return Response(
                         {
@@ -309,7 +315,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                     )
                                 except ValidationError as validation_e:
                                     logger.setLevel(logging.ERROR)
-                                    logger.exception("Validation error: %s", str(validation_e))
+                                    logger.exception(
+                                        "Validation error: %s", str(validation_e)
+                                    )
                                     return Response(
                                         {
                                             "message": "Excel upload Failed.",

@@ -28,7 +28,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_ROOT = BASE_DIR / "utils" / "media"
+# MEDIA_ROOT = BASE_DIR / "utils" / "media"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -44,6 +44,7 @@ ALLOWED_HOSTS = ["insights-api.cyc-bpo.com", "insights-api-dev.cyc-bpo.com"]
 # Application definition
 
 INSTALLED_APPS = [
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -56,8 +57,8 @@ INSTALLED_APPS = [
     "goals",
     "api_token",
     "hierarchy",
-    "sgc",
-    "users",
+    # "sgc",
+    "users"
 ]
 
 MIDDLEWARE = [
@@ -66,7 +67,6 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "INSIGHTSAPI.middleware.logging.LoggingMiddleware",
-    # "INSIGHTSAPI.middleware.response_redirect.RedirectMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -77,9 +77,7 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "api_token.cookie_JWT.CookieJWTAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_JWT.CookieJWTAuthentication",),
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
@@ -152,20 +150,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
-# AUTH_PASSWORD_VALIDATORS = [
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-#     },
-#     {
-#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-#     },
-# ]
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
 
 
 # Internationalization
@@ -180,8 +178,8 @@ USE_I18N = True
 USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
     "django_auth_ldap.backend.LDAPBackend",
-    # "django.contrib.auth.backends.ModelBackend",
 ]
 
 
@@ -265,13 +263,12 @@ AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 AUTH_LDAP_USER_SEARCH = LDAPSearch(
     "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
     ldap.SCOPE_SUBTREE,  # Search scope
-    "(sAMAccountName=%(user)s)"  # Search filter
+    "(sAMAccountName=%(user)s)",  # Search filter
 )
 
 AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
     "last_name": "sn",
-    "email": "mail"
 }
 
 # This works faster in ldap but i don't know how implement it with the sAMAcountName
@@ -280,12 +277,12 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # AUTH_LDAP_USER_DN_TEMPLATE = '(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(hours=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=15),
     # "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
     "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
     "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
     "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
     "AUTH_COOKIE": "access-token",
-    "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true"
+    "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true",
 }
