@@ -129,15 +129,37 @@ class GoalAPITestCase(APITestCase):
         """Test the get-history view."""
         self.test_claro_upload()
         self.test_execution_upload(called=True)
-        response = self.client.get("/goals/?month=DICIembre-2028")
+        # Check with a month that has no goals
+        response = self.client.get("/goals/?date=DICIembre-2028&column=delivery")
         self.assertEqual(response.status_code, 200)
         self.assertFalse(len(response.data) > 0)  # type: ignore
-        response = self.client.get("/goals/?month=ENERO-2022")
+        # Check with a month that has goals
+        response = self.client.get("/goals/?date=ENERO-2028&column=delivery")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 338)  # type: ignore
-        response = self.client.get("/goals/?month=ENERO-2028")
         self.assertEqual(len(response.data), 110)  # type: ignore
         self.assertIn("ENERO-2028", response.data[0].get("goal_date"))  # type: ignore
+        # Check with a month that has execution
+        response = self.client.get("/goals/?date=ENERO-2022&column=execution")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 338)  # type: ignore
+        # Upload a file to test if the same month distinct between delivery and execution
+        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx"
+        with open(file_path, "rb") as file_obj:
+            file_data = file_obj.read()
+        excel_file = SimpleUploadedFile(
+            "Entrega de metas ejemplo Claro-ENERO-2022.xlsx",
+            file_data,
+            content_type="application/vnd.ms-excel",
+        )
+        # Send the POST request to the upload-excel URL with the Excel file data
+        response = self.client.post(reverse("goal-list"), {"file": excel_file})
+        self.assertEqual(response.status_code, 201)
+        # Check with a month that has twice
+        response = self.client.get("/goals/?date=ENERO-2022&column=delivery")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 110)  # type: ignore
+        self.assertIn("ENERO-2022", response.data[0].get("goal_date"))  # type: ignore
+
 
 
 @override_settings(DATABASES={"default": "your_real_db_alias"})

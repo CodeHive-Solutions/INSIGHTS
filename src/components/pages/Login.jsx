@@ -38,7 +38,7 @@ const Login = () => {
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
-        setMessage(message);
+        setMessage(message); 
         setOpenSnack(true);
         if (error) {
             console.error("error:", message);

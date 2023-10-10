@@ -1,5 +1,7 @@
 """Test module for the excels_processing app"""
 import os
+from users.models import User
+from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
@@ -27,6 +29,10 @@ class FilesTestCase(TestCase):
     def test_upload_file(self):
         """Test uploading a file to the server"""
         TokenCheckTest.test_token_obtain(self) # type: ignore
+        user = User.objects.get(username="heibert.mogollon")
+        permission = Permission.objects.get(codename="upload_robinson_list")
+        user.user_permissions.add(permission)
+        user.save()
         cursor = self.cursor
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx"
         file_obj = open(file_path, "rb")

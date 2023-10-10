@@ -19,12 +19,17 @@ class User(AbstractUser):
         upload_to="images/pictures/", validators=[validate_file_extension]
     )
     email = models.EmailField(unique=True, null=True, blank=False, default=None)
-    # password = None
+    password = None
     date_joined = None
     last_login = None
-    is_active = None
+    is_superuser = None
+    is_staff = None
+
+    @property
+    def is_active(self):
+        """Return all the users like active."""
+        return True
 
     class Meta:
         """Meta class."""
-
         permissions = [("upload_robinson_list", "Can upload robinson list")]

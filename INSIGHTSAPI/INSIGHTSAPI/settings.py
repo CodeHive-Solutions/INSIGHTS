@@ -28,7 +28,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# MEDIA_ROOT = BASE_DIR / "utils" / "media"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -57,7 +58,7 @@ INSTALLED_APPS = [
     "goals",
     "api_token",
     "hierarchy",
-    # "sgc",
+    "sgc",
     "users"
 ]
 
@@ -178,8 +179,8 @@ USE_I18N = True
 USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",
     "django_auth_ldap.backend.LDAPBackend",
+    "django.contrib.auth.backends.ModelBackend",
 ]
 
 

@@ -34,13 +34,21 @@ class GoalsViewSet(viewsets.ModelViewSet):
         user_id = self.request.session.get("user_id")
         username = self.request.session.get("username")
         coordinator = self.request.GET.get("coordinator", None)
-        month = self.request.GET.get("month", None)
+        date = self.request.GET.get("date", None)
+        column = self.request.GET.get("column", None)
         if coordinator is not None:
             return self.queryset.filter(coordinator=coordinator)
-        elif month is not None:
+        elif date is not None and column is not None:
+            if column == "delivery":
+                column_name = "goal_date"
+            elif column == "execution":
+                column_name = "execution_date"
+            else:
+                return self.queryset.none()
+            filter_params = {f"{column_name}":date.upper()}
             latest_history_dates = (
                 HistoricalGoals.objects.filter(
-                    Q(goal_date=month) | Q(execution_date=month)
+                    Q(**filter_params)
                 )
                 .values("cedula")
                 .annotate(max_history_date=Max("history_date"))
