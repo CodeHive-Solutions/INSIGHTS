@@ -14,6 +14,7 @@ class LoggingMiddleware:
         log_info = {
             "Request": request,
             "Response": response,
+            "User": request.user,
         }
 
         if request_file:

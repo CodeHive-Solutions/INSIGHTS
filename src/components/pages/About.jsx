@@ -45,7 +45,7 @@ const managements = [
     { name: " Melida Sandoval", management: "Gerente Administrativa", image: melidaSandoval },
 ];
 
-const AboutUs = () => {
+const About = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -196,6 +196,10 @@ const AboutUs = () => {
                                 height: 450,
                                 position: "relative",
                                 overflow: "hidden",
+                                transition: "transform 0.3s ease",
+                                "&:hover": {
+                                    transform: "scale(1.05)",
+                                },
                                 "&::before": {
                                     content: '""',
                                     position: "absolute",
@@ -227,4 +231,4 @@ const AboutUs = () => {
     );
 };
 
-export default AboutUs;
+export default About;

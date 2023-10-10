@@ -1,30 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import CarouselComponent from "../shared/Carousel";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Dialog } from "@mui/material";
 import { motion, useIsPresent } from "framer-motion";
 import imageExample from "../../images/example-image.jpg";
 import imageExample2 from "../../images/example-image2.jpg";
-import image2 from "../../images/image2.jpg";
-import image3 from "../../images/image3.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
+
+//images test
+import imageTest from "../../images/test/test.jpeg";
+import imageTest1 from "../../images/test/image00002.jpeg";
+import imageTest2 from "../../images/test/image00003.jpeg";
+import imageTest3 from "../../images/test/image00004.jpeg";
 
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
 import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
 import tuliaCalderon from "../../images/birthdays/tulia-calderon.jpeg";
 import carolGuerrero from "../../images/birthdays/carol-guerrero.jpeg";
+import benefit1 from "../../images/benefits-vacancies/MicrosoftTeams-image4.png";
+import benefit2 from "../../images/benefits-vacancies/MicrosoftTeams-image5.png";
+import benefit3 from "../../images/benefits-vacancies/MicrosoftTeams-image6.png";
+import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png";
 
-const homeImages = [
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
+const benefits = [
+    { image: benefit1, title: "Beneficio 1" },
+    { image: benefit2, title: "Beneficio 2" },
 ];
+
+const vacancies = [
+    { image: benefit3, title: "Vacante 1" },
+    { image: benefit4, title: "Vacante 2" },
+];
+
+const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }];
 const birthdays = [
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
@@ -37,6 +50,7 @@ const birthdays2 = [
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
 ];
+
 const birthdays3 = [
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
@@ -45,6 +59,9 @@ const birthdays3 = [
 ];
 
 const Home = () => {
+    const [openDialog, setOpenDialog] = useState(false);
+    const handleOpenDialog = () => setOpenDialog(true);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -58,14 +75,14 @@ const Home = () => {
 
     return (
         <>
-            <motion.div
+            {/* <motion.div
                 initial={{ scaleX: 1 }}
                 animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
                 exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
                 style={{ originX: isPresent ? 0 : 1 }}
                 className="privacy-screen"
-            />
-            <Box sx={{ mt: "4rem" }}>
+            /> */}
+            <Box sx={{ display: "flex", mt: "4rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"80vh"} width={"100%"} />
             </Box>
             <Box
@@ -114,7 +131,7 @@ const Home = () => {
                     >
                         Vacantes
                     </Typography>
-                    <CarouselComponent items={homeImages} height={"80vh"} width={"100%"} />
+                    <CarouselComponent items={vacancies} height={"80vh"} width={"100%"} />
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "2rem" }}>
                     <Typography
@@ -124,9 +141,13 @@ const Home = () => {
                     >
                         Beneficios
                     </Typography>
-                    <CarouselComponent items={homeImages} height={"80vh"} width={"100%"} />
+                    <CarouselComponent items={benefits} height={"70vh"} width={"80%"} />
                 </Box>
             </Box>
+            <Dialog open={openDialog} title={"example title"}>
+                <p>HOLA</p>
+            </Dialog>
+            <button onClick={handleOpenDialog}>open</button>
         </>
     );
 };

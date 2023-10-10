@@ -1,33 +1,24 @@
-import React, { useEffect } from "react";
-import { motion, useIsPresent } from "framer-motion";
-import { useNavigate, Link, useMatch } from "react-router-dom";
+import React from "react";
+import { useCookies } from "react-cookie";
 
-function Test() {
-    const isPresent = useIsPresent();
+function Example() {
+    const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
 
-    const navigate = useNavigate();
+    const handleButtonClick = () => {
+        setCookie("cookie-name", "cookie-value", { path: "/" });
+    };
 
-    const handleNavigate = () => {
-        navigate("/logged/home");
+    const handleRemoveButtonClick = () => {
+        removeCookie("cookie-name");
     };
 
     return (
         <div>
-            <li>
-                <Link to="/logged/home">Amsterdam</Link>
-            </li>
-            <motion.div
-                initial={{ scaleX: 1 }}
-                animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
-                exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
-                style={{ originX: isPresent ? 0 : 1 }}
-                className="privacy-screen"
-            />
-            <button onClick={() => handleNavigate()}>Transition</button>
-            <h1>Hello, React!</h1>
-            <p>This is a basic React.js component.</p>
+            <button onClick={handleButtonClick}>Set Cookie</button>
+            <button onClick={handleRemoveButtonClick}>Remove Cookie</button>
+            {cookies["cookie-name"] && <p>Cookie Value: {cookies["cookie-name"]}</p>}
         </div>
     );
 }
 
-export default Test;
+export default Example;

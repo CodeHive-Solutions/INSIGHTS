@@ -15,6 +15,8 @@ function CarouselComponent(props) {
     );
 }
 
+const aspectRatio = 1414 / 2000; // Width divided by height
+
 function Item(props) {
     const { item, height, width, day } = props;
     const { name, description, image } = item;
@@ -25,8 +27,9 @@ function Item(props) {
                 sx={{
                     height: height,
                     width: width,
-                    backgroundSize: "cover",
+                    backgroundSize: "contain",
                     backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
                     backgroundImage: `url(${image})`,
                     borderRadius: "15px",
                 }}

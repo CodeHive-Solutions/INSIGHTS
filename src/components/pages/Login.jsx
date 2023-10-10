@@ -3,13 +3,15 @@ import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import login_image from "../../images/ALE02974.webp";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
-import { React } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import * as Yup from "yup";
 import { useState, useEffect } from "react";
 import SnackbarAlert from "../common/SnackBarAlert";
 import LinearProgress from "@mui/material/LinearProgress";
+import apiRequest from "../../assets/apiRequest";
+import { useCookies } from "react-cookie";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),
@@ -23,10 +25,6 @@ const FormikTextField = ({ label, type, ...props }) => {
 };
 
 const Login = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     const [open, setOpen] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const navigate = useNavigate();
@@ -34,14 +32,13 @@ const Login = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [loadingBar, setLoadingBar] = useState(false);
+    const [cookies, setCookie] = useCookies(["refresh-timer"]);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
-    const handleOpenSnack = () => setOpenSnack(true);
-
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
-        setMessage(message);
+        setMessage(message); 
         setOpenSnack(true);
         if (error) {
             console.error("error:", message);
@@ -53,31 +50,41 @@ const Login = () => {
         setLoadingBar(true);
 
         try {
+            // Use the apiRequest function to make the API request
+            // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
+
             const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/obtain/", {
                 method: "POST",
-                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
+                credentials: "include",
             });
 
             setLoadingBar(false);
             setIsSubmitting(false);
 
             const data = await response.json();
+
             if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.non_field_errors);
+                throw new Error(data.detail);
             }
+
             if (response.status === 200) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + 15 * 60 * 60 * 1000);
+                setCookie("refresh-timer", "", { path: "/", expires });
                 navigate("/logged/home");
             }
         } catch (error) {
             console.error(error);
-            if (error.message === "Unable to log in with provided credentials.") {
+
+            if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
                 showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
             } else {
+                console.log(error.message);
                 showSnack("error", error.message);
             }
+
             setLoadingBar(false);
         }
     };
@@ -128,7 +135,7 @@ const Login = () => {
                             }}
                         >
                             <Typography sx={{ fontWeight: 500 }} variant="h4">
-                                Iniciar Sesión
+                                Intranet
                             </Typography>
 
                             <FormikTextField type="text" name="username" label="Usuario" autoComplete="off" spellCheck={false} />

@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { Typography } from "@mui/material";
-import SaveIcon from "@mui/icons-material/Save";
 import Collapse from "@mui/material/Collapse";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -19,12 +18,20 @@ const UploadGoals = () => {
 
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState("Example");
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-    const [snackbarMessage, setSnackbarMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const [isLoading, setIsLoading] = useState(true); // Add a loading state
     const [cedula, setCedula] = useState();
+    const [severity, setSeverity] = useState("success");
+    const [message, setMessage] = useState();
+    const [openSnack, setOpenSnack] = useState(false);
+
+    const showSnack = (severity, message, error) => {
+        setSeverity(severity);
+        setMessage(message);
+        setOpenSnack(true);
+        if (error) {
+            console.error("error:", message);
+        }
+    };
 
     const onDrop = useCallback((acceptedFiles) => {
         setSelectedFile(acceptedFiles[0]);
@@ -61,45 +68,41 @@ const UploadGoals = () => {
             let path;
             if (selectedFile.name.includes("meta")) {
                 path = "https://insights-api-dev.cyc-bpo.com/goals/";
-            } else if (selectedFile.name.includes("robinson")) {
-                path = "https://insights-api-dev.cyc-bpo.com/robinson-list/";
+            } else if (selectedFile.name.includes("ROBINSON").uppercase()) {
+                path = "https://insights-api-dev.cyc-bpo.com/files/robinson-list/";
+            } else {
+                showSnack("error", "La nomenclatura del archivo no es correcta.");
+                return;
             }
             try {
                 const response = await fetch(path, {
                     method: "POST",
                     body: formData,
+                    credentials: "include",
                 });
 
                 setLoading(false);
                 if (!response.ok) {
                     if (response.status === 500) {
-                        console.error("Lo sentimos, se ha producido un error inesperado.");
-                        setOpenSnackbar(true);
-                        setSnackbarSeverity("error");
-                        setSnackbarMessage("Lo sentimos, se ha producido un error inesperado");
+                        showSnack("error", "Lo sentimos, se ha producido un error inesperado.");
                         throw new Error(response.statusText);
                     } else if (response.status === 400) {
                         const data = await response.json();
-                        console.error("Lo sentimos, se ha producido un error inesperado.");
-                        setOpenSnackbar(true);
-                        setSnackbarSeverity("error");
-                        setSnackbarMessage(data.message);
+                        showSnack("error", data.message);
                         throw new Error(response.statusText);
                     }
 
                     const data = await response.json();
                     console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                    setOpenSnackbar(true);
-                    setSnackbarSeverity("error");
-                    setSnackbarMessage("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
+                    showSnack("error", "Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
                     throw new Error(response.statusText);
                 }
 
                 if (response.status === 201) {
-                    setOpenSnackbar(true);
-                    setSnackbarSeverity("success");
-                    setSnackbarMessage("Archivo subido exitosamente!");
-                    // Handle successful response here
+                    const data = await response.json();
+                    showSnack("success", "Registros subidos: " + data.rows_updated);
+                } else if (response.status === 200) {
+                    showSnack("warning", "No se encontraron registros para actualizar.");
                 }
             } catch (error) {
                 console.error(error);
@@ -107,18 +110,12 @@ const UploadGoals = () => {
         }
     };
 
-    const handleCloseSnackbar = (event, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-
-        setOpenSnackbar(false);
-    };
+    const handleCloseSnack = () => setOpenSnack(false);
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
             <Typography variant="h6" sx={{ color: "primary.main", mb: "55px", fontSize: "30px" }}>
-                CARGUE DE ARCHIVOS
+                Cargue de Archivos
             </Typography>
             <Box
                 sx={{
@@ -188,7 +185,7 @@ const UploadGoals = () => {
                     </LoadingButton>{" "}
                 </Box>
             </Collapse>
-            <SnackbarAlert open={openSnackbar} onClose={handleCloseSnackbar} severity={snackbarSeverity} message={snackbarMessage} />
+            <SnackbarAlert openSnack={openSnack} closeSnack={handleCloseSnack} severity={severity} message={message} />
         </Box>
     );
 };

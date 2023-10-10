@@ -1,15 +1,20 @@
-import pandas as pd
-from typing import BinaryIO
+"""This module contains functions for processing Excel files. """
+
 import logging
+from typing import BinaryIO
+import pandas as pd
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("requests")
 
-def upload_df_to_table(df:pd.DataFrame, connection, table_name: str, columns_mapping: dict[str, str]) -> bool:
+
+def upload_df_to_table(
+    data_f: pd.DataFrame, connection, table_name: str, columns_mapping: dict[str, str]
+) -> bool:
     """
     Upload data from a Pandas DataFrame to a specified database table.
 
     Parameters:
-    - df (pd.DataFrame): The DataFrame containing the data to be uploaded.
+    - data_f (pd.DataFrame): The DataFrame containing the data to be uploaded.
     - connection: The database connection to execute SQL queries.
     - table_name (str): The name of the database table where data will be inserted.
     - columns_mapping (dict): A dictionary that maps DataFrame column names to destination column names in the database table.
@@ -20,26 +25,28 @@ def upload_df_to_table(df:pd.DataFrame, connection, table_name: str, columns_map
     try:
         # Create a list of dictionaries where each dictionary represents a row
         data_dicts = []
-        for index, row in df.iterrows():
+        for row in data_f.itertuples(index=False):
             data_dict = {}
             for excel_column, destination_column in columns_mapping.items():
-                if excel_column in df.columns:
-                    data_dict[destination_column] = row[excel_column]
+                if excel_column in data_f.columns:
+                    data_dict[destination_column] = getattr(row, excel_column)
             data_dicts.append(data_dict)
 
         # Create the INSERT query dynamically based on columns_mapping
-        columns = ', '.join(data_dicts[0].keys())
-        values_template = ', '.join(['%s'] * len(data_dicts[0]))
-        query = f"INSERT IGNORE INTO {table_name} ({columns}) VALUES ({values_template})"
+        columns = ", ".join(data_dicts[0].keys())
+        values_template = ", ".join(["%s"] * len(data_dicts[0]))
+        query = (
+            f"INSERT IGNORE INTO {table_name} ({columns}) VALUES ({values_template})"
+        )
         cursor = connection.cursor()
         # Execute the query using executemany with the list of dictionaries
         cursor.executemany(query, [tuple(d.values()) for d in data_dicts])
         # Commit the transaction to save changes
         connection.commit()
-        return True
-    except Exception as e:
-        logger.exception(e)
-        return False
+        return cursor.rowcount
+    except Exception as error:
+        logger.exception(error)
+        raise Exception(f"Error reading Excel file: {str(error)}") from error
 
 
 def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:
@@ -61,7 +68,7 @@ def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:
     print(data_frame)
     """
     try:
-        df = pd.read_excel(file)
-        return df
-    except Exception as e:
-        raise ValueError(f"Error reading Excel file: {str(e)}")
+        data_f = pd.read_excel(file, engine='openpyxl')
+        return data_f
+    except Exception as error:
+        raise ValueError(f"Error reading Excel file: {str(error)}") from error

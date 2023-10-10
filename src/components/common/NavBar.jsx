@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useRef } from "react";
-import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover } from "@mui/material";
+import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover, Dialog } from "@mui/material";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
@@ -17,6 +17,9 @@ import logotipo from "../../images/logotipo-navbar-copia.webp";
 import SnackbarAlert from "./SnackBarAlert";
 import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { useCookies } from "react-cookie";
+import FeedbackIcon from "@mui/icons-material/Feedback";
+import Goals from "../shared/Goals";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -30,6 +33,10 @@ const Navbar = () => {
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
+    const [cookies, setCookie, removeCookie] = useCookies(["refresh-timer"]);
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleOpenDialog = () => setOpenDialog(true);
 
     const handleUtilitariosMenuOpen = (event) => {
         setAnchorElUtils(event.currentTarget);
@@ -100,30 +107,6 @@ const Navbar = () => {
         }
     };
 
-    const refreshToken = async () => {
-        try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/refresh/", {
-                method: "POST",
-                credentials: "include",
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.detail);
-            }
-
-            const data = await response.json();
-            if (response.status === 200) {
-                console.log("refresh token success");
-            } else if (response.status === 401 && data.detail === "Authentication credentials were not provided") {
-                navigate("/", { replace: true });
-            }
-        } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
-        }
-    };
-
     const handleLogout = async () => {
         try {
             const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/destroy/", {
@@ -133,17 +116,12 @@ const Navbar = () => {
 
             if (!response.ok) {
                 const data = await response.json();
-                if (response.status === 401 && data.detail === "Authentication credentials were not provided.") {
-                    refreshToken();
-                }
                 throw new Error(data.detail);
             }
 
-            const data = await response.json();
             if (response.status === 200) {
-                refreshToken();
+                removeCookie("refresh-timer");
                 navigate("/", { replace: true });
-            } else if (response.status === 401 && data.detail === "Authentication credentials were not provided") {
             }
         } catch (error) {
             console.error(error);
@@ -260,6 +238,12 @@ const Navbar = () => {
                 </MenuItem>
                 <MenuItem onClick={handleClose}>
                     <Avatar /> Mi cuenta
+                </MenuItem>
+                <MenuItem onClick={handleOpenDialog}>
+                    <ListItemIcon>
+                        <FlagIcon fontSize="small" />
+                    </ListItemIcon>
+                    Mi Meta: $250.000.000
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleClose}>
@@ -395,21 +379,27 @@ const Navbar = () => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <Box onMouseLeave={handleCloseUtils}>
+                    <MenuItem onClick={() => navigate("/logged/sugerencias")}>
+                        <ListItemIcon>
+                            <FeedbackIcon fontSize="small" />
+                        </ListItemIcon>
+                        Sugerencias
+                    </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
-                        Análisis de metas
+                        Análisis de Metas
                     </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/upload-goals")}>
                         <ListItemIcon>
                             <UploadFileIcon fontSize="small" />
                         </ListItemIcon>
-                        Cargue de archivos
+                        Cargue de Archivos
                     </MenuItem>
                 </Box>
             </Menu>
-
+            <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

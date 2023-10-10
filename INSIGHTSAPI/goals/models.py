@@ -1,8 +1,12 @@
+"""This file contains the models for the goals app."""
 from django.db import models
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
+
 class Goals(models.Model):
+    """This class represents the goals model."""
+
     cedula = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     job_title = models.CharField(max_length=100)
@@ -19,24 +23,29 @@ class Goals(models.Model):
     table_goal = models.CharField(max_length=50, null=True)
     goal_date = models.CharField(max_length=20)
     execution_date = models.CharField(max_length=20)
-    observation = models.CharField(max_length=350,null=True)
+    observation = models.CharField(max_length=350, null=True)
     accepted = models.BooleanField(null=True)
     accepted_at = models.DateTimeField(null=True)
     accepted_execution = models.BooleanField(null=True)
     accepted_execution_at = models.DateTimeField(null=True)
     status = models.BooleanField(default=None, null=True)
     last_update = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=['last_update'])
+    history = HistoricalRecords(excluded_fields=["last_update"])
+
     def pre_create_historical_record(self):
-        record = super().pre_create_historical_record() #type: ignore
+        """This method is used to save the date of the historical record."""
+        record = super().pre_create_historical_record()  # type: ignore
         record.history_date = timezone.now()
         record.save()
         return record
+
     def __str__(self):
-        return self.name
+        """This method is used to return the name of the goal."""
+        return str(self.name)
+
 
 class TableInfo(models.Model):
-    # name = models.ForeignKey('TableName', on_delete=models.DO_NOTHING)
+    """This class represents the table info model."""
     name = models.CharField(max_length=50)
     fringe = models.CharField(max_length=100)
     diary_goal = models.IntegerField()
@@ -47,16 +56,18 @@ class TableInfo(models.Model):
     history = HistoricalRecords()
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def pre_create_historical_record(self):
-        record = super().pre_create_historical_record() #type: ignore
+        """This method is used to save the date of the historical record."""
+        record = super().pre_create_historical_record()  # type: ignore
         record.history_date = timezone.now()
         record.save()
         return record
 
-# class TableName(models.Model):
-    # name = models.CharField(max_length=50, primary_key=True)
 
-    # def __str__(self):
-        # return self.name
+# class TableName(models.Model):
+# name = models.CharField(max_length=50, primary_key=True)
+
+# def __str__(self):
+# return self.name
