@@ -68,7 +68,7 @@ const UploadGoals = () => {
             let path;
             if (selectedFile.name.includes("meta")) {
                 path = "https://insights-api-dev.cyc-bpo.com/goals/";
-            } else if (selectedFile.name.includes("ROBINSON").uppercase()) {
+            } else if (selectedFile.name.toUpperCase().includes("ROBINSON")) {
                 path = "https://insights-api-dev.cyc-bpo.com/files/robinson-list/";
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");
@@ -90,12 +90,17 @@ const UploadGoals = () => {
                         const data = await response.json();
                         showSnack("error", data.message);
                         throw new Error(response.statusText);
+                    } else if (response.status === 403) {
+                        showSnack("error", "No tiene permiso para realizar esta acción.");
+                        throw new Error(response.statusText);
                     }
 
                     const data = await response.json();
-                    console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                    showSnack("error", "Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                    throw new Error(response.statusText);
+                    if (path === "https://insights-api-dev.cyc-bpo.com/goals/") {
+                        console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
+                        showSnack("error", "Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
+                        throw new Error(response.statusText);
+                    }
                 }
 
                 if (response.status === 201) {

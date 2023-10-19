@@ -12,6 +12,8 @@ from api_token.tests import TokenCheckTest
 class FilesTestCase(TestCase):
     """Test case for the files endpoint"""
 
+    databases = "__all__"
+
     def setUp(self):
         """Set up the test case """
         self.client = APIClient()

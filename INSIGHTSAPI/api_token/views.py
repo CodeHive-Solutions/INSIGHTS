@@ -64,6 +64,6 @@ class CustomTokenRefreshView(TokenRefreshView):
 @permission_classes([AllowAny])
 def logout_view(request):
     response = Response({"message": "Logout successful"}, status=200)
-    response.delete_cookie("access-token", domain=".cyc-bpo.com", path="/")
-    response.delete_cookie("refresh-token", domain=".cyc-bpo.com", path="/")
+    response.delete_cookie("access-token", domain=".cyc-bpo.com", path="/", samesite="None")
+    response.delete_cookie("refresh-token", domain=".cyc-bpo.com", path="/", samesite="None")
     return response

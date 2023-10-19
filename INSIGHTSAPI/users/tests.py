@@ -1,5 +1,4 @@
 """Tests for the users app."""
-import json
 import ldap
 from users.models import User
 from django.contrib.auth.models import Permission
@@ -11,6 +10,8 @@ from django.test.client import Client
 
 class LDAPAuthenticationTest(TestCase):
     """Tests the LDAP authentication."""
+
+    databases = "__all__"
 
     def setUp(self):
         """Sets up the test client."""
@@ -48,7 +49,7 @@ class LDAPAuthenticationTest(TestCase):
             result_id = conn.search(
                 search_base, ldap.SCOPE_SUBTREE, search_filter, attributes
             )
-            result_type, result_data = conn.result(result_id, 0)
+            _, result_data = conn.result(result_id, 0)
             self.assertTrue(result_data, "User entry not found.")
             if result_data:
                 user_dn = result_data[0][0]

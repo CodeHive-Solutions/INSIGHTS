@@ -28,8 +28,8 @@ ssl._create_default_https_context = ssl._create_unverified_context
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -59,7 +59,7 @@ INSTALLED_APPS = [
     "api_token",
     "hierarchy",
     "sgc",
-    "users"
+    "users",
 ]
 
 MIDDLEWARE = [
@@ -137,7 +137,7 @@ DATABASES = {
         "NAME": "staffnet",
         "TEST": {"MIRROR": "staffnet"},
     },
-    # 'llamadas': {
+    # 'llamadas': {  # MySQL too old
     #     'ENGINE': 'django.db.backends.mysql',
     #     'HOST': '172.16.0.9',
     #     'PORT': '3306',
@@ -146,6 +146,13 @@ DATABASES = {
     #     'PASSWORD': 'a4dnAGc-',
     #     'NAME': 'asteriskdb',
     # }
+    # 'intranet': { # MySQL too old
+    #     "user": "mtc",
+    #     "password": os.environ["LEYES"],
+    #     "host": "172.16.0.6",
+    #     "port": "3306",
+    #     "database": "userscyc",
+    #  }
 }
 
 # Password validation
@@ -153,16 +160,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 

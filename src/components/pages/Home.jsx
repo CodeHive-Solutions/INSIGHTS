@@ -10,9 +10,10 @@ import imageExample2 from "../../images/example-image2.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
+import { useNavigate } from "react-router-dom";
 
 //images test
-import imageTest from "../../images/test/test.jpeg";
+import imageTest from "../../images/carousel-test.jpg";
 import imageTest1 from "../../images/test/image00002.jpeg";
 import imageTest2 from "../../images/test/image00003.jpeg";
 import imageTest3 from "../../images/test/image00004.jpeg";

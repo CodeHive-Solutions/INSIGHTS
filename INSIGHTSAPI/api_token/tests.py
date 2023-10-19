@@ -7,6 +7,8 @@ from rest_framework.test import APIClient
 import ldap # type: ignore
 
 class LDAPAuthenticationTest(APITestCase):
+    databases = '__all__'
+
     """Test the LDAP authentication."""
     def setUp(self):
         self.client = APIClient()
@@ -45,6 +47,8 @@ class LDAPAuthenticationTest(APITestCase):
 
 class TokenCheckTest(APITestCase):
     """Test the token authentication."""
+
+    databases = '__all__'
 
     def setUp(self):
         self.client = APIClient()

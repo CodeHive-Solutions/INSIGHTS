@@ -34,11 +34,19 @@ const Login = () => {
     const [loadingBar, setLoadingBar] = useState(false);
     const [cookies, setCookie] = useCookies(["refresh-timer"]);
 
+    const isCookiePresent = cookies["refresh-timer"] !== undefined;
+
+    // useEffect(() => {
+    //     if (isCookiePresent) {
+    //         navigate("/logged/home");
+    //     }
+    // }, [isCookiePresent, navigate]);
+
     const handleCloseSnack = () => setOpenSnack(false);
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
-        setMessage(message); 
+        setMessage(message);
         setOpenSnack(true);
         if (error) {
             console.error("error:", message);

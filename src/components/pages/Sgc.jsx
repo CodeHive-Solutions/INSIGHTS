@@ -2,8 +2,22 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { motion, useIsPresent } from "framer-motion";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
 import SnackbarAlert from "../common/SnackBarAlert";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import MenuItem from "@mui/material/MenuItem";
+import { styled } from "@mui/material/styles";
+import * as Yup from "yup";
+import { Formik, Form, useField, useFormikContext } from "formik";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import Save from "@mui/icons-material/Save";
 
 import {
     GridRowModes,
@@ -27,6 +41,45 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 import "../../index.css";
+
+const validationSchema = Yup.object().shape({
+    area: Yup.string().required("Campo requerido"),
+    tipo: Yup.string().required("Campo requerido"),
+    subtipo: Yup.string().required("Campo requerido"),
+    nombre: Yup.string().required("Campo requerido"),
+    version: Yup.string().required("Campo requerido"),
+    archivo: Yup.string().required("Campo requerido"),
+});
+
+const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
+    const [field, meta] = useField(props);
+    const errorText = meta.error && meta.touched ? meta.error : "";
+    if (type === "select") {
+        return (
+            <TextField sx={{ width: "270px" }} defaultValue="" select type={type} label={label} {...field} helperText={errorText} error={!!errorText}>
+                {options.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                    </MenuItem>
+                ))}
+            </TextField>
+        );
+    } else {
+        return <TextField sx={{ width: "270px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
+    }
+};
+
+const VisuallyHiddenInput = styled("input")({
+    clip: "rect(0 0 0 0)",
+    clipPath: "inset(50%)",
+    height: 1,
+    overflow: "hidden",
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    whiteSpace: "nowrap",
+    width: 1,
+});
 
 const initialRows = [
     { id: 1, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
@@ -55,10 +108,14 @@ export const Sgc = () => {
     const [message, setMessage] = useState();
     const [editAccess, setEditAccess] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
+
+    const handleCloseDialog = () => setOpenDialog(false);
+    const handleOpenDialog = () => setOpenDialog(true);
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -143,12 +200,42 @@ export const Sgc = () => {
                         utf8WithBom: true,
                     }}
                 />
+                <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                    AÑADIR
+                </Button>
                 <Box sx={{ textAlign: "end", flex: "1" }}>
                     <GridToolbarQuickFilter />
                 </Box>
             </GridToolbarContainer>
         );
     };
+
+    const handleSubmit = (values, { setSubmitting }) => {
+        console.log(values);
+    };
+
+    const areas = [
+        { value: "DE", label: "DE" },
+        { value: "GA", label: "GA" },
+        { value: "GC", label: "GC" },
+        { value: "GH", label: "GH" },
+        { value: "GL", label: "GL" },
+        { value: "GP", label: "GP" },
+        { value: "GR", label: "GR" },
+        { value: "GS", label: "GS" },
+        { value: "GT", label: "GT" },
+        { value: "SG-SST", label: "SG-SST" },
+    ];
+
+    const tipos = [
+        { value: "CR", label: "CR" },
+        { value: "IN", label: "IN" },
+        { value: "MA", label: "MA" },
+        { value: "P", label: "P" },
+        { value: "PL", label: "PL" },
+        { value: "PR", label: "PR" },
+        { value: "RG", label: "RG" },
+    ];
 
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
@@ -287,6 +374,31 @@ export const Sgc = () => {
                 className="privacy-screen"
             />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+            <Dialog fullWidth={true} maxWidth="md" open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle>Cargar nuevo archivo</DialogTitle>
+                <DialogContent>
+                    <Formik initialValues={{ area: "", tipo: "", subtipo: "", nombre: "", version: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                        <Form>
+                            <Box sx={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
+                                <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="select" options={tipos} name="tipo" label="Tipo" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
+                                <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
+                                    <Button sx={{ width: "100%" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
+                                        Cargar archivo
+                                        <VisuallyHiddenInput type="file" />
+                                    </Button>
+                                </Box>
+                            </Box>
+                            <Box sx={{ pl: "0.5rem" }}>
+                                <Button startIcon={<SaveIcon></SaveIcon>}>Guardar</Button>
+                            </Box>
+                        </Form>
+                    </Formik>
+                </DialogContent>
+            </Dialog>
         </>
     );
 };

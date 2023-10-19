@@ -36,6 +36,38 @@ const Navbar = () => {
     const [cookies, setCookie, removeCookie] = useCookies(["refresh-timer"]);
     const [openDialog, setOpenDialog] = useState(false);
 
+    const isCookiePresent = cookies["refresh-timer"] !== undefined;
+
+    const refreshToken = async () => {
+        try {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/refresh/", {
+                method: "POST",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                navigate("/", { replace: true });
+                throw new Error(data.detail);
+            } else if (response.status === 200) {
+                const expires = new Date();
+                expires.setTime(expires.getTime() + 15 * 60 * 60 * 1000);
+                setCookie("refresh-timer", "", { path: "/", expires });
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    useEffect(() => {
+        if (!isCookiePresent) {
+            console.log("hola");
+            refreshToken();
+        }
+    }, []);
+
     const handleOpenDialog = () => setOpenDialog(true);
 
     const handleUtilitariosMenuOpen = (event) => {
@@ -115,13 +147,18 @@ const Navbar = () => {
             });
 
             if (!response.ok) {
+                removeCookie("refresh-timer");
+                // navigate("/", { replace: true });
                 const data = await response.json();
                 throw new Error(data.detail);
             }
 
             if (response.status === 200) {
+                console.log("example");
                 removeCookie("refresh-timer");
-                navigate("/", { replace: true });
+                // setTimeout(() => {
+                //     navigate("/", { replace: true });
+                // }, 5000);
             }
         } catch (error) {
             console.error(error);
@@ -385,12 +422,12 @@ const Navbar = () => {
                         </ListItemIcon>
                         Sugerencias
                     </MenuItem>
-                    <MenuItem onClick={() => navigate("/logged/goals-stats")}>
+                    {/* <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
                         Análisis de Metas
-                    </MenuItem>
+                    </MenuItem> */}
                     <MenuItem onClick={() => navigate("/logged/upload-goals")}>
                         <ListItemIcon>
                             <UploadFileIcon fontSize="small" />

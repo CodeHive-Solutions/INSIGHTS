@@ -1,5 +1,4 @@
 """This module contains the tests for the goals app."""
-from django.test.utils import override_settings
 from django.db.models import Q
 from django.utils import timezone
 from django.urls import reverse
@@ -160,9 +159,24 @@ class GoalAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 110)  # type: ignore
         self.assertIn("ENERO-2022", response.data[0].get("goal_date"))  # type: ignore
 
+    def test_get_one_history(self):
+        """Test the get-one-history view."""
+        self.test_claro_upload()
+        self.test_execution_upload(called=True)
+        # Check with a month that has goals
+        response = self.client.get("/goals/1016080155/?date=ENERO-2028&column=delivery")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['cedula'], 1016080155)  # type: ignore
+        self.assertIn("ENERO-2028", response.data.get("goal_date"))  # type: ignore
+        self.assertEqual(len(response.data), 22)  # type: ignore
+        # Check with a month that has execution
+        response = self.client.get("/goals/1192792468/?date=ENERO-2022&column=execution")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['cedula'], 1192792468)  # type: ignore
+        self.assertEqual(len(response.data), 22)  # type: ignore
+        self.assertIn("ENERO-2022", response.data.get("execution_date"))  # type: ignore
 
 
-@override_settings(DATABASES={"default": "your_real_db_alias"})
 class SendEmailTestCase(APITestCase):
     """Test the send-email function of the goals view."""
 

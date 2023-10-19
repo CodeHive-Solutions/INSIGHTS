@@ -28,7 +28,7 @@ const ArticlePage = () => {
             subtitle:
                 "Cómo la innovación tecnológica está transformando la forma en que interactuamos con los clientes y gestionamos las operaciones en el entorno del call center.",
             img: homeImages[2].image,
-            imgAuthor: imgAvatar,
+            imgAuthor: "",
             nameAuthor: "Sebastian",
             tags: ["Customer Experience", "Call Center", "BPO"],
             content: `
