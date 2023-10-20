@@ -210,8 +210,26 @@ export const Sgc = () => {
         );
     };
 
-    const handleSubmit = (values, { setSubmitting }) => {
-        console.log(values);
+    const handleSubmit = (values) => {
+        console.log("example");
+        // console.log(values);
+        // try {
+        //     const response = await fetch("https://insights-api-dev.cyc-bpo.com/sgc", {
+        //         method: "POST",
+        //         credentials: "include",
+        //         body: JSON.stringify(values),
+        //     });
+        //     const data = await response.json();
+        //     if (!response.ok) {
+        //         navigate("/", { replace: true });
+        //         throw new Error(data.detail);
+        //     } else if (response.status === 200) {
+        //         showSnack("success", "Se ha cargado el archivo correctamente.");
+        //     }
+        // } catch (error) {
+        //     console.error(error);
+        //     showSnack("error", error.message);
+        // }
     };
 
     const areas = [
@@ -385,16 +403,16 @@ export const Sgc = () => {
                                 <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
-                                <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
+                                {/* <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
                                     <Button sx={{ width: "100%" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
                                         Cargar archivo
                                         <VisuallyHiddenInput type="file" />
                                     </Button>
-                                </Box>
+                                </Box> */}
                             </Box>
-                            <Box sx={{ pl: "0.5rem" }}>
-                                <Button startIcon={<SaveIcon></SaveIcon>}>Guardar</Button>
-                            </Box>
+                            <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                Guardar
+                            </Button>
                         </Form>
                     </Formik>
                 </DialogContent>

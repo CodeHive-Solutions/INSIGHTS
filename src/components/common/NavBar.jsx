@@ -43,6 +43,7 @@ const Navbar = () => {
             const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/refresh/", {
                 method: "POST",
                 credentials: "include",
+                
             });
 
             const data = await response.json();

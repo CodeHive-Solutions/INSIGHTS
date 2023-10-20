@@ -37,13 +37,13 @@ class FilesTestCase(TestCase):
         user.save()
         cursor = self.cursor
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx"
-        file_obj = open(file_path, "rb")
-        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies) # type: ignore
+        self.file_obj = open(file_path, "rb")
+        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["rows_updated"], 1) # type: ignore
         self.connection.commit()
-        file_obj.seek(0)
-        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies) # type: ignore
+        self.file_obj.seek(0)
+        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["message"], "No data was inserted.") # type: ignore
         cursor.execute(self.select_query)
@@ -53,6 +53,8 @@ class FilesTestCase(TestCase):
         self.cursor.execute(
             "DELETE FROM asteriskdb.blacklist WHERE numero IN (3103233724,123456789);"
         )
+        if self.file_obj:
+            self.file_obj.close()
         self.cursor.execute(self.select_query)
         self.assertIsNone(self.cursor.fetchone())
         self.connection.commit()
