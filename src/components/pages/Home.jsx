@@ -64,18 +64,6 @@ const Home = () => {
     const handleOpenDialog = () => setOpenDialog(true);
 
     useEffect(() => {
-        let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
-
-        // Check if the item has expired
-        if (refreshTimer === null) {
-            navigate("/", { replace: true });
-        } else if (refreshTimer.expiry < new Date().getTime()) {
-            localStorage.removeItem("refreshTimer");
-            navigate("/", { replace: true });
-        }
-    }, []);
-
-    useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 

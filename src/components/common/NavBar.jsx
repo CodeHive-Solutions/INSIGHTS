@@ -17,7 +17,6 @@ import logotipo from "../../images/logotipo-navbar-copia.webp";
 import SnackbarAlert from "./SnackBarAlert";
 import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { useCookies } from "react-cookie";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import Goals from "../shared/Goals";
 
@@ -33,12 +32,9 @@ const Navbar = () => {
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
-    const [cookies, setCookie, removeCookie] = useCookies(["refresh-timer"]);
     const [openDialog, setOpenDialog] = useState(false);
 
-    const isCookiePresent = cookies["refresh-timer"] !== undefined;
-
-    const refreshToken = async () => {
+    const refreshToken = async (refreshTimer) => {
         try {
             const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/refresh/", {
                 method: "POST",
@@ -48,10 +44,26 @@ const Navbar = () => {
             const data = await response.json();
 
             if (!response.ok) {
+                if (refreshTimer) {
+                    localStorage.removeItem("refresh-timer-ls");
+                }
                 navigate("/", { replace: true });
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                
+                if (refreshTimer !== null) {
+                    localStorage.setItem(
+                        "refresh-timer-ls",
+                        JSON.stringify({
+                            expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
+                        })
+                    );
+                } else {
+                    let refreshTimer = JSON.parse(localStorage.getItem("refreshTimer"));
+                    refreshTimer.expiry = new Date().getTime() + 15 * 60 * 60 * 1000; // 15 hours from now
+
+                    // Store the item again
+                    localStorage.setItem("refresh-timer-ls", JSON.stringify(refreshTimer));
+                }
             }
         } catch (error) {
             console.error(error);
@@ -59,20 +71,11 @@ const Navbar = () => {
     };
 
     useEffect(() => {
-
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
 
         // Check if the item has expired
-        if (refreshTimer === null || r) {
-            navigate("/", { replace: true });
-        } else if (refreshTimer.expiry < new Date().getTime()) {
-            localStorage.removeItem("refreshTimer");
-            navigate("/", { replace: true });
-        }
-
-        if (!isCookiePresent) {
-            console.log("hola");
-            refreshToken();
+        if (refreshTimer === null || refreshTimer.expiry < new Date().getTime()) {
+            refreshToken(refreshTimer);
         }
     }, []);
 
@@ -155,12 +158,12 @@ const Navbar = () => {
             });
 
             if (!response.ok) {
-                removeCookie("refresh-timer");
+                localStorage.removeItem("refresh-timer-ls");
                 navigate("/", { replace: true });
             }
 
             if (response.status === 200) {
-                localStorage.removeItem("myItem");
+                localStorage.removeItem("refresh-timer-ls");
                 navigate("/", { replace: true });
             }
         } catch (error) {
