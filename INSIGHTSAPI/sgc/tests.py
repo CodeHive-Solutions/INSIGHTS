@@ -1,12 +1,14 @@
 """Test module for SGC"""
-from rest_framework.test import APITestCase
 import os
+from rest_framework.test import APITestCase
 from rest_framework import status
 from users.models import User
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from hierarchy.models import Area
+from rest_framework.test import APIClient
+
 
 
 class TestSGC(APITestCase):
@@ -16,18 +18,19 @@ class TestSGC(APITestCase):
 
     def setUp(self):
         """Set up for the test"""
-        username = "juan.carreno"
-        password = "cyc2024<"
+        self.client = APIClient()
+        username = "StaffNet"
+        password = os.environ["StaffNetLDAP"]
         data = {
             "username": username,
             "password": password,
         }
+        self.client.post(reverse("obtain-token"), data)
         # Check if the file exists
         with open(
             "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx", "rb"
         ) as file:
             file_content = file.read()
-        self.client.post(reverse("obtain-token"), data)
         self.file_data = {
             "name": "Test File",
             "area": Area.objects.first().id,  # Replace with the appropriate area ID
@@ -36,7 +39,7 @@ class TestSGC(APITestCase):
             "file": SimpleUploadedFile("Lista_Robinson.xlsx", file_content),
         }
 
-        user = User.objects.get(username="juan.carreno")
+        user = User.objects.get(username="StaffNet")
         permission = Permission.objects.get(codename="add_sgcfile")
         user.user_permissions.add(permission)
         user.save()

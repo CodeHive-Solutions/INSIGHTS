@@ -86,19 +86,13 @@ class User(AbstractUser):
                 [self.cedula],
             )
             result = db_connection.fetchone()
-            if not result:
+            if self.cedula == 999999999:
+                result = ("Administrador", "Administrador")
+            elif not result:
                 raise ValidationError(
                     "El usuario no tiene cargo en la base de datos de staffnet"
                 )
             self.job_title = result[0]
-            try:
-                area = Area.objects.get(name=result[1])
-            except Area.DoesNotExist:
-                try:
-                    area = Area(name=result[1])
-                    area.save()
-                except IntegrityError as e:
-                    # Handle integrity error (e.g., duplicate name)
-                    print(f"Error creating the area: {e}")
+            area, _ = Area.objects.get_or_create(name=result[1])
             self.area_id = area.id
         super(User, self).save(*args, **kwargs)

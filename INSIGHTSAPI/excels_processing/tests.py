@@ -6,7 +6,6 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 import mysql.connector
-from api_token.tests import TokenCheckTest
 
 
 class FilesTestCase(TestCase):
@@ -17,6 +16,14 @@ class FilesTestCase(TestCase):
     def setUp(self):
         """Set up the test case """
         self.client = APIClient()
+        username = "staffnet"
+        password = os.environ["StaffNetLDAP"]
+        data = {
+            "username": username,
+            "password": password,
+        }
+        response = self.client.post(reverse("obtain-token"), data)
+        self.assertEqual(response.status_code, 200)
         db_config = {
             "user": "blacklistuser",
             "password": os.environ["black_list_pass"],
@@ -30,8 +37,7 @@ class FilesTestCase(TestCase):
 
     def test_upload_file(self):
         """Test uploading a file to the server"""
-        TokenCheckTest.test_token_obtain(self) # type: ignore
-        user = User.objects.get(username="heibert.mogollon")
+        user = User.objects.get(username="staffnet")
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()

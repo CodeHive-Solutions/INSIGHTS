@@ -48,7 +48,7 @@ const validationSchema = Yup.object().shape({
     subtipo: Yup.string().required("Campo requerido"),
     nombre: Yup.string().required("Campo requerido"),
     version: Yup.string().required("Campo requerido"),
-    archivo: Yup.string().required("Campo requerido"),
+    // archivo: Yup.string().required("Campo requerido"),
 });
 
 const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
@@ -211,7 +211,7 @@ export const Sgc = () => {
     };
 
     const handleSubmit = (values) => {
-        console.log("example");
+        console.log(values);
         // console.log(values);
         // try {
         //     const response = await fetch("https://insights-api-dev.cyc-bpo.com/sgc", {
@@ -397,7 +397,7 @@ export const Sgc = () => {
                 <DialogContent>
                     <Formik initialValues={{ area: "", tipo: "", subtipo: "", nombre: "", version: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
                         <Form>
-                            <Box sx={{ display: "flex", gap: ".5rem", flexWrap: "wrap" }}>
+                            <Box sx={{ display: "flex", gap: ".5rem", pt: "0.5rem", flexWrap: "wrap" }}>
                                 <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="select" options={tipos} name="tipo" label="Tipo" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />

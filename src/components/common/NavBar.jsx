@@ -43,7 +43,6 @@ const Navbar = () => {
             const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/refresh/", {
                 method: "POST",
                 credentials: "include",
-                
             });
 
             const data = await response.json();
@@ -52,17 +51,25 @@ const Navbar = () => {
                 navigate("/", { replace: true });
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                const expires = new Date();
-                expires.setTime(expires.getTime() + 15 * 60 * 60 * 1000);
-                setCookie("refresh-timer", "", { path: "/", expires });
+                
             }
         } catch (error) {
             console.error(error);
-            showSnack("error", error.message);
         }
     };
 
     useEffect(() => {
+
+        let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
+
+        // Check if the item has expired
+        if (refreshTimer === null || r) {
+            navigate("/", { replace: true });
+        } else if (refreshTimer.expiry < new Date().getTime()) {
+            localStorage.removeItem("refreshTimer");
+            navigate("/", { replace: true });
+        }
+
         if (!isCookiePresent) {
             console.log("hola");
             refreshToken();
@@ -149,21 +156,15 @@ const Navbar = () => {
 
             if (!response.ok) {
                 removeCookie("refresh-timer");
-                // navigate("/", { replace: true });
-                const data = await response.json();
-                throw new Error(data.detail);
+                navigate("/", { replace: true });
             }
 
             if (response.status === 200) {
-                console.log("example");
-                removeCookie("refresh-timer");
-                // setTimeout(() => {
-                //     navigate("/", { replace: true });
-                // }, 5000);
+                localStorage.removeItem("myItem");
+                navigate("/", { replace: true });
             }
         } catch (error) {
             console.error(error);
-            showSnack("error", error.message);
         }
     };
 

@@ -13,7 +13,7 @@ function Example() {
     };
 
     return (
-        <div>
+        <div style={{padding: '20rem'}}>
             <button onClick={handleButtonClick}>Set Cookie</button>
             <button onClick={handleRemoveButtonClick}>Remove Cookie</button>
             {cookies["cookie-name"] && <p>Cookie Value: {cookies["cookie-name"]}</p>}

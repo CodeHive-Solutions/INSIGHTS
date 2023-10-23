@@ -36,6 +36,8 @@ const Login = () => {
 
     const isCookiePresent = cookies["refresh-timer"] !== undefined;
 
+    // Use Effect Hook to update localStorage when items state changes
+    useEffect(() => {}, []);
     // useEffect(() => {
     //     if (isCookiePresent) {
     //         navigate("/logged/home");
@@ -78,9 +80,14 @@ const Login = () => {
             }
 
             if (response.status === 200) {
-                const expires = new Date();
-                expires.setTime(expires.getTime() + 15 * 60 * 60 * 1000);
-                setCookie("refresh-timer", "", { path: "/", expires });
+                // Set the item in localStorage
+                localStorage.setItem(
+                    "refresh-timer-ls",
+                    JSON.stringify({
+                        expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
+                    })
+                );
+
                 navigate("/logged/home");
             }
         } catch (error) {
