@@ -50,7 +50,7 @@ const Navbar = () => {
                 navigate("/", { replace: true });
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                if (refreshTimer !== null) {
+                if (refreshTimer === null) {
                     localStorage.setItem(
                         "refresh-timer-ls",
                         JSON.stringify({
@@ -58,7 +58,7 @@ const Navbar = () => {
                         })
                     );
                 } else {
-                    let refreshTimer = JSON.parse(localStorage.getItem("refreshTimer"));
+                    let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
                     refreshTimer.expiry = new Date().getTime() + 15 * 60 * 60 * 1000; // 15 hours from now
 
                     // Store the item again

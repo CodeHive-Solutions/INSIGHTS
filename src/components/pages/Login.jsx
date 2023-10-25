@@ -35,8 +35,9 @@ const Login = () => {
 
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
-        let refreshTimer = JSON.parse(localStorage.getItem("refreshTimer"));
+        let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
 
+        console.log(refreshTimer);
         if (refreshTimer !== null && refreshTimer.expiry > new Date().getTime()) {
             navigate("/logged/home");
         }
