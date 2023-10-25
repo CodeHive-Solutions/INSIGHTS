@@ -1,6 +1,6 @@
 """Tests for the users app."""
-import json
 import ldap
+import os
 from users.models import User
 from django.contrib.auth.models import Permission
 from django.test import TestCase
@@ -11,6 +11,8 @@ from django.test.client import Client
 
 class LDAPAuthenticationTest(TestCase):
     """Tests the LDAP authentication."""
+
+    databases = "__all__"
 
     def setUp(self):
         """Sets up the test client."""
@@ -36,8 +38,8 @@ class LDAPAuthenticationTest(TestCase):
         ldap_server_uri = settings.AUTH_LDAP_SERVER_URI
         ldap_bind_dn = settings.AUTH_LDAP_BIND_DN
         ldap_bind_password = settings.AUTH_LDAP_BIND_PASSWORD
-        username = "heibert.mogollon"
-        password = "Password5"
+        username = "staffnet"
+        password = os.environ["StaffNetLDAP"]
         conn = None
         try:
             conn = ldap.initialize(ldap_server_uri)
@@ -48,7 +50,7 @@ class LDAPAuthenticationTest(TestCase):
             result_id = conn.search(
                 search_base, ldap.SCOPE_SUBTREE, search_filter, attributes
             )
-            result_type, result_data = conn.result(result_id, 0)
+            _, result_data = conn.result(result_id, 0)
             self.assertTrue(result_data, "User entry not found.")
             if result_data:
                 user_dn = result_data[0][0]
@@ -63,8 +65,8 @@ class LDAPAuthenticationTest(TestCase):
     def test_login_django(self, called=False):
         """Tests that the login endpoint works as expected."""
         if called:
-            username = "heibert.mogollon"
-            password = "Password5"
+            username = "staffnet"
+            password = os.environ["StaffNetLDAP"]
             data = {
                 "username": username,
                 "password": password,
@@ -79,7 +81,7 @@ class LDAPAuthenticationTest(TestCase):
 
     def test_login_fail(self):
         """Tests that the login endpoint fails when the password is wrong."""
-        username = "heibert.mogollon"
+        username = "staffnet"
         password = "WrongPassword"
         data = {
             "username": username,
@@ -94,30 +96,30 @@ class LDAPAuthenticationTest(TestCase):
         """Tests that the logout endpoint works as expected."""
         response = self.test_login_django(called=True)
         # Make a request that requires authentication
-        response = self.client.get("/goals/", cookies=self.client.cookies) # type: ignore
+        response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 200)
-        response2 = self.client.post(reverse("destroy-token"), cookies=self.client.cookies) # type: ignore
+        response2 = self.client.post(reverse("destroy-token"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response2.status_code, 200)
-        response3 = self.client.get(reverse("robinson-list"), cookies=self.client.cookies) # type: ignore
+        response3 = self.client.get(reverse("robinson-list"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response3.status_code, 401)
 
     def test_permission_check(self):
         """Tests that the permission check endpoint works as expected."""
-        username = "juan.carreno"
-        password = "cyc2024<"
+        username = "StaffNet"
+        password = os.environ["StaffNetLDAP"]
         data = {
             "username": username,
             "password": password,
         }
         response = self.client.post(reverse("obtain-token"), data)
         self.assertEqual(response.status_code, 200)
-        response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies) # type: ignore
+        response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 403)
         self.test_logout()
         self.test_login_django(called=True)
-        user = User.objects.get(username="heibert.mogollon")
+        user = User.objects.get(username="staffnet")
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()
-        response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies) # type: ignore
+        response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 400)

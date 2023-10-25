@@ -143,16 +143,6 @@ const About = () => {
                 </Box>
             </Container>
 
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
-                    Nuestras Sedes
-                </Typography>
-                <Box sx={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
-                    <CarouselComponent items={homeImages} height={"80vh"} width={"20rem"} />
-                    <CarouselComponent items={homeImages} height={"80vh"} width={"20rem"} />
-                    <CarouselComponent items={homeImages} height={"80vh"} width={"20rem"} />
-                </Box>
-            </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem", alignItems: "center", px: "8rem" }}>
                 <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
                     Organigrama de la empresa

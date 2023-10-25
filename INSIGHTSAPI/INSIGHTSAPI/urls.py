@@ -21,4 +21,5 @@ urlpatterns = [
     path("goals/", include("goals.urls")),
     path("token/", include("api_token.urls")),
     path("files/", include("excels_processing.urls")),
+    path("sgc/", include("sgc.urls")),
 ]

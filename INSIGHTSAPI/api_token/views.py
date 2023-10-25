@@ -1,9 +1,10 @@
 """Views for the api_token app."""
 from django.conf import settings
+from django.contrib.auth import logout
 from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 
 
@@ -63,7 +64,8 @@ class CustomTokenRefreshView(TokenRefreshView):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def logout_view(request):
+    logout(request)
     response = Response({"message": "Logout successful"}, status=200)
-    response.delete_cookie("access-token", domain=".cyc-bpo.com", path="/")
-    response.delete_cookie("refresh-token", domain=".cyc-bpo.com", path="/")
+    response.delete_cookie("access-token", domain=".cyc-bpo.com", path="/", samesite="None")
+    response.delete_cookie("refresh-token", domain=".cyc-bpo.com", path="/", samesite="None")
     return response

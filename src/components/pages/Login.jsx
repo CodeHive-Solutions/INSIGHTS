@@ -32,13 +32,22 @@ const Login = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [loadingBar, setLoadingBar] = useState(false);
-    const [cookies, setCookie] = useCookies(["refresh-timer"]);
+
+    // Use Effect Hook to update localStorage when items state changes
+    useEffect(() => {
+        let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
+
+        console.log(refreshTimer);
+        if (refreshTimer !== null && refreshTimer.expiry > new Date().getTime()) {
+            navigate("/logged/home");
+        }
+    }, []);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
-        setMessage(message); 
+        setMessage(message);
         setOpenSnack(true);
         if (error) {
             console.error("error:", message);
@@ -70,9 +79,14 @@ const Login = () => {
             }
 
             if (response.status === 200) {
-                const expires = new Date();
-                expires.setTime(expires.getTime() + 15 * 60 * 60 * 1000);
-                setCookie("refresh-timer", "", { path: "/", expires });
+                // Set the item in localStorage
+                localStorage.setItem(
+                    "refresh-timer-ls",
+                    JSON.stringify({
+                        expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
+                    })
+                );
+
                 navigate("/logged/home");
             }
         } catch (error) {

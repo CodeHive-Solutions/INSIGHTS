@@ -20,6 +20,7 @@ import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";
 import Suggestions from "./components/pages/Suggestions";
+import ImageUploader from "./components/Test";
 
 const theme = createTheme({
     typography: {
@@ -97,6 +98,10 @@ const router = createBrowserRouter([
             {
                 path: "goals-stats",
                 element: <GoalsStats />,
+            },
+            {
+                path: "test",
+                element: <Test />,
             },
         ],
     },

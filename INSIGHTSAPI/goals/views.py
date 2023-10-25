@@ -30,9 +30,32 @@ class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
     serializer_class = GoalSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        cedula = self.kwargs.get("pk")
+        date = self.request.GET.get("date", None)
+        column = self.request.GET.get("column", None)
+
+        if date is not None and column is not None and cedula is not None:
+            if column == "delivery":
+                column_name = "goal_date"
+            elif column == "execution":
+                column_name = "execution_date"
+            else:
+                return self.queryset.none()
+            filter_params = {f"{column_name}": date.upper()}
+            # Return a single object if cedula is provided
+            unique_goal = HistoricalGoals.objects.filter(
+                Q(cedula=cedula, **filter_params)
+            ).order_by('-history_date').first()
+            if unique_goal:
+                serializer = self.get_serializer(unique_goal)
+                return Response(serializer.data)
+            else:
+                return Response([])  # No matching record
+        else:
+            return super().retrieve(request, *args, **kwargs)
+
     def get_queryset(self):
-        user_id = self.request.session.get("user_id")
-        username = self.request.session.get("username")
         coordinator = self.request.GET.get("coordinator", None)
         date = self.request.GET.get("date", None)
         column = self.request.GET.get("column", None)
@@ -45,17 +68,14 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 column_name = "execution_date"
             else:
                 return self.queryset.none()
-            filter_params = {f"{column_name}":date.upper()}
+            filter_params = {f"{column_name}": date.upper()}
             latest_history_dates = (
-                HistoricalGoals.objects.filter(
-                    Q(**filter_params)
-                )
+                HistoricalGoals.objects.filter(Q(**filter_params))
                 .values("cedula")
                 .annotate(max_history_date=Max("history_date"))
             )
-
             # Filter records with the latest history_date
-            unique_goals = HistoricalGoals.objects.filter(
+            history_goals = HistoricalGoals.objects.filter(
                 Q(
                     history_date__in=Subquery(
                         latest_history_dates.values("max_history_date")
@@ -63,8 +83,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 )
                 & Q(cedula__in=latest_history_dates.values("cedula"))
             )
-
-            return unique_goals
+            return history_goals
         else:
             # With out the .all() method, the queryset will be evaluated lazily
             return self.queryset.all()

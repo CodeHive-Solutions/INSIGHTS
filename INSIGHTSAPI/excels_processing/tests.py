@@ -6,15 +6,24 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework.test import APIClient
 import mysql.connector
-from api_token.tests import TokenCheckTest
 
 
 class FilesTestCase(TestCase):
     """Test case for the files endpoint"""
 
+    databases = "__all__"
+
     def setUp(self):
         """Set up the test case """
         self.client = APIClient()
+        username = "staffnet"
+        password = os.environ["StaffNetLDAP"]
+        data = {
+            "username": username,
+            "password": password,
+        }
+        response = self.client.post(reverse("obtain-token"), data)
+        self.assertEqual(response.status_code, 200)
         db_config = {
             "user": "blacklistuser",
             "password": os.environ["black_list_pass"],
@@ -28,20 +37,19 @@ class FilesTestCase(TestCase):
 
     def test_upload_file(self):
         """Test uploading a file to the server"""
-        TokenCheckTest.test_token_obtain(self) # type: ignore
-        user = User.objects.get(username="heibert.mogollon")
+        user = User.objects.get(username="staffnet")
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()
         cursor = self.cursor
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx"
-        file_obj = open(file_path, "rb")
-        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies) # type: ignore
+        self.file_obj = open(file_path, "rb")
+        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 201)
         self.assertEqual(response.data["rows_updated"], 1) # type: ignore
         self.connection.commit()
-        file_obj.seek(0)
-        response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies) # type: ignore
+        self.file_obj.seek(0)
+        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["message"], "No data was inserted.") # type: ignore
         cursor.execute(self.select_query)
@@ -51,6 +59,8 @@ class FilesTestCase(TestCase):
         self.cursor.execute(
             "DELETE FROM asteriskdb.blacklist WHERE numero IN (3103233724,123456789);"
         )
+        if self.file_obj:
+            self.file_obj.close()
         self.cursor.execute(self.select_query)
         self.assertIsNone(self.cursor.fetchone())
         self.connection.commit()
