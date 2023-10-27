@@ -21,7 +21,7 @@ import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";
 import Suggestions from "./components/pages/Suggestions";
 import ImageUploader from "./components/Test";
-
+import UploadFiles from "./components/pages/UploadFiles";
 const theme = createTheme({
     typography: {
         fontFamily: [
@@ -59,52 +59,57 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage isLogin={true} />,
     },
     {
-        path: "test",
-        element: <Test />,
-    },
-    {
-        path: "/logged",
-        element: <Root />,
+        path: "/upload-files",
+        element: <UploadFiles />,
         errorElement: <ErrorPage />,
-        children: [
-            {
-                path: "home",
-                element: <Home />,
-            },
-            {
-                path: "about-us",
-                element: <About />,
-            },
-            {
-                path: "sgc",
-                element: <Sgc />,
-            },
-            {
-                path: "blog",
-                element: <Blog />,
-            },
-            {
-                path: "blog/article/:articleId",
-                element: <Article />,
-            },
-            {
-                path: "upload-goals",
-                element: <UploadGoals />,
-            },
-            {
-                path: "sugerencias",
-                element: <Suggestions />,
-            },
-            {
-                path: "goals-stats",
-                element: <GoalsStats />,
-            },
-            {
-                path: "test",
-                element: <Test />,
-            },
-        ],
     },
+    // {
+    //     path: "test",
+    //     element: <Test />,
+    // },
+    // {
+    //     path: "/logged",
+    //     element: <Root />,
+    //     errorElement: <ErrorPage />,
+    //     children: [
+    //         {
+    //             path: "home",
+    //             element: <Home />,
+    //         },
+    //         {
+    //             path: "about-us",
+    //             element: <About />,
+    //         },
+    //         {
+    //             path: "sgc",
+    //             element: <Sgc />,
+    //         },
+    //         {
+    //             path: "blog",
+    //             element: <Blog />,
+    //         },
+    //         {
+    //             path: "blog/article/:articleId",
+    //             element: <Article />,
+    //         },
+    //         {
+    //             path: "upload-goals",
+    //             element: <UploadGoals />,
+    //         },
+    //         {
+    //             path: "sugerencias",
+    //             element: <Suggestions />,
+    //         },
+    //         {
+    //             path: "goals-stats",
+    //             element: <GoalsStats />,
+    //         },
+    //         {
+    //             path: "test",
+    //             element: <Test />,
+    //         },
+    //     ],
+    // },
 ]);
 
 if ("scrollRestoration" in history) {

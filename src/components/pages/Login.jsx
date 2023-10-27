@@ -39,7 +39,7 @@ const Login = () => {
 
         console.log(refreshTimer);
         if (refreshTimer !== null && refreshTimer.expiry > new Date().getTime()) {
-            navigate("/logged/home");
+            navigate("/upload-files");
         }
     }, []);
 
@@ -87,7 +87,7 @@ const Login = () => {
                     })
                 );
 
-                navigate("/logged/home");
+                navigate("/upload-files");
             }
         } catch (error) {
             console.error(error);
