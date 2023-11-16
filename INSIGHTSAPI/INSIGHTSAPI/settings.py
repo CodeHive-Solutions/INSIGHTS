@@ -201,10 +201,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-year = datetime.now().year
-month = datetime.now().strftime("%B")
-log_dir = os.path.join(BASE_DIR, "utils", "logs", month)
-os.makedirs(log_dir, exist_ok=True)
+log_dir = os.path.join(BASE_DIR, "utils", "logs")
 
 LOGGING = {
     "version": 1,
@@ -228,7 +225,7 @@ LOGGING = {
         "exception_file": {
             "level": "ERROR",
             "class": "logging.FileHandler",
-            "filename": os.path.join(BASE_DIR, "utils", "logs", "exceptions.log"),
+            "filename": os.path.join(log_dir, "exceptions.log"),
             "formatter": "time-lvl-msg",
         },
     },

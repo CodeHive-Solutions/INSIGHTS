@@ -32,3 +32,9 @@ migrations
 *.xlsx
 venv
 .venv
+
+#images
+*.webp
+*.png
+*.jpg
+*.jpeg

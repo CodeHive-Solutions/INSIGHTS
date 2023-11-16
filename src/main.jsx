@@ -25,6 +25,7 @@ import UploadFiles from "./components/pages/UploadFiles";
 const theme = createTheme({
     typography: {
         fontFamily: [
+            // "Lato",
             "Inter",
             "-apple-system",
             "BlinkMacSystemFont",
@@ -58,58 +59,58 @@ const router = createBrowserRouter([
         element: <Login />,
         errorElement: <ErrorPage isLogin={true} />,
     },
-    {
-        path: "/upload-files",
-        element: <UploadFiles />,
-        errorElement: <ErrorPage />,
-    },
     // {
-    //     path: "test",
-    //     element: <Test />,
-    // },
-    // {
-    //     path: "/logged",
-    //     element: <Root />,
+    //     path: "/upload-files",
+    //     element: <UploadFiles />,
     //     errorElement: <ErrorPage />,
-    //     children: [
-    //         {
-    //             path: "home",
-    //             element: <Home />,
-    //         },
-    //         {
-    //             path: "about-us",
-    //             element: <About />,
-    //         },
-    //         {
-    //             path: "sgc",
-    //             element: <Sgc />,
-    //         },
-    //         {
-    //             path: "blog",
-    //             element: <Blog />,
-    //         },
-    //         {
-    //             path: "blog/article/:articleId",
-    //             element: <Article />,
-    //         },
-    //         {
-    //             path: "upload-goals",
-    //             element: <UploadGoals />,
-    //         },
-    //         {
-    //             path: "sugerencias",
-    //             element: <Suggestions />,
-    //         },
-    //         {
-    //             path: "goals-stats",
-    //             element: <GoalsStats />,
-    //         },
-    //         {
-    //             path: "test",
-    //             element: <Test />,
-    //         },
-    //     ],
     // },
+    {
+        path: "test",
+        element: <Test />,
+    },
+    {
+        path: "/logged",
+        element: <Root />,
+        errorElement: <ErrorPage />,
+        children: [
+            {
+                path: "home",
+                element: <Home />,
+            },
+            {
+                path: "about-us",
+                element: <About />,
+            },
+            {
+                path: "sgc",
+                element: <Sgc />,
+            },
+            {
+                path: "blog",
+                element: <Blog />,
+            },
+            {
+                path: "blog/article/:articleId",
+                element: <Article />,
+            },
+            {
+                path: "upload-goals",
+                element: <UploadGoals />,
+            },
+            {
+                path: "sugerencias",
+                element: <Suggestions />,
+            },
+            {
+                path: "goals-stats",
+                element: <GoalsStats />,
+            },
+            {
+                path: "test",
+                element: <Test />,
+            },
+        ],
+    },
 ]);
 
 if ("scrollRestoration" in history) {

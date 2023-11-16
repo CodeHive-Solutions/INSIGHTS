@@ -166,14 +166,16 @@ class GoalAPITestCase(APITestCase):
         # Check with a month that has goals
         response = self.client.get("/goals/1016080155/?date=ENERO-2028&column=delivery")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['cedula'], 1016080155)  # type: ignore
+        self.assertEqual(response.data["cedula"], 1016080155)  # type: ignore
         self.assertIn("ENERO-2028", response.data.get("goal_date"))  # type: ignore
-        self.assertEqual(len(response.data), 22)  # type: ignore
+        self.assertEqual(len(response.data), 28)  # type: ignore
         # Check with a month that has execution
-        response = self.client.get("/goals/1192792468/?date=ENERO-2022&column=execution")
+        response = self.client.get(
+            "/goals/1192792468/?date=ENERO-2022&column=execution"
+        )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['cedula'], 1192792468)  # type: ignore
-        self.assertEqual(len(response.data), 22)  # type: ignore
+        self.assertEqual(response.data["cedula"], 1192792468)  # type: ignore
+        self.assertEqual(len(response.data), 28)  # type: ignore
         self.assertIn("ENERO-2022", response.data.get("execution_date"))  # type: ignore
 
 
@@ -188,16 +190,16 @@ class SendEmailTestCase(APITestCase):
         self.heibert = Goals.objects.create(
             cedula="1000065648",
             name="Heibert",
-            campaign="Base Test Goal",
+            campaign_goal="Base Test Goal",
             result="100",
             evaluation="100",
             quality="100",
             clean_desk="100",
             total="100",
-            job_title="Developer",
+            job_title_goal="Developer",
             last_update=timezone.now(),
-            criteria="100",
-            quantity="100",
+            criteria_goal="100",
+            quantity_goal="100",
         )
 
     def test_send_email_success(self):

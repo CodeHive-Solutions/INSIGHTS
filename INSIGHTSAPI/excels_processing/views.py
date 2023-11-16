@@ -41,13 +41,21 @@ def robinson_list(request):
     try:
         connection = mysql.connector.connect(**db_config)
         rows = upload_df_to_table(filtered_df, connection, "blacklist", columns_mapping)
+        total_rows = len(filtered_df)
         if rows > 0:
             return Response(
-                {"message": "File processed successfully.", "rows_updated": rows},
+                {
+                    "message": "File processed successfully.",
+                    "total_rows": total_rows,
+                    "rows_updated": rows,
+                },
                 status=201,
             )
         else:
-            return Response({"message": "No data was inserted."}, status=200)
+            return Response(
+                {"message": "No data was inserted.", "total_rows": total_rows},
+                status=200,
+            )
     except Exception as error:
         logger.error(error)
         return Response(str(error), status=500)

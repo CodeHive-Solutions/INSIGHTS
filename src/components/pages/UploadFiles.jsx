@@ -18,51 +18,6 @@ const UploadFiles = () => {
         document.title = "Subir Excel Metas";
     }, []);
 
-    const refreshToken = async (refreshTimer) => {
-        try {
-            const response = await fetch("https://insights-api.cyc-bpo.com/token/refresh/", {
-                method: "POST",
-                credentials: "include",
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (refreshTimer) {
-                    localStorage.removeItem("refresh-timer-ls");
-                }
-                navigate("/", { replace: true });
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
-                if (refreshTimer === null) {
-                    localStorage.setItem(
-                        "refresh-timer-ls",
-                        JSON.stringify({
-                            expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
-                        })
-                    );
-                } else {
-                    let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
-                    refreshTimer.expiry = new Date().getTime() + 15 * 60 * 60 * 1000; // 15 hours from now
-
-                    // Store the item again
-                    localStorage.setItem("refresh-timer-ls", JSON.stringify(refreshTimer));
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    useEffect(() => {
-        let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
-
-        // Check if the item has expired
-        if (refreshTimer === null || refreshTimer.expiry < new Date().getTime()) {
-            refreshToken(refreshTimer);
-        }
-    }, []);
-
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState("Example");
     const [loading, setLoading] = useState(false);

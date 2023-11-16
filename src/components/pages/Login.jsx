@@ -38,7 +38,7 @@ const Login = () => {
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
 
         if (refreshTimer !== null && refreshTimer.expiry > new Date().getTime()) {
-            navigate("/upload-files");
+            navigate("/logged/home");
         }
     }, []);
 
@@ -61,7 +61,7 @@ const Login = () => {
             // Use the apiRequest function to make the API request
             // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
 
-            const response = await fetch("https://insights-api.cyc-bpo.com/token/obtain/", {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/obtain/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -86,7 +86,7 @@ const Login = () => {
                     })
                 );
 
-                navigate("/upload-files");
+                navigate("/logged/home");
             }
         } catch (error) {
             console.error(error);
@@ -147,7 +147,7 @@ const Login = () => {
                                 gap: "15px",
                             }}
                         >
-                            <Typography sx={{ fontWeight: 500 }} variant="h4">
+                            <Typography sx={{ fontFamily: "Montserrat", fontWeight: 600 }} variant="h4">
                                 Intranet
                             </Typography>
 
@@ -168,7 +168,7 @@ const Login = () => {
                                     </Alert>
                                 </Collapse>
                             </Box>
-                            <Button type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
+                            <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
                                 Iniciar Sesión
                             </Button>
                         </Box>
