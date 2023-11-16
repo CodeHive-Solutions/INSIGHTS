@@ -21,10 +21,11 @@ import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";
 import Suggestions from "./components/pages/Suggestions";
 import ImageUploader from "./components/Test";
-
+import UploadFiles from "./components/pages/UploadFiles";
 const theme = createTheme({
     typography: {
         fontFamily: [
+            // "Lato",
             "Inter",
             "-apple-system",
             "BlinkMacSystemFont",
@@ -58,6 +59,11 @@ const router = createBrowserRouter([
         element: <Login />,
         errorElement: <ErrorPage isLogin={true} />,
     },
+    // {
+    //     path: "/upload-files",
+    //     element: <UploadFiles />,
+    //     errorElement: <ErrorPage />,
+    // },
     {
         path: "test",
         element: <Test />,

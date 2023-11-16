@@ -142,7 +142,7 @@ const Home = () => {
                     >
                         Beneficios
                     </Typography>
-                    <CarouselComponent items={benefits} height={"70vh"} width={"80%"} />
+                    <CarouselComponent items={benefits} height={"80vh"} width={"100%"} />
                 </Box>
             </Box>
             <Dialog open={openDialog} title={"example title"}>

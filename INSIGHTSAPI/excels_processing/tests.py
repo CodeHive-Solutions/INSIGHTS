@@ -46,7 +46,7 @@ class FilesTestCase(TestCase):
         self.file_obj = open(file_path, "rb")
         response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["rows_updated"], 1) # type: ignore
+        self.assertEqual(response.data["rows_updated"], 2) # type: ignore
         self.connection.commit()
         self.file_obj.seek(0)
         response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
@@ -57,7 +57,7 @@ class FilesTestCase(TestCase):
 
     def tearDown(self):
         self.cursor.execute(
-            "DELETE FROM asteriskdb.blacklist WHERE numero IN (3103233724,123456789);"
+            "DELETE FROM asteriskdb.blacklist WHERE numero IN (3103233724,123456789,3213213213);"
         )
         if self.file_obj:
             self.file_obj.close()

@@ -44,9 +44,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 return self.queryset.none()
             filter_params = {f"{column_name}": date.upper()}
             # Return a single object if cedula is provided
-            unique_goal = HistoricalGoals.objects.filter(
-                Q(cedula=cedula, **filter_params)
-            ).order_by('-history_date').first()
+            unique_goal = (
+                HistoricalGoals.objects.filter(Q(cedula=cedula, **filter_params))
+                .order_by("-history_date")
+                .first()
+            )
             if unique_goal:
                 serializer = self.get_serializer(unique_goal)
                 return Response(serializer.data)
@@ -293,8 +295,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         )
                         sheet = workbook[workbook.sheetnames[0]]
                         for i, row in enumerate(sheet.iter_rows(min_row=2), start=2):  # type: ignore
-                            cargo = str(row[cargo_index].value).upper().lstrip(".")
-                            if cargo.find("ASESOR") != -1:
+                            cargo_goal = str(row[cargo_index].value).upper().lstrip(".")
+                            if cargo_goal.find("ASESOR") != -1:
                                 # Avoid NoneType error
                                 def format_cell_value(cell):
                                     if cell.value is None or "":
@@ -304,15 +306,15 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
                                 cedula = row[cedula_index].value
                                 name = row[name_index].value
-                                coordinator = row[coordinator_index].value
-                                campaign = row[campaign_index].value
-                                observation = row[observation_index].value
+                                coordinator_goal = row[coordinator_index].value
+                                campaign_goal = row[campaign_index].value
+                                observation_goal = row[observation_index].value
                                 table = row[table_index].value
-                                status = row[status_index].value
-                                if str(status).upper() == "ACTIVO":
-                                    status = True
-                                elif str(status).upper() == "RETIRADO":
-                                    status = False
+                                status_goal = row[status_index].value
+                                if str(status_goal).upper() == "ACTIVO":
+                                    status_goal = True
+                                elif str(status_goal).upper() == "RETIRADO":
+                                    status_goal = False
                                 else:
                                     return Response(
                                         {
@@ -324,12 +326,12 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                 unique_constraint = "cedula"
                                 default_value = {
                                     "name": str(name).upper(),
-                                    "job_title": cargo,
-                                    "campaign": campaign,
-                                    "coordinator": coordinator,
+                                    "job_title_goal": cargo_goal,
+                                    "campaign_goal": campaign_goal,
+                                    "coordinator_goal": coordinator_goal,
                                     "goal_date": date,
-                                    "status": status,
-                                    "observation": observation,
+                                    "status_goal": status_goal,
+                                    "observation_goal": observation_goal,
                                     "table_goal": table,
                                 }
                                 try:
@@ -461,16 +463,19 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
                         cedula = row[cedula_index].value
                         name = row[name_index].value
-                        coordinator = row[coordinator_index].value
-                        campaign = row[campaign_index].value
-                        criteria = row[criteria_index].value
-                        observation = row[observation_index].value
-                        status = row[status_index].value
+
                         entrega = True
+                        unique_constraint = "cedula"
                         if (
                             file_name.upper().find("EJECUCION") != -1
                             or file_name.upper().find("EJECUCIÓN") != -1
                         ):
+                            cargo_execution = cargo.upper()
+                            coordinator_execution = row[coordinator_index].value
+                            campaign_execution = row[campaign_index].value
+                            criteria_execution = row[criteria_index].value
+                            observation_execution = row[observation_index].value
+                            status_execution = row[status_index].value
                             result_cell = row[result_index]  # type: ignore
                             result = format_cell_value(result_cell)
                             evaluation_cell = row[evaluation_index]  # type: ignore
@@ -479,38 +484,66 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             clean_desk = format_cell_value(row[clean_desk_index])  # type: ignore
                             total = format_cell_value(row[total_index])  # type: ignore
                             entrega = False
+                            if str(status_execution).upper() == "ACTIVO":
+                                status_execution = True
+                            elif str(status_execution).upper() == "RETIRADO":
+                                status_execution = False
+                            else:
+                                return Response(
+                                    {"message": "Se encontraron asesores sin estado."},
+                                    status=framework_status.HTTP_400_BAD_REQUEST,
+                                )
+                            default_value = {
+                                "name": name,
+                                "observation_execution": observation_execution,
+                                "job_title_execution": cargo_execution,
+                                "campaign_execution": campaign_execution,
+                                "coordinator_execution": coordinator_execution,
+                                "criteria_execution": criteria_execution,
+                                "result": result,
+                                "quality": quality,
+                                "evaluation": evaluation,
+                                "clean_desk": clean_desk,
+                                "total": total,
+                                "quantity_execution": row[quantity_index].value,
+                                "status_execution": status_execution,
+                            }
                         else:
+                            cargo_goal = cargo.upper()
+                            coordinator_goal = row[coordinator_index].value
+                            campaign_goal = row[campaign_index].value
+                            criteria_goal = row[criteria_index].value
+                            observation_goal = row[observation_index].value
+                            status_goal = row[status_index].value
                             result = None
                             evaluation = None
                             quality = None
                             clean_desk = None
                             total = None
-                        if str(status).upper() == "ACTIVO":
-                            status = True
-                        elif str(status).upper() == "RETIRADO":
-                            status = False
-                        else:
-                            return Response(
-                                {"message": "Se encontraron asesores sin estado."},
-                                status=framework_status.HTTP_400_BAD_REQUEST,
-                            )
-                        # Update or create the record
-                        unique_constraint = "cedula"
-                        default_value = {
-                            "name": name,
-                            "job_title": cargo,
-                            "campaign": campaign,
-                            "coordinator": coordinator,
-                            "criteria": criteria,
-                            "result": result,
-                            "quality": quality,
-                            "evaluation": evaluation,
-                            "clean_desk": clean_desk,
-                            "total": total,
-                            "status": status,
-                        }
-                        if entrega:
-                            default_value["quantity"] = row[quantity_index].value
+                            if str(status_goal).upper() == "ACTIVO":
+                                status_goal = True
+                            elif str(status_goal).upper() == "RETIRADO":
+                                status_goal = False
+                            else:
+                                return Response(
+                                    {"message": "Se encontraron asesores sin estado."},
+                                    status=framework_status.HTTP_400_BAD_REQUEST,
+                                )
+                            default_value = {
+                                "name": name,
+                                "observation_goal": observation_goal,
+                                "job_title_goal": cargo_goal,
+                                "campaign_goal": campaign_goal,
+                                "coordinator_goal": coordinator_goal,
+                                "criteria_goal": criteria_goal,
+                                "result": result,
+                                "quality": quality,
+                                "evaluation": evaluation,
+                                "clean_desk": clean_desk,
+                                "total": total,
+                                "quantity_goal": row[quantity_index].value,
+                                "status_goal": status_goal,
+                            }
                         # Remove empty values from default_value dictionary
                         default_value = {k: v for k, v in default_value.items() if v}
                         instance = Goals.objects.filter(cedula=cedula)

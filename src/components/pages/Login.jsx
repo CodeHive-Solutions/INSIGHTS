@@ -37,7 +37,6 @@ const Login = () => {
     useEffect(() => {
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
 
-        console.log(refreshTimer);
         if (refreshTimer !== null && refreshTimer.expiry > new Date().getTime()) {
             navigate("/logged/home");
         }
@@ -148,7 +147,7 @@ const Login = () => {
                                 gap: "15px",
                             }}
                         >
-                            <Typography sx={{ fontWeight: 500 }} variant="h4">
+                            <Typography sx={{ fontFamily: "Montserrat", fontWeight: 600 }} variant="h4">
                                 Intranet
                             </Typography>
 
@@ -169,7 +168,7 @@ const Login = () => {
                                     </Alert>
                                 </Collapse>
                             </Box>
-                            <Button type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
+                            <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
                                 Iniciar Sesión
                             </Button>
                         </Box>
