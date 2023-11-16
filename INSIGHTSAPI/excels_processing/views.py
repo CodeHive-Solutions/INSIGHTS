@@ -41,7 +41,7 @@ def robinson_list(request):
     try:
         connection = mysql.connector.connect(**db_config)
         rows = upload_df_to_table(filtered_df, connection, "blacklist", columns_mapping)
-        total_rows = len(filtered_df)
+        total_rows = len(data_f)
         if rows > 0:
             return Response(
                 {
