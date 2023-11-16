@@ -22,6 +22,8 @@ import { useOutlet } from "react-router-dom";
 import Suggestions from "./components/pages/Suggestions";
 import ImageUploader from "./components/Test";
 import UploadFiles from "./components/pages/UploadFiles";
+import EthicalLine from "./components/pages/EthicalLine";
+
 const theme = createTheme({
     typography: {
         fontFamily: [
@@ -67,6 +69,10 @@ const router = createBrowserRouter([
     {
         path: "test",
         element: <Test />,
+    },
+    {
+        path: "ethical-line",
+        element: <EthicalLine />,
     },
     {
         path: "/logged",

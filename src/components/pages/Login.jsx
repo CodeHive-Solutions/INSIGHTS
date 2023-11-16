@@ -104,6 +104,10 @@ const Login = () => {
 
     const handleClick = () => setOpen(!open);
 
+    const ethicalLine = () => {
+        navigate("ethical-line");
+    };
+
     return (
         <Box sx={{ display: "flex" }}>
             <Box
@@ -177,6 +181,7 @@ const Login = () => {
                 <Box
                     sx={{
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "flex-end",
                         justifyContent: "flex-end",
                         width: "100%",
@@ -185,6 +190,9 @@ const Login = () => {
                     }}
                 >
                     <Typography variant="subtitle2">C&C SERVICES © - Bogotá D.C. / Colombia.</Typography>
+                    <Link href="#" onClick={ethicalLine} variant="subtitle2">
+                        Linea ética{" "}
+                    </Link>
                 </Box>
             </Box>
             {loadingBar && (

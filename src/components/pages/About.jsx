@@ -114,7 +114,7 @@ const About = () => {
                     py: "2rem",
                 }}
             >
-                <Box sx={{ display: "flex", justifyContent: "end", alignItems: "center", pr: "12rem", gap: "2rem" }}>
+                <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "2rem" }}>
                     <img src={image2} height={400} alt="" />
                     <Box sx={{ width: "100%" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
@@ -125,8 +125,8 @@ const About = () => {
                         </Typography>
                     </Box>
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center", pl: "12rem" }}>
-                    <Box sx={{ width: "100%" }}>
+                <Box sx={{ display: "flex", justifyContent: "end", alignItems: "center", pr: "5rem" }}>
+                    <Box sx={{ width: "30%", textAlign: "end" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Visión
                         </Typography>
@@ -137,19 +137,19 @@ const About = () => {
                     </Box>
                     <img src={image1} height={400} alt="" />
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center", pl: "12rem" }}>
+                <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center", pl: "10rem" }}>
+                    <img src={image3} height={400} alt="" />
                     <Box sx={{ width: "30%" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestros Valores Corporativos
                         </Typography>
-                        
+
                         <Typography variant="body2" sx={{ fontSize: "16px", color: "gray" }}>
                             La empresa se compromete a actuar con integridad, respeto, transparencia, responsabilidad y disciplina, tratando a todos con calidez humana y
                             pasión por la excelencia en el servicio. Además, valora la equidad y la igualdad de todas las personas, sin importar su raza, género, edad o
                             cultura.
                         </Typography>
                     </Box>
-                    <img src={image3} height={400} alt="" />
                 </Box>
             </Container>
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", px: "5rem" }}>
