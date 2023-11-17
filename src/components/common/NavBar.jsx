@@ -13,7 +13,7 @@ import ChecklistIcon from "@mui/icons-material/Checklist";
 import ArticleIcon from "@mui/icons-material/Article";
 import FolderZipIcon from "@mui/icons-material/FolderZip";
 import { useNavigate, useMatch } from "react-router-dom";
-import logotipo from "../../images/logotipo-navbar-copia.webp";
+import logotipo from "../../images/cyc-logos/logo-navbar.webp";
 import SnackbarAlert from "./SnackBarAlert";
 import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";

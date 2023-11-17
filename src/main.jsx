@@ -23,12 +23,14 @@ import Suggestions from "./components/pages/Suggestions";
 import ImageUploader from "./components/Test";
 import UploadFiles from "./components/pages/UploadFiles";
 import EthicalLine from "./components/pages/EthicalLine";
+import BasicDocument from "./components/shared/GoalsPDF";
 
 const theme = createTheme({
     typography: {
         fontFamily: [
-            // "Lato",
+            "Poppins",
             "Inter",
+            "Montserrat",
             "-apple-system",
             "BlinkMacSystemFont",
             '"Segoe UI"',
@@ -73,6 +75,10 @@ const router = createBrowserRouter([
     {
         path: "ethical-line",
         element: <EthicalLine />,
+    },
+    {
+        path: "goal-pdf",
+        element: <BasicDocument />,
     },
     {
         path: "/logged",

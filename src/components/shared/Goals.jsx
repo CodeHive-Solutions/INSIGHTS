@@ -84,7 +84,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         }
     };
 
-    const getGoals = async () => {
+    const getGoal = async () => {
         try {
             const response = await fetch("https://insights-api-dev.cyc-bpo.com/goals/15225716/", {
                 method: "GET",
@@ -123,8 +123,36 @@ const Goals = ({ openDialog, setOpenDialog }) => {
     };
 
     useEffect(() => {
-        getGoals();
+        getGoal();
     }, []);
+
+    const handleAcceptGoals = async () => {
+        const body = {
+            accepted: true,
+            accepted_at: new Date().toISOString(),
+        };
+
+        try {
+            const response = await fetch(`https://insights-api-dev.cyc-bpo.com/goals/${goalCedula}/`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                console.error(data);
+                throw new Error(response.statusText);
+            }
+
+            const updatedInstance = await response.json();
+            console.log(updatedInstance);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     return (
         <Dialog open={openDialog} fullWidth maxWidth={"lg"} onClose={handleCloseDialog}>
@@ -150,7 +178,8 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                 ) : (
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                         <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "flex-end" }}>
-                            <Button>Aceptar</Button>
+                            <Button onClick={{ handleAcceptGoals }}>Aceptar</Button>
+                            <Button onClick={{ handleAcceptGoals }}>Detalles</Button>
                             <Button>Rechazar</Button>
                         </Box>
                         <TableContainer component={Paper}>

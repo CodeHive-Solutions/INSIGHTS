@@ -1,17 +1,14 @@
 import { React, useEffect } from "react";
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
-import cycLogo from "../../images/img-about.jpg";
-import CarouselComponent from "../shared/Carousel";
 import { useMediaQuery } from "@mui/material";
 import Container from "@mui/material/Container";
-import image1 from "../../images/image-vision.jpg";
-import image2 from "../../images/image-mision.png";
-import image3 from "../../images/image-values.jpg";
+import image1 from "../../images/about/image-vision.jpg";
+import image2 from "../../images/about/image-mision.png";
+import image3 from "../../images/about/image-values.jpg";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
-import logoTipo from "../../images/logotipo.png";
 import cesarGarzon from "../../images/managers/cesar-garzon.jpg";
 import javierTorres from "../../images/managers/javier-torres.jpeg";
 import yannethPinzon from "../../images/managers/yanneth-pinzon.webp";
@@ -22,7 +19,8 @@ import marioGiron from "../../images/managers/mario-giron.jpg";
 import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
 import hectorSotelo from "../../images/managers/hector-sotelo.png";
 import pablo from "../../images/managers/pablo.jpeg";
-import aboutUs from "../../images/about-us-2.jpg";
+import aboutUs from "../../images/about/img-about-2.jpg";
+import organigrama from "../../images/about/organigrama.png";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -114,7 +112,7 @@ const About = () => {
                     py: "2rem",
                 }}
             >
-                <Box sx={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "2rem" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <img src={image2} height={400} alt="" />
                     <Box sx={{ width: "100%" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
@@ -125,8 +123,8 @@ const About = () => {
                         </Typography>
                     </Box>
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "end", alignItems: "center", pr: "5rem" }}>
-                    <Box sx={{ width: "30%", textAlign: "end" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pr: "5rem" }}>
+                    <Box sx={{ width: "20%", textAlign: "end" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Visión
                         </Typography>
@@ -137,7 +135,7 @@ const About = () => {
                     </Box>
                     <img src={image1} height={400} alt="" />
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "start", alignItems: "center", pl: "10rem" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pl: "10rem" }}>
                     <img src={image3} height={400} alt="" />
                     <Box sx={{ width: "30%" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
@@ -199,7 +197,8 @@ const About = () => {
                 <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
                     Organigrama de la empresa
                 </Typography>
-                <Box sx={{ borderRadius: "2rem", width: "100%", height: "40rem", border: "1px solid rgba(0, 0, 0, 0.12)" }}>
+                <img src={organigrama} alt="organigrama" width={1800} />
+                {/* <Box sx={{ borderRadius: "2rem", width: "100%", height: "40rem", border: "1px solid rgba(0, 0, 0, 0.12)" }}>
                     {isSmallScreen ? (
                         <Typography
                             sx={{
@@ -221,13 +220,13 @@ const About = () => {
                             Imagen Organigrama
                         </Typography>
                     )}
-                </Box>
+                </Box> */}
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                 <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins", py: "2rem" }}>
                     Nuestras Gerencias
                 </Typography>
-                <Box sx={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
+                <Container sx={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
                     {managements.map((item, index) => (
                         <Card
                             variant="outlined"
@@ -242,18 +241,6 @@ const About = () => {
                                 "&:hover": {
                                     transform: "scale(1.05)",
                                 },
-                                "&::before": {
-                                    content: '""',
-                                    position: "absolute",
-                                    top: 0,
-                                    right: 0,
-                                    bottom: 0,
-                                    left: 0,
-                                    backgroundImage: `url(${logoTipo})`,
-                                    backgroundRepeat: "no-repeat",
-                                    backgroundSize: "contain",
-                                    opacity: 0, // adjust this value to change the opacity
-                                },
                             }}
                         >
                             <CardMedia sx={{ height: 350 }} image={item.image} />
@@ -267,7 +254,7 @@ const About = () => {
                             </CardContent>
                         </Card>
                     ))}
-                </Box>
+                </Container>
             </Box>
         </Box>
     );

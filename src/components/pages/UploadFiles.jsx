@@ -15,7 +15,6 @@ const UploadFiles = () => {
     const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0);
-        document.title = "Subir Excel Metas";
     }, []);
 
     const [selectedFile, setSelectedFile] = useState(null);
