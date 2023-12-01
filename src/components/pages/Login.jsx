@@ -12,6 +12,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import LinearProgress from "@mui/material/LinearProgress";
 import apiRequest from "../../assets/apiRequest";
 import { useCookies } from "react-cookie";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),
@@ -175,6 +176,9 @@ const Login = () => {
                             <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
                                 Iniciar Sesión
                             </Button>
+                            <Button onClick={ethicalLine} sx={{ fontFamily: "Montserrat" }} type="button" variant="contained" startIcon={<Diversity3Icon />}>
+                                Linea ética
+                            </Button>
                         </Box>
                     </Form>
                 </Formik>
@@ -190,9 +194,6 @@ const Login = () => {
                     }}
                 >
                     <Typography variant="subtitle2">C&C SERVICES © - Bogotá D.C. / Colombia.</Typography>
-                    <Link sx={{ cursor: "pointer" }} onClick={ethicalLine} variant="subtitle2">
-                        Linea ética{" "}
-                    </Link>
                 </Box>
             </Box>
             {loadingBar && (

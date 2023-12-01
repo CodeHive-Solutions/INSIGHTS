@@ -2,20 +2,18 @@
 import os
 from users.models import User
 from django.contrib.auth.models import Permission
-from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 import mysql.connector
 
 
-class FilesTestCase(TestCase):
+class FilesTestCase(APITestCase):
     """Test case for the files endpoint"""
 
     databases = "__all__"
 
     def setUp(self):
-        """Set up the test case """
-        self.client = APIClient()
+        """Set up the test case"""
         username = "staffnet"
         password = os.environ["StaffNetLDAP"]
         data = {
@@ -24,6 +22,7 @@ class FilesTestCase(TestCase):
         }
         response = self.client.post(reverse("obtain-token"), data)
         self.assertEqual(response.status_code, 200)
+        self.file_obj = None
         db_config = {
             "user": "blacklistuser",
             "password": os.environ["black_list_pass"],
@@ -35,25 +34,43 @@ class FilesTestCase(TestCase):
         self.cursor = self.connection.cursor()
         self.select_query = "SELECT * FROM asteriskdb.blacklist WHERE numero IN (3103233724,1234567890);"
 
-    def test_upload_file(self):
-        """Test uploading a file to the server"""
+    def test_upload_robinson_file(self):
+        """Test uploading a robinson file to the server"""
         user = User.objects.get(username="staffnet")
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()
-        cursor = self.cursor
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx"
         self.file_obj = open(file_path, "rb")
-        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
+        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(response.data["rows_updated"], 2) # type: ignore
+        self.assertEqual(response.data["rows_updated"], 2)  # type: ignore
         self.connection.commit()
         self.file_obj.seek(0)
-        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies) # type: ignore
+        response = self.client.post(reverse("robinson-list"), {"file": self.file_obj}, cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["message"], "No data was inserted.") # type: ignore
+        self.assertEqual(response.data["message"], "No data was inserted.")  # type: ignore
+        cursor = self.cursor
         cursor.execute(self.select_query)
-        self.assertEqual(cursor.fetchone()[0], 3103233724) # type: ignore
+        self.assertEqual(cursor.fetchone()[0], 3103233724)  # type: ignore
+
+    def test_upload_call_transfer_file(self):
+        """Test uploading a call transfer file to the server"""
+        request = self.client.post(reverse("call-transfer-list"))
+        self.assertEqual(request.status_code, 403)
+        user = User.objects.get(username="staffnet")
+        permission = Permission.objects.get(codename="call_transfer")
+        user.user_permissions.add(permission)
+        user.save()
+        self.file_obj = open(
+            "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Call_transfer_list.xlsx", "rb"
+        )
+        response = self.client.post(
+            reverse("call-transfer-list"),
+            {"file": self.file_obj, "campaign": "falabella"},
+            cookies=self.client.cookies,  # type: ignore
+        )
+        self.assertEqual(response.status_code, 200, response.data)
 
     def tearDown(self):
         self.cursor.execute(

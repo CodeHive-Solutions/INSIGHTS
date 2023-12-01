@@ -24,6 +24,7 @@ import ImageUploader from "./components/Test";
 import UploadFiles from "./components/pages/UploadFiles";
 import EthicalLine from "./components/pages/EthicalLine";
 import BasicDocument from "./components/shared/GoalsPDF";
+import Quality from "./components/pages/Quality";
 
 const theme = createTheme({
     typography: {
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
     {
         path: "goal-pdf",
         element: <BasicDocument />,
+    },
+    {
+        path: "quality",
+        element: <Quality />,
     },
     {
         path: "/logged",

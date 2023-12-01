@@ -6,7 +6,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework.test import APITestCase
 from rest_framework import status
 from rest_framework.test import APIClient
+from media.goals_templates.goals_delivery import get_template
 from .models import Goals, TableInfo
+from weasyprint import HTML
+from django.conf import settings
 
 
 class GoalAPITestCase(APITestCase):
@@ -243,3 +246,15 @@ class SendEmailTestCase(APITestCase):
         response = self.client.post(self.url, data=payload)
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_pdf_create(self):
+        """Test the pdf creation"""
+        template = get_template("Jorge", "1000065648", "Testing", "fala", 11, "10")
+        media = settings.MEDIA_ROOT
+        with open(media / "test.html", "wb") as f:
+            f.write(template.encode("utf-8"))
+
+        with open(media / "test.html", "rb") as html_file:
+            html_content = html_file.read().decode("utf-8")
+
+        HTML(string=html_content).write_pdf(settings.MEDIA_ROOT / "test.pdf")

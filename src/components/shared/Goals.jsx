@@ -86,7 +86,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
 
     const getGoal = async () => {
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/goals/15225716/", {
+            const response = await fetch("https://insights-api-dev.cyc-bpo.com/goals/39573300/", {
                 method: "GET",
                 credentials: "include",
             });

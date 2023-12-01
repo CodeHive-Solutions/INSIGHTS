@@ -22,6 +22,15 @@ import pablo from "../../images/managers/pablo.jpeg";
 import aboutUs from "../../images/about/img-about-2.jpg";
 import organigrama from "../../images/about/organigrama.png";
 
+//mission images
+import mission1 from "../../images/about/image-mission.jpg";
+import mission2 from "../../images/about/image-mission-2.jpg";
+import mission3 from "../../images/about/image-mission-3.jpg";
+import mission4 from "../../images/about/image-mission-4.jpg";
+
+//corporative values images
+import value1 from "../../images/about/corporative-values.jpg";
+
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -107,13 +116,13 @@ const About = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    gap: "3rem",
+                    gap: "5rem",
                     flexWrap: "wrap",
                     py: "2rem",
                 }}
             >
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
-                    <img src={image2} height={400} alt="" />
+                    <img style={{ borderRadius: 5 }} src={mission2} height={300} alt="" />
                     <Box sx={{ width: "100%" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Misión
@@ -123,7 +132,7 @@ const About = () => {
                         </Typography>
                     </Box>
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pr: "5rem" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pr: "5rem", gap: "2rem" }}>
                     <Box sx={{ width: "20%", textAlign: "end" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Visión
@@ -133,19 +142,19 @@ const About = () => {
                             digital y el mejor talento humano.
                         </Typography>
                     </Box>
-                    <img src={image1} height={400} alt="" />
+                    <img style={{ borderRadius: "8px" }} src={mission1} height={300} alt="" />
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pl: "10rem" }}>
-                    <img src={image3} height={400} alt="" />
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pl: "10rem", gap: "2rem" }}>
+                    <img style={{ borderRadius: "8px" }} src={value1} height={300} alt="" />
                     <Box sx={{ width: "30%" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestros Valores Corporativos
                         </Typography>
 
                         <Typography variant="body2" sx={{ fontSize: "16px", color: "gray" }}>
-                            La empresa se compromete a actuar con integridad, respeto, transparencia, responsabilidad y disciplina, tratando a todos con calidez humana y
-                            pasión por la excelencia en el servicio. Además, valora la equidad y la igualdad de todas las personas, sin importar su raza, género, edad o
-                            cultura.
+                            En C&C, los valores corporativos constituyen la columna vertebral de nuestra cultura y orientan cada faceta de la operación. Son el motor que
+                            nos impulsa hacia adelante, permitiéndonos cumplir con las expectativas de clientes, empleados y comunidades, al tiempo que construimos un
+                            futuro sostenible y exitoso.
                         </Typography>
                     </Box>
                 </Box>
@@ -197,7 +206,7 @@ const About = () => {
                 <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
                     Organigrama de la empresa
                 </Typography>
-                <img src={organigrama} alt="organigrama" width={1800} />
+                <img src={organigrama} alt="organigrama" width={"1400px"} />
                 {/* <Box sx={{ borderRadius: "2rem", width: "100%", height: "40rem", border: "1px solid rgba(0, 0, 0, 0.12)" }}>
                     {isSmallScreen ? (
                         <Typography

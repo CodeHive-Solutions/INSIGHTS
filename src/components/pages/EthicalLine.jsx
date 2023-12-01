@@ -13,6 +13,8 @@ import { FormHelperText } from "@mui/material";
 import logoCYC from "../../images/cyc-logos/logo-navbar.webp";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
+import ethicalLineBackground from "../../images/ethical-line/ethical-line-background.jpg";
+import wave from "../../images/ethical-line/wave-2.png";
 
 const complaintType = [
     { value: "Fraude y Engaño", label: "Fraude y Engaño" },
@@ -139,15 +141,35 @@ const EthicalLine = () => {
 
     return (
         <>
+            <Box
+                className="waveWrapper"
+                sx={{
+                    width: "100%",
+                    height: "50vh",
+                    backgroundImage: `url(${ethicalLineBackground})`,
+                    backgroundSize: "cover",
+                    backgroundColor: "#f0f0f0",
+                    padding: "20px",
+                }}
+            >
+                <Typography variant={"h1"} sx={{ textAlign: "center", pb: "15px", color: "white", fontWeight: "400", pt: "6rem" }}>
+                    Linea Ética
+                </Typography>
+                <Box class="wave wave1"></Box>
+                <Box class="wave wave2"></Box>
+                <Box class="wave wave3"></Box>
+                <Box class="wave wave4"></Box>
+            </Box>
+            {/* <img src={ethicalLineBackground} alt="" /> */}
             <Box sx={{ position: "fixed", p: "2rem", color: "primary.main" }}>
                 <Button onClick={() => navigate("/")} startIcon={<ArrowBackIosNewIcon />}>
                     Volver
                 </Button>
             </Box>
             <Container sx={{ height: "max-content", py: "5rem" }}>
-                <Typography variant={"h4"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
+                {/* <Typography variant={"h3"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "400" }}>
                     Linea Ética
-                </Typography>
+                </Typography> */}
                 <Box sx={{ textAlign: "center", justifyContent: "center", alignItems: "center", p: "2rem" }}>
                     <img src={logoCYC} alt="" width={200} />
                 </Box>
@@ -156,13 +178,17 @@ const EthicalLine = () => {
                         La línea ética es un canal de comunicación confidencial que permite a los empleados reportar de manera anónima cualquier conducta que consideren
                         contraria a los valores y principios de la empresa.
                     </Typography>
-                    <Typography variant="h4">Objetivo</Typography>
+                    <Typography sx={{ fontWeight: "500" }} variant="h5">
+                        Objetivo
+                    </Typography>
                     <Typography variant="body1">
                         El objetivo de la línea ética es promover un ambiente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
                         denunciar cualquier situación que pueda poner en riesgo la integridad de las personas, los recursos de la empresa o el cumplimiento de sus
                         obligaciones legales.
                     </Typography>
-                    <Typography variant="h4">¿Qué puedes reportar?</Typography>
+                    <Typography sx={{ fontWeight: "500" }} variant="h5">
+                        ¿Qué puedes reportar?
+                    </Typography>
                     <ul>
                         <li>Fraude y Engaño</li>
                         <li>Acoso y Discriminación</li>
@@ -171,18 +197,24 @@ const EthicalLine = () => {
                         <li>Ignorar el Canal de Denuncia Ética</li>
                         <li>Falta de Transparencia</li>
                     </ul>
-                    <Typography variant="h4">¿Cómo reportar?</Typography>
+                    <Typography sx={{ fontWeight: "500" }} variant="h5">
+                        ¿Cómo reportar?
+                    </Typography>
                     <ul>
                         <li>Llamando al número telefónico [número]</li>
                         <li>Enviando un correo electrónico a la dirección [dirección]</li>
                         <li>Completando el formulario en línea en la página web de la empresa</li>
                     </ul>
-                    <Typography variant="h4">Confidencialidad</Typography>
+                    <Typography sx={{ fontWeight: "500" }} variant="h5">
+                        Confidencialidad
+                    </Typography>
                     <Typography variant="body1">
                         La empresa se compromete a garantizar la confidencialidad de las denuncias recibidas a través de la línea ética. Las denuncias se investigarán de
                         manera imparcial y objetiva, y se tomarán las medidas adecuadas para proteger a los denunciantes.
                     </Typography>
-                    <Typography variant="h4">¿Qué ocurre si reporto una conducta?</Typography>
+                    <Typography sx={{ fontWeight: "500" }} variant="h5">
+                        ¿Qué ocurre si reporto una conducta?
+                    </Typography>
                     <Typography variant="body1">
                         Si reportas una conducta a través de la línea ética, la empresa iniciará una investigación para determinar si la denuncia es fundada. Si la
                         denuncia es fundada, la empresa tomará las medidas adecuadas para corregir la situación y garantizar que no vuelva a ocurrir.

@@ -19,6 +19,7 @@ import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import Goals from "../shared/Goals";
+import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -438,6 +439,12 @@ const Navbar = () => {
                             <UploadFileIcon fontSize="small" />
                         </ListItemIcon>
                         Cargue de Archivos
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/quality")}>
+                        <ListItemIcon>
+                            <DriveFileMoveIcon fontSize="small" />
+                        </ListItemIcon>
+                        Trasladar Archivos
                     </MenuItem>
                 </Box>
             </Menu>
