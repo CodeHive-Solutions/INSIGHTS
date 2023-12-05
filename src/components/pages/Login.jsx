@@ -1,6 +1,6 @@
 import { Box, Typography, Button, TextField, Link } from "@mui/material";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import login_image from "../../images/ALE02974.webp";
+import login_image from "../../images/login/login-image.webp";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
 import React from "react";
@@ -12,6 +12,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import LinearProgress from "@mui/material/LinearProgress";
 import apiRequest from "../../assets/apiRequest";
 import { useCookies } from "react-cookie";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),
@@ -61,7 +62,7 @@ const Login = () => {
             // Use the apiRequest function to make the API request
             // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
 
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/obtain/", {
+            const response = await fetch("https://insights-api.cyc-bpo.com/token/obtain/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -103,6 +104,10 @@ const Login = () => {
     };
 
     const handleClick = () => setOpen(!open);
+
+    const ethicalLine = () => {
+        navigate("ethical-line");
+    };
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -171,12 +176,16 @@ const Login = () => {
                             <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
                                 Iniciar Sesión
                             </Button>
+                            <Button onClick={ethicalLine} sx={{ fontFamily: "Montserrat" }} type="button" variant="contained" startIcon={<Diversity3Icon />}>
+                                Linea ética
+                            </Button>
                         </Box>
                     </Form>
                 </Formik>
                 <Box
                     sx={{
                         display: "flex",
+                        flexDirection: "column",
                         alignItems: "flex-end",
                         justifyContent: "flex-end",
                         width: "100%",

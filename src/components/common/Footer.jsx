@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import logo_CYC from "../../images/logo-cyc.webp";
+import logo_CYC from "../../images/cyc-logos/logo-footer.webp";
 import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import { useNavigate } from "react-router-dom";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";

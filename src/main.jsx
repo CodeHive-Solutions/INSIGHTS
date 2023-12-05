@@ -22,11 +22,16 @@ import { useOutlet } from "react-router-dom";
 import Suggestions from "./components/pages/Suggestions";
 import ImageUploader from "./components/Test";
 import UploadFiles from "./components/pages/UploadFiles";
+import EthicalLine from "./components/pages/EthicalLine";
+import BasicDocument from "./components/shared/GoalsPDF";
+import Quality from "./components/pages/Quality";
+
 const theme = createTheme({
     typography: {
         fontFamily: [
-            // "Lato",
+            "Poppins",
             "Inter",
+            "Montserrat",
             "-apple-system",
             "BlinkMacSystemFont",
             '"Segoe UI"',
@@ -69,6 +74,14 @@ const router = createBrowserRouter([
         element: <Test />,
     },
     {
+        path: "ethical-line",
+        element: <EthicalLine />,
+    },
+    {
+        path: "goal-pdf",
+        element: <BasicDocument />,
+    },
+    {
         path: "/logged",
         element: <Root />,
         errorElement: <ErrorPage />,
@@ -94,8 +107,8 @@ const router = createBrowserRouter([
                 element: <Article />,
             },
             {
-                path: "upload-goals",
-                element: <UploadGoals />,
+                path: "upload-files",
+                element: <UploadFiles />,
             },
             {
                 path: "sugerencias",
@@ -108,6 +121,10 @@ const router = createBrowserRouter([
             {
                 path: "test",
                 element: <Test />,
+            },
+            {
+                path: "quality",
+                element: <Quality />,
             },
         ],
     },

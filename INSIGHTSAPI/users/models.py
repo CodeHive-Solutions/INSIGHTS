@@ -4,7 +4,6 @@ import os
 from django.contrib.auth.models import AbstractUser
 from django.db import connections
 from django.db import models
-from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
 import mysql.connector
 from hierarchy.models import Area
@@ -37,7 +36,6 @@ class User(AbstractUser):
         related_name="users",
     )
     job_title = models.CharField(max_length=100, null=True, blank=True)
-    password = None
     date_joined = None
     last_login = None
     is_superuser = None
@@ -49,11 +47,12 @@ class User(AbstractUser):
         return True
 
     class Meta:
-        """Meta class."""
+        """Meta class just create the permission this don't automatically assign to any user."""
 
         permissions = [("upload_robinson_list", "Can upload robinson list")]
 
     def save(self, *args, **kwargs):
+        """Create a user in the database."""
         db_config = {
             "user": "root",
             "password": os.environ["LEYES"],
@@ -63,6 +62,7 @@ class User(AbstractUser):
         }
         connection = None
         try:
+            # I have to connect to the intranet database to get the cedula because in StaffNet there is no windows user
             connection = mysql.connector.connect(**db_config)
             query = "SELECT id_user FROM users WHERE user_windows = %s"
             cursor = connection.cursor()
@@ -95,4 +95,5 @@ class User(AbstractUser):
             self.job_title = result[0]
             area, _ = Area.objects.get_or_create(name=result[1])
             self.area_id = area.id
+        self.set_unusable_password()
         super(User, self).save(*args, **kwargs)

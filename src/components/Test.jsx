@@ -14,7 +14,7 @@ function ImageUploader() {
             formData.append("image", selectedFile);
 
             try {
-                const response = await fetch("https://insights-api-dev.cyc-bpo.com/sgc", {
+                const response = await fetch("https://insights-api.cyc-bpo.com/sgc", {
                     method: "POST",
                     body: formData,
                     credentials: "include",

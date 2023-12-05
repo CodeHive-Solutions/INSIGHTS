@@ -5,6 +5,7 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import imgAvatar from "../../images/birthdays/cristian-gonzales copy.jpeg";
+import emergency from "../../images/blog/emergency.png";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -46,8 +47,40 @@ const ArticlePage = () => {
         },
         {
             id: 2,
-            title: "Tecnología de Vanguardia en el Call Center",
-            content: "Content for the second article...",
+            title: "Emergency Response in a Call Center: A Guide to Effective Action",
+            nameAuthor: "Daniela",
+            imgAuthor: "",
+            img: emergency,
+            date: "Hace 2 horas",
+            subtitle: "Navigating Crisis: Strategies for Swift and Calibrated Responses in the Call Center Environment",
+//             content: `Emergencies can arise unexpectedly in a call center environment, demanding swift and composed action from staff members. Whether it's a technical glitch affecting multiple callers or a customer in distress, a well-prepared team is crucial to managing these situations effectively.
+
+// 1. Preparation is Key
+
+// Training: Ensure all employees receive thorough training in emergency protocols, including escalation procedures and specific scenarios they might encounter.
+// Familiarize with Tools: Equip staff with knowledge about the systems and tools available to handle emergencies. Practice using these tools to streamline responses.
+// 2. Stay Calm and Focused
+
+// Maintain Composure: Stress can escalate situations. Encourage agents to remain calm, reassuring, and empathetic when dealing with distressed callers.
+// Active Listening: Train employees to actively listen to callers to fully understand the situation before taking action.
+// 3. Clear Communication
+
+// Use Standardized Scripts: Provide scripts for emergency scenarios to ensure consistent and accurate information delivery.
+// Concise Information Sharing: Teach agents to convey crucial information clearly and succinctly, avoiding jargon or technical language that might confuse the caller.
+// 4. Collaboration and Escalation
+
+// Team Coordination: Foster a collaborative environment where team members can support each other during high-stress situations.
+// Escalation Protocols: Establish clear escalation paths for situations that demand higher-level intervention, ensuring a swift and efficient response.
+// 5. Post-Emergency Review and Improvement
+
+// Debrief Sessions: Conduct debrief sessions after emergencies to analyze responses and identify areas for improvement.
+// Continuous Training: Use insights gained from reviews to update and enhance training programs, keeping the team prepared for future emergencies.
+// Conclusion:
+// In a call center setting, emergencies can test the preparedness and efficacy of the team. By prioritizing preparation, maintaining composure, emphasizing clear communication, fostering collaboration, and learning from each situation, call centers can improve their emergency response capabilities significantly.
+
+// Handling emergencies in a call center demands a mix of empathy, technical proficiency, and quick thinking. Empowering staff with the right tools, training, and support can ensure a smoother resolution when faced with unexpected situations.
+
+// Remember, a well-prepared team can turn an emergency into an opportunity to showcase professionalism and dedication to customer care.`,
         },
         {
             id: 3,

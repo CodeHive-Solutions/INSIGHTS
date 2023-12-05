@@ -2,6 +2,7 @@
 
 import logging
 from typing import BinaryIO
+from io import StringIO
 import pandas as pd
 
 logger = logging.getLogger("requests")
@@ -51,7 +52,7 @@ def upload_df_to_table(
 
 def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:
     """
-    Read data from an Excel file and return it as a pandas DataFrame.
+    Read data from an Excel file and return it as a pandas DataFrame have to be an xlsx.
 
     Parameters:
     - file (BinaryIO): The Excel file to be read.
@@ -68,7 +69,14 @@ def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:
     print(data_frame)
     """
     try:
-        data_f = pd.read_excel(file, engine='openpyxl')
+        if file.name.endswith(".csv"):
+            data_f = pd.read_csv(
+                StringIO(file.read().decode()), sep=None, engine="python"
+            )
+        elif file.name.endswith(".xlsx"):
+            data_f = pd.read_excel(file, engine="openpyxl")
+        else:
+            raise ValueError("File must be an Excel file (.xlsx) or a CSV file (.csv)")
         return data_f
     except Exception as error:
         raise ValueError(f"Error reading Excel file: {str(error)}") from error

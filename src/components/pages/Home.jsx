@@ -5,18 +5,17 @@ import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import { Typography, Box, Dialog } from "@mui/material";
 import { motion, useIsPresent } from "framer-motion";
-import imageExample from "../../images/example-image.jpg";
-import imageExample2 from "../../images/example-image2.jpg";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
 import { useNavigate } from "react-router-dom";
 
-//images test
-import imageTest from "../../images/carousel-test.jpg";
-import imageTest1 from "../../images/test/image00002.jpeg";
-import imageTest2 from "../../images/test/image00003.jpeg";
-import imageTest3 from "../../images/test/image00004.jpeg";
+//images carousel test
+import imageTest from "../../images/home-carousel/image00001.jpg";
+import imageTest1 from "../../images/home-carousel/image00002.jpeg";
+import imageTest2 from "../../images/home-carousel/image00003.jpeg";
+import imageTest3 from "../../images/home-carousel/image00004.jpeg";
+import imageTest4 from "../../images/home-carousel/image00006.jpeg";
 
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
@@ -38,7 +37,7 @@ const vacancies = [
     { image: benefit4, title: "Vacante 2" },
 ];
 
-const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }];
+const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }, { image: imageTest4 }];
 const birthdays = [
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },

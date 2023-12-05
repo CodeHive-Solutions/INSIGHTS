@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -8,6 +8,8 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
+import emergency from "../../images/blog/emergency.png";
+import Skeleton from "@mui/material/Skeleton";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -17,6 +19,12 @@ const homeImages = [
 ];
 
 const MediaCard = ({ title, subtitle, img, articleId }) => {
+    const [imageLoaded, setImageLoaded] = useState(false);
+
+    const handleImageLoaded = () => {
+        setImageLoaded(true);
+    };
+
     const navigate = useNavigate();
 
     const handleCardClick = () => {
@@ -37,7 +45,15 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
             }}
             onClick={handleCardClick}
         >
-            <CardMedia sx={{ height: 300 }} image={img} />
+            {!imageLoaded ? (
+                <Skeleton variant="rectangular" width={500} height={300} />
+            ) : (
+                <CardMedia
+                    sx={{ height: 300 }}
+                    image={img}
+                    onLoad={handleImageLoaded} // Call handleImageLoaded when the image is loaded
+                />
+            )}
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                     {title}
@@ -78,7 +94,7 @@ const Blog = () => {
                     subtitle={
                         "Cómo la innovación tecnológica está transformando la forma en que interactuamos con los clientes y gestionamos las operaciones en el entorno del call center."
                     }
-                    img={homeImages[1].image}
+                    img={emergency}
                     articleId={2}
                 ></MediaCard>
                 <MediaCard

@@ -12,6 +12,10 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
+import DialogActions from "@mui/material/DialogActions";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
 const Goals = ({ openDialog, setOpenDialog }) => {
     const claroGoalsHeader = {
         franja: "Franja",
@@ -42,10 +46,16 @@ const Goals = ({ openDialog, setOpenDialog }) => {
     const [goalQuantity, setGoalQuantity] = useState();
     const [goalCriteria, setGoalCriteria] = useState();
     const [goalCedula, setGoalCedula] = useState();
+    const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const [executionAcceptedGoal, setExecutionAcceptedGoal] = useState(false);
     const [executionDeclinedGoal, setExecutionDeclinedGoal] = useState(false);
     const [executionTotalGoal, setExecutionTotalGoal] = useState();
+    const [result, setResult] = useState();
+    const [evaluation, setEvaluation] = useState();
+    const [quality, setQuality] = useState();
+    const [cleanDesk, setCleanDesk] = useState();
+    const [total, setTotal] = useState();
     const handleCloseDialog = () => setOpenDialog(false);
     const handleOpenDialog = () => setOpenDialog(true);
 
@@ -63,7 +73,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         }
 
         try {
-            const response = await fetch(`https://insights-api-dev.cyc-bpo.com/goals/${goalCedula}/`, {
+            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/${goalCedula}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -84,9 +94,9 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         }
     };
 
-    const getGoals = async () => {
+    const getGoal = async () => {
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/goals/15225716/", {
+            const response = await fetch("https://insights-api.cyc-bpo.com/goals/5202927/", {
                 method: "GET",
                 credentials: "include",
             });
@@ -106,15 +116,21 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                 } else if (data.additional_info.length > 0) {
                     setGoalAdvisorClaro(data.additional_info);
                     console.log(data.additional_info);
-                } else if (data.quantity && data.criteria) {
-                    setGoalQuantity(data.quantity);
-                    setGoalCriteria(data.criteria);
+                } else if (data.quantity_goal && data.criteria_goal) {
+                    setGoalQuantity(data.quantity_goal);
+                    setGoalCriteria(data.criteria_goal);
                 }
                 if (data.executionAccepted) {
                     setExecutionAcceptedGoal(true);
                 } else if (data.executionDeclined) {
                     setExecutionDeclinedGoal(true);
                 } else if (data.total) {
+                    setExecutionTotalGoal(true);
+                    setResult(data.result);
+                    setEvaluation(data.evaluation);
+                    setQuality(data.quality);
+                    setCleanDesk(data.clean_desk);
+                    setTotal(data.total);
                 }
             }
         } catch (error) {
@@ -123,126 +139,186 @@ const Goals = ({ openDialog, setOpenDialog }) => {
     };
 
     useEffect(() => {
-        getGoals();
+        getGoal();
     }, []);
 
+    const handleAcceptGoals = async () => {
+        const body = {
+            accepted: true,
+            accepted_at: new Date().toISOString(),
+        };
+
+        try {
+            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/${goalCedula}/`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                console.error(data);
+                throw new Error(response.statusText);
+            }
+
+            const updatedInstance = await response.json();
+            console.log(updatedInstance);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const handleCloseConfirmDialog = () => setOpenConfirmDialog(false);
+
     return (
-        <Dialog open={openDialog} fullWidth maxWidth={"lg"} onClose={handleCloseDialog}>
-            <DialogContent sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                    Entrega de Meta
-                </Typography>
-                {goalDeclined ? (
-                    <>
-                        <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                            Meta de Entrega Rechazada
+        <>
+            <Dialog open={openDialog} fullWidth maxWidth={"lg"} onClose={handleCloseDialog}>
+                <DialogContent sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                    <Typography variant={"h5"} sx={{ textAlign: "center", pt: "15px", color: "primary.main" }}>
+                        Entrega de Meta
+                    </Typography>
+                    {goalDeclined ? (
+                        <>
+                            <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
+                                Meta de Entrega Rechazada
+                            </Typography>
+                            <Box sx={{ textAlign: "center" }}>
+                                <Button variant="contained" onClick={handleUndoDeclinedGoal("delivery")}>
+                                    Deshacer el rechazo
+                                </Button>
+                            </Box>
+                        </>
+                    ) : goalAccepted ? (
+                        <>
+                            <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
+                                Meta de Entrega Aceptada
+                            </Typography>
+                            <Box sx={{ textAlign: "center" }}>
+                                <Button variant="contained">detalles</Button>
+                            </Box>
+                        </>
+                    ) : goalAdvisorClaro.length == 0 && !goalQuantity ? (
+                        <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
+                            Su meta de entrega aun no ha sido subida
                         </Typography>
-                        <Button onClick={handleUndoDeclinedGoal(delivery)}>Deshacer el rechazo</Button>
-                    </>
-                ) : goalAccepted ? (
-                    <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                        Meta de Entrega Aceptada
-                    </Typography>
-                ) : !goalAdvisorClaro && !goalQuantity ? (
-                    <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                        Su meta de entrega aun no ha sido subida
-                    </Typography>
-                ) : (
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                        <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "flex-end" }}>
-                            <Button>Aceptar</Button>
-                            <Button>Rechazar</Button>
-                        </Box>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        {goalAdvisorClaro
-                                            ? Object.values(claroGoalsHeader).map((header) => (
-                                                  <TableCell align="center" key={header}>
-                                                      {header}
-                                                  </TableCell>
-                                              ))
-                                            : Object.values(generalGoalHeader).map((header) => (
-                                                  <TableCell align="center" key={header}>
-                                                      {header}
-                                                  </TableCell>
-                                              ))}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {goalAdvisorClaro ? (
-                                        goalAdvisorClaro.map((row, index) => (
-                                            <TableRow key={index}>
-                                                <TableCell align="center">{row.fringe}</TableCell>
-                                                <TableCell align="center">{row.diary_goal}</TableCell>
-                                                <TableCell align="center">{row.days}</TableCell>
-                                                <TableCell align="center">{row.month_goal}</TableCell>
-                                                <TableCell align="center">{row.hours}</TableCell>
-                                                <TableCell align="center">{row.collection_account}</TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : goalQuantity ? (
+                    ) : (
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                            <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "center" }}>
+                                <Button variant="contained" onClick={{ handleAcceptGoals }}>
+                                    Aceptar
+                                </Button>
+                                <Button variant="contained">Detalles</Button>
+                                <Button variant="contained">Rechazar</Button>
+                            </Box>
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
+                                    <TableHead>
                                         <TableRow>
-                                            <TableCell align="center">{goalCriteria}</TableCell>
-                                            <TableCell align="center">{goalQuantity}</TableCell>
+                                            {goalAdvisorClaro
+                                                ? Object.values(claroGoalsHeader).map((header) => (
+                                                      <TableCell align="center" key={header}>
+                                                          {header}
+                                                      </TableCell>
+                                                  ))
+                                                : Object.values(generalGoalHeader).map((header) => (
+                                                      <TableCell align="center" key={header}>
+                                                          {header}
+                                                      </TableCell>
+                                                  ))}
                                         </TableRow>
-                                    ) : null}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                )}
-                <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                    Ejecución de Meta
-                </Typography>
-                {executionDeclinedGoal ? (
-                    <>
-                        <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                            Meta Rechazada
-                        </Typography>
-                        <Button onClick={handleUndoDeclinedGoal(execution)}>Deshacer el rechazo</Button>
-                    </>
-                ) : executionAcceptedGoal ? (
-                    <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                        Meta Aceptada
-                    </Typography>
-                ) : executionTotalGoal ? (
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                        <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "flex-end" }}>
-                            <Button>Aceptar</Button>
-                            <Button>Rechazar</Button>
+                                    </TableHead>
+                                    <TableBody>
+                                        {goalAdvisorClaro ? (
+                                            goalAdvisorClaro.map((row, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell align="center">{row.fringe}</TableCell>
+                                                    <TableCell align="center">{row.diary_goal}</TableCell>
+                                                    <TableCell align="center">{row.days}</TableCell>
+                                                    <TableCell align="center">{row.month_goal}</TableCell>
+                                                    <TableCell align="center">{row.hours}</TableCell>
+                                                    <TableCell align="center">{row.collection_account}</TableCell>
+                                                </TableRow>
+                                            ))
+                                        ) : goalQuantity ? (
+                                            <TableRow>
+                                                <TableCell align="center">{goalCriteria}</TableCell>
+                                                <TableCell align="center">{goalQuantity}</TableCell>
+                                            </TableRow>
+                                        ) : null}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
                         </Box>
-                        <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell align="right">Clean Desk</TableCell>
-                                        <TableCell align="right">Evaluación</TableCell>
-                                        <TableCell align="right">Resultado</TableCell>
-                                        <TableCell align="right">Calidad</TableCell>
-                                        <TableCell align="right">Total</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell align="right">100.00%</TableCell>
-                                        <TableCell align="right">100.00%</TableCell>
-                                        <TableCell align="right">100.00%</TableCell>
-                                        <TableCell align="right">100.00%</TableCell>
-                                        <TableCell align="right">100.00%</TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                ) : (
-                    <Typography variant={"h5"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                        Su meta de ejecución correspondiente aun no ha sido subida
+                    )}
+                    <Typography variant={"h5"} sx={{ textAlign: "center", pt: "15px", color: "primary.main" }}>
+                        Ejecución de Meta
                     </Typography>
-                )}
-            </DialogContent>
-        </Dialog>
+                    {executionDeclinedGoal ? (
+                        <>
+                            <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
+                                Meta Rechazada
+                            </Typography>
+                            <Box sx={{ textAlign: "center" }}>
+                                <Button variant="contained" onClick={handleUndoDeclinedGoal("execution")}>
+                                    Deshacer el rechazo
+                                </Button>
+                            </Box>
+                        </>
+                    ) : executionAcceptedGoal ? (
+                        <>
+                            <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
+                                Meta Aceptada
+                            </Typography>
+                            <Box sx={{ textAlign: "center" }}>
+                                <Button variant="contained">Detalles</Button>
+                            </Box>
+                        </>
+                    ) : executionTotalGoal ? (
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                            <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "center" }}>
+                                <Button variant="contained">Aceptar</Button>
+                                <Button variant="contained">Detalles</Button>
+                                <Button variant="contained">Rechazar</Button>
+                            </Box>
+                            <TableContainer component={Paper}>
+                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell align="right">Clean Desk</TableCell>
+                                            <TableCell align="right">Evaluación</TableCell>
+                                            <TableCell align="right">Resultado</TableCell>
+                                            <TableCell align="right">Calidad</TableCell>
+                                            <TableCell align="right">Total</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell align="right">{cleanDesk}</TableCell>
+                                            <TableCell align="right">{evaluation}</TableCell>
+                                            <TableCell align="right">{result}</TableCell>
+                                            <TableCell align="right">{quality}</TableCell>
+                                            <TableCell align="right">{total}</TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Box>
+                    ) : (
+                        <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
+                            Su meta de ejecución correspondiente aun no ha sido subida
+                        </Typography>
+                    )}
+                </DialogContent>
+            </Dialog>
+            <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                <DialogTitle id="alert-dialog-title">{"¿Aceptar entrega de meta?"}</DialogTitle>
+                <DialogActions>
+                    <Button onClick={handleCloseConfirmDialog}>Aceptar</Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 

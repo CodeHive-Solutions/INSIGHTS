@@ -121,5 +121,6 @@ class LDAPAuthenticationTest(TestCase):
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()
+        print(user.user_permissions.all())
         response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 400)

@@ -29,7 +29,9 @@ WSGI
 *.sqlite3
 *.pyc
 migrations
+*.csv
 *.xlsx
+*.xl*
 venv
 .venv
 
@@ -38,3 +40,4 @@ venv
 *.png
 *.jpg
 *.jpeg
+static/

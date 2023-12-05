@@ -52,12 +52,11 @@ const Suggestions = () => {
     };
 
     const handleSubmit = async (values) => {
-        console.log(values);
         setLoadingBar(true);
         showSnack("success", "Sugerencia enviada correctamente");
 
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/suggestions/", {
+            const response = await fetch("https://insights-api.cyc-bpo.com/suggestions/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -107,7 +106,7 @@ const Suggestions = () => {
     };
 
     return (
-        <Container sx={{ height: "max-content", mt: "5rem" }}>
+        <Container sx={{ height: "100vh", mt: "5rem" }}>
             <Typography variant={"h4"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
                 Sugerencias
             </Typography>

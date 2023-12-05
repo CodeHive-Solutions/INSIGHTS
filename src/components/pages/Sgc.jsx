@@ -214,7 +214,7 @@ export const Sgc = () => {
         console.log(values);
         // console.log(values);
         // try {
-        //     const response = await fetch("https://insights-api-dev.cyc-bpo.com/sgc", {
+        //     const response = await fetch("https://insights-api.cyc-bpo.com/sgc", {
         //         method: "POST",
         //         credentials: "include",
         //         body: JSON.stringify(values),
