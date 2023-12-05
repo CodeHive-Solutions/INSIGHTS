@@ -27,7 +27,7 @@ function Item(props) {
                 sx={{
                     height: height,
                     width: width,
-                    backgroundSize: "contain",
+                    backgroundSize: "cover",
                     backgroundPosition: "center",
                     backgroundRepeat: "no-repeat",
                     backgroundImage: `url(${image})`,

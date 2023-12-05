@@ -29,6 +29,7 @@ WSGI
 *.sqlite3
 *.pyc
 migrations
+*.csv
 *.xlsx
 *.xl*
 venv

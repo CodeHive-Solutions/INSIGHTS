@@ -56,7 +56,7 @@ const Suggestions = () => {
         showSnack("success", "Sugerencia enviada correctamente");
 
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/suggestions/", {
+            const response = await fetch("https://insights-api.cyc-bpo.com/suggestions/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),

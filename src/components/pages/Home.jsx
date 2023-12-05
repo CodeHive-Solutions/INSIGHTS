@@ -15,6 +15,7 @@ import imageTest from "../../images/home-carousel/image00001.jpg";
 import imageTest1 from "../../images/home-carousel/image00002.jpeg";
 import imageTest2 from "../../images/home-carousel/image00003.jpeg";
 import imageTest3 from "../../images/home-carousel/image00004.jpeg";
+import imageTest4 from "../../images/home-carousel/image00006.jpeg";
 
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
@@ -36,7 +37,7 @@ const vacancies = [
     { image: benefit4, title: "Vacante 2" },
 ];
 
-const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }];
+const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }, { image: imageTest4 }];
 const birthdays = [
     { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
     { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },

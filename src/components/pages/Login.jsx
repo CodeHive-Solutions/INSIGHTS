@@ -62,7 +62,7 @@ const Login = () => {
             // Use the apiRequest function to make the API request
             // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
 
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/token/obtain/", {
+            const response = await fetch("https://insights-api.cyc-bpo.com/token/obtain/", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),

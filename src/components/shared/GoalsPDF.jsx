@@ -15,7 +15,7 @@ const PDFcomponent = () => {
     const [goalDate, setGoalDate] = useState();
     const getGoal = async () => {
         try {
-            const response = await fetch("https://insights-api-dev.cyc-bpo.com/goals/15225716/", {
+            const response = await fetch("https://insights-api.cyc-bpo.com/goals/15225716/", {
                 method: "GET",
                 credentials: "include",
             });
@@ -27,7 +27,6 @@ const PDFcomponent = () => {
             }
 
             if (response.status === 200) {
-                
             }
         } catch (error) {
             console.error(error);

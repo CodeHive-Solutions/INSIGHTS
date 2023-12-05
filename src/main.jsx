@@ -82,10 +82,6 @@ const router = createBrowserRouter([
         element: <BasicDocument />,
     },
     {
-        path: "quality",
-        element: <Quality />,
-    },
-    {
         path: "/logged",
         element: <Root />,
         errorElement: <ErrorPage />,
@@ -111,8 +107,8 @@ const router = createBrowserRouter([
                 element: <Article />,
             },
             {
-                path: "upload-goals",
-                element: <UploadGoals />,
+                path: "upload-files",
+                element: <UploadFiles />,
             },
             {
                 path: "sugerencias",
@@ -125,6 +121,10 @@ const router = createBrowserRouter([
             {
                 path: "test",
                 element: <Test />,
+            },
+            {
+                path: "quality",
+                element: <Quality />,
             },
         ],
     },

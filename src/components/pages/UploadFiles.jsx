@@ -104,11 +104,28 @@ const UploadFiles = () => {
                     }
                 }
 
+                const data = await response.json();
+
                 if (response.status === 201) {
-                    const data = await response.json();
-                    showSnack("success", "Registros subidos: " + data.rows_updated);
+                    if (data.uploaded_rows === 0) {
+                        showSnack(
+                            "warning",
+                            "La importación se ejecutó exitosamente, pero no se añadieron registros nuevos.\nRegistros totales en la base de datos: " + data.database_rows
+                        );
+                    } else {
+                        showSnack(
+                            "success",
+                            "La importación se ejecutó exitosamente, " +
+                                data.rows_updated +
+                                " registros fueron añadidos.\nRegistros totales en la base de datos: " +
+                                data.database_rows
+                        );
+                    }
                 } else if (response.status === 200) {
-                    showSnack("warning", "No se encontraron registros para actualizar.");
+                    showSnack(
+                        "success",
+                        "La importación se ejecutó exitosamente, no se encontraron registros por añadir.\nRegistros totales en la base de datos: " + data.database_rows
+                    );
                 }
             } catch (error) {
                 console.error(error);

@@ -66,9 +66,9 @@ const UploadGoals = () => {
             formData.append("cedula", cedula);
             let path;
             if (selectedFile.name.includes("meta")) {
-                path = "https://insights-api-dev.cyc-bpo.com/goals/";
+                path = "https://insights-api.cyc-bpo.com/goals/";
             } else if (selectedFile.name.toUpperCase().includes("ROBINSON")) {
-                path = "https://insights-api-dev.cyc-bpo.com/files/robinson-list/";
+                path = "https://insights-api.cyc-bpo.com/files/robinson-list/";
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");
                 return;
@@ -95,7 +95,7 @@ const UploadGoals = () => {
                     }
 
                     const data = await response.json();
-                    if (path === "https://insights-api-dev.cyc-bpo.com/goals/") {
+                    if (path === "https://insights-api.cyc-bpo.com/goals/") {
                         console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
                         showSnack("error", "Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
                         throw new Error(response.statusText);
