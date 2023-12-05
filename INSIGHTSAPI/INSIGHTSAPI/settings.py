@@ -134,7 +134,7 @@ DATABASES = {
         "PORT": "3306",
         "USER": "INSIGHTSUSER",
         "PASSWORD": os.environ["INSIGHTSMYSQL"],
-        # "NAME": "insights_test",
+        "NAME": "insights",
     },
     "staffnet": {
         "ENGINE": "django.db.backends.mysql",

@@ -28,7 +28,6 @@ WSGI
 *.sqlite
 *.sqlite3
 *.pyc
-migrations
 *.csv
 *.xlsx
 *.xl*
