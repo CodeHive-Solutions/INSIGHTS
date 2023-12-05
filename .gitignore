@@ -41,3 +41,5 @@ venv
 *.jpg
 *.jpeg
 static/
+test.html
+test.pdf

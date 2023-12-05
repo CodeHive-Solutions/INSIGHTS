@@ -41,7 +41,7 @@ STATIC_ROOT = BASE_DIR / "static"
 SECRET_KEY = "django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG")
+DEBUG = True if os.environ["DEBUG"] == "True" else False
 
 ALLOWED_HOSTS = ["insights-api.cyc-bpo.com", "insights-api-dev.cyc-bpo.com"]
 
@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     "hierarchy",
     "sgc",
     "users",
-    "excels_processing"
+    "excels_processing",
 ]
 
 MIDDLEWARE = [
@@ -88,11 +88,15 @@ REST_FRAMEWORK = {
     # ],
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True
 
 
-CORS_ORIGIN_WHITELIST = ["http://172.16.0.115:8000", "https://insights-dev.cyc-bpo.com"]
+if DEBUG:
+    CORS_ORIGIN_WHITELIST = [
+        "http://172.16.0.115:8000",
+        "https://insights-dev.cyc-bpo.com",
+    ]
 
 ROOT_URLCONF = "INSIGHTSAPI.urls"
 
@@ -130,7 +134,7 @@ DATABASES = {
         "PORT": "3306",
         "USER": "INSIGHTSUSER",
         "PASSWORD": os.environ["INSIGHTSMYSQL"],
-        "NAME": "insights",
+        # "NAME": "insights_test",
     },
     "staffnet": {
         "ENGINE": "django.db.backends.mysql",
