@@ -1,5 +1,6 @@
 """This module contains the views for the excels_processing app."""
 import logging
+from math import e
 import os
 import shutil
 import re
@@ -89,12 +90,6 @@ def call_transfer_list(request):
     if not "file" in request.FILES:
         return Response("No file found in the request", status=400)
     campaign = str(request.POST.get("campaign")).lower()
-    paths = {
-        "falabella_old": "/var/servers/falabella/BOGOTA/LLAMADAS_PREDICTIVO/",
-        "falabella_new": "/var/servers/calidad/Llamadas Banco Falabella/",
-        "test_old": "/var/servers/test/",
-        "test_new": "/var/servers/test/",
-    }
     # check if the folder exists
     file = request.FILES["file"]
     data_f = file_to_data_frame(file)
@@ -103,39 +98,46 @@ def call_transfer_list(request):
     missing_columns = [
         column for column in required_columns if column not in data_f.columns
     ]
+    logger.info(f"Missing columns: {data_f.columns}")
     if missing_columns:
         return Response(f"Missing columns: {', '.join(missing_columns)}", status=400)
     # Transfer the calls files to the new path
-    pattern = re.compile(r"_(\d+)-")
+    paths = {
+        "falabella_old": "/var/servers/falabella/BOGOTA/LLAMADAS_PREDICTIVO/",
+        "falabella_new": "/var/servers/calidad/Llamadas Banco Falabella/",
+        "test_old": "/var/servers/falabella/test/test/",
+        "test_new": "/var/servers/calidad/test/test/",
+    }
+    path_old = os.path.join(paths[f"{campaign}_old"], "{date:%Y/%m/%d/OUT/}")
+    path_new = os.path.join(paths[f"{campaign}_new"], "{entry.name}")
+    # pattern = re.compile(r"_(\d+)-")
     fails = []
 
     for row in data_f.itertuples(index=False):
+        # Break the loop if the date is empty or nan
+        if not row.FECHA or row.FECHA != row.FECHA:
+            continue
+
         date = datetime.strptime(str(row.FECHA).split(" ", maxsplit=1)[0], "%d/%m/%Y")
-        number = str(row.NUMERO)
+        number = str(int(row.NUMERO))
         match = None
-        if not os.path.exists(
-            os.path.join(paths[f"{campaign}_old"], date.strftime("%Y/%m/%d/OUT/"))
-        ):
-            fails.append(number)
-            break
-        for entry in os.scandir(
-            os.path.join(paths[f"{campaign}_old"], date.strftime("%Y/%m/%d/OUT/"))
-        ):
-            if entry.is_file() and entry.name.endswith(".mp3"):
-                # Use the compiled pattern to match the middle number
-                match = pattern.search(entry.name)
-                if match and match.group(1) == number:
-                    try:
-                        # Transfer the file
-                        shutil.copy2(
-                            entry.path,
-                            os.path.join(paths[f"{campaign}_new"], entry.name),
-                        )
-                        match = True
-                        break
-                    except Exception as error:
-                        logger.critical(error)
-                        return Response(str(error), status=500)
+        pattern = re.compile(rf"_{number}-")
+
+        if not os.path.exists(path_old.format(date=date)):
+            return Response("Folder for that date does not exist.", status=400)
+        for entry in os.scandir(path_old.format(date=date)):
+            if entry.name.endswith(".mp3") and pattern.search(entry.name):
+                try:
+                    # Transfer the file
+                    shutil.copy2(
+                        entry.path,
+                        path_new.format(entry=entry),
+                    )
+                    match = True
+                    break
+                except Exception as error:
+                    logger.critical(error)
+                    return Response(str(error), status=500)
         if match is not True:
             fails.append(number)
     return Response({"message": "Files transferred successfully.", "fails": fails})

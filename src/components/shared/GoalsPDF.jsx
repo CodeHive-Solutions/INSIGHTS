@@ -3,6 +3,7 @@ import cycLogo from "../../images/cyc-logos/logotipo-navbar.png";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { useState } from "react";
+import { getApiUrl } from "../../assets/getApi";
 
 const PDFcomponent = () => {
     const navigate = useNavigate();
@@ -15,7 +16,7 @@ const PDFcomponent = () => {
     const [goalDate, setGoalDate] = useState();
     const getGoal = async () => {
         try {
-            const response = await fetch("https://insights-api.cyc-bpo.com/goals/15225716/", {
+            const response = await fetch(`${getApiUrl()}goals/15225716/`, {
                 method: "GET",
                 credentials: "include",
             });

@@ -4,7 +4,7 @@ const sessionRequest = async () => {
     const navigate = useNavigate();
     
     try {
-        const response = await fetch("https://insights-api.cyc-bpo.com", {
+        const response = await fetch("https://insights-api-dev.cyc-bpo.com", {
             method,
             credentials: "include",
             headers: { "Content-Type": contentType },

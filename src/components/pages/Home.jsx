@@ -9,6 +9,7 @@ import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
 import { useNavigate } from "react-router-dom";
+import quality from "../../images/quality/quality.jpg";
 
 //images carousel test
 import imageTest from "../../images/home-carousel/image00001.jpg";
@@ -16,6 +17,9 @@ import imageTest1 from "../../images/home-carousel/image00002.jpeg";
 import imageTest2 from "../../images/home-carousel/image00003.jpeg";
 import imageTest3 from "../../images/home-carousel/image00004.jpeg";
 import imageTest4 from "../../images/home-carousel/image00006.jpeg";
+import realImage from "../../images/home-carousel/2.jpg";
+import realImage2 from "../../images/home-carousel/3.jpg";
+import realImage3 from "../../images/home-carousel/4.jpg";
 
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
@@ -37,25 +41,25 @@ const vacancies = [
     { image: benefit4, title: "Vacante 2" },
 ];
 
-const homeImages = [{ image: imageTest }, { image: imageTest1 }, { image: imageTest2 }, { image: imageTest3 }, { image: imageTest4 }];
+const homeImages = [{ image: realImage }, { image: realImage2 }, { image: realImage3 }];
 const birthdays = [
-    { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
-    { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
-    { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
-    { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
+    { image: "", name: "nombre ejemplo", description: "Yanbal" },
+    { image: "", name: "nombre ejemplo", description: "Scotiabank Colpatria" },
+    { image: "", name: "nombre ejemplo", description: "Yanbal" },
+    { image: "", name: "nombre ejemplo", description: "BBVA" },
 ];
 const birthdays2 = [
-    { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
-    { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
-    { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
-    { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
+    { image: "", name: "nombre ejemplo", description: "Yanbal" },
+    { image: "", name: "nombre ejemplo", description: "BBVA" },
+    { image: "", name: "nombre ejemplo", description: "Yanbal" },
+    { image: "", name: "nombre ejemplo", description: "Scotiabank Colpatria" },
 ];
 
 const birthdays3 = [
-    { image: cristianGonzales, name: "Cristian Gonzales", description: "Scotiabank Colpatria" },
-    { image: barbaraVanegas, name: "Barbara Vanegas", description: "Yanbal" },
-    { image: carolGuerrero, name: "Carol Guerrero", description: "BBVA" },
-    { image: tuliaCalderon, name: "Tulia Calderon", description: "Yanbal" },
+    { image: "", name: "nombre ejemplo", description: "Scotiabank Colpatria" },
+    { image: "", name: "nombre ejemplo", description: "Yanbal" },
+    { image: "", name: "nombre ejemplo", description: "BBVA" },
+    { image: "", name: "nombre ejemplo", description: "Yanbal" },
 ];
 
 const Home = () => {
@@ -85,6 +89,21 @@ const Home = () => {
             <Box sx={{ display: "flex", mt: "4rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"80vh"} width={"100%"} />
             </Box>
+            {/* <Box
+                className="waveWrapper"
+                sx={{
+                    width: "100%",
+                    height: "20vh",
+                    backgroundSize: "cover",
+                    backgroundColor: "#f0f0f0",
+                    padding: "20px",
+                }}
+            >
+                <Box className="wave wave1"></Box>
+                <Box className="wave wave2"></Box>
+                <Box className="wave wave3"></Box>
+                <Box className="wave wave4"></Box>
+            </Box> */}
             <Box
                 sx={{
                     display: "flex",

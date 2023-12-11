@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -32,6 +32,12 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
         navigate(`/logged/blog/article/${articleId}`);
     };
 
+    useEffect(() => {
+        const imagePreload = new Image();
+        imagePreload.src = img;
+        imagePreload.onload = handleImageLoaded;
+    }, [img]);
+
     return (
         <Card
             sx={{
@@ -45,15 +51,18 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
             }}
             onClick={handleCardClick}
         >
-            {!imageLoaded ? (
-                <Skeleton variant="rectangular" width={500} height={300} />
-            ) : (
+            <CardContent>
+                {!imageLoaded && <Skeleton variant="rectangular" width={500} height={300} />}
                 <CardMedia
-                    sx={{ height: 300 }}
-                    image={img}
-                    onLoad={handleImageLoaded} // Call handleImageLoaded when the image is loaded
-                />
-            )}
+                    sx={{
+                        height: 0,
+                        paddingTop: "56.25%", // 16:9 aspect ratio (adjust as needed)
+                        display: imageLoaded ? "block" : "none",
+                    }}
+                >
+                    <img src={img} alt={title} onLoad={handleImageLoaded} style={{ display: "none" }} />
+                </CardMedia>
+            </CardContent>
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                     {title}

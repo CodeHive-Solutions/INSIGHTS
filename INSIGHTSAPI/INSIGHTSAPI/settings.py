@@ -41,7 +41,7 @@ STATIC_ROOT = BASE_DIR / "static"
 SECRET_KEY = "django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.environ["DEBUG"] == "True" else False
+DEBUG = True if os.getenv("DEBUG") is not None else False
 
 ALLOWED_HOSTS = ["insights-api.cyc-bpo.com", "insights-api-dev.cyc-bpo.com"]
 
@@ -92,10 +92,9 @@ CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True
 
 
-if DEBUG:
-    CORS_ORIGIN_WHITELIST = [
-        "http://172.16.0.115:8000",
-        "https://insights-dev.cyc-bpo.com",
+if not DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        "https://insights.cyc-bpo.com",
     ]
 
 ROOT_URLCONF = "INSIGHTSAPI.urls"
