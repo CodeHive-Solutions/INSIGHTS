@@ -10,9 +10,9 @@ import { useEffect } from "react";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { useNavigate } from "react-router-dom";
+import { getApiUrl } from "../../assets/getApi";
 
 const UploadFiles = () => {
-    const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
@@ -68,9 +68,9 @@ const UploadFiles = () => {
             formData.append("cedula", cedula);
             let path;
             if (selectedFile.name.includes("meta")) {
-                path = "https://insights-api.cyc-bpo.com/goals/";
+                path = `${getApiUrl()}goals/`;
             } else if (selectedFile.name.toUpperCase().includes("ROBINSON")) {
-                path = "https://insights-api.cyc-bpo.com/files/robinson-list/";
+                path = `${getApiUrl()}files/robinson-list/`;
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");
                 return;
@@ -97,7 +97,7 @@ const UploadFiles = () => {
                     }
 
                     const data = await response.json();
-                    if (path === "https://insights-api.cyc-bpo.com/goals/") {
+                    if (path === `${getApiUrl()}goals/`) {
                         console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
                         showSnack("error", "Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
                         throw new Error(response.statusText);
@@ -107,20 +107,13 @@ const UploadFiles = () => {
                 const data = await response.json();
 
                 if (response.status === 201) {
-                    if (data.uploaded_rows === 0) {
-                        showSnack(
-                            "warning",
-                            "La importación se ejecutó exitosamente, pero no se añadieron registros nuevos.\nRegistros totales en la base de datos: " + data.database_rows
-                        );
-                    } else {
-                        showSnack(
-                            "success",
-                            "La importación se ejecutó exitosamente, " +
-                                data.rows_updated +
-                                " registros fueron añadidos.\nRegistros totales en la base de datos: " +
-                                data.database_rows
-                        );
-                    }
+                    showSnack(
+                        "success",
+                        "La importación se ejecutó exitosamente, " +
+                            data.rows_updated +
+                            " registros fueron añadidos.\nRegistros totales en la base de datos: " +
+                            data.database_rows
+                    );
                 } else if (response.status === 200) {
                     showSnack(
                         "success",

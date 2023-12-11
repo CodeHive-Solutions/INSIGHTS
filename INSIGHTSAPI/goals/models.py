@@ -10,15 +10,15 @@ class Goals(models.Model):
     cedula = models.BigIntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     job_title_goal = models.CharField(max_length=100)
-    job_title_execution = models.CharField(max_length=100)
+    job_title_execution = models.CharField(max_length=100, null=True)
     campaign_goal = models.CharField(max_length=100)
-    campaign_execution = models.CharField(max_length=100)
+    campaign_execution = models.CharField(max_length=100, null=True)
     coordinator_goal = models.CharField(max_length=100)
-    coordinator_execution = models.CharField(max_length=100)
+    coordinator_execution = models.CharField(max_length=100, null=True)
     criteria_goal = models.CharField(max_length=100)
-    criteria_execution = models.CharField(max_length=100)
+    criteria_execution = models.CharField(max_length=100, null=True)
     quantity_goal = models.CharField(max_length=20)
-    quantity_execution = models.CharField(max_length=20)
+    quantity_execution = models.CharField(max_length=20, null=True)
     result = models.CharField(max_length=10, blank=True)
     quality = models.CharField(max_length=10, blank=True)
     evaluation = models.CharField(max_length=10, blank=True)
@@ -52,6 +52,7 @@ class Goals(models.Model):
 
 class TableInfo(models.Model):
     """This class represents the table info model."""
+
     name = models.CharField(max_length=50)
     fringe = models.CharField(max_length=100)
     diary_goal = models.IntegerField()

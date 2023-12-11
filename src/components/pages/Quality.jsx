@@ -10,6 +10,7 @@ import quality from "../../images/quality/quality.jpg";
 import { LoadingButton } from "@mui/lab";
 import SnackbarAlert from "../common/SnackBarAlert";
 import MenuItem from "@mui/material/MenuItem";
+import { getApiUrl } from "../../assets/getApi";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -86,7 +87,7 @@ const Quality = () => {
             formData.append("campaign", "falabella");
 
             try {
-                const response = await fetch("https://insights-api.cyc-bpo.com/files/call-transfer-list/", {
+                const response = await fetch(`${getApiUrl()}files/call-transfer-list/`, {
                     method: "POST",
                     body: formData,
                     credentials: "include",
@@ -121,8 +122,12 @@ const Quality = () => {
                 if (response.status === 200) {
                     const data = await response.json();
                     console.log(data);
-                    const failsString = data.fails.join(", ");
-                    showSnack("success", "Archivos trasladados correctamente. Registros no encontrados: " + failsString);
+                    if (data.fails.length === 0) {
+                        showSnack("success", "Archivos trasladados correctamente.");
+                    } else {
+                        const failsString = data.fails.join(", ");
+                        showSnack("success", "Archivos trasladados correctamente. Registros no encontrados: " + failsString);
+                    }
                 }
             } catch (error) {
                 console.error(error);
@@ -152,7 +157,7 @@ const Quality = () => {
                 <Box className="wave wave4"></Box>
             </Box>
 
-            <Container sx={{ display: "flex", justifyContent: "start", alignItems: "center", flexDirection: "column", height: "50vh" }}>
+            <Container sx={{ display: "flex", justifyContent: "start", alignItems: "center", flexDirection: "column", height: "max-content" }}>
                 <Box sx={{ display: "flex", gap: "1rem", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: "2rem" }}>
                     <TextField sx={{ width: "600px" }} value={selectedCampaign.value} onChange={handleCampaignChange} label="Campaña" select>
                         {campaigns.map((option) => (

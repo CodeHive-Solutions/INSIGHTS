@@ -3,7 +3,7 @@ import os
 from users.models import User
 from django.contrib.auth.models import Permission
 from django.urls import reverse
-from django.db import transaction
+from shutil import rmtree
 from rest_framework.test import APITestCase
 import mysql.connector
 
@@ -44,7 +44,7 @@ class RobinsonTestCase(APITestCase):
         with open(file_path, "rb") as file_obj:
             response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies)  # type: ignore
             self.assertEqual(response.status_code, 201, response.data)
-            self.assertEqual(response.data["rows_updated"], 2)  # type: ignore
+            self.assertEqual(response.data["updated_rows"], 2)  # type: ignore
             self.connection.commit()
             file_obj.seek(0)
             response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies)  # type: ignore
@@ -87,8 +87,21 @@ class CallTransferTestCase(APITestCase):
         permission = Permission.objects.get(codename="call_transfer")
         user.user_permissions.add(permission)
         user.save()
+        # Create the folders for the test
+        path_quality = "/var/servers/calidad/test/test/2023/12/05/OUT"
+        os.makedirs(path_quality, exist_ok=True)
+        path_falabella = "/var/servers/falabella/test/test/2023/12/05/OUT"
+        os.makedirs(path_falabella, exist_ok=True)
         with open(
-            "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/informe_gestion.csv",
+            path_falabella + "/OUT-20231201-153739_3103233725-16072-37842888-all.mp3",
+            "w",
+            encoding="utf-8",
+        ) as file_obj:
+            file_obj.write("test")
+            self.assertTrue(os.path.exists(file_obj.name), file_obj.name)
+        # Open the file to upload
+        with open(
+            "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Call_transfer_list.csv",
             "r",
             encoding="utf-8",
         ) as file_obj:
@@ -98,15 +111,22 @@ class CallTransferTestCase(APITestCase):
                 cookies=self.client.cookies,  # type: ignore
             )
             self.assertEqual(response.status_code, 200, response.data)
-            self.assertEqual(response.data["fails"], [])
+            self.assertEqual(response.data["fails"], [], response.data)
             # Check if the file was copied to the server
-            file_path = "/var/servers/test/OUT-20231201-153739_3103233725-16072-37842888-all.mp3"
+            file_path = "/var/servers/calidad/test/test/OUT-20231201-153739_3103233725-16072-37842888-all.mp3"
             self.assertTrue(os.path.exists(file_path))
 
     def tearDown(self):
         """Tear down the test case"""
-        file_path = (
-            "/var/servers/test/OUT-20231201-153739_3103233725-16072-37842888-all.mp3"
-        )
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        file_path_quality = "/var/servers/calidad/test/"
+        file_path_quality_check = file_path_quality + "test/2023/12/05/OUT"
+        if os.path.exists(file_path_quality) and os.path.exists(
+            file_path_quality_check
+        ):
+            rmtree(file_path_quality)
+        file_path_falabella = "/var/servers/falabella/test/"
+        file_path_falabella_check = file_path_falabella + "test/2023/12/05/OUT"
+        if os.path.exists(file_path_falabella) and os.path.exists(
+            file_path_falabella_check
+        ):
+            rmtree(file_path_falabella)

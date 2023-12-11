@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { getApiUrl } from "../assets/getApi.js";
 
 function ImageUploader() {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -14,7 +15,7 @@ function ImageUploader() {
             formData.append("image", selectedFile);
 
             try {
-                const response = await fetch("https://insights-api.cyc-bpo.com/sgc", {
+                const response = await fetch(`${getApiUrl()}sgc`, {
                     method: "POST",
                     body: formData,
                     credentials: "include",

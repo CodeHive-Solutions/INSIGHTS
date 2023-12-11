@@ -13,6 +13,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import apiRequest from "../../assets/apiRequest";
 import { useCookies } from "react-cookie";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
+import { getApiUrl } from "../../assets/getApi.js";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),
@@ -62,15 +63,15 @@ const Login = () => {
             // Use the apiRequest function to make the API request
             // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
 
-            const response = await fetch("https://insights-api.cyc-bpo.com/token/obtain/", {
+            const response = await fetch(`${getApiUrl()}token/obtain/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
                 credentials: "include",
             });
 
-            setLoadingBar(false);
             setIsSubmitting(false);
+            setLoadingBar(false);
 
             const data = await response.json();
 
@@ -98,7 +99,7 @@ const Login = () => {
                 console.log(error.message);
                 showSnack("error", error.message);
             }
-
+            setIsSubmitting(false);
             setLoadingBar(false);
         }
     };
@@ -173,10 +174,10 @@ const Login = () => {
                                     </Alert>
                                 </Collapse>
                             </Box>
-                            <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="outlined" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
+                            <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="contained" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
                                 Iniciar Sesión
                             </Button>
-                            <Button onClick={ethicalLine} sx={{ fontFamily: "Montserrat" }} type="button" variant="contained" startIcon={<Diversity3Icon />}>
+                            <Button onClick={ethicalLine} sx={{ fontFamily: "Montserrat" }} type="button" variant="outlined" startIcon={<Diversity3Icon />}>
                                 Linea ética
                             </Button>
                         </Box>

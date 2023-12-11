@@ -4,6 +4,7 @@ import logging
 from typing import BinaryIO
 from io import StringIO
 import pandas as pd
+import chardet
 
 logger = logging.getLogger("requests")
 
@@ -70,8 +71,12 @@ def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:
     """
     try:
         if file.name.endswith(".csv"):
+            file_content = file.read()
+            result = chardet.detect(file_content)
+            encoding = result["encoding"]
+            logger.info("Reading CSV file with encode " + encoding + ".")
             data_f = pd.read_csv(
-                StringIO(file.read().decode()), sep=None, engine="python"
+                StringIO(file_content.decode(encoding)), sep=None, engine="python"
             )
         elif file.name.endswith(".xlsx"):
             data_f = pd.read_excel(file, engine="openpyxl")

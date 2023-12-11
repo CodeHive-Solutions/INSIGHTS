@@ -15,6 +15,7 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import { useNavigate } from "react-router-dom";
 import ethicalLineBackground from "../../images/ethical-line/ethical-line-background.jpg";
 import wave from "../../images/ethical-line/wave-2.png";
+import { getApiUrl } from "../../assets/getApi";
 
 const complaintType = [
     { value: "Fraude y Engaño", label: "Fraude y Engaño" },
@@ -82,7 +83,7 @@ const EthicalLine = () => {
         // showSnack("success", "Sugerencia enviada correctamente");
 
         // try {
-        //     const response = await fetch("https://insights-api.cyc-bpo.com/suggestions/", {
+        //     const response = await fetch(`${getApiUrl()}suggestions/`, {
         //         method: "POST",
         //         headers: { "Content-Type": "application/json" },
         //         body: JSON.stringify(values),

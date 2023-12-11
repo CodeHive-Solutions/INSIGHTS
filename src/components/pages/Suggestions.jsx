@@ -4,6 +4,7 @@ import { Formik, Form, useField, useFormikContext } from "formik";
 import * as Yup from "yup";
 import SendIcon from "@mui/icons-material/Send";
 import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
     { value: "Presidencia - Pablo César Castañeda Camacho", label: "Presidencia - Pablo César Castañeda Camacho" },
@@ -56,7 +57,7 @@ const Suggestions = () => {
         showSnack("success", "Sugerencia enviada correctamente");
 
         try {
-            const response = await fetch("https://insights-api.cyc-bpo.com/suggestions/", {
+            const response = await fetch(`${getApiUrl()}suggestions/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),

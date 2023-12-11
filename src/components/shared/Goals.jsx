@@ -15,6 +15,7 @@ import Button from "@mui/material/Button";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import { getApiUrl } from "../../assets/getApi";
 
 const Goals = ({ openDialog, setOpenDialog }) => {
     const claroGoalsHeader = {
@@ -73,7 +74,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         }
 
         try {
-            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/${goalCedula}/`, {
+            const response = await fetch(`${getApiUrl()}goals/${goalCedula}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -96,7 +97,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
 
     const getGoal = async () => {
         try {
-            const response = await fetch("https://insights-api.cyc-bpo.com/goals/5202927/", {
+            const response = await fetch(`${getApiUrl()}goals/5202927/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -149,7 +150,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         };
 
         try {
-            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/${goalCedula}/`, {
+            const response = await fetch(`${getApiUrl()}goals/${goalCedula}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

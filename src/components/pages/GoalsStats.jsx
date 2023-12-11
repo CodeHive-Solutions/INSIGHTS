@@ -20,6 +20,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
+import { getApiUrl } from "../../assets/getApi";
 
 const AnalisisMetas = () => {
     useEffect(() => {
@@ -43,7 +44,7 @@ const AnalisisMetas = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch("https://insights-api.cyc-bpo.com/goals/", {
+            const response = await fetch(`${getApiUrl()}goals/`, {
                 method: "GET",
             });
 
@@ -118,7 +119,7 @@ const AnalisisMetas = () => {
 
     const handleDeleteClick = async (register_cedula) => {
         try {
-            const response = await fetch(`https://insights-api-dev.cyc-bpo.com/goals/${register_cedula}`, {
+            const response = await fetch(`${getApiUrl()}goals/${register_cedula}`, {
                 method: "DELETE",
                 body: JSON.stringify({ cedula: cedula }),
             });
@@ -334,7 +335,7 @@ const AnalisisMetas = () => {
         // Make the HTTP request to save in the backend
         const newRowWithCedula = { ...newRow, cedula: cedula };
         try {
-            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/${newRow.cedula}/`, {
+            const response = await fetch(`${getApiUrl()}goals/${newRow.cedula}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -421,7 +422,7 @@ const AnalisisMetas = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/?month=${monthRef.current.value}-${yearRef.current.value}&cedula=${cedula}`, {
+            const response = await fetch(`${getApiUrl()}goals/?month=${monthRef.current.value}-${yearRef.current.value}&cedula=${cedula}`, {
                 method: "GET",
             });
 
