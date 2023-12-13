@@ -6,7 +6,7 @@ import { styled } from "@mui/material/styles";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import Collapse from "@mui/material/Collapse";
 import SaveIcon from "@mui/icons-material/Save";
-import quality from "../../images/quality/quality.jpg";
+import quality from "../../images/quality/files.jpg";
 import { LoadingButton } from "@mui/lab";
 import SnackbarAlert from "../common/SnackBarAlert";
 import MenuItem from "@mui/material/MenuItem";
@@ -191,7 +191,7 @@ const Quality = () => {
                                         <VisuallyHiddenInput accept=".csv" type="file" onChange={handleFileInputChange} />
                                     </Button>
                                     <LoadingButton onClick={handleUpload} startIcon={<SaveIcon />} variant="contained" loading={loading}>
-                                        Guardar
+                                        Trasladar
                                     </LoadingButton>
                                 </Box>
                             </>

@@ -1,6 +1,5 @@
 """This module contains the views for the excels_processing app."""
 import logging
-from math import e
 import os
 import shutil
 import re
@@ -9,10 +8,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
-import os
 import mysql.connector
 from .excel_functions import upload_df_to_table, file_to_data_frame
-from django.db import transaction
 
 
 logger = logging.getLogger("requests")
@@ -68,7 +65,7 @@ def robinson_list(request):
                     "message": "No data was inserted.",
                     "uploaded_rows": uploaded_rows,
                     "database_rows": total_rows,
-                    "rows_updated": rows,
+                    "updated_rows": rows,
                 },
                 status=200,
             )

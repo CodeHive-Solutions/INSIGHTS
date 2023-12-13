@@ -54,7 +54,7 @@ const Suggestions = () => {
 
     const handleSubmit = async (values) => {
         setLoadingBar(true);
-        showSnack("success", "Sugerencia enviada correctamente");
+        showSnack("success", "PQRS enviado correctamente");
 
         try {
             const response = await fetch(`${getApiUrl()}suggestions/`, {
@@ -108,9 +108,19 @@ const Suggestions = () => {
 
     return (
         <Container sx={{ height: "100vh", mt: "5rem" }}>
-            <Typography variant={"h4"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                Sugerencias
-            </Typography>
+            <Box sx={{ pb: "1rem" }}>
+                <Typography variant={"h4"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
+                    PQRS
+                </Typography>
+                <Typography variant={"body"}>
+                    En esta sección puedes enviar un mensaje a alguna de las Gerencias de la Compañía según tus intereses. De manera muy respetuosa puedes redactar un
+                    mensaje dando a conocer tus inconformidades, inconvenientes, sugerencias o felicitaciones a la Gerencia a la cual desees enviar el mensaje.
+                    <br />
+                    <br />
+                    Ten en cuenta que el mensaje que envíes sólo lo conocerás tú y el Gerente del área a la que lo envíes. Procura redactar con prudencia y buena
+                    ortografía para que tu mensaje sea totalmente legible.
+                </Typography>
+            </Box>
             <Formik initialValues={{ area: "", motivo: "", mensaje: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
                 <Form>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>

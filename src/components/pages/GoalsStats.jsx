@@ -41,10 +41,11 @@ const AnalisisMetas = () => {
     const handleClose = () => setOpen(false);
     const monthRef = useRef();
     const yearRef = useRef();
+    const goalType = useRef(null);
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/`, {
+            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/`, {
                 method: "GET",
             });
 
@@ -107,6 +108,7 @@ const AnalisisMetas = () => {
                     };
                 });
                 setRows(modifiedData);
+                console.log(modifiedData);
             }
         } catch (error) {
             console.error(error);
@@ -142,61 +144,14 @@ const AnalisisMetas = () => {
         }
     };
 
-    const initialColumns = [
+    const goalsColumns = [
         { field: "cedula", headerName: "Cedula", width: 100 },
-        { field: "quantity", headerName: "Meta", width: 140, editable: true },
-        { field: "clean_desk", headerName: "Clean Desk", width: 80, editable: true },
-        { field: "quality", headerName: "Calidad", width: 80, editable: true },
-        { field: "result", headerName: "Resultado", width: 80, editable: true },
-        { field: "total", headerName: "Total", width: 80, editable: true },
+        { field: "quantity_goal", headerName: "Meta", width: 140, editable: true },
         { field: "last_update", headerName: "Fecha de modificación", width: 155 },
         { field: "accepted", headerName: "Aprobación Meta", width: 125 },
-        { field: "accepted_execution", headerName: "Aprobación Ejecución", width: 150 },
         {
             field: "goal_date",
             headerName: "Fecha de la meta",
-            width: 150,
-            sortComparator: (v1, v2) => {
-                // Extraer el mes y el año de los valores
-                const [mes1, año1] = v1.split("-");
-                const [mes2, año2] = v2.split("-");
-                // Crear un objeto con los nombres de los meses en español y sus números correspondientes
-                const meses = {
-                    ENERO: 1,
-                    FEBRERO: 2,
-                    MARZO: 3,
-                    ABRIL: 4,
-                    MAYO: 5,
-                    JUNIO: 6,
-                    JULIO: 7,
-                    AGOSTO: 8,
-                    SEPTIEMBRE: 9,
-                    OCTUBRE: 10,
-                    NOVIEMBRE: 11,
-                    DICIEMBRE: 12,
-                };
-                // Convertir los meses a números
-                const num1 = meses[mes1];
-                const num2 = meses[mes2];
-                // Comparar los años primero, y si son iguales, comparar los meses
-                if (año1 < año2) {
-                    return -1;
-                } else if (año1 > año2) {
-                    return 1;
-                } else {
-                    if (num1 < num2) {
-                        return -1;
-                    } else if (num1 > num2) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            },
-        },
-        {
-            field: "execution_date",
-            headerName: "Fecha de la ejecucion de la meta",
             width: 150,
             sortComparator: (v1, v2) => {
                 // Extraer el mes y el año de los valores
@@ -266,8 +221,214 @@ const AnalisisMetas = () => {
         //     },
         // },
     ];
+    // const initialColumns = [
+    //     { field: "cedula", headerName: "Cedula", width: 100 },
+    //     { field: "quantity", headerName: "Meta", width: 140, editable: true },
+    //     { field: "clean_desk", headerName: "Clean Desk", width: 80, editable: true },
+    //     { field: "quality", headerName: "Calidad", width: 80, editable: true },
+    //     { field: "result", headerName: "Resultado", width: 80, editable: true },
+    //     { field: "total", headerName: "Total", width: 80, editable: true },
+    //     { field: "last_update", headerName: "Fecha de modificación", width: 155 },
+    //     { field: "accepted", headerName: "Aprobación Meta", width: 125 },
+    //     { field: "accepted_execution", headerName: "Aprobación Ejecución", width: 150 },
+    //     {
+    //         field: "goal_date",
+    //         headerName: "Fecha de la meta",
+    //         width: 150,
+    //         sortComparator: (v1, v2) => {
+    //             // Extraer el mes y el año de los valores
+    //             const [mes1, año1] = v1.split("-");
+    //             const [mes2, año2] = v2.split("-");
+    //             // Crear un objeto con los nombres de los meses en español y sus números correspondientes
+    //             const meses = {
+    //                 ENERO: 1,
+    //                 FEBRERO: 2,
+    //                 MARZO: 3,
+    //                 ABRIL: 4,
+    //                 MAYO: 5,
+    //                 JUNIO: 6,
+    //                 JULIO: 7,
+    //                 AGOSTO: 8,
+    //                 SEPTIEMBRE: 9,
+    //                 OCTUBRE: 10,
+    //                 NOVIEMBRE: 11,
+    //                 DICIEMBRE: 12,
+    //             };
+    //             // Convertir los meses a números
+    //             const num1 = meses[mes1];
+    //             const num2 = meses[mes2];
+    //             // Comparar los años primero, y si son iguales, comparar los meses
+    //             if (año1 < año2) {
+    //                 return -1;
+    //             } else if (año1 > año2) {
+    //                 return 1;
+    //             } else {
+    //                 if (num1 < num2) {
+    //                     return -1;
+    //                 } else if (num1 > num2) {
+    //                     return 1;
+    //                 } else {
+    //                     return 0;
+    //                 }
+    //             }
+    //         },
+    //     },
+    //     {
+    //         field: "execution_date",
+    //         headerName: "Fecha de la ejecucion de la meta",
+    //         width: 150,
+    //         sortComparator: (v1, v2) => {
+    //             // Extraer el mes y el año de los valores
+    //             const [mes1, año1] = v1.split("-");
+    //             const [mes2, año2] = v2.split("-");
+    //             // Crear un objeto con los nombres de los meses en español y sus números correspondientes
+    //             const meses = {
+    //                 ENERO: 1,
+    //                 FEBRERO: 2,
+    //                 MARZO: 3,
+    //                 ABRIL: 4,
+    //                 MAYO: 5,
+    //                 JUNIO: 6,
+    //                 JULIO: 7,
+    //                 AGOSTO: 8,
+    //                 SEPTIEMBRE: 9,
+    //                 OCTUBRE: 10,
+    //                 NOVIEMBRE: 11,
+    //                 DICIEMBRE: 12,
+    //             };
+    //             // Convertir los meses a números
+    //             const num1 = meses[mes1];
+    //             const num2 = meses[mes2];
+    //             // Comparar los años primero, y si son iguales, comparar los meses
+    //             if (año1 < año2) {
+    //                 return -1;
+    //             } else if (año1 > año2) {
+    //                 return 1;
+    //             } else {
+    //                 if (num1 < num2) {
+    //                     return -1;
+    //                 } else if (num1 > num2) {
+    //                     return 1;
+    //                 } else {
+    //                     return 0;
+    //                 }
+    //             }
+    //         },
+    //     },
+    //     // {
+    //     //     field: "actions",
+    //     //     type: "actions",
+    //     //     headerName: "Acciones",
+    //     //     width: 100,
+    //     //     cellClassName: "actions",
+    //     //     getActions: ({ id }) => {
+    //     //         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+    //     //         if (isInEditMode) {
+    //     //             return [
+    //     //                 <GridActionsCellItem
+    //     //                     icon={<SaveOutlinedIcon />}
+    //     //                     label="Save"
+    //     //                     key={id}
+    //     //                     sx={{
+    //     //                         color: "primary.main",
+    //     //                     }}
+    //     //                     onClick={handleSaveClick(id)}
+    //     //                 />,
+    //     //                 <GridActionsCellItem key={id} icon={<CancelOutlinedIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} />,
+    //     //             ];
+    //     //         }
 
-    const [columns, setColumns] = useState(initialColumns);
+    //     //         return [
+    //     //             <GridActionsCellItem key={id} icon={<EditOutlinedIcon />} label="Edit" onClick={handleEditClick(id)} />,
+    //     //             <GridActionsCellItem key={id} icon={<DeleteOutlineOutlinedIcon />} label="Delete" onClick={() => handleDeleteClick(id)} />,
+    //     //         ];
+    //     //     },
+    //     // },
+    // ];
+
+    const executionColumns = [
+        { field: "cedula", headerName: "Cedula", width: 100 },
+        { field: "quantity_execution", headerName: "Meta", width: 140, editable: true },
+        { field: "clean_desk", headerName: "Clean Desk", width: 100, editable: true },
+        { field: "quality", headerName: "Calidad", width: 80, editable: true },
+        { field: "result", headerName: "Resultado", width: 100, editable: true },
+        { field: "total", headerName: "Total", width: 80, editable: true },
+        { field: "last_update", headerName: "Fecha de modificación", width: 180 },
+        { field: "accepted_execution", headerName: "Aprobación", width: 170 },
+        {
+            field: "execution_date",
+            headerName: "Mes de la ejecución",
+            width: 180,
+            sortComparator: (v1, v2) => {
+                // Extraer el mes y el año de los valores
+                const [mes1, año1] = v1.split("-");
+                const [mes2, año2] = v2.split("-");
+                // Crear un objeto con los nombres de los meses en español y sus números correspondientes
+                const meses = {
+                    ENERO: 1,
+                    FEBRERO: 2,
+                    MARZO: 3,
+                    ABRIL: 4,
+                    MAYO: 5,
+                    JUNIO: 6,
+                    JULIO: 7,
+                    AGOSTO: 8,
+                    SEPTIEMBRE: 9,
+                    OCTUBRE: 10,
+                    NOVIEMBRE: 11,
+                    DICIEMBRE: 12,
+                };
+                // Convertir los meses a números
+                const num1 = meses[mes1];
+                const num2 = meses[mes2];
+                // Comparar los años primero, y si son iguales, comparar los meses
+                if (año1 < año2) {
+                    return -1;
+                } else if (año1 > año2) {
+                    return 1;
+                } else {
+                    if (num1 < num2) {
+                        return -1;
+                    } else if (num1 > num2) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            },
+        },
+        // {
+        //     field: "actions",
+        //     type: "actions",
+        //     headerName: "Acciones",
+        //     width: 100,
+        //     cellClassName: "actions",
+        //     getActions: ({ id }) => {
+        //         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+        //         if (isInEditMode) {
+        //             return [
+        //                 <GridActionsCellItem
+        //                     icon={<SaveOutlinedIcon />}
+        //                     label="Save"
+        //                     key={id}
+        //                     sx={{
+        //                         color: "primary.main",
+        //                     }}
+        //                     onClick={handleSaveClick(id)}
+        //                 />,
+        //                 <GridActionsCellItem key={id} icon={<CancelOutlinedIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} />,
+        //             ];
+        //         }
+
+        //         return [
+        //             <GridActionsCellItem key={id} icon={<EditOutlinedIcon />} label="Edit" onClick={handleEditClick(id)} />,
+        //             <GridActionsCellItem key={id} icon={<DeleteOutlineOutlinedIcon />} label="Delete" onClick={() => handleDeleteClick(id)} />,
+        //         ];
+        //     },
+        // },
+    ];
+
+    const [columns, setColumns] = useState(goalsColumns);
 
     const handleCloseSnackbar = (event, reason) => {
         if (reason === "clickaway") {
@@ -507,18 +668,28 @@ const AnalisisMetas = () => {
         }
     };
 
+    const handleTypeGoalChange = (event) => {
+        const selectedValue = event.target.value;
+
+        // Perform actions based on the selected value
+        if (selectedValue === "entrega") {
+            setColumns(goalsColumns);
+        } else if (selectedValue === "ejecucion") {
+            setColumns(executionColumns);
+        }
+    };
+
     return (
         <>
             {isLoading ? (
                 <Container
                     sx={{
                         height: "100vh",
-                        width: "100%",
-                        display: "flex",
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "column",
                         marginTop: "1rem",
+                        pt: "5rem",
                     }}
                 >
                     <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
@@ -542,6 +713,20 @@ const AnalisisMetas = () => {
                         <Button variant="outlined" size="small" type="submit">
                             Filtrar
                         </Button>
+                        <TextField
+                            onChange={handleTypeGoalChange}
+                            required
+                            defaultValue=""
+                            sx={{ width: "10rem" }}
+                            size="small"
+                            variant="filled"
+                            select
+                            label="Tipo de meta"
+                            inputRef={goalType}
+                        >
+                            <MenuItem value={"entrega"}>Entrega</MenuItem>
+                            <MenuItem value={"ejecucion"}>Ejecución</MenuItem>
+                        </TextField>
                     </Box>
                     <DataGrid
                         rows={rows}

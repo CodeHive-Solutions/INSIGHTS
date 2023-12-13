@@ -10,7 +10,8 @@ import Grow from "@mui/material/Grow";
 import "../../index.css";
 import { useNavigate } from "react-router-dom";
 import quality from "../../images/quality/quality.jpg";
-
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi.js";
 //images carousel test
 import imageTest from "../../images/home-carousel/image00001.jpg";
 import imageTest1 from "../../images/home-carousel/image00002.jpeg";
@@ -31,42 +32,126 @@ import benefit2 from "../../images/benefits-vacancies/MicrosoftTeams-image5.png"
 import benefit3 from "../../images/benefits-vacancies/MicrosoftTeams-image6.png";
 import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png";
 
+//vacancies
+import vancie1 from "../../images/vacancies/1.jpg";
+import vancie2 from "../../images/vacancies/2.jpg";
+import vancie3 from "../../images/vacancies/3.png";
+import vancie4 from "../../images/vacancies/4.jpg";
+
+//benefits
+import realBenefit1 from "../../images/benefits/1.png";
+import realBenefit2 from "../../images/benefits/2.png";
+import { RepeatOneSharp } from "@mui/icons-material";
+
 const benefits = [
-    { image: benefit1, title: "Beneficio 1" },
-    { image: benefit2, title: "Beneficio 2" },
+    { image: realBenefit1, title: "Beneficio 1" },
+    { image: realBenefit2, title: "Beneficio 2" },
 ];
 
 const vacancies = [
-    { image: benefit3, title: "Vacante 1" },
-    { image: benefit4, title: "Vacante 2" },
+    // { image: benefit3, title: "Vacante 1" },
+    // { image: benefit4, title: "Vacante 2" },
+    { image: realBenefit1, title: "Beneficio 1" },
+    { image: realBenefit2, title: "Beneficio 2" },
 ];
 
 const homeImages = [{ image: realImage }, { image: realImage2 }, { image: realImage3 }];
 const birthdays = [
-    { image: "", name: "nombre ejemplo", description: "Yanbal" },
-    { image: "", name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-    { image: "", name: "nombre ejemplo", description: "Yanbal" },
-    { image: "", name: "nombre ejemplo", description: "BBVA" },
+    { image: barbaraVanegas, name: "nombre ejemplo", description: "Yanbal" },
+    { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
+    { image: tuliaCalderon, name: "nombre ejemplo", description: "Yanbal" },
+    { image: cristianGonzales, name: "nombre ejemplo", description: "BBVA" },
 ];
 const birthdays2 = [
-    { image: "", name: "nombre ejemplo", description: "Yanbal" },
-    { image: "", name: "nombre ejemplo", description: "BBVA" },
-    { image: "", name: "nombre ejemplo", description: "Yanbal" },
-    { image: "", name: "nombre ejemplo", description: "Scotiabank Colpatria" },
+    { image: cristianGonzales, name: "nombre ejemplo", description: "Yanbal" },
+    { image: barbaraVanegas, name: "nombre ejemplo", description: "BBVA" },
+    { image: carolGuerrero, name: "nombre ejemplo", description: "Yanbal" },
+    { image: tuliaCalderon, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
 ];
 
 const birthdays3 = [
-    { image: "", name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-    { image: "", name: "nombre ejemplo", description: "Yanbal" },
-    { image: "", name: "nombre ejemplo", description: "BBVA" },
-    { image: "", name: "nombre ejemplo", description: "Yanbal" },
+    { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
+    { image: cristianGonzales, name: "nombre ejemplo", description: "Yanbal" },
+    { image: barbaraVanegas, name: "nombre ejemplo", description: "BBVA" },
+    { image: tuliaCalderon, name: "nombre ejemplo", description: "Yanbal" },
 ];
 
 const Home = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const handleOpenDialog = () => setOpenDialog(true);
+    const [openSnack, setOpenSnack] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("success");
+    const handleCloseSnack = () => setOpenSnack(false);
+    const [todayBirthdays, setTodayBirthdays] = useState([]);
+    const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
+    const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
+
+    const showSnack = (severity, message, error) => {
+        setSeverity(severity);
+        setMessage(message);
+        setOpenSnack(true);
+        if (error) {
+            console.error("error:", message);
+        }
+    };
+
+    const fetchImages = async (employees) => {
+        const imagePromises = employees.map(async (employee) => {
+            try {
+                const imageResponse = await fetch(`https://staffnet-api-dev.cyc-bpo.com/profile-picture/${employee.cedula}`, {
+                    method: "GET",
+                });
+
+                // Check if the image is found (status 200) and return the image URL
+                if (imageResponse.status === 200) {
+                    return {
+                        image: `https://staffnet-api-dev.cyc-bpo.com/profile-picture/${employee.cedula}`,
+                    };
+                }
+                // If image not found, return null
+                return null;
+            } catch (error) {
+                return null; // Handle fetch errors by returning null
+            }
+        });
+
+        return (await Promise.all(imagePromises)).filter((image) => image !== null);
+    };
+
+    const getBirthdaysId = async () => {
+        try {
+            const response = await fetch("https://staffnet-api-dev.cyc-bpo.com/profile-picture/birthday", {
+                method: "GET",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail);
+            }
+
+            if (response.status === 200) {
+                const yesterdayBirthdays = data.data.yesterday;
+                const todayBirthdays = data.data.today;
+                const tomorrowBirthdays = data.data.tomorrow;
+
+                const yesterdayImages = await fetchImages(yesterdayBirthdays);
+                const todayImages = await fetchImages(todayBirthdays);
+                const tomorrowImages = await fetchImages(tomorrowBirthdays);
+
+                setYesterdayBirthdays(yesterdayImages);
+                setTodayBirthdays(todayImages);
+                setTomorrowBirthdays(tomorrowImages);
+            }
+        } catch (error) {
+            showSnack("error", error.message);
+            console.log(error);
+        }
+    };
 
     useEffect(() => {
+        getBirthdaysId();
         window.scrollTo(0, 0);
     }, []);
 
@@ -131,13 +216,13 @@ const Home = () => {
             <Grow in={inView}>
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                     <Card sx={{ maxWidth: 250, width: 250, height: 450 }}>
-                        <CarouselComponent items={birthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                        <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
-                        <CarouselComponent items={birthdays2} day={"Hoy"} height={"280px"} width={"100%"} />
+                        <CarouselComponent items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
                     </Card>{" "}
                     <Card sx={{ maxWidth: 250, width: 250, height: 450 }}>
-                        <CarouselComponent items={birthdays3} day={"Mañana"} height={"280px"} width={"100%"} />
+                        <CarouselComponent items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
                     </Card>{" "}
                 </Box>
             </Grow>
@@ -163,10 +248,7 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"80vh"} width={"100%"} />
                 </Box>
             </Box>
-            <Dialog open={openDialog} title={"example title"}>
-                <p>HOLA</p>
-            </Dialog>
-            <button onClick={handleOpenDialog}>open</button>
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
 };

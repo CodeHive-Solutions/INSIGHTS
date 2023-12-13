@@ -18,11 +18,15 @@ import ldap  # type: ignore
 from django_auth_ldap.config import LDAPSearch  # type: ignore
 from dotenv import load_dotenv
 
-if not os.path.isfile("/var/env/INSIGHTS.env"):
+
+ENV_PATH = Path("/var/env/INSIGHTS.env")
+
+if not os.path.isfile(ENV_PATH):
     raise FileNotFoundError("The env file was not found.")
 
-load_dotenv("/var/env/INSIGHTS.env")
+load_dotenv(ENV_PATH)
 
+# This allows to use the server with a self signed certificate
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

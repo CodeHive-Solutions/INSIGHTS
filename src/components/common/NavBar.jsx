@@ -423,11 +423,11 @@ const Navbar = () => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <Box onMouseLeave={handleCloseUtils}>
-                    <MenuItem onClick={() => navigate("/logged/sugerencias")}>
+                    <MenuItem onClick={() => navigate("/logged/suggestions")}>
                         <ListItemIcon>
                             <FeedbackIcon fontSize="small" />
                         </ListItemIcon>
-                        Sugerencias
+                        PQRS
                     </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>

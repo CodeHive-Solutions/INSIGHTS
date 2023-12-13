@@ -1,11 +1,14 @@
 """Test module for the excels_processing app"""
 import os
+from shutil import rmtree
 from users.models import User
 from django.contrib.auth.models import Permission
 from django.urls import reverse
-from shutil import rmtree
+from django.conf import settings
 from rest_framework.test import APITestCase
 import mysql.connector
+
+config = settings.config
 
 
 class RobinsonTestCase(APITestCase):
@@ -16,14 +19,14 @@ class RobinsonTestCase(APITestCase):
     def setUp(self):
         """Set up the test case"""
         username = "staffnet"
-        password = os.environ["StaffNetLDAP"]
+        password = config("StaffNetLDAP")
         self.login_data = {
             "username": username,
             "password": password,
         }
         db_config = {
             "user": "blacklistuser",
-            "password": os.environ["black_list_pass"],
+            "password": config("black_list_pass"),
             "host": "172.16.0.9",
             "port": "3306",
             "database": "asteriskdb",
@@ -72,7 +75,7 @@ class CallTransferTestCase(APITestCase):
     def setUp(self):
         """Set up the test case"""
         username = "staffnet"
-        password = os.environ["StaffNetLDAP"]
+        password = config("StaffNetLDAP")
         self.login_data = {
             "username": username,
             "password": password,
@@ -110,8 +113,8 @@ class CallTransferTestCase(APITestCase):
                 {"file": file_obj, "campaign": "test"},
                 cookies=self.client.cookies,  # type: ignore
             )
-            self.assertEqual(response.status_code, 200, response.data)
-            self.assertEqual(response.data["fails"], [], response.data)
+            self.assertEqual(response.status_code, 200, response.data)  # type: ignore
+            self.assertEqual(response.data["fails"], [], response.data)  # type: ignore
             # Check if the file was copied to the server
             file_path = "/var/servers/calidad/test/test/OUT-20231201-153739_3103233725-16072-37842888-all.mp3"
             self.assertTrue(os.path.exists(file_path))

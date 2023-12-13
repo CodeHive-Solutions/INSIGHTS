@@ -25,7 +25,7 @@ const Footer = () => {
             }}
         >
             <Box sx={{ display: "flex", flexDirection: "Column", gap: "15px" }}>
-                <img onClick={() => window.open("https://www.cyc-bpo.com/", "_blank")} src={logo_CYC} style={{ width: 200, cursor: "pointer" }} alt="logo_CYC" />
+                <img onClick={() => window.open("https://cyc-bpo.com/", "_blank")} src={logo_CYC} style={{ width: 200, cursor: "pointer" }} alt="logo_CYC" />
                 <Typography variant="body2" color="white">
                     Calle 19 No. 3 - 16 Piso 3CC Barichara - Bogotá D. C.
                 </Typography>
@@ -68,13 +68,13 @@ const Footer = () => {
                 <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/about-us")} variant="subtitle2" color="white">
                     Sobre Nosotros
                 </Typography>
-                <Typography sx={{ cursor: "pointer" }} variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/blog")} variant="subtitle2" color="white">
                     Blog
                 </Typography>
-                <Typography sx={{ cursor: "pointer" }} variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/suggestions")} variant="subtitle2" color="white">
                     PQR
                 </Typography>
-                <Typography sx={{ cursor: "pointer" }} variant="subtitle2" color="white">
+                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/sgc")} variant="subtitle2" color="white">
                     SGC
                 </Typography>
             </Box>
