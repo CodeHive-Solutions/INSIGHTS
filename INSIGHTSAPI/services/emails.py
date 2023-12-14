@@ -1,22 +1,38 @@
-"""Email service to send emails to users """
+# emails.py
 
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
+def send_plain_text_email(subject, message, from_email, to_emails, cc_emails=None, bcc_emails=None, headers=None, attachments=None):
+    email = EmailMessage(
+        subject,
+        message,
+        from_email,
+        to_emails,
+        cc=cc_emails,
+        bcc=bcc_emails,
+        headers=headers,
+    )
 
-class EmailService:
-    """Email service to send emails to users"""
+    if attachments:
+        for attachment in attachments:
+            email.attach(*attachment)
 
-    def send_email(self, sender_email, recipient_email, subject, message):
-        """Send email to recipient_email with subject and message"""
-        try:
-            # Send mail
-            send_mail(
-                subject,
-                message,
-                sender_email,  # Sender's email address
-                [recipient_email],  # List of recipient email addresses
-                fail_silently=False,
-            )
-            print("Email sent successfully!")
-        except Exception as e:
-            print(f"Error sending email: {e}")
+    email.send(fail_silently=False)
+
+def send_html_email(subject, html_content, from_email, to_emails, cc_emails=None, bcc_emails=None, headers=None, attachments=None):
+    email = EmailMessage(
+        subject,
+        html_content,
+        from_email,
+        to_emails,
+        cc=cc_emails,
+        bcc=bcc_emails,
+        headers=headers,
+    )
+    email.content_subtype = "html"  # Set the content type to HTML
+
+    if attachments:
+        for attachment in attachments:
+            email.attach(*attachment)
+
+    email.send(fail_silently=False)

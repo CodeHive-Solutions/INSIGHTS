@@ -31,11 +31,11 @@ const AnalisisMetas = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [coordinator, setCoordinator] = useState("");
+    const [selectedOption, setSelectedOption] = useState("");
     const [rows, setRows] = useState([]);
     const [rowModesModel, setRowModesModel] = useState({});
     const [isLoading, setIsLoading] = useState(true); // Add a loading state
     const [yearsArray, setYearsArray] = useState([]); // Add a loading state
-    const [cedula, setCedula] = useState("");
     const [open, setOpen] = useState(false);
     const [link, setLink] = useState();
     const handleClose = () => setOpen(false);
@@ -108,7 +108,6 @@ const AnalisisMetas = () => {
                     };
                 });
                 setRows(modifiedData);
-                console.log(modifiedData);
             }
         } catch (error) {
             console.error(error);
@@ -117,7 +116,7 @@ const AnalisisMetas = () => {
 
     useEffect(() => {
         handleSave();
-    }, [cedula, coordinator]); // Add cedula and coordinator as dependencies to useEffect
+    }, [coordinator]); // Add cedula and coordinator as dependencies to useEffect
 
     const handleDeleteClick = async (register_cedula) => {
         try {
@@ -145,10 +144,10 @@ const AnalisisMetas = () => {
     };
 
     const goalsColumns = [
-        { field: "cedula", headerName: "Cedula", width: 100 },
-        { field: "quantity_goal", headerName: "Meta", width: 140, editable: true },
-        { field: "last_update", headerName: "Fecha de modificación", width: 155 },
-        { field: "accepted", headerName: "Aprobación Meta", width: 125 },
+        { field: "cedula", headerName: "Cedula", width: 200 },
+        { field: "quantity_goal", headerName: "Meta", width: 240, editable: true },
+        { field: "last_update", headerName: "Fecha de modificación", width: 255 },
+        { field: "accepted", headerName: "Aprobación Meta", width: 225 },
         {
             field: "goal_date",
             headerName: "Fecha de la meta",
@@ -583,7 +582,7 @@ const AnalisisMetas = () => {
         event.preventDefault();
 
         try {
-            const response = await fetch(`${getApiUrl()}goals/?month=${monthRef.current.value}-${yearRef.current.value}&cedula=${cedula}`, {
+            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${selectedOption}`, {
                 method: "GET",
             });
 
@@ -647,7 +646,7 @@ const AnalisisMetas = () => {
                     };
                 });
                 // Create a new columns array based on the initial columns but with the field name changed
-                const updatedColumns = initialColumns.map((column) => {
+                const updatedColumns = columns.map((column) => {
                     if (column.field === "last_update") {
                         // Change the field and header name for 'last_update' column
                         return {
@@ -670,11 +669,11 @@ const AnalisisMetas = () => {
 
     const handleTypeGoalChange = (event) => {
         const selectedValue = event.target.value;
-
+        setSelectedOption(selectedValue);
         // Perform actions based on the selected value
-        if (selectedValue === "entrega") {
+        if (selectedValue === "delivery") {
             setColumns(goalsColumns);
-        } else if (selectedValue === "ejecucion") {
+        } else if (selectedValue === "execution") {
             setColumns(executionColumns);
         }
     };
@@ -684,7 +683,7 @@ const AnalisisMetas = () => {
             {isLoading ? (
                 <Container
                     sx={{
-                        height: "100vh",
+                        height: "calc(250px + max-content);",
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "column",
@@ -695,38 +694,42 @@ const AnalisisMetas = () => {
                     <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                         Análisis de Metas
                     </Typography>
-                    <Box component="form" sx={{ display: "flex", gap: "2rem", p: "1rem" }} onSubmit={handleFilter}>
-                        <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Mes" inputRef={monthRef}>
-                            {months.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Año" inputRef={yearRef}>
-                            {yearsArray.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <Button variant="outlined" size="small" type="submit">
-                            Filtrar
-                        </Button>
-                        <TextField
-                            onChange={handleTypeGoalChange}
-                            required
-                            defaultValue=""
-                            sx={{ width: "10rem" }}
-                            size="small"
-                            variant="filled"
-                            select
-                            label="Tipo de meta"
-                            inputRef={goalType}
-                        >
-                            <MenuItem value={"entrega"}>Entrega</MenuItem>
-                            <MenuItem value={"ejecucion"}>Ejecución</MenuItem>
-                        </TextField>
+                    <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
+                        <Box>
+                            <TextField
+                                onChange={handleTypeGoalChange}
+                                required
+                                defaultValue="delivery"
+                                sx={{ width: "10rem" }}
+                                size="small"
+                                variant="filled"
+                                select
+                                label="Tipo de meta"
+                                inputRef={goalType}
+                            >
+                                <MenuItem value={"delivery"}>Entrega</MenuItem>
+                                <MenuItem value={"execution"}>Ejecución</MenuItem>
+                            </TextField>
+                        </Box>
+                        <Box component="form" sx={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }} onSubmit={handleFilter}>
+                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Mes" inputRef={monthRef}>
+                                {months.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Año" inputRef={yearRef}>
+                                {yearsArray.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <Button variant="outlined" size="small" type="submit">
+                                Filtrar
+                            </Button>
+                        </Box>
                     </Box>
                     <DataGrid
                         rows={rows}
