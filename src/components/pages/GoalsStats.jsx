@@ -31,7 +31,7 @@ const AnalisisMetas = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [coordinator, setCoordinator] = useState("");
-    const [selectedOption, setSelectedOption] = useState("");
+    const [selectedOption, setSelectedOption] = useState("delivery");
     const [rows, setRows] = useState([]);
     const [rowModesModel, setRowModesModel] = useState({});
     const [isLoading, setIsLoading] = useState(true); // Add a loading state
@@ -76,18 +76,18 @@ const AnalisisMetas = () => {
             if (response.status === 200) {
                 const data = await response.json();
                 const modifiedData = data.map((row) => {
-                    if (row.quantity > 999) {
+                    if (row.quantity_goal > 999) {
                         const formatter = new Intl.NumberFormat("es-CO", {
                             style: "currency",
                             currency: "COP",
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0,
                         });
-                        const value = row.quantity;
+                        const value = row.quantity_goal;
                         const formattedValue = formatter.format(value);
-                        row.quantity = formattedValue;
-                    } else if (row.quantity < 1) {
-                        row.quantity = Math.round(row.quantity * 100) + "%";
+                        row.quantity_goal = formattedValue;
+                    } else if (row.quantity_goal < 1) {
+                        row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
                     }
                     return {
                         ...row,
@@ -145,7 +145,7 @@ const AnalisisMetas = () => {
 
     const goalsColumns = [
         { field: "cedula", headerName: "Cedula", width: 200 },
-        { field: "quantity_goal", headerName: "Meta", width: 240, editable: true },
+        { field: "quantity_goal", headerName: "Meta", width: 240 },
         { field: "last_update", headerName: "Fecha de modificación", width: 255 },
         { field: "accepted", headerName: "Aprobación Meta", width: 225 },
         {
@@ -347,11 +347,11 @@ const AnalisisMetas = () => {
 
     const executionColumns = [
         { field: "cedula", headerName: "Cedula", width: 100 },
-        { field: "quantity_execution", headerName: "Meta", width: 140, editable: true },
-        { field: "clean_desk", headerName: "Clean Desk", width: 100, editable: true },
-        { field: "quality", headerName: "Calidad", width: 80, editable: true },
-        { field: "result", headerName: "Resultado", width: 100, editable: true },
-        { field: "total", headerName: "Total", width: 80, editable: true },
+        { field: "quantity_execution", headerName: "Meta", width: 140 },
+        { field: "clean_desk", headerName: "Clean Desk", width: 100 },
+        { field: "quality", headerName: "Calidad", width: 80 },
+        { field: "result", headerName: "Resultado", width: 100 },
+        { field: "total", headerName: "Total", width: 80 },
         { field: "last_update", headerName: "Fecha de modificación", width: 180 },
         { field: "accepted_execution", headerName: "Aprobación", width: 170 },
         {
@@ -614,18 +614,18 @@ const AnalisisMetas = () => {
                 const data = await response.json();
                 /* just wait he is going to sleep in the lunch time I think, after that he will be okay */
                 const modifiedData = data.map((row) => {
-                    if (row.quantity > 999) {
+                    if (row.quantity_goal > 999) {
                         const formatter = new Intl.NumberFormat("es-CO", {
                             style: "currency",
                             currency: "COP",
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0,
                         });
-                        const value = row.quantity;
+                        const value = row.quantity_goal;
                         const formattedValue = formatter.format(value);
-                        row.quantity = formattedValue;
-                    } else if (row.quantity < 1) {
-                        row.quantity = Math.round(row.quantity * 100) + "%";
+                        row.quantity_goal = formattedValue;
+                    } else if (row.quantity_goal < 1) {
+                        row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
                     }
                     return {
                         ...row,

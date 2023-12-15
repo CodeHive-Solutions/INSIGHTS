@@ -10,6 +10,7 @@ import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import emergency from "../../images/blog/emergency.png";
 import Skeleton from "@mui/material/Skeleton";
+import blog1 from "../../images/blog/blog-1.png";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -45,15 +46,11 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
             }}
             onClick={handleCardClick}
         >
-            {!imageLoaded ? (
-                <Skeleton variant="rectangular" width={500} height={300} />
-            ) : (
-                <CardMedia
-                    sx={{ height: 300 }}
-                    image={img}
-                    onLoad={handleImageLoaded} // Call handleImageLoaded when the image is loaded
-                />
-            )}
+            <CardMedia
+                sx={{ height: 300 }}
+                image={img}
+                onLoad={handleImageLoaded} // Call handleImageLoaded when the image is loaded
+            />
             <CardContent>
                 <Typography gutterBottom variant="h5" component="div">
                     {title}
@@ -84,9 +81,9 @@ const Blog = () => {
             </Typography>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
                 <MediaCard
-                    title={"Mejorando la Experiencia del Cliente en el BPO"}
-                    subtitle={"Consejos y estrategias para brindar un servicio excepcional y fortalecer la lealtad del cliente en la industria de procesos de negocio."}
-                    img={homeImages[0].image}
+                    title={"Sumando Valor: Bienvenidos a las Nuevas Campañas en C&C Services S.A.S."}
+                    subtitle={"Uniendo Fuerzas para Alcanzar Nuevos Horizontes de Éxito y Crecimiento"}
+                    img={blog1}
                     articleId={1}
                 ></MediaCard>
                 <MediaCard

@@ -7,20 +7,16 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
-    { value: "Presidencia - Pablo César Castañeda Camacho", label: "Presidencia - Pablo César Castañeda Camacho" },
-    { value: "Gerencia General - Jose Fernando Duran", label: "Gerencia General - Jose Fernando Duran" },
-    { value: "Gerencia de Cuentas - Nelson Acevedo", label: "Gerencia de Cuentas - Nelson Acevedo" },
-    { value: "Gerencia de Cuenta Banco Falabella - Adriana Páez", label: "Gerencia de Cuenta Banco Falabella - Adriana Páez" },
-    { value: "Gerencia de Cuenta Claro - Adriana Barrera", label: "Gerencia de Cuenta Claro - Adriana Barrera" },
-    { value: "Gerencia de Planeacion - Angela Duran", label: "Gerencia de Planeacion - Angela Duran" },
-    { value: "Gerencia de Tecnología - Javier Torres", label: "Gerencia de Tecnología - Javier Torres" },
-    { value: "Gerencia SGSI Control interno - Mario Ernesto Giron", label: "Gerencia SGSI Control interno - Mario Ernesto Giron" },
-    { value: "Gerencia de Operaciones - Angela Duran", label: "Gerencia de Operaciones - Angela Duran" },
-    { value: "Gerencia Legal y de Riesgo - César Garzón", label: "Gerencia Legal y de Riesgo - César Garzón" },
-    { value: "Gerencia Administrativa - Melida Sandoval", label: "Gerencia Administrativa - Melida Sandoval" },
-    { value: "Gerencia de Gestión Humana - Jeanneth Pinzón", label: "Gerencia de Gestión Humana - Jeanneth Pinzón" },
-    { value: "Gerencia Contable - Melida Sandoval", label: "Gerencia Contable - Melida Sandoval" },
-    { value: "Dinerum - Opticoom - Lila Marcela Avila Tordecilla", label: "Dinerum - Opticoom - Lila Marcela Avila Tordecilla" },
+    { value: "Pablo César Castañeda Camacho - Presidente", label: "Pablo César Castañeda Camacho - Presidente	" },
+    { value: "César Alberto Garzón Navas - Gerente General	", label: "César Alberto Garzón Navas - Gerente General	" },
+    { value: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno	", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno	" },
+    { value: "Jeanneth Pinzón - Gerente Gestión Humana ", label: "Jeanneth Pinzón - Gerente Gestión Humana " },
+    { value: "Angela Maria Durán Gutierrez - Gerente Planeación", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
+    { value: "Melida Sandoval Cabra - Gerente Administrativa", label: "Melida Sandoval Cabra - Gerente Administrativa" },
+    { value: "Adriana Nataly Páez Castiblanco - Gerente Operaciones", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
+    { value: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo         ", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo         " },
+    { value: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas", label: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas" },
+    { value: "Andrés Beltrán - Director Financiero", label: "Andrés Beltrán	- Director Financiero" },
 ];
 
 const motivos = [

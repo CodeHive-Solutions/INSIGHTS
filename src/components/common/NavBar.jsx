@@ -205,9 +205,9 @@ const Navbar = () => {
                         </IconButton>
                     ) : (
                         <>
-                            <CustomNavLink to="/logged/sgc">SGC</CustomNavLink>
                             <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                             <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
+                            <CustomNavLink to="/logged/sgc">Gestor Documental</CustomNavLink>
                             <Typography
                                 onMouseEnter={handleUtilitariosMenuOpen}
                                 anchorEl={anchorElUtils}
@@ -221,7 +221,7 @@ const Navbar = () => {
                                     borderBottomColor: "transparent",
                                 }}
                             >
-                                Utilitarios
+                                Servicios
                             </Typography>
 
                             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -372,7 +372,7 @@ const Navbar = () => {
                     <ListItemIcon>
                         <Settings />
                     </ListItemIcon>
-                    SGC
+                    Gestor Documental
                 </MenuItem>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Tooltip title="Configuración de cuenta">

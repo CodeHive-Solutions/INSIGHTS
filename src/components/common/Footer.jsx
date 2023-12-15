@@ -18,6 +18,7 @@ const Footer = () => {
                 backgroundColor: "primary.main",
                 display: "flex",
                 padding: "25px",
+                bottom: 0,
                 marginTop: "15px",
                 justifyContent: "space-evenly",
                 gap: "2rem",
@@ -65,17 +66,17 @@ const Footer = () => {
                     gap: "15px",
                 }}
             >
-                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/about-us")} variant="subtitle2" color="white">
-                    Sobre Nosotros
-                </Typography>
                 <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/blog")} variant="subtitle2" color="white">
                     Blog
                 </Typography>
-                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/suggestions")} variant="subtitle2" color="white">
-                    PQR
+                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/about-us")} variant="subtitle2" color="white">
+                    Sobre Nosotros
                 </Typography>
                 <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/sgc")} variant="subtitle2" color="white">
-                    SGC
+                    Gestor Documental
+                </Typography>
+                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/suggestions")} variant="subtitle2" color="white">
+                    PQR
                 </Typography>
             </Box>
         </Box>

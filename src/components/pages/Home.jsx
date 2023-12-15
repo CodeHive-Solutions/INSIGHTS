@@ -21,7 +21,7 @@ import imageTest4 from "../../images/home-carousel/image00006.jpeg";
 import realImage from "../../images/home-carousel/2.jpg";
 import realImage2 from "../../images/home-carousel/3.jpg";
 import realImage3 from "../../images/home-carousel/4.jpg";
-
+import Avatar from "../../images/home-carousel/avatar.jpg";
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
 import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
@@ -107,10 +107,16 @@ const Home = () => {
                 if (imageResponse.status === 200) {
                     return {
                         image: `https://staffnet-api-dev.cyc-bpo.com/profile-picture/${employee.cedula}`,
+                        name: employee.nombre,
+                        description: employee.campana_general,
                     };
                 }
                 // If image not found, return null
-                return null;
+                return {
+                    image: Avatar,
+                    name: employee.nombre,
+                    description: employee.campana_general,
+                };
             } catch (error) {
                 return null; // Handle fetch errors by returning null
             }
@@ -141,6 +147,7 @@ const Home = () => {
                 const tomorrowImages = await fetchImages(tomorrowBirthdays);
 
                 setYesterdayBirthdays(yesterdayImages);
+                console.log(yesterdayBirthdays);
                 setTodayBirthdays(todayImages);
                 setTomorrowBirthdays(tomorrowImages);
             }
@@ -161,6 +168,26 @@ const Home = () => {
         triggerOnce: true,
         threshold: 0.5,
     });
+
+    const noBirthdays = (message) => {
+        return (
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
+                <Typography
+                    sx={{
+                        color: "gray",
+                        display: "flex",
+                        width: "100%",
+                        justifyContent: "center",
+                        fontWeight: 500,
+                        fontSize: "16px",
+                        textAlign: "center",
+                    }}
+                >
+                    {message}
+                </Typography>
+            </Box>
+        );
+    };
 
     return (
         <>
@@ -210,19 +237,31 @@ const Home = () => {
                     Cumpleaños
                 </Typography>
                 <Typography sx={{ color: "gray", display: "flex", width: "50%", justifyContent: "center", padding: "1em", fontWeight: 500, fontSize: "16px" }}>
-                    `¡Feliz cumpleaños a nuestros brillantes compañeros que llenan nuestros días de alegría y éxito! 🎂🎈`
+                    ¡Feliz cumpleaños a nuestros brillantes compañeros que llenan nuestros días de alegría y éxito! 🎂🎈
                 </Typography>
             </Box>
             <Grow in={inView}>
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-                    <Card sx={{ maxWidth: 250, width: 250, height: 450 }}>
-                        <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                        {yesterdayBirthdays.length === 0 ? (
+                            noBirthdays("No hubieron cumpleaños ayer")
+                        ) : (
+                            <CarouselComponent items={yesterdayBirthdays} description={yesterdayBirthdays.nombre} day={"Ayer"} height={"280px"} width={"100%"} />
+                        )}
+                    </Card>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                        {todayBirthdays.length === 0 ? (
+                            noBirthdays("No hay cumpleaños hoy")
+                        ) : (
+                            <CarouselComponent items={todayBirthdays} description={todayBirthdays.nombre} day={"Hoy"} height={"280px"} width={"100%"} />
+                        )}
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
-                        <CarouselComponent items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
-                    </Card>{" "}
-                    <Card sx={{ maxWidth: 250, width: 250, height: 450 }}>
-                        <CarouselComponent items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
+                        {tomorrowBirthdays.length === 0 ? (
+                            noBirthdays("No hay cumpleaños mañana")
+                        ) : (
+                            <CarouselComponent items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
+                        )}
                     </Card>{" "}
                 </Box>
             </Grow>

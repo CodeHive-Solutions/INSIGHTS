@@ -367,7 +367,7 @@ export const Sgc = () => {
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Sistema de Gestión de Calidad
+                    Gestor Documental
                 </Typography>
                 <DataGrid
                     sx={{ width: "100%" }}

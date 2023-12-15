@@ -38,7 +38,7 @@ function Item(props) {
                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                     {day}
                 </Typography>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="subtitle1" component="div">
                     {name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
