@@ -81,11 +81,11 @@ def robinson_list(request):
 def call_transfer_list(request):
     """Change the path of the calls to the another location."""
     if not request.user.has_perm("excels_processing.call_transfer"):
-        return Response("Access denied", status=403)
+        return Response({"error": "Access denied"}, status=403)
     if not request.POST.get("campaign"):
-        return Response("No campaign found in the request", status=400)
-    if not "file" in request.FILES:
-        return Response("No file found in the request", status=400)
+        return Response({"error": "No campaign found in the request"}, status=400)
+    if "file" not in request.FILES:
+        return Response({"error": "No file found in the request"}, status=400)
     campaign = str(request.POST.get("campaign")).lower()
     # check if the folder exists
     file = request.FILES["file"]
@@ -95,9 +95,11 @@ def call_transfer_list(request):
     missing_columns = [
         column for column in required_columns if column not in data_f.columns
     ]
-    logger.info(f"Missing columns: {data_f.columns}")
+    logger.info("Missing columns: %s", data_f.columns)
     if missing_columns:
-        return Response(f"Missing columns: {', '.join(missing_columns)}", status=400)
+        return Response(
+            {"error": f"Missing columns: {', '.join(missing_columns)}"}, status=400
+        )
     # Transfer the calls files to the new path
     paths = {
         "falabella_old": "/var/servers/falabella/BOGOTA/LLAMADAS_PREDICTIVO/",
@@ -121,7 +123,9 @@ def call_transfer_list(request):
         pattern = re.compile(rf"_{number}-")
 
         if not os.path.exists(path_old.format(date=date)):
-            return Response("Folder for that date does not exist.", status=400)
+            return Response(
+                {"error": "Folder for that date does not exist."}, status=400
+            )
         for entry in os.scandir(path_old.format(date=date)):
             if entry.name.endswith(".mp3") and pattern.search(entry.name):
                 try:
@@ -134,7 +138,7 @@ def call_transfer_list(request):
                     break
                 except Exception as error:
                     logger.critical(error)
-                    return Response(str(error), status=500)
+                    return Response({"error": str(error)}, status=500)
         if match is not True:
             fails.append(number)
     return Response({"message": "Files transferred successfully.", "fails": fails})

@@ -18,7 +18,6 @@ const Footer = () => {
                 backgroundColor: "primary.main",
                 display: "flex",
                 padding: "25px",
-                bottom: 0,
                 marginTop: "15px",
                 justifyContent: "space-evenly",
                 gap: "2rem",

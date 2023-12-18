@@ -214,10 +214,10 @@ class SendEmailTestCase(APITestCase):
             "delivery_type": "Testing",
         }
         response = self.client.post(self.url, data=payload)
-        data = response.json()
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("email", data)
+        email = response.data["email"]
+        self.assertIsNotNone(email)
 
     def test_send_email_missing_data(self):
         """Test the send-email view with missing data."""

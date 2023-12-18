@@ -8,8 +8,6 @@ from django.conf import settings
 from rest_framework.test import APITestCase
 import mysql.connector
 
-config = settings.config
-
 
 class RobinsonTestCase(APITestCase):
     """Test case for the files endpoint"""
@@ -19,14 +17,14 @@ class RobinsonTestCase(APITestCase):
     def setUp(self):
         """Set up the test case"""
         username = "staffnet"
-        password = config("StaffNetLDAP")
+        password = os.getenv("StaffNetLDAP")
         self.login_data = {
             "username": username,
             "password": password,
         }
         db_config = {
             "user": "blacklistuser",
-            "password": config("black_list_pass"),
+            "password": os.getenv("black_list_pass"),
             "host": "172.16.0.9",
             "port": "3306",
             "database": "asteriskdb",
@@ -75,7 +73,7 @@ class CallTransferTestCase(APITestCase):
     def setUp(self):
         """Set up the test case"""
         username = "staffnet"
-        password = config("StaffNetLDAP")
+        password = os.getenv("StaffNetLDAP")
         self.login_data = {
             "username": username,
             "password": password,

@@ -47,7 +47,10 @@ SECRET_KEY = "django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") is not None else False
 
-ALLOWED_HOSTS = ["insights-api.cyc-bpo.com", "insights-api-dev.cyc-bpo.com"]
+if DEBUG:
+    ALLOWED_HOSTS = ["insights-api-dev.cyc-bpo.com"]
+else:
+    ALLOWED_HOSTS = ["insights-api.cyc-bpo.com"]
 
 # Application definition
 

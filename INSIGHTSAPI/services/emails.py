@@ -2,10 +2,11 @@
 
 import logging
 from typing import List, Union
+import os
 from django.core.mail import EmailMessage
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("requests")
 
 
 ALLOWED_EMAILS = {
@@ -14,10 +15,10 @@ ALLOWED_EMAILS = {
 
 
 def send_email(
+    sender_user: str,
     subject: str,
     message: str,
     to_emails: Union[str, List[str]],
-    sender_user: str,
     html_content=False,
     cc_emails=None,
     bcc_emails=None,
@@ -29,11 +30,10 @@ def send_email(
     Send an email.
 
     Parameters:
+    - sender_user (str): The username for authentication.
     - subject (str): The subject of the email.
     - message (str): The content of the email.
     - to_emails (Union[str, List[str]]): The recipient(s) of the email.
-    - sender_user (str): The username for authentication.
-    - sender_password (str): The password for authentication.
 
     Returns:
     - None in case of success.
@@ -43,7 +43,7 @@ def send_email(
         if sender_user not in ALLOWED_EMAILS:
             raise Exception("Email not allowed")
         else:
-            sender_email = ALLOWED_EMAILS[sender_user].keys()[0]
+            sender_email = list(ALLOWED_EMAILS[sender_user].keys())[0]
             sender_password = ALLOWED_EMAILS[sender_user][sender_email]
 
         email = EmailMessage(
@@ -56,7 +56,7 @@ def send_email(
             reply_to=reply_to,
         )
 
-        email.connection(username=sender_email, password=sender_password)
+        email.send()
 
         if html_content:
             email.content_subtype = "html"
@@ -68,5 +68,5 @@ def send_email(
         email.send(fail_silently=False)
         return None
     except Exception as e:
-        logger.critical("Error sending email: %s", e)
+        logger.exception("Error sending email: %s", e)
         return e

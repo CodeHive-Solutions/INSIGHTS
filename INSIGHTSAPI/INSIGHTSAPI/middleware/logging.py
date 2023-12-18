@@ -26,7 +26,7 @@ class LoggingMiddleware:
         if hasattr(request, "data"):
             log_info["Request Data"] = request.data
 
-        if hasattr(response, "data"):
+        if hasattr(response, "data") and response.data is not None:
             data = response.data
             route = getattr(request.resolver_match, "route", None)
             no_log_routes = {"goals/", "/token/obtain", "token/refresh"}

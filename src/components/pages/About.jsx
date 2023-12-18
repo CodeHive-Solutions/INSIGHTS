@@ -86,13 +86,13 @@ const managements = [
         management: "Gerente de Legal y Riesgo",
         image: diegoGonzales,
         description:
-            "LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \n RIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.",
+            "LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.",
     },
     {
         name: "Mario Giron",
         management: "Gerente de Riesgo y Control Interno",
         image: marioGiron,
-        description: `Resguardar los recursos de la empresa para evitar pérdidas o faltas que puedan afectar su rentabilidad en un marco de gestión de riesgos, donde son identificados, evaluados y controlados, los cuales son informados, comunicados y monitoreados, mediante procesos de auditoría. \n \n Atender procesos de auditoria externas periódicamente de los clientes, entes certificadores, entes de control y firmas evaluadoras de riesgos.`,
+        description: `Resguardar los recursos de la empresa para evitar pérdidas o faltas que puedan afectar su rentabilidad en un marco de gestión de riesgos, donde son identificados, evaluados y controlados, los cuales son informados, comunicados y monitoreados, mediante procesos de auditoría. \n \nAtender procesos de auditoria externas periódicamente de los clientes, entes certificadores, entes de control y firmas evaluadoras de riesgos.`,
     },
     {
         name: "Melida Sandoval",
@@ -123,7 +123,7 @@ const About = () => {
                     )}
                 </Box>
                 <Box sx={{ width: "35rem" }}>
-                    <Typography sx={{ color: "gray" }}>
+                    <Typography sx={{ color: "gray", textAlign: "justify" }}>
                         Somos una compañía con más de 18 años de experiencia en el mercado, especializada en ofrecer soluciones para fortalecer ciclos de riesgo;
                         proveemos alternativas para los procesos de originación, mantenimiento y recuperación de cartera. En la implementación de servicios BPO,
                         trabajamos con estándares metodológicos de calidad que nos permiten la optimización de procesos para garantizar resultados que maximicen la
@@ -172,7 +172,7 @@ const About = () => {
             >
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <img style={{ borderRadius: 5 }} src={mission2} height={300} alt="" />
-                    <Box sx={{ width: "100%" }}>
+                    <Box sx={{ width: "550px" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Misión
                         </Typography>
@@ -181,8 +181,8 @@ const About = () => {
                         </Typography>
                     </Box>
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pr: "5rem", gap: "2rem" }}>
-                    <Box sx={{ width: "20%", textAlign: "end" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
+                    <Box sx={{ width: "550px", textAlign: "justify" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Visión
                         </Typography>
@@ -193,9 +193,9 @@ const About = () => {
                     </Box>
                     <img style={{ borderRadius: "8px" }} src={mission1} height={300} alt="" />
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pl: "10rem", gap: "2rem" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <img style={{ borderRadius: "8px" }} src={value1} height={300} alt="" />
-                    <Box sx={{ width: "30%" }}>
+                    <Box sx={{ width: "550px" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestros Valores Corporativos
                         </Typography>
@@ -309,11 +309,9 @@ const About = () => {
                                 <Typography variant="subtitle2" color="gray">
                                     {item.management}
                                 </Typography>
-                                {item.description.split("\n").map((line, index) => (
-                                    <Typography key={index} variant="body2" sx={{ whiteSpace: "break-spaces" }}>
-                                        {line}
-                                    </Typography>
-                                ))}
+                                <Typography key={index} variant="body2" sx={{ whiteSpace: "break-spaces", textAlign: "justify" }}>
+                                    {item.description}
+                                </Typography>
                             </CardContent>
                         </Card>
                     ))}

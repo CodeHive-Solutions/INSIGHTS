@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
 import emergency from "../../images/blog/emergency.png";
 import Skeleton from "@mui/material/Skeleton";
-import blog1 from "../../images/blog/blog-1.png";
+import article1 from "../../images/articles/article1.jpg";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -83,7 +83,7 @@ const Blog = () => {
                 <MediaCard
                     title={"Sumando Valor: Bienvenidos a las Nuevas Campañas en C&C Services S.A.S."}
                     subtitle={"Uniendo Fuerzas para Alcanzar Nuevos Horizontes de Éxito y Crecimiento"}
-                    img={blog1}
+                    img={article1}
                     articleId={1}
                 ></MediaCard>
                 <MediaCard

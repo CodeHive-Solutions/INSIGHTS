@@ -578,11 +578,17 @@ const AnalisisMetas = () => {
         YearSelect();
     }, []);
 
-    const handleFilter = async (event) => {
-        event.preventDefault();
-
+    const handleFilter = async (event, changeType) => {
+        let link = "";
+        if (!changeType) {
+            link = `https://insights-api.cyc-bpo.com/goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`;
+            event.preventDefault();
+        } else {
+            link = `https://insights-api.cyc-bpo.com/goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${changeType}`;
+            console.log(changeType);
+        }
         try {
-            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${selectedOption}`, {
+            const response = await fetch(link, {
                 method: "GET",
             });
 
@@ -646,20 +652,21 @@ const AnalisisMetas = () => {
                     };
                 });
                 // Create a new columns array based on the initial columns but with the field name changed
-                const updatedColumns = columns.map((column) => {
-                    if (column.field === "last_update") {
-                        // Change the field and header name for 'last_update' column
-                        return {
-                            ...column,
-                            field: "history_date",
-                            headerName: "Fecha de modificación",
-                        };
-                    }
-                    return column; // Keep other columns unchanged
-                });
 
-                // Update the 'columns' state with the modified columns
-                setColumns(updatedColumns);
+                // const updatedColumns = columns.map((column) => {
+                //     if (column.field === "last_update") {
+                //         // Change the field and header name for 'last_update' column
+                //         return {
+                //             ...column,
+                //             field: "history_date",
+                //             headerName: "Fecha de modificación",
+                //         };
+                //     }
+                //     return column; // Keep other columns unchanged
+                // });
+
+                // // Update the 'columns' state with the modified columns
+                // setColumns(updatedColumns);
                 setRows(modifiedData);
             }
         } catch (error) {
@@ -676,6 +683,7 @@ const AnalisisMetas = () => {
         } else if (selectedValue === "execution") {
             setColumns(executionColumns);
         }
+        handleFilter("", selectedValue);
     };
 
     return (
@@ -683,7 +691,7 @@ const AnalisisMetas = () => {
             {isLoading ? (
                 <Container
                     sx={{
-                        height: "calc(250px + max-content);",
+                        height: "100%",
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "column",
@@ -735,7 +743,7 @@ const AnalisisMetas = () => {
                         rows={rows}
                         editMode="row"
                         columns={columns}
-                        sx={{ maxHeight: "500px" }}
+                        sx={{ maxHeight: "600px", height: "500px" }}
                         csvOptions={{
                             fileName: "customerDataBase",
                             delimiter: ";",
