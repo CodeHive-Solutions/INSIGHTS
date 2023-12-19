@@ -99,14 +99,14 @@ const Home = () => {
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`https://staffnet-api-dev.cyc-bpo.com/profile-picture/${employee.cedula}`, {
+                const imageResponse = await fetch(`https://staffnet-api.cyc-bpo.com/profile-picture/${employee.cedula}`, {
                     method: "GET",
                 });
 
                 // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
                     return {
-                        image: `https://staffnet-api-dev.cyc-bpo.com/profile-picture/${employee.cedula}`,
+                        image: `https://staffnet-api.cyc-bpo.com/profile-picture/${employee.cedula}`,
                         name: employee.nombre,
                         description: employee.campana_general,
                     };
@@ -127,7 +127,7 @@ const Home = () => {
 
     const getBirthdaysId = async () => {
         try {
-            const response = await fetch("https://staffnet-api-dev.cyc-bpo.com/profile-picture/birthday", {
+            const response = await fetch("https://staffnet-api.cyc-bpo.com/profile-picture/birthday", {
                 method: "GET",
             });
 
@@ -147,13 +147,12 @@ const Home = () => {
                 const tomorrowImages = await fetchImages(tomorrowBirthdays);
 
                 setYesterdayBirthdays(yesterdayImages);
-                console.log(yesterdayBirthdays);
                 setTodayBirthdays(todayImages);
                 setTomorrowBirthdays(tomorrowImages);
             }
         } catch (error) {
             showSnack("error", error.message);
-            console.log(error);
+            console.error(error);
         }
     };
 

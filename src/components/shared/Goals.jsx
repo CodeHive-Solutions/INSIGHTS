@@ -89,7 +89,6 @@ const Goals = ({ openDialog, setOpenDialog }) => {
             }
 
             const updatedInstance = await response.json();
-            console.log(updatedInstance);
         } catch (error) {
             console.error(error);
         }
@@ -116,7 +115,6 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                     setGoalDeclined(true);
                 } else if (data.additional_info.length > 0) {
                     setGoalAdvisorClaro(data.additional_info);
-                    console.log(data.additional_info);
                 } else if (data.quantity_goal && data.criteria_goal) {
                     setGoalQuantity(data.quantity_goal);
                     setGoalCriteria(data.criteria_goal);
@@ -140,7 +138,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
     };
 
     useEffect(() => {
-        getGoal();
+        // getGoal();
     }, []);
 
     const handleAcceptGoals = async () => {
@@ -165,7 +163,6 @@ const Goals = ({ openDialog, setOpenDialog }) => {
             }
 
             const updatedInstance = await response.json();
-            console.log(updatedInstance);
         } catch (error) {
             console.error(error);
         }

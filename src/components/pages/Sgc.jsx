@@ -170,20 +170,18 @@ export const Sgc = () => {
     };
 
     const handleProcessRowUpdateError = useCallback((error) => {
-        console.log(error);
+        console.error(error);
         showSnack("error", error.message, true);
         // setSnackbar({ children: error.message, severity: "error" });
     }, []);
 
     const handleClickFile = (id) => {
         hiddenFileInput.current.click();
-        console.log(id);
     };
 
     const handleFileChange = (event) => {
         const fileUploaded = event.target.files[0];
         // Now you can use the fileUploaded object for further processing
-        console.log(fileUploaded);
         showSnack("success", "Se ha cargado el archivo correctamente.");
     };
 
@@ -212,7 +210,6 @@ export const Sgc = () => {
 
     const handleSubmit = (values) => {
         console.log(values);
-        // console.log(values);
         // try {
         //     const response = await fetch(`${getApiUrl()}sgc`, {
         //         method: "POST",
@@ -395,25 +392,41 @@ export const Sgc = () => {
             <Dialog fullWidth={true} maxWidth="md" open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Cargar nuevo archivo</DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={{ area: "", tipo: "", subtipo: "", nombre: "", version: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                        <Form>
-                            <Box sx={{ display: "flex", gap: ".5rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="select" options={tipos} name="tipo" label="Tipo" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
-                                {/* <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
-                                    <Button sx={{ width: "100%" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
-                                        Cargar archivo
-                                        <VisuallyHiddenInput type="file" />
-                                    </Button>
-                                </Box> */}
-                            </Box>
-                            <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                                Guardar
-                            </Button>
-                        </Form>
+                    <Formik
+                        initialValues={{ area: "", tipo: "", subtipo: "", nombre: "", version: "", file: "" }}
+                        validationSchema={validationSchema}
+                        onSubmit={handleSubmit}
+                    >
+                        {(formik) => (
+                            <Form>
+                                <Box sx={{ display: "flex", gap: ".5rem", pt: "0.5rem", flexWrap: "wrap" }}>
+                                    <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="select" options={tipos} name="tipo" label="Tipo" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
+                                    <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
+                                        <Button sx={{ width: "100%" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
+                                            Cargar archivo
+                                            <VisuallyHiddenInput
+                                                id="file"
+                                                name="file"
+                                                type="file"
+                                                accept=".pdf, .xlsx"
+                                                onChange={(event) => {
+                                                    // Formik doesn't automatically handle file inputs, so we need to manually
+                                                    // update the 'file' field when a file is selected
+                                                    formik.setFieldValue("file", event.currentTarget.files[0]);
+                                                }}
+                                            />
+                                        </Button>
+                                    </Box>
+                                </Box>
+                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                    Guardar
+                                </Button>
+                            </Form>
+                        )}
                     </Formik>
                 </DialogContent>
             </Dialog>

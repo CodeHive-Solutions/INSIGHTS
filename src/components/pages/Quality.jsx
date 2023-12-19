@@ -100,7 +100,7 @@ const Quality = () => {
                         throw new Error(response.statusText);
                     } else if (response.status === 400) {
                         const data = await response.json();
-                        showSnack("error", data.message);
+                        showSnack("error", data.error);
                         throw new Error(response.statusText);
                     } else if (response.status === 422) {
                         showSnack("error", "El archivo no cumple con el formato.");
@@ -121,7 +121,6 @@ const Quality = () => {
                 }
                 if (response.status === 200) {
                     const data = await response.json();
-                    console.log(data);
                     if (data.fails.length === 0) {
                         showSnack("success", "Archivos trasladados correctamente.");
                     } else {

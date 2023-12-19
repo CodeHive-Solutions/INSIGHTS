@@ -2,8 +2,12 @@
 
 import logging
 from typing import List, Union
+from smtplib import SMTP
+import ssl
 import os
+from imaplib import IMAP4_SSL
 from django.core.mail import EmailMessage
+from django.conf import settings
 
 
 logger = logging.getLogger("requests")
@@ -11,6 +15,7 @@ logger = logging.getLogger("requests")
 
 ALLOWED_EMAILS = {
     "mismetas": {"mismetas@cyc-services.com.co": os.environ["C_2023"]},
+    "acuerdosBBVA": {"acuerdos.bbva@cyc-services.com.co": "Colombia2023*"},
 }
 
 
@@ -19,12 +24,12 @@ def send_email(
     subject: str,
     message: str,
     to_emails: Union[str, List[str]],
-    html_content=False,
     cc_emails=None,
     bcc_emails=None,
-    headers=None,
+    html_content=False,
     attachments=None,
     reply_to=None,
+    return_path=None,
 ) -> None | Exception:
     """
     Send an email.
@@ -34,6 +39,12 @@ def send_email(
     - subject (str): The subject of the email.
     - message (str): The content of the email.
     - to_emails (Union[str, List[str]]): The recipient(s) of the email.
+    - cc_emails (Union[str, List[str]]): The CC recipient(s) of the email.
+    - bcc_emails (Union[str, List[str]]): The BCC recipient(s) of the email.
+    - html_content (bool): Whether the content of the email is HTML.
+    - attachments (List[str]): The path(s) of the attachment(s).
+    - reply_to (Union[str, List[str]]): The reply-to address(es).
+    - return_path (str): The return-path address in case of error.
 
     Returns:
     - None in case of success.
@@ -45,27 +56,45 @@ def send_email(
         else:
             sender_email = list(ALLOWED_EMAILS[sender_user].keys())[0]
             sender_password = ALLOWED_EMAILS[sender_user][sender_email]
-
+        smtp_connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+        smtp_connection.ehlo()
+        context = ssl.create_default_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        smtp_connection.starttls(context=context)
+        smtp_connection.login(sender_email, sender_password)
         email = EmailMessage(
             subject,
             message,
+            sender_email,
             to_emails,
             cc=cc_emails,
             bcc=bcc_emails,
-            headers=headers,
+            attachments=attachments,
             reply_to=reply_to,
         )
-
-        email.send()
+        if return_path:
+            email.extra_headers["Return-Path"] = return_path
 
         if html_content:
             email.content_subtype = "html"
 
-        if attachments:
-            for attachment in attachments:
-                email.attach(*attachment)
+        # Get the underlying EmailMessage object
+        email_msg = email.message()
+        result = smtp_connection.send_message(email_msg)
+        if result:
+            return Exception("Error sending email")
+        with IMAP4_SSL(settings.EMAIL_HOST) as imap_connection:
+            imap_connection.login(sender_email, sender_password)
+            imap_connection.select('"sent"', readonly=False)
 
-        email.send(fail_silently=False)
+            # Save a copy of the email to the 'sent' folder
+            result, _ = imap_connection.append(
+                '"sent"', None, None, email_msg.as_bytes()
+            )
+            if result != "OK":
+                logger.exception("Error saving email to 'sent' folder: %s", result)
+                return Exception("Error saving email to 'sent' folder")
         return None
     except Exception as e:
         logger.exception("Error sending email: %s", e)

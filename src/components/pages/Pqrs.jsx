@@ -50,10 +50,9 @@ const Suggestions = () => {
 
     const handleSubmit = async (values) => {
         setLoadingBar(true);
-        showSnack("success", "PQRS enviado correctamente");
 
         try {
-            const response = await fetch(`${getApiUrl()}suggestions/`, {
+            const response = await fetch(`${getApiUrl()}pqrs/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -76,7 +75,7 @@ const Suggestions = () => {
             if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
                 showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
             } else {
-                console.log(error.message);
+                console.error(error.message);
                 showSnack("error", error.message);
             }
 
@@ -103,7 +102,7 @@ const Suggestions = () => {
     };
 
     return (
-        <Container sx={{ height: "100vh", mt: "5rem" }}>
+        <Container sx={{ height: "100%", mt: "5rem" }}>
             <Box sx={{ pb: "1rem" }}>
                 <Typography variant={"h4"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
                     PQRS

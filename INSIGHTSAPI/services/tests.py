@@ -11,6 +11,10 @@ class EmailServiceTest(TestCase):
         """Test send email."""
         subject = "Test email"
         message = "Test email"
-        to_emails = ["heibert.mogollon@cyc-bpo.com"]
+        to_emails = [
+            "heibert.mogollon@cyc-bpo.com",
+            "heibert1.mogollon@gmail.com",
+            "jkarmankm22@gmail.com",
+        ]
         errors = send_email("mismetas", subject, message, to_emails)
         self.assertIsNone(errors, errors)

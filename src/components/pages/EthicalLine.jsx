@@ -156,18 +156,18 @@ const EthicalLine = () => {
                 <Typography variant={"h1"} sx={{ textAlign: "center", pb: "15px", color: "white", fontWeight: "400", pt: "6rem" }}>
                     Linea Ética
                 </Typography>
-                <Box class="wave wave1"></Box>
-                <Box class="wave wave2"></Box>
-                <Box class="wave wave3"></Box>
-                <Box class="wave wave4"></Box>
+                <Box className="wave wave1"></Box>
+                <Box className="wave wave2"></Box>
+                <Box className="wave wave3"></Box>
+                <Box className="wave wave4"></Box>
             </Box>
             {/* <img src={ethicalLineBackground} alt="" /> */}
-            <Box sx={{ position: "fixed", p: "2rem", color: "primary.main" }}>
-                <Button onClick={() => navigate("/")} startIcon={<ArrowBackIosNewIcon />}>
-                    Volver
-                </Button>
-            </Box>
             <Container sx={{ height: "max-content", py: "5rem" }}>
+                <Box sx={{ color: "primary.main" }}>
+                    <Button onClick={() => navigate("/")} startIcon={<ArrowBackIosNewIcon />}>
+                        Volver
+                    </Button>
+                </Box>
                 {/* <Typography variant={"h3"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "400" }}>
                     Linea Ética
                 </Typography> */}
@@ -183,7 +183,7 @@ const EthicalLine = () => {
                         Objetivo
                     </Typography>
                     <Typography variant="body1">
-                        El objetivo de la línea ética es promover un ambiente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
+                        El objetivo de la línea ética es promover un amente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
                         denunciar cualquier situación que pueda poner en riesgo la integridad de las personas, los recursos de la empresa o el cumplimiento de sus
                         obligaciones legales.
                     </Typography>

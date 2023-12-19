@@ -106,7 +106,7 @@ const UploadFiles = () => {
 
                 const data = await response.json();
 
-                if (response.status === 201) {
+                if (response.status === 201 && path === `${getApiUrl()}files/robinson-list/`) {
                     showSnack(
                         "success",
                         "La importación se ejecutó exitosamente, " +
@@ -114,13 +114,16 @@ const UploadFiles = () => {
                             " registros fueron añadidos.\nRegistros totales en la base de datos: " +
                             data.database_rows
                     );
-                } else if (response.status === 200) {
+                } else if (response.status === 200 && path === `${getApiUrl()}files/robinson-list/`) {
                     showSnack(
                         "success",
                         "La importación se ejecutó exitosamente, no se encontraron registros por añadir.\nRegistros totales en la base de datos: " + data.database_rows
                     );
+                } else {
+                    showSnack("success", "El cargue se subió exitosamente.");
                 }
             } catch (error) {
+                setLoading(false);
                 console.error(error);
             }
         }

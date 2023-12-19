@@ -47,6 +47,7 @@ SECRET_KEY = "django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") is not None else False
 
+
 if DEBUG:
     ALLOWED_HOSTS = ["insights-api-dev.cyc-bpo.com"]
 else:
@@ -71,6 +72,7 @@ INSTALLED_APPS = [
     "sgc",
     "users",
     "excels_processing",
+    "pqrs",
 ]
 
 MIDDLEWARE = [
@@ -122,12 +124,12 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "INSIGHTSAPI.custom.email_backend.CustomEmailBackend"
 EMAIL_HOST = "mail.cyc-services.com.co"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = "mismetas@cyc-services.com.co"
-# EMAIL_HOST_PASSWORD = os.environ["C_2023"]
+EMAIL_HOST_USER = "mismetas@cyc-services.com.co"
+EMAIL_HOST_PASSWORD = os.environ["C_2023"]
 # DEFAULT_FROM_EMAIL = "mismetas@cyc-services.com.co"
 
 # Database
@@ -261,7 +263,7 @@ LOGGING = {
         },
         "django.request": {
             "handlers": ["exception_file"],
-            "level": "INFO",
+            "level": "DEBUG",
             "propagate": False,
         },
         "django_auth_ldap": {
