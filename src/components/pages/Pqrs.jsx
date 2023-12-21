@@ -7,14 +7,15 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
-    { value: "Pablo César Castañeda Camacho - Presidente", label: "Pablo César Castañeda Camacho - Presidente	" },
-    { value: "César Alberto Garzón Navas - Gerente General	", label: "César Alberto Garzón Navas - Gerente General	" },
-    { value: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno	", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno	" },
-    { value: "Jeanneth Pinzón - Gerente Gestión Humana ", label: "Jeanneth Pinzón - Gerente Gestión Humana " },
+    { value: "MOGOLLON MAHECHA HEIBERT STEVEN", label: "MOGOLLON MAHECHA HEIBERT STEVEN" },
+    { value: "Castañeda Camacho Pablo Cesar - Presidente", label: "Castañeda Camacho Pablo Cesar - Presidente" },
+    { value: "César Alberto Garzón Navas - Gerente General	", label: "César Alberto Garzón Navas - Gerente General" },
+    { value: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
+    { value: "Jeanneth Pinzón - Gerente Gestión Humana ", label: "Jeanneth Pinzón - Gerente Gestión Humana" },
     { value: "Angela Maria Durán Gutierrez - Gerente Planeación", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
     { value: "Melida Sandoval Cabra - Gerente Administrativa", label: "Melida Sandoval Cabra - Gerente Administrativa" },
     { value: "Adriana Nataly Páez Castiblanco - Gerente Operaciones", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
-    { value: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo         ", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo         " },
+    { value: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo" },
     { value: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas", label: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas" },
     { value: "Andrés Beltrán - Director Financiero", label: "Andrés Beltrán	- Director Financiero" },
 ];
@@ -29,7 +30,7 @@ const motivos = [
 const validationSchema = Yup.object().shape({
     area: Yup.string().required("Campo requerido"),
     motivo: Yup.string().required("Campo requerido"),
-    mensaje: Yup.string().required("Campo requerido"),
+    description: Yup.string().required("Campo requerido"),
 });
 
 const Suggestions = () => {
@@ -52,7 +53,7 @@ const Suggestions = () => {
         setLoadingBar(true);
 
         try {
-            const response = await fetch(`${getApiUrl()}pqrs/`, {
+            const response = await fetch(`${getApiUrl()}pqrs/complaints/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -116,14 +117,15 @@ const Suggestions = () => {
                     ortografía para que tu mensaje sea totalmente legible.
                 </Typography>
             </Box>
-            <Formik initialValues={{ area: "", motivo: "", mensaje: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+            <Formik initialValues={{ area: "", motivo: "", description: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                {}
                 <Form>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                         <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
 
                         <FormikTextField type="select" options={motivos} name="motivo" label="Motivo" autoComplete="off" spellCheck={false} />
 
-                        <FormikTextField width="100%" type="text" multiline={true} rows={8} name="mensaje" label="Mensaje" autoComplete="off" spellCheck={false} />
+                        <FormikTextField width="100%" type="text" multiline={true} rows={8} name="description" label="Mensaje" autoComplete="off" spellCheck={false} />
                         <Button disabled={loadingBar} type="submit" sx={{ width: "max-content" }} variant="outlined" endIcon={<SendIcon />}>
                             Enviar
                         </Button>

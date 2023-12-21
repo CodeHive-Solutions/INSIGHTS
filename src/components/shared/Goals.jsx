@@ -96,7 +96,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
 
     const getGoal = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/5202927/`, {
+            const response = await fetch(`${getApiUrl()}goals/15225716/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -138,7 +138,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
     };
 
     useEffect(() => {
-        // getGoal();
+        getGoal();
     }, []);
 
     const handleAcceptGoals = async () => {

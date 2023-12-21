@@ -80,6 +80,48 @@ const Navbar = () => {
     //         refreshToken(refreshTimer);
     //     }
     // }, []);
+    const getGoal = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}goals/15225716/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail);
+            }
+
+            if (response.status === 200) {
+                setGoalCedula(data.cedula);
+                if (data.accepted) {
+                    setGoalAccepted(true);
+                } else if (data.declined) {
+                    setGoalDeclined(true);
+                } else if (data.additional_info.length > 0) {
+                    setGoalAdvisorClaro(data.additional_info);
+                } else if (data.quantity_goal && data.criteria_goal) {
+                    setGoalQuantity(data.quantity_goal);
+                    setGoalCriteria(data.criteria_goal);
+                }
+                if (data.executionAccepted) {
+                    setExecutionAcceptedGoal(true);
+                } else if (data.executionDeclined) {
+                    setExecutionDeclinedGoal(true);
+                } else if (data.total) {
+                    setExecutionTotalGoal(true);
+                    setResult(data.result);
+                    setEvaluation(data.evaluation);
+                    setQuality(data.quality);
+                    setCleanDesk(data.clean_desk);
+                    setTotal(data.total);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleOpenDialog = () => setOpenDialog(true);
 
@@ -277,12 +319,12 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                <MenuItem onClick={handleClose}>
+                {/* <MenuItem onClick={handleClose}>
                     <Avatar /> Perfil
                 </MenuItem>
                 <MenuItem onClick={handleClose}>
                     <Avatar /> Mi cuenta
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleOpenDialog}>
                     <ListItemIcon>
                         <FlagIcon fontSize="small" />
@@ -290,7 +332,7 @@ const Navbar = () => {
                     Mi Meta: $250.000.000
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={handleClose}>
+                {/* <MenuItem onClick={handleClose}>
                     <ListItemIcon>
                         <RequestPageIcon fontSize="small" />
                     </ListItemIcon>
@@ -307,7 +349,7 @@ const Navbar = () => {
                         <Settings fontSize="small" />
                     </ListItemIcon>
                     Configuración
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />

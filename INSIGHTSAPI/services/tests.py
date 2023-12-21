@@ -18,3 +18,19 @@ class EmailServiceTest(TestCase):
         ]
         errors = send_email("mismetas", subject, message, to_emails)
         self.assertIsNone(errors, errors)
+
+
+class EthicalLineTest(TestCase):
+    """Test for ethical line."""
+
+    def test_send_report_ethical_line(self):
+        """Test send report ethical line."""
+        response = self.client.post(
+            "/services/send-ethical-line/",
+            {
+                "type": "Test Type",
+                "description": "Test Description",
+                "contact_info": "Test contact info",
+            },
+        )
+        self.assertEqual(response.status_code, 200)

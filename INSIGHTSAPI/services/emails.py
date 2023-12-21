@@ -23,13 +23,16 @@ def send_email(
     sender_user: str,
     subject: str,
     message: str,
-    to_emails: Union[str, List[str]],
+    to_emails: List[str],
+    from_email=None,
     cc_emails=None,
     bcc_emails=None,
     html_content=False,
     attachments=None,
     reply_to=None,
     return_path=None,
+    save_message=True,
+    email_owner=None,
 ) -> None | Exception:
     """
     Send an email.
@@ -39,12 +42,15 @@ def send_email(
     - subject (str): The subject of the email.
     - message (str): The content of the email.
     - to_emails (Union[str, List[str]]): The recipient(s) of the email.
+    - from_email (str): The sender of the email just put the name it will use the same @ that the sender_user.
     - cc_emails (Union[str, List[str]]): The CC recipient(s) of the email.
     - bcc_emails (Union[str, List[str]]): The BCC recipient(s) of the email.
     - html_content (bool): Whether the content of the email is HTML.
     - attachments (List[str]): The path(s) of the attachment(s).
     - reply_to (Union[str, List[str]]): The reply-to address(es).
     - return_path (str): The return-path address in case of error.
+    - save_message (bool): Whether to save a copy of the email to the 'sent' folder.
+    - email_owner (str): The email name showed.
 
     Returns:
     - None in case of success.
@@ -63,10 +69,19 @@ def send_email(
         context.verify_mode = ssl.CERT_NONE
         smtp_connection.starttls(context=context)
         smtp_connection.login(sender_email, sender_password)
+        from_email_domain = sender_email.split("@")[1]
+        from_email = (
+            f"{from_email}@{from_email_domain}"
+            if from_email
+            else f"no-reply@{from_email_domain}"
+        )
+
+        if email_owner:
+            from_email = f"{email_owner} <{from_email}>"
         email = EmailMessage(
             subject,
             message,
-            sender_email,
+            from_email,
             to_emails,
             cc=cc_emails,
             bcc=bcc_emails,
@@ -84,17 +99,18 @@ def send_email(
         result = smtp_connection.send_message(email_msg)
         if result:
             return Exception("Error sending email")
-        with IMAP4_SSL(settings.EMAIL_HOST) as imap_connection:
-            imap_connection.login(sender_email, sender_password)
-            imap_connection.select('"sent"', readonly=False)
+        if save_message:
+            with IMAP4_SSL(settings.EMAIL_HOST) as imap_connection:
+                imap_connection.login(sender_email, sender_password)
+                imap_connection.select('"sent"', readonly=False)
 
-            # Save a copy of the email to the 'sent' folder
-            result, _ = imap_connection.append(
-                '"sent"', None, None, email_msg.as_bytes()
-            )
-            if result != "OK":
-                logger.exception("Error saving email to 'sent' folder: %s", result)
-                return Exception("Error saving email to 'sent' folder")
+                # Save a copy of the email to the 'sent' folder
+                result, _ = imap_connection.append(
+                    '"sent"', None, None, email_msg.as_bytes()
+                )
+                if result != "OK":
+                    logger.exception("Error saving email to 'sent' folder: %s", result)
+                    return Exception("Error saving email to 'sent' folder")
         return None
     except Exception as e:
         logger.exception("Error sending email: %s", e)

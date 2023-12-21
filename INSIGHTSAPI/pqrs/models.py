@@ -1,14 +1,22 @@
 """This module represents the pqrs models. """
 from django.db import models
+from django.core.exceptions import ValidationError
+
+
+def validate_max_length_1000(value):
+    """Validate the max length of the description field."""
+    if len(value) > 1000:
+        raise ValidationError("The maximum length is 1000 characters.")
 
 
 # Create your models here.
 class Complaint(models.Model):
     """This class represents the complaint model."""
 
-    description = models.CharField(max_length=100)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
+    description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(default="PENDING")
+    status = models.CharField(max_length=50, default="PENDING")
     resolution_date = models.DateTimeField(null=True)
     user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
 
@@ -16,7 +24,8 @@ class Complaint(models.Model):
 class Congratulation(models.Model):
     """This class represents the congratulation model."""
 
-    description = models.CharField(max_length=100)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
+    description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
 
@@ -24,9 +33,10 @@ class Congratulation(models.Model):
 class Suggestion(models.Model):
     """This class represents the suggestion model."""
 
-    description = models.CharField(max_length=100)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
+    description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(default="PENDING")
+    status = models.CharField(max_length=50, default="PENDING")
     resolution_date = models.DateTimeField(null=True)
     user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
 
@@ -34,10 +44,9 @@ class Suggestion(models.Model):
 class Other(models.Model):
     """This class represents the other model."""
 
-    description = models.CharField(max_length=100)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
+    description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(
-        default="PENDING",
-    )
+    status = models.CharField(max_length=50, default="PENDING")
     resolution_date = models.DateTimeField(null=True)
     user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)

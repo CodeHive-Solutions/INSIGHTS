@@ -9,7 +9,6 @@ import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
 import { useNavigate } from "react-router-dom";
-import quality from "../../images/quality/quality.jpg";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
 //images carousel test
