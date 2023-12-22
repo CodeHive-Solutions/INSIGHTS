@@ -329,7 +329,7 @@ const Navbar = () => {
                     <ListItemIcon>
                         <FlagIcon fontSize="small" />
                     </ListItemIcon>
-                    Mi Meta: $250.000.000
+                    Mi Meta
                 </MenuItem>
                 <Divider />
                 {/* <MenuItem onClick={handleClose}>

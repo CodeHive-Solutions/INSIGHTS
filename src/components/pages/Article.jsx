@@ -8,6 +8,7 @@ import imgAvatar from "../../images/birthdays/cristian-gonzales copy.jpeg";
 import emergency from "../../images/blog/emergency.png";
 import blog1 from "../../images/blog/blog-1.png";
 import article1 from "../../images/articles/article1.jpg";
+import despedida from "../../images/blog/despedida.jpg";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -58,12 +59,9 @@ const ArticlePage = () => {
         },
         {
             id: 2,
-            title: "Emergency Response in a Call Center: A Guide to Effective Action",
-            nameAuthor: "Daniela",
-            imgAuthor: "",
-            img: emergency,
-            date: "Hace 2 horas",
-            subtitle: "Navigating Crisis: Strategies for Swift and Calibrated Responses in the Call Center Environment",
+            title: "C&C Services Celebra una Integración Innovadora para Cerrar el Año 2023 con Éxito",
+            subtitle: "Celebrando el Poder del Compartir y la Eucaristía como Símbolo de Agradecimiento",
+            img: despedida,
             //             content: `Emergencies can arise unexpectedly in a call center environment, demanding swift and composed action from staff members. Whether it's a technical glitch affecting multiple callers or a customer in distress, a well-prepared team is crucial to managing these situations effectively.
 
             // 1. Preparation is Key

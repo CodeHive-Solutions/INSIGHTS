@@ -8,7 +8,7 @@ from hierarchy.models import Area
 class BasePQRSSerializer(serializers.ModelSerializer):
     """Base serializer for PQRS models."""
 
-    area = serializers.PrimaryKeyRelatedField(queryset=Area.objects.all())
+    area = serializers.PrimaryKeyRelatedField(read_only=True)
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     created_at = serializers.ReadOnlyField()
     resolution_date = serializers.ReadOnlyField()
@@ -18,6 +18,13 @@ class BasePQRSSerializer(serializers.ModelSerializer):
         """Meta class to map serializer's fields with the model fields."""
 
         fields = "__all__"
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        validated_data[
+            "area"
+        ] = user.area  # Assign the user's area to the Complaint's area
+        return super().create(validated_data)
 
 
 class ComplaintSerializer(BasePQRSSerializer):

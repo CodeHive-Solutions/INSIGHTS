@@ -18,7 +18,7 @@ import * as Yup from "yup";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Save from "@mui/icons-material/Save";
-
+import { getApiUrl } from "../../assets/getApi";
 import {
     GridRowModes,
     DataGrid,
@@ -109,12 +109,18 @@ export const Sgc = () => {
     const [editAccess, setEditAccess] = useState(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [fileName, setFileName] = useState("Cargar Archivo");
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
-    const handleCloseDialog = () => setOpenDialog(false);
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setFileName("Cargar Archivo");
+        setSelectedFile(null);
+    };
     const handleOpenDialog = () => setOpenDialog(true);
 
     const showSnack = (severity, message, error) => {
@@ -208,38 +214,47 @@ export const Sgc = () => {
         );
     };
 
-    const handleSubmit = (values) => {
-        console.log(values);
-        // try {
-        //     const response = await fetch(`${getApiUrl()}sgc`, {
-        //         method: "POST",
-        //         credentials: "include",
-        //         body: JSON.stringify(values),
-        //     });
-        //     const data = await response.json();
-        //     if (!response.ok) {
-        //         navigate("/", { replace: true });
-        //         throw new Error(data.detail);
-        //     } else if (response.status === 200) {
-        //         showSnack("success", "Se ha cargado el archivo correctamente.");
-        //     }
-        // } catch (error) {
-        //     console.error(error);
-        //     showSnack("error", error.message);
-        // }
+    const handleSubmit = async (values) => {
+        const formData = new FormData();
+        formData.append("area", values.area);
+        formData.append("type", values.tipo);
+        formData.append("sub_type", values.subtipo);
+        formData.append("name", values.nombre);
+        formData.append("version", values.version);
+        formData.append("file", selectedFile);
+        console.log(formData);
+
+        try {
+            const response = await fetch(`${getApiUrl()}sgc/`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+                // headers: { "Content-Type": "multipart/form-data" },
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail);
+            } else if (response.status === 200) {
+                showSnack("success", "Se ha cargado el archivo correctamente.");
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    const handleFileInputChange = (event) => {
+        setFileName(event.target.files[0].name);
+        setSelectedFile(event.target.files[0]);
     };
 
     const areas = [
-        { value: "DE", label: "DE" },
-        { value: "GA", label: "GA" },
-        { value: "GC", label: "GC" },
-        { value: "GH", label: "GH" },
-        { value: "GL", label: "GL" },
-        { value: "GP", label: "GP" },
-        { value: "GR", label: "GR" },
-        { value: "GS", label: "GS" },
-        { value: "GT", label: "GT" },
-        { value: "SG-SST", label: "SG-SST" },
+        { value: "GERENCIA ADMINISTRATIVA", label: "Gerencia Administrativa" },
+        { value: "GERENCIA DE OPERACIONES", label: "Gerencia de Operaciones" },
+        { value: "GERENCIA GESTIÓN HUMANA", label: "Gerencia de Gestión Humana" },
+        { value: "GERENCIA DE LEGAL RIESGO", label: "Gerencia de Legal y Riesgo" },
+        { value: "GERENCIA DE PLANEACIÓN", label: "Gerencia de Planeacion" },
+        { value: "GERENCIA DE TECNOLOGÍA", label: "Gerencia de Tecnología" },
     ];
 
     const tipos = [
@@ -406,18 +421,19 @@ export const Sgc = () => {
                                     <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
                                     <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
                                     <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
-                                        <Button sx={{ width: "100%" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
-                                            Cargar archivo
+                                        <Button sx={{ width: "100%", overflow: "hidden" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
+                                            {fileName}
                                             <VisuallyHiddenInput
                                                 id="file"
                                                 name="file"
                                                 type="file"
                                                 accept=".pdf, .xlsx"
-                                                onChange={(event) => {
+                                                onChange={
+                                                    handleFileInputChange
                                                     // Formik doesn't automatically handle file inputs, so we need to manually
                                                     // update the 'file' field when a file is selected
-                                                    formik.setFieldValue("file", event.currentTarget.files[0]);
-                                                }}
+                                                    // formik.setFieldValue("file", event.currentTarget.files[0]);
+                                                }
                                             />
                                         </Button>
                                     </Box>

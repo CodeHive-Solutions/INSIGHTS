@@ -26,16 +26,16 @@ const VisuallyHiddenInput = styled("input")({
 
 const campaigns = [
     {
-        value: "FALABELLA",
+        value: "falabella",
         label: "Falabella",
         routeOrigin: "172.16.0.46/banco_falabella_call/BOGOTA/LLAMADAS_PREDICTIVO/",
-        routeDestination: `172.16.0.12\Control-Calidad\PRIVADA\Llamadas Banco Falabella`,
+        routeDestination: `172.16.0.12\\Control-Calidad\\PRIVADA\\Llamadas\\Banco Falabella`,
     },
     {
-        value: "BANCO AGRARIO",
+        value: "banco_agrario",
         label: "Banco Agrario",
-        routeOrigin: "Por definir",
-        routeDestination: "Por definir",
+        routeOrigin: "\\172.16.0.106\\banco_agrario_call\\LLAMADAS_PREDICTIVO",
+        routeDestination: "\\172.16.0.12\\Control-Calidad\\PRIVADA\\Llamadas\\Banco Agrario",
     },
     {
         value: "CLARO",
@@ -81,10 +81,11 @@ const Quality = () => {
 
     const handleUpload = async () => {
         setLoading(true);
+        console.log(selectedCampaign.value);
         if (selectedFile) {
             const formData = new FormData();
             formData.append("file", selectedFile);
-            formData.append("campaign", "falabella");
+            formData.append("campaign", selectedCampaign.value);
 
             try {
                 const response = await fetch(`${getApiUrl()}files/call-transfer-list/`, {
@@ -168,7 +169,7 @@ const Quality = () => {
                     <TextField sx={{ width: "600px" }} label="ruta-origen" value={selectedCampaign.routeOrigin} disabled></TextField>
                     <ArrowDownwardIcon color="primary" />
                     <TextField sx={{ width: "600px" }} label="ruta-destino" value={selectedCampaign.routeDestination} disabled></TextField>
-                    {selectedCampaign.value === "FALABELLA" ? (
+                    {selectedCampaign.value === "falabella" || selectedCampaign.value === "banco_agrario" ? (
                         <Collapse in={openCollapse}>
                             <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
                                 SUBIR ARCHIVO
@@ -179,7 +180,7 @@ const Quality = () => {
                 </Box>
                 <Collapse in={!openCollapse}>
                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: "1rem" }}>
-                        {selectedCampaign.value === "FALABELLA" ? (
+                        {selectedCampaign.value === "falabella" || selectedCampaign.value === "banco_agrario" ? (
                             <>
                                 <Typography color="primary.main" variant="subtitle2">
                                     {fileName}

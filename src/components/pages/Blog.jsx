@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import emergency from "../../images/blog/emergency.png";
 import Skeleton from "@mui/material/Skeleton";
 import article1 from "../../images/articles/article1.jpg";
+import despedida from "../../images/blog/despedida.jpg";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -87,11 +88,9 @@ const Blog = () => {
                     articleId={1}
                 ></MediaCard>
                 <MediaCard
-                    title={"Tecnología de Vanguardia en el Call Center"}
-                    subtitle={
-                        "Cómo la innovación tecnológica está transformando la forma en que interactuamos con los clientes y gestionamos las operaciones en el entorno del call center."
-                    }
-                    img={emergency}
+                    title={"C&C Services Celebra una Integración Innovadora para Cerrar el Año 2023 con Éxito"}
+                    subtitle={"Celebrando el Poder del Compartir y la Eucaristía como Símbolo de Agradecimiento"}
+                    img={despedida}
                     articleId={2}
                 ></MediaCard>
                 <MediaCard

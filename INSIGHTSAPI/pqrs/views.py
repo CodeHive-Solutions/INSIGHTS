@@ -1,19 +1,20 @@
 """This module contains the PQRS viewset."""
+import logging
+from attr import mutable
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .models import Complaint, Congratulation, Suggestion, Other
 from services.emails import send_email
+from django.db import connections
+from .models import Complaint, Congratulation, Suggestion, Other
 from .serializers import (
     ComplaintSerializer,
     CongratulationSerializer,
     SuggestionSerializer,
     OtherSerializer,
 )
-from django.db import connections
-import logging
 
 
 logger = logging.getLogger("requests")
@@ -39,8 +40,7 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Save the post data when creating a new model instance."""
         user = self.request.user
-        name = self.request.data["area"].split(" - ")[0].upper()
-        request.data["area"] = user.area_id
+        name = self.request.data["name-area"].split(" - ")[0].upper()
         response = super().create(request, *args, **kwargs)
 
         if response.status_code == status.HTTP_201_CREATED:
@@ -59,7 +59,7 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                     sender_user="mismetas",
                     subject="Nueva PQRS",
                     message=f"<p>El usuario {user.first_name} {user.last_name} ha creado una nueva PQRS: </p> {request.data['description']}",
-                    to_emails=[row[0], "heibert.mogollon@cyc-bpo.com"],
+                    to_emails=[row[0]],
                     bcc_emails=[
                         "juan.carreno@cyc-bpo.com",
                         "heibert.mogollon@gmail.com",

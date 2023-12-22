@@ -1,7 +1,8 @@
 """Views for the SGC app"""
 import logging
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
-from rest_framework.parsers import MultiPartParser, FormParser
+
+# from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import viewsets
 from .models import SGCFile
 from .serializers import SGCFileSerializer
@@ -14,5 +15,4 @@ class SGCFileViewSet(viewsets.ModelViewSet):
 
     queryset = SGCFile.objects.all()
     serializer_class = SGCFileSerializer
-    permission_classes = [IsAuthenticated, DjangoModelPermissions]
-    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]    

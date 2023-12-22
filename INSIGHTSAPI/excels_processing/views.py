@@ -104,12 +104,16 @@ def call_transfer_list(request):
     paths = {
         "falabella_old": "/var/servers/falabella/BOGOTA/LLAMADAS_PREDICTIVO/",
         "falabella_new": "/var/servers/calidad/Llamadas Banco Falabella/",
-        "test_old": "/var/servers/falabella/test/test/",
-        "test_new": "/var/servers/calidad/test/test/",
+        "banco_agrario_old": "/var/servers/banco_agrario/LLAMADAS_PREDICTIVO/",
+        "banco_agrario_new": "/var/servers/calidad/Llamadas Banco Agrario/",
+        "test_banco_agrario_old": "/var/servers/banco_agrario/test/test/",
+        "test_banco_agrario_new": "/var/servers/calidad/test/test/",
+        "test_falabella_old": "/var/servers/falabella/test/test/",
+        "test_falabella_new": "/var/servers/calidad/test/test/",
     }
+
     path_old = os.path.join(paths[f"{campaign}_old"], "{date:%Y/%m/%d/OUT/}")
     path_new = os.path.join(paths[f"{campaign}_new"], "{entry.name}")
-    # pattern = re.compile(r"_(\d+)-")
     fails = []
 
     for row in data_f.itertuples(index=False):
@@ -120,7 +124,12 @@ def call_transfer_list(request):
         date = datetime.strptime(str(row.FECHA).split(" ", maxsplit=1)[0], "%d/%m/%Y")
         number = str(int(row.NUMERO))
         match = None
-        pattern = re.compile(rf"_{number}-")
+        if "banco_agrario" in campaign:
+            pattern = re.compile(rf"_{number}_")
+        elif "falabella" in campaign:
+            pattern = re.compile(rf"_{number}-")
+        else:
+            return Response({"error": "Invalid campaign"}, status=400)
 
         if not os.path.exists(path_old.format(date=date)):
             return Response(
@@ -129,10 +138,11 @@ def call_transfer_list(request):
         for entry in os.scandir(path_old.format(date=date)):
             if entry.name.endswith(".mp3") and pattern.search(entry.name):
                 try:
+                    final_path = path_new.format(entry=entry)
                     # Transfer the file
                     shutil.copy2(
                         entry.path,
-                        path_new.format(entry=entry),
+                        final_path,
                     )
                     match = True
                     break

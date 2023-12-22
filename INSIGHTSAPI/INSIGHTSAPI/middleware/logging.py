@@ -31,7 +31,7 @@ class LoggingMiddleware:
             route = getattr(request.resolver_match, "route", None)
             no_log_routes = {"goals/", "/token/obtain", "token/refresh"}
             if (
-                (route not in no_log_routes)
+                route not in no_log_routes
                 and "refresh" not in data
                 or "access" not in data
             ):

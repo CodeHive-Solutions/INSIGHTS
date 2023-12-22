@@ -7,14 +7,20 @@ from .emails import send_email
 @api_view(["POST"])
 def send_report_ethical_line(request):
     """Send a report from the ethical line."""
+    if not "complaint" in request.data:
+        return Response({"error": "El tipo de denuncia es requerido"}, status=400)
+    if not "description" in request.data:
+        return Response(
+            {"error": "La descripción de la denuncia es requerida"}, status=400
+        )
+
     contact_info = ""
     if "contact_info" in request.data:
         contact_info = f"<p>El usuario desea ser contactado mediante:</p>{request.data['contact_info']}"
     errors = send_email(
         sender_user="mismetas",
-        subject=f"Denuncia de {request.data['type']}",
-        message=f"<p>Se ha creado una nueva denuncia: </p> <p>{request.data['description']}</p>"
-        + contact_info,
+        subject=f"Denuncia de {request.data['complaint']}",
+        message=f"<p>{request.data['description']}</p>" + contact_info,
         to_emails=["heibert.mogollon@cyc-bpo.com"],
         html_content=True,
         email_owner="Línea ética",

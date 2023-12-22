@@ -78,40 +78,43 @@ const EthicalLine = () => {
             rest = { ...rest, contact };
         }
 
+        const descriptionValue = values.description.replace(/\n/g, "<br>");
+        rest = { ...rest, description: descriptionValue };
+
         console.log(rest);
-        // setLoadingBar(true);
-        // showSnack("success", "Sugerencia enviada correctamente");
+        setLoadingBar(true);
+        showSnack("success", "Sugerencia enviada correctamente");
 
-        // try {
-        //     const response = await fetch(`${getApiUrl()}suggestions/`, {
-        //         method: "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify(values),
-        //         credentials: "include",
-        //     });
+        try {
+            const response = await fetch(`${getApiUrl()}services/send-ethical-line/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(rest),
+                credentials: "include",
+            });
 
-        //     setLoadingBar(false);
+            setLoadingBar(false);
 
-        //     const data = await response.json();
+            const data = await response.json();
 
-        //     if (!response.ok) {
-        //         throw new Error(data.detail);
-        //     }
+            if (!response.ok) {
+                throw new Error(data.detail);
+            }
 
-        //     if (response.status === 200) {
-        //     }
-        // } catch (error) {
-        //     console.error(error);
+            if (response.status === 200) {
+            }
+        } catch (error) {
+            console.error(error);
 
-        //     if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
-        //         showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
-        //     } else {
-        //         console.log(error.message);
-        //         showSnack("error", error.message);
-        //     }
+            if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
+                showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
+            } else {
+                console.log(error.message);
+                showSnack("error", error.message);
+            }
 
-        //     setLoadingBar(false);
-        // }
+            setLoadingBar(false);
+        }
     };
 
     const FormikTextField = ({ label, type, options, multiline, rows, width, ...props }) => {

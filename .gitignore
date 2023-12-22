@@ -42,3 +42,4 @@ venv
 static/
 test.html
 test.pdf
+*.pdf

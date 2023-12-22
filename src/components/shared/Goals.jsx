@@ -96,7 +96,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
 
     const getGoal = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/15225716/`, {
+            const response = await fetch(`${getApiUrl()}goals/5202927/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -141,9 +141,9 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         getGoal();
     }, []);
 
-    const handleAcceptGoals = async () => {
+    const handleGoalAction = async (status, goalType) => {
         const body = {
-            accepted: true,
+            accepted: status,
             accepted_at: new Date().toISOString(),
         };
 
@@ -183,7 +183,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                                 Meta de Entrega Rechazada
                             </Typography>
                             <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained" onClick={handleUndoDeclinedGoal("delivery")}>
+                                <Button variant="contained" onClick={handleGoalAction(null, "accepted")}>
                                     Deshacer el rechazo
                                 </Button>
                             </Box>
@@ -204,17 +204,19 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                     ) : (
                         <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                             <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                                <Button variant="contained" onClick={{ handleAcceptGoals }}>
+                                <Button variant="contained" onClick={handleGoalAction(true, "accepted")}>
                                     Aceptar
                                 </Button>
                                 <Button variant="contained">Detalles</Button>
-                                <Button variant="contained">Rechazar</Button>
+                                <Button variant="contained" onClick={handleGoalAction(false, "accepted")}>
+                                    Rechazar
+                                </Button>
                             </Box>
                             <TableContainer component={Paper}>
                                 <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
                                     <TableHead>
                                         <TableRow>
-                                            {goalAdvisorClaro
+                                            {goalAdvisorClaro.length > 0
                                                 ? Object.values(claroGoalsHeader).map((header) => (
                                                       <TableCell align="center" key={header}>
                                                           {header}
@@ -228,7 +230,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {goalAdvisorClaro ? (
+                                        {goalAdvisorClaro.length > 0 ? (
                                             goalAdvisorClaro.map((row, index) => (
                                                 <TableRow key={index}>
                                                     <TableCell align="center">{row.fringe}</TableCell>
@@ -259,7 +261,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                                 Meta Rechazada
                             </Typography>
                             <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained" onClick={handleUndoDeclinedGoal("execution")}>
+                                <Button variant="contained" onClick={handleGoalAction(null, "accepted_execution")}>
                                     Deshacer el rechazo
                                 </Button>
                             </Box>
@@ -276,9 +278,13 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                     ) : executionTotalGoal ? (
                         <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                             <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                                <Button variant="contained">Aceptar</Button>
+                                <Button variant="contained" onClick={handleGoalAction(true, "accepted_execution")}>
+                                    Aceptar
+                                </Button>
                                 <Button variant="contained">Detalles</Button>
-                                <Button variant="contained">Rechazar</Button>
+                                <Button variant="contained" onClick={handleGoalAction(false, "accepted_execution")}>
+                                    Rechazar
+                                </Button>
                             </Box>
                             <TableContainer component={Paper}>
                                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
