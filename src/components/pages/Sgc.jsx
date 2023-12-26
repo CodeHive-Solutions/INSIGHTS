@@ -116,6 +116,28 @@ export const Sgc = () => {
         window.scrollTo(0, 0);
     }, []);
 
+    const getFiles = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}sgc/`, {
+                method: "GET",
+                credentials: "include",
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail);
+            } else if (response.status === 200) {
+                setRows(data);
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    useEffect(() => {
+        getFiles();
+    }, []);
+
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setFileName("Cargar Archivo");
@@ -160,15 +182,58 @@ export const Sgc = () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
 
-    const handleDeleteClick = (id) => () => {
-        setRows(rows.filter((row) => row.id !== id));
+    const handleDeleteClick = async (id) => {
+        try {
+            const response = await fetch(`${getApiUrl()}sgc/${id}`, {
+                method: "DELETE",
+                include: "credentials",
+                body: JSON.stringify({ id: id }),
+            });
+            if (response.status === 204) {
+                setRows(rows.filter((row) => row.id !== id));
+                showSnack("success", "Se ha eliminado el registro correctamente.");
+            } else {
+                showSnack("error", "Error al eliminar el registro");
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+            setSnackbarMessage("Error al eliminar la meta: " + error.message);
+        }
     };
 
-    const processRowUpdate = (newRow) => {
-        const updatedRow = { ...newRow, isNew: false };
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        showSnack("success", "Se ha actualizado la fila correctamente.");
-        return updatedRow;
+    const processRowUpdate = async (newRow) => {
+        // const updatedRow = { ...newRow, isNew: false };
+        // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
+        // showSnack("success", "Se ha actualizado la fila correctamente.");
+        // return updatedRow;
+        console.log(newRow);
+
+        // const newRowWithCedula = { ...newRow, cedula: cedula };
+        // try {
+        //     const response = await fetch(`${getApiUrl()}goals/${newRow.cedula}/`, {
+        //         method: "PATCH",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify(newRowWithCedula),
+        //     });
+
+        //     if (!response.ok) {
+        //         const data = await response.json();
+        //         console.error(data);
+        //         throw new Error(response.statusText);
+        //     } else if (response.status === 200) {
+        //         const data = await response.json();
+        //         setOpenSnackbar(true);
+        //         setSnackbarSeverity("success");
+        //         setSnackbarMessage("Meta actualizada correctamente");
+        //         handleSave();
+        //         return data;
+        //     }
+        // } catch (error) {
+        //     console.error(error);
+        // }
     };
 
     const handleRowModesModelChange = (newRowModesModel) => {
@@ -183,6 +248,10 @@ export const Sgc = () => {
 
     const handleClickFile = (id) => {
         hiddenFileInput.current.click();
+    };
+
+    const handleDownloadFile = (id) => {
+        window.open(`${getApiUrl}sgc/${id}`);
     };
 
     const handleFileChange = (event) => {
@@ -272,24 +341,26 @@ export const Sgc = () => {
         {
             field: "area",
             headerName: "Area",
-            width: 70,
+            width: 250,
             type: "singleSelect",
             editable: editAccess,
             valueOptions: ["DE", "GA", "GC", "GH", "GL", "GP", "GR", "GS", "GT", "SG-SST"],
         },
 
-        { field: "tipo", headerName: "Tipo", width: 70, type: "singleSelect", editable: editAccess, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
-        { field: "subtipo", headerName: "Subtipo", width: 70, editable: editAccess },
-        { field: "nombre", headerName: "Nombre", width: 700, editable: editAccess },
-        { field: "version", headerName: "Version", width: 70, editable: editAccess },
+        { field: "type", headerName: "Tipo", width: 70, type: "singleSelect", editable: editAccess, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
+        { field: "sub_type", headerName: "Subtipo", width: 70, editable: editAccess },
+        { field: "name", headerName: "Nombre", width: 500, editable: editAccess },
+        // { field: "file", headerName: "file name", width: 700, editable: editAccess },
+        // { field: "version", headerName: "Version", width: 70, editable: editAccess },
+        // { field: "version", headerName: "Version", width: 70, editable: editAccess },
         {
-            field: "archivo",
+            field: "file",
             headerName: "Archivo",
             width: 80,
             type: "actions",
             cellClassName: "actions",
-            getActions: ({ id }) => {
-                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+            getActions: (GridRowParams) => {
+                const isInEditMode = rowModesModel[GridRowParams.id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
                     return [
@@ -301,7 +372,7 @@ export const Sgc = () => {
                                 sx={{
                                     color: "primary.main",
                                 }}
-                                onClick={() => handleClickFile(id)}
+                                onClick={() => handleClickFile(GridRowParams.id)}
                             />
                         </>,
                     ];
@@ -311,6 +382,7 @@ export const Sgc = () => {
                     <GridActionsCellItem
                         icon={<FileDownloadIcon />}
                         label="Save"
+                        onClick={() => handleDownloadFile(GridRowParams.row.id)}
                         sx={{
                             color: "primary.main",
                         }}
@@ -355,7 +427,7 @@ export const Sgc = () => {
 
                 return [
                     <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
-                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={handleDeleteClick(id)} />,
+                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />,
                 ];
             },
         });

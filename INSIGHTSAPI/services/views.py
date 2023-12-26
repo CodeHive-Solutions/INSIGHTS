@@ -1,7 +1,33 @@
 """Views for the services app."""
+import os
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from django_sendfile import sendfile
+from django.shortcuts import get_object_or_404
 from .emails import send_email
+
+
+class FileDownloadMixin(APIView):
+    """Mixin for download files."""
+
+    # The model have to be put in the views
+    model = None
+
+    def get(self, request, pk):
+        """Get the file."""
+        file_instance = get_object_or_404(self.model, pk=pk)
+
+        file_path = file_instance.file.path
+        file_name = file_name = os.path.basename(file_path)
+
+        response = sendfile(
+            request,
+            file_path,
+            attachment=True,
+            attachment_filename=file_name,
+        )
+        return response
 
 
 @api_view(["POST"])

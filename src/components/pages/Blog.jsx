@@ -12,7 +12,8 @@ import emergency from "../../images/blog/emergency.png";
 import Skeleton from "@mui/material/Skeleton";
 import article1 from "../../images/articles/article1.jpg";
 import despedida from "../../images/blog/despedida.jpg";
-
+import cibersecurity from "../../images/blog/cibersecurity.jpg";
+import bienestar from "../../images/blog/bienestar.jpg";
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -41,9 +42,9 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
                 textAlign: "left",
                 cursor: "pointer",
                 transition: "transform 0.3s ease",
-                "&:hover": {
-                    transform: "scale(1.05)",
-                },
+                // "&:hover": {
+                //     transform: "scale(1.05)",
+                // },
             }}
             onClick={handleCardClick}
         >
@@ -95,18 +96,14 @@ const Blog = () => {
                 ></MediaCard>
                 <MediaCard
                     title={"Desarrollo Profesional en el Mundo del BPO"}
-                    subtitle={
-                        "Crecimiento y oportunidades para los empleados del centro de llamadas: estrategias para avanzar en tu carrera en el emocionante sector de externalización de procesos de negocio."
-                    }
-                    img={homeImages[2].image}
+                    subtitle={"C&C Services y la Ciberseguridad en la Era Actual"}
+                    img={cibersecurity}
                     articleId={3}
                 ></MediaCard>
                 <MediaCard
-                    title={"Optimizando la Gestión de Llamadas"}
-                    subtitle={
-                        "Mejores prácticas y técnicas eficaces para manejar conversaciones con los clientes y garantizar una experiencia de llamada fluida y exitosa."
-                    }
-                    img={homeImages[3].image}
+                    title={"C&C Services: Innovación en el Bienestar Laboral para Empleados Productivos"}
+                    subtitle={"Una Mirada Profunda a los Programas de Bienestar Integral y su Impacto en la Productividad y la Satisfacción Laboral"}
+                    img={bienestar}
                     articleId={4}
                 ></MediaCard>
             </Box>

@@ -5,15 +5,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sgc', '0001_initial'),
+        ("sgc", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sgcfile',
-            name='file',
-            field=models.FileField(upload_to='files/SGC/', validators=[sgc.models.validate_file_extension]),
+            model_name="sgcfile",
+            name="file",
+            field=models.FileField(upload_to="files/SGC/"),
         ),
     ]

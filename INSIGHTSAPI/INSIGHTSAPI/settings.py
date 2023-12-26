@@ -34,6 +34,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+SENDFILE_ROOT = MEDIA_ROOT
+
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static"
@@ -73,6 +75,7 @@ INSTALLED_APPS = [
     "users",
     "excels_processing",
     "pqrs",
+    "django_sendfile",
 ]
 
 MIDDLEWARE = [
@@ -96,6 +99,7 @@ REST_FRAMEWORK = {
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
 }
+
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True
@@ -163,7 +167,7 @@ DATABASES = {
     #     'NAME': 'asteriskdb',
     # }
     # 'intranet': { # MySQL too old
-    #     "user": "mtc",
+    #     "user": "root",
     #     "password": os.environ["LEYES"],
     #     "host": "172.16.0.6",
     #     "port": "3306",
@@ -296,6 +300,11 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # AUTH_LDAP_USER_DN_TEMPLATE = 'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 # AUTH_LDAP_USER_DN_TEMPLATE = '(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
+
+if DEBUG:
+    SENDFILE_BACKEND = "django_sendfile.backends.development"
+else:
+    SENDFILE_BACKEND = "django_sendfile.backends.simple"
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=15),

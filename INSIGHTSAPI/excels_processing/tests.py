@@ -109,7 +109,7 @@ class CallTransferTestCase(BaseTestCase):
             response = self.client.post(
                 reverse("call-transfer-list"),
                 {"file": file_obj, "campaign": "test_falabella"},
-                cookies=self.client.cookies,  # type: ignore
+f                cookies=self.client.cookies,  # type: ignore
             )
             self.assertEqual(response.status_code, 200, response.data)  # type: ignore
             self.assertEqual(response.data["fails"], [], response.data)  # type: ignore
