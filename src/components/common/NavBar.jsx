@@ -247,8 +247,8 @@ const Navbar = () => {
                         </IconButton>
                     ) : (
                         <>
-                            <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                             <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
+                            <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                             <CustomNavLink to="/logged/sgc">Gestor Documental</CustomNavLink>
                             <Typography
                                 onMouseEnter={handleUtilitariosMenuOpen}
@@ -414,7 +414,7 @@ const Navbar = () => {
                     <ListItemIcon>
                         <Settings />
                     </ListItemIcon>
-                    Gestor Documental
+                    Gestión Documental
                 </MenuItem>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Tooltip title="Configuración de cuenta">

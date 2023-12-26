@@ -109,7 +109,7 @@ class CallTransferTestCase(BaseTestCase):
             response = self.client.post(
                 reverse("call-transfer-list"),
                 {"file": file_obj, "campaign": "test_falabella"},
-f                cookies=self.client.cookies,  # type: ignore
+                cookies=self.client.cookies,  # type: ignore
             )
             self.assertEqual(response.status_code, 200, response.data)  # type: ignore
             self.assertEqual(response.data["fails"], [], response.data)  # type: ignore
@@ -120,11 +120,11 @@ f                cookies=self.client.cookies,  # type: ignore
     def test_upload_call_transfer_file_banco_agrario(self):
         """Test uploading a call transfer file to the server"""
         # Create the folders for the test
-        path_banco_agrario = "/var/servers/banco_agrario/test/test/2023/12/05/OUT"
+        path_banco_agrario = "/var/servers/banco_agrario/test/test/2023/12/05/OUT/"
         os.makedirs(path_banco_agrario, exist_ok=True)
         with open(
             path_banco_agrario
-            + "/76309250_72506917047_20231129-185927_3103233725_1411-all.mp3",
+            + "1067521833_725045210_20231128-185934_3103233725_1404-all.mp3",
             "w",
             encoding="utf-8",
         ) as file_obj:
@@ -142,6 +142,7 @@ f                cookies=self.client.cookies,  # type: ignore
                 cookies=self.client.cookies,  # type: ignore
             )
             self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(response.data["fails"], [], response.data)  # type: ignore
 
     def tearDown(self):
         """Tear down the test case"""

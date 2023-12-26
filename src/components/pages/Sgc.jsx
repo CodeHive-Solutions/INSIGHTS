@@ -185,9 +185,8 @@ export const Sgc = () => {
     const handleDeleteClick = async (id) => {
         try {
             const response = await fetch(`${getApiUrl()}sgc/${id}`, {
-                method: "DELETE",
-                include: "credentials",
-                body: JSON.stringify({ id: id }),
+                method: "delete",
+                credentials: "include",
             });
             if (response.status === 204) {
                 setRows(rows.filter((row) => row.id !== id));
@@ -451,7 +450,7 @@ export const Sgc = () => {
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Gestor Documental
+                    Gestión Documental
                 </Typography>
                 <DataGrid
                     sx={{ width: "100%" }}

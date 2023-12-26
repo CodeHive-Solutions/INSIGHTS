@@ -54,11 +54,11 @@ const managements = [
             "Mantener y gestionar la plataforma tecnológica existente, implementar nuevas soluciones tecnológicas que provean en forma oportuna, eficiente y transparente la información necesaria para el cumplimiento de los fines misionales de C&C Services, formulando lineamientos relacionados con estándares y buenas prácticas para el manejo de la información.",
     },
     {
-        name: "Yanneth Pinzón ",
-        management: "Gerente de Gestión Humana",
-        image: yannethPinzon,
+        name: "Diego González",
+        management: "Gerente de Legal y Riesgo",
+        image: diegoGonzales,
         description:
-            "Proveer, mantener y desarrollar un recurso humano altamente calificado y motivado para alcanzar los objetivos de la organización a través de la aplicación de programas enfocados en conectar al Talento Humano con el propósito de la compañía desde sus habilidades, motivaciones, conocimientos y pasiones, para así apalancar efectivamente el éxito de los objetivos del negocio y a su vez velar por el cumplimiento de las normas y procedimientos vigentes",
+            "LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.",
     },
     {
         name: "Angela Duran",
@@ -82,11 +82,11 @@ const managements = [
             "Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.",
     },
     {
-        name: "Diego González",
-        management: "Gerente de Legal y Riesgo",
-        image: diegoGonzales,
+        name: "Jeanneth Pinzón ",
+        management: "Gerente de Gestión Humana",
+        image: yannethPinzon,
         description:
-            "LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.",
+            "Proveer, mantener y desarrollar un recurso humano altamente calificado y motivado para alcanzar los objetivos de la organización a través de la aplicación de programas enfocados en conectar al Talento Humano con el propósito de la compañía desde sus habilidades, motivaciones, conocimientos y pasiones, para así apalancar efectivamente el éxito de los objetivos del negocio y a su vez velar por el cumplimiento de las normas y procedimientos vigentes",
     },
     {
         name: "Mario Giron",

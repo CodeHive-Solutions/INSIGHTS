@@ -242,7 +242,7 @@ const Home = () => {
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                     <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
                         {yesterdayBirthdays.length === 0 ? (
-                            noBirthdays("No hubieron cumpleaños ayer")
+                            noBirthdays("No hubo cumpleaños ayer")
                         ) : (
                             <CarouselComponent items={yesterdayBirthdays} description={yesterdayBirthdays.nombre} day={"Ayer"} height={"280px"} width={"100%"} />
                         )}

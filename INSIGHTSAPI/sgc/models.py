@@ -31,7 +31,7 @@ class SGCFile(models.Model):
     """Model for the SGC files."""
 
     name = models.CharField(max_length=200)
-    area = models.ForeignKey("hierarchy.area", on_delete=models.DO_NOTHING)
+    area = models.CharField(max_length=100)
     type = models.CharField(max_length=100)
     sub_type = models.CharField(max_length=100)
     version = models.CharField(max_length=100, default="1.0")
