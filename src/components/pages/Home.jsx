@@ -17,10 +17,10 @@ import imageTest1 from "../../images/home-carousel/image00002.jpeg";
 import imageTest2 from "../../images/home-carousel/image00003.jpeg";
 import imageTest3 from "../../images/home-carousel/image00004.jpeg";
 import imageTest4 from "../../images/home-carousel/image00006.jpeg";
-import realImage from "../../images/home-carousel/2.jpg";
 import realImage2 from "../../images/home-carousel/3.jpg";
 import realImage3 from "../../images/home-carousel/4.jpg";
 import Avatar from "../../images/home-carousel/avatar.jpg";
+import image2024 from "../../images/home-carousel/2024.png";
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
 import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
@@ -36,6 +36,7 @@ import vancie1 from "../../images/vacancies/1.jpg";
 import vancie2 from "../../images/vacancies/2.jpg";
 import vancie3 from "../../images/vacancies/3.png";
 import vancie4 from "../../images/vacancies/4.jpg";
+import vancie5 from "../../images/vacancies/5.png";
 
 //benefits
 import realBenefit1 from "../../images/benefits/1.png";
@@ -43,18 +44,18 @@ import realBenefit2 from "../../images/benefits/2.png";
 import { RepeatOneSharp } from "@mui/icons-material";
 
 const benefits = [
-    { image: realBenefit1, title: "Beneficio 1" },
+    { image: vancie5, title: "Beneficio 1" },
     { image: realBenefit2, title: "Beneficio 2" },
 ];
 
 const vacancies = [
     // { image: benefit3, title: "Vacante 1" },
     // { image: benefit4, title: "Vacante 2" },
-    { image: realBenefit1, title: "Beneficio 1" },
+    { image: vancie5, title: "Beneficio 1" },
     { image: realBenefit2, title: "Beneficio 2" },
 ];
 
-const homeImages = [{ image: realImage }, { image: realImage2 }, { image: realImage3 }];
+const homeImages = [{ image: image2024 }, { image: realImage2 }, { image: realImage3 }];
 const birthdays = [
     { image: barbaraVanegas, name: "nombre ejemplo", description: "Yanbal" },
     { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
@@ -197,7 +198,7 @@ const Home = () => {
                 className="privacy-screen"
             /> */}
             <Box sx={{ display: "flex", mt: "4rem", textAlign: "center", justifyContent: "center" }}>
-                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"80vh"} width={"100%"} />
+                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"650px"} width={"100%"} />
             </Box>
             {/* <Box
                 className="waveWrapper"
@@ -263,8 +264,8 @@ const Home = () => {
                     </Card>{" "}
                 </Box>
             </Grow>
-            <Box sx={{ display: "flex", justifyContent: "space-between", p: "2rem", gap: "2rem" }}>
-                <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "2rem" }}>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: "2rem", gap: "2rem", flexWrap: "wrap" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                     <Typography
                         color="primary"
                         id="section1"
@@ -272,9 +273,9 @@ const Home = () => {
                     >
                         Vacantes
                     </Typography>
-                    <CarouselComponent items={vacancies} height={"80vh"} width={"100%"} />
+                    <CarouselComponent items={vacancies} height={"650px"} width={"600px"} />
                 </Box>
-                <Box sx={{ display: "flex", flexDirection: "column", width: "100%", gap: "2rem" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                     <Typography
                         color="primary"
                         id="section1"
@@ -282,7 +283,7 @@ const Home = () => {
                     >
                         Beneficios
                     </Typography>
-                    <CarouselComponent items={benefits} height={"80vh"} width={"100%"} />
+                    <CarouselComponent items={benefits} height={"650px"} width={"600px"} />
                 </Box>
             </Box>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />

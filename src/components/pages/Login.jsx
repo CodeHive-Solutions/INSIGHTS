@@ -1,6 +1,6 @@
 import { Box, Typography, Button, TextField, Link } from "@mui/material";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import login_image from "../../images/login/login-image.webp";
+import login_image from "../../images/login/new-login-image.jpg";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
 import React from "react";

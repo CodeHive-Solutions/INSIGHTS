@@ -19,6 +19,7 @@ import { Formik, Form, useField, useFormikContext } from "formik";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Save from "@mui/icons-material/Save";
 import { getApiUrl } from "../../assets/getApi";
+
 import {
     GridRowModes,
     DataGrid,
@@ -100,9 +101,9 @@ const initialRows = [
 ];
 
 export const Sgc = () => {
+    const hiddenFileInput = useRef(null);
     const [rowModesModel, setRowModesModel] = useState({});
     const [rows, setRows] = useState(initialRows);
-    const hiddenFileInput = useRef(null);
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
@@ -110,6 +111,7 @@ export const Sgc = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFileUpdate, setSelectedFileUpdate] = useState(null);
     const [fileName, setFileName] = useState("Cargar Archivo");
 
     useEffect(() => {
@@ -137,6 +139,10 @@ export const Sgc = () => {
     useEffect(() => {
         getFiles();
     }, []);
+
+    const handleDownloadFile = (id) => {
+        window.open(`${getApiUrl()}services/file-download/sgc/${id}`);
+    };
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
@@ -190,6 +196,7 @@ export const Sgc = () => {
             });
             if (response.status === 204) {
                 setRows(rows.filter((row) => row.id !== id));
+                getFiles();
                 showSnack("success", "Se ha eliminado el registro correctamente.");
             } else {
                 showSnack("error", "Error al eliminar el registro");
@@ -202,37 +209,34 @@ export const Sgc = () => {
     };
 
     const processRowUpdate = async (newRow) => {
+        console.log(newRow);
         // const updatedRow = { ...newRow, isNew: false };
         // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
         // showSnack("success", "Se ha actualizado la fila correctamente.");
         // return updatedRow;
-        console.log(newRow);
+        try {
+            const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
+                method: "PATCH",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newRow),
+            });
 
-        // const newRowWithCedula = { ...newRow, cedula: cedula };
-        // try {
-        //     const response = await fetch(`${getApiUrl()}goals/${newRow.cedula}/`, {
-        //         method: "PATCH",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //         },
-        //         body: JSON.stringify(newRowWithCedula),
-        //     });
-
-        //     if (!response.ok) {
-        //         const data = await response.json();
-        //         console.error(data);
-        //         throw new Error(response.statusText);
-        //     } else if (response.status === 200) {
-        //         const data = await response.json();
-        //         setOpenSnackbar(true);
-        //         setSnackbarSeverity("success");
-        //         setSnackbarMessage("Meta actualizada correctamente");
-        //         handleSave();
-        //         return data;
-        //     }
-        // } catch (error) {
-        //     console.error(error);
-        // }
+            if (!response.ok) {
+                const data = await response.json();
+                console.error(data);
+                throw new Error(response.statusText);
+            } else if (response.status === 200) {
+                const data = await response.json();
+                getFiles();
+                showSnack("success", "El archivo ha sido actualizado correctamente.");
+                return data;
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const handleRowModesModelChange = (newRowModesModel) => {
@@ -249,14 +253,12 @@ export const Sgc = () => {
         hiddenFileInput.current.click();
     };
 
-    const handleDownloadFile = (id) => {
-        window.open(`${getApiUrl}sgc/${id}`);
-    };
-
-    const handleFileChange = (event) => {
-        const fileUploaded = event.target.files[0];
-        // Now you can use the fileUploaded object for further processing
-        showSnack("success", "Se ha cargado el archivo correctamente.");
+    const handleFileChange = (id) => {
+        return () => (event) => {
+            console.log(id);
+            console.log(event);
+            // Rest of your code handling the file change event
+        };
     };
 
     const CustomToolbar = () => {
@@ -272,9 +274,11 @@ export const Sgc = () => {
                         utf8WithBom: true,
                     }}
                 />
-                <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
-                    AÑADIR
-                </Button>
+                {editAccess ? (
+                    <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                        AÑADIR
+                    </Button>
+                ) : null}
                 <Box sx={{ textAlign: "end", flex: "1" }}>
                     <GridToolbarQuickFilter />
                 </Box>
@@ -297,12 +301,13 @@ export const Sgc = () => {
                 method: "POST",
                 credentials: "include",
                 body: formData,
-                // headers: { "Content-Type": "multipart/form-data" },
             });
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.detail);
-            } else if (response.status === 200) {
+            } else if (response.status === 201) {
+                handleCloseDialog();
+                getFiles();
                 showSnack("success", "Se ha cargado el archivo correctamente.");
             }
         } catch (error) {
@@ -317,22 +322,27 @@ export const Sgc = () => {
     };
 
     const areas = [
-        { value: "GERENCIA ADMINISTRATIVA", label: "Gerencia Administrativa" },
-        { value: "GERENCIA DE OPERACIONES", label: "Gerencia de Operaciones" },
-        { value: "GERENCIA GESTIÓN HUMANA", label: "Gerencia de Gestión Humana" },
-        { value: "GERENCIA DE LEGAL RIESGO", label: "Gerencia de Legal y Riesgo" },
-        { value: "GERENCIA DE PLANEACIÓN", label: "Gerencia de Planeacion" },
-        { value: "GERENCIA DE TECNOLOGÍA", label: "Gerencia de Tecnología" },
+        { value: "GESTION TECNOLOGICA", label: "GT" },
+        { value: "GESTION HUMANA", label: "GH" },
+        { value: "DIRECCIONAMIENTO ESTRATEGICO", label: "DE" },
+        { value: "GESTION DE PROCESOS", label: "GP" },
+        { value: "GESTION CARTERA", label: "GC" },
+        { value: "GESTION ADMINISTRATIVA", label: "GA" },
+        { value: "GESTION LEGAL", label: "GL" },
+        { value: "GESTION RIESGO", label: "GR" },
+        { value: "CONTROL INTERNO", label: "CI" },
+        { value: "GESTION DE SERVICIO", label: "GS" },
+        { value: "SISTEMA DE GESTION DE SEGURIDAD Y SALUD EN EL TRABAJO", label: "SST-GA" },
     ];
 
     const tipos = [
-        { value: "CR", label: "CR" },
-        { value: "IN", label: "IN" },
-        { value: "MA", label: "MA" },
         { value: "P", label: "P" },
-        { value: "PL", label: "PL" },
         { value: "PR", label: "PR" },
+        { value: "PL", label: "PL" },
         { value: "RG", label: "RG" },
+        { value: "MA", label: "MA" },
+        { value: "IN", label: "IN" },
+        { value: "CR", label: "CR" },
     ];
 
     const columns = [
@@ -340,18 +350,16 @@ export const Sgc = () => {
         {
             field: "area",
             headerName: "Area",
-            width: 250,
+            width: 75,
             type: "singleSelect",
             editable: editAccess,
-            valueOptions: ["DE", "GA", "GC", "GH", "GL", "GP", "GR", "GS", "GT", "SG-SST"],
+            valueOptions: areas,
         },
 
         { field: "type", headerName: "Tipo", width: 70, type: "singleSelect", editable: editAccess, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
-        { field: "sub_type", headerName: "Subtipo", width: 70, editable: editAccess },
-        { field: "name", headerName: "Nombre", width: 500, editable: editAccess },
-        // { field: "file", headerName: "file name", width: 700, editable: editAccess },
-        // { field: "version", headerName: "Version", width: 70, editable: editAccess },
-        // { field: "version", headerName: "Version", width: 70, editable: editAccess },
+        { field: "sub_type", headerName: "Subtipo", width: 100, editable: editAccess },
+        { field: "name", headerName: "Nombre", width: 550, editable: editAccess },
+        { field: "version", headerName: "Version", width: 70, editable: editAccess },
         {
             field: "file",
             headerName: "Archivo",
@@ -364,10 +372,10 @@ export const Sgc = () => {
                 if (isInEditMode) {
                     return [
                         <>
-                            <input type="file" ref={hiddenFileInput} onChange={handleFileChange} style={{ display: "none" }} />
+                            <input type="file" ref={hiddenFileInput} onChange={() => handleFileChange(GridRowParams.id)()} style={{ display: "none" }} />
                             <GridActionsCellItem
                                 icon={<UploadFileIcon />}
-                                label="Save"
+                                label="upload"
                                 sx={{
                                     color: "primary.main",
                                 }}
@@ -380,7 +388,7 @@ export const Sgc = () => {
                 return [
                     <GridActionsCellItem
                         icon={<FileDownloadIcon />}
-                        label="Save"
+                        label="download"
                         onClick={() => handleDownloadFile(GridRowParams.row.id)}
                         sx={{
                             color: "primary.main",

@@ -139,8 +139,8 @@ const ArticlePage = () => {
     const contentHtml = { __html: article.content };
 
     return (
-        <Container sx={{ height: "max-content", pt: "5rem" }}>
-            <Box sx={{ height: "40vh", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", px: "5rem", gap: "3rem" }}>
+        <Container sx={{ height: "max-content" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", px: "5rem", pt: "7rem", pb: "2rem", gap: "3rem" }}>
                 <Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bolder", fontSize: "3em", fontFamily: "Poppins" }}>
                     {article.title}
                 </Typography>

@@ -7,7 +7,6 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
-    { value: "MOGOLLON MAHECHA HEIBERT STEVEN", label: "MOGOLLON MAHECHA HEIBERT STEVEN" },
     { value: "Castañeda Camacho Pablo Cesar - Presidente", label: "Castañeda Camacho Pablo Cesar - Presidente" },
     { value: "César Alberto Garzón Navas - Gerente General	", label: "César Alberto Garzón Navas - Gerente General" },
     { value: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },

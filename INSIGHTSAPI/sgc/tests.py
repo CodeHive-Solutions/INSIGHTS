@@ -13,6 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from hierarchy.models import Area
 import mysql.connector
 from .models import SGCFile
+import base64
 
 
 class TestSGC(BaseTestCase):
@@ -57,28 +58,11 @@ class TestSGC(BaseTestCase):
             cookies=self.client.cookies,
         )
         # Assert that the response status code is HTTP 201 Created
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         file_exist = os.path.exists(
             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
         )
-        self.assertTrue(file_exist)
-
-    def test_update_file(self):
-        """Test updating a file"""
-        file = SGCFile.objects.create(**self.file_data)
-        self.file_data["name"] = "Test File Updated"
-        response = self.client.put(
-            reverse("SGCFile-detail", kwargs={"pk": file.id}),
-            self.file_data,
-            format="multipart",
-            cookies=self.client.cookies,
-        )
-        # Assert that the response status code is HTTP 200 OK
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        file_exist = os.path.exists(
-            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
-        )
-        self.assertTrue(file_exist)
+        self.assertTrue(file_exist, os.listdir(self.media_directory))
 
     # def test_create_file_without_permission(self):
     #     """Test creating a file without permission"""
@@ -139,47 +123,34 @@ class TestSGC(BaseTestCase):
     #     )
     #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # def test_multi_upload(self):
-    #     connection = mysql.connector.connect(
-    #         host="172.16.0.6",
-    #         user="root",
-    #         password=os.environ["LEYES"],
-    #         database="userscyc",
-    #     )
-    #     cursor = connection.cursor(dictionary=True)
-    #     cursor.execute(
-    #         """
-    #     SELECT
-    #         area as area,
-    #         tipo as type,
-    #         subtipo as sub_type,
-    #         nombre as name,
-    #         archivo as file,
-    #         version as version
-    #     FROM userscyc.documentos_sgc
-    #     """
-    #     )
-    #     rows = cursor.fetchall()
-    #     self.assertGreater(len(rows), 0)
-    #     cursor.close()
-    #     connection.close()
-    #     # print(rows)
-    #     sgc_files_to_create = []
-    #     for row in rows:
-    #         content_file = ContentFile(row["file"])
-    #         sgc_files_to_create.append(
-    #             SGCFile(
-    #                 name=row["name"],
-    #                 area=Area.objects.get(id=row["area"]),
-    #                 type=row["type"],
-    #                 sub_type=row["sub_type"],
-    #                 version=row["version"],
-    #                 file=content_file,
-    #             )
-    #         )
-    #     SGCFile.objects.bulk_create(sgc_files_to_create)
-    #     self.assertEqual(len(SGCFile.objects.all()), len(rows))
-    #     print(SGCFile.objects.first().file)
+    def test_update_file(self):
+        """Test updating a file"""
+        response = self.client.post(
+            reverse("SGCFile-list"),
+            self.file_data,
+            format="multipart",
+            cookies=self.client.cookies,
+        )
+        print(response.data)
+        SGCFile.objects.create(**self.file_data)
+        print(os.listdir(self.media_directory))
+        self.file_data["name"] = "Test File Updated"
+        self.file_data["file"] = SimpleUploadedFile(
+            "Test_SGC_Robinson.xlsx", b"Test File Updated"
+        )
+        response = self.client.put(
+            reverse("SGCFile-detail", kwargs={"pk": SGCFile.objects.first().id}),
+            self.file_data,
+            format="multipart",
+            cookies=self.client.cookies,
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        file_exist = os.path.exists(
+            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
+        )
+        print(f"Using {self.media_directory} as media directory")
+        self.assertTrue(file_exist)
 
     def test_update_file_without_permission(self):
         """Test updating a file without permission"""
@@ -229,5 +200,6 @@ class TestSGC(BaseTestCase):
         super().tearDown()
         if self.media_directory.startswith("/tmp"):
             shutil.rmtree(self.media_directory)
+            # pass
         else:
-            print("Not removing %s" % self.media_directory)
+            print(f"Not removing {self.media_directory}")
