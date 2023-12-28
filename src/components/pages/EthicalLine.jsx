@@ -205,9 +205,8 @@ const EthicalLine = () => {
                         ¿Cómo reportar?
                     </Typography>
                     <ul>
-                        <li>Llamando al número telefónico [número]</li>
-                        <li>Enviando un correo electrónico a la dirección [dirección]</li>
-                        <li>Completando el formulario en línea en la página web de la empresa</li>
+                        <li>Para realizar un reporte, le invitamos a completar el formulario disponible al final de esta página. Agradecemos su colaboración.</li>
+                        {/* <li>Completando el formulario en línea en la página web de la empresa</li> */}
                     </ul>
                     <Typography sx={{ fontWeight: "500" }} variant="h5">
                         Confidencialidad

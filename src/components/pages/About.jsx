@@ -20,7 +20,7 @@ import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
 import hectorSotelo from "../../images/managers/hector-sotelo.png";
 import pablo from "../../images/managers/pablo.jpeg";
 import aboutUs from "../../images/about/img-about-2.jpg";
-import organigrama from "../../images/about/organigrama.png";
+import organigrama from "../../images/about/organigrama.jpg";
 
 //mission images
 import mission1 from "../../images/about/image-mission.jpg";
@@ -45,13 +45,6 @@ const managements = [
         image: cesarGarzon,
         description:
             "Garantizar la sostenibilidad de la compañía a través de la planeación, liderazgo y control de las diferentes áreas que permitan alcanzar los objetivos establecidos con los clientes, el recurso humano y los accionistas.",
-    },
-    {
-        name: "Javier Torres",
-        management: "Gerente de Tecnología",
-        image: javierTorres,
-        description:
-            "Mantener y gestionar la plataforma tecnológica existente, implementar nuevas soluciones tecnológicas que provean en forma oportuna, eficiente y transparente la información necesaria para el cumplimiento de los fines misionales de C&C Services, formulando lineamientos relacionados con estándares y buenas prácticas para el manejo de la información.",
     },
     {
         name: "Diego González",

@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from django_sendfile import sendfile
 from django.shortcuts import get_object_or_404
 from .emails import send_email
+from django.conf import settings
 
 
 class FileDownloadMixin(APIView):
@@ -43,11 +44,19 @@ def send_report_ethical_line(request):
     contact_info = ""
     if "contact_info" in request.data:
         contact_info = f"<p>El usuario desea ser contactado mediante:</p>{request.data['contact_info']}"
+    if settings.DEBUG:
+        to_emails = (["heibert.mogollon@cyc-bpo.com", "juan.carreno@cyc-bpo.com"],)
+    else:
+        to_emails = [
+            "cesar.garzon@cyc-bpo.com",
+            "mario.giron@cyc-bpo.com",
+            "jeanneth.pinzon@cyc-bpo.com",
+        ]
     errors = send_email(
         sender_user="mismetas",
         subject=f"Denuncia de {request.data['complaint']}",
         message=f"<p>{request.data['description']}</p>" + contact_info,
-        to_emails=["heibert.mogollon@cyc-bpo.com"],
+        to_emails=to_emails,
         html_content=True,
         email_owner="Línea ética",
         return_path="heibert.mogollon@cyc-bpo.com",

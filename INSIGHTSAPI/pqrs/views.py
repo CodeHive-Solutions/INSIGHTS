@@ -40,17 +40,19 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Save the post data when creating a new model instance."""
         user = self.request.user
-        name = self.request.data["name-area"].split(" - ")[0].upper()
+        if not "name" in self.request.data:
+            return Response({"error": "El nombre es requerido"}, status=400)
+        name = self.request.data["name"]
         response = super().create(request, *args, **kwargs)
 
         if response.status_code == status.HTTP_201_CREATED:
             with connections["staffnet"].cursor() as cursor:
                 cursor.execute(
-                    "SELECT correo FROM personal_information WHERE nombre = %s",
+                    "SELECT correo_corporativo FROM personal_information WHERE nombre = %s",
                     (name,),
                 )
                 row = cursor.fetchone()
-                if not row:
+                if not row or not row[0]:
                     return Response(
                         {"error": f"No se encontró el email de {name}"},
                         status=status.HTTP_404_NOT_FOUND,
@@ -60,11 +62,7 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                     subject="Nueva PQRS",
                     message=f"<p>El usuario {user.first_name} {user.last_name} ha creado una nueva PQRS: </p> {request.data['description']}",
                     to_emails=[row[0]],
-                    bcc_emails=[
-                        "juan.carreno@cyc-bpo.com",
-                        "heibert.mogollon@gmail.com",
-                    ],
-                    save_message=False,
+                    # cc_emails=[""]
                     html_content=True,
                     email_owner="PQRS",
                     return_path="heibert.mogollon@cyc-bpo.com",

@@ -20,7 +20,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/complaints/",
             {
-                "name-area": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",
@@ -33,7 +33,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/congratulations/",
             {
-                "name-area": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",
@@ -46,7 +46,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/suggestions/",
             {
-                "name-area": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",
@@ -59,7 +59,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/others/",
             {
-                "name-area": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",

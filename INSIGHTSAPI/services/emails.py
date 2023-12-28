@@ -15,7 +15,7 @@ logger = logging.getLogger("requests")
 
 ALLOWED_EMAILS = {
     "mismetas": {"mismetas@cyc-services.com.co": os.environ["C_2023"]},
-    "acuerdosBBVA": {"acuerdos.bbva@cyc-services.com.co": "Colombia2023*"},
+    "no-reply": {"no-reply@cyc-services.com.co": os.environ["TecPlusLess"]},
 }
 
 
@@ -38,7 +38,7 @@ def send_email(
     Send an email.
 
     Parameters:
-    - sender_user (str): The username for authentication.
+    - sender_user (str): The email for authentication.
     - subject (str): The subject of the email.
     - message (str): The content of the email.
     - to_emails (Union[str, List[str]]): The recipient(s) of the email.
@@ -70,11 +70,8 @@ def send_email(
         smtp_connection.starttls(context=context)
         smtp_connection.login(sender_email, sender_password)
         from_email_domain = sender_email.split("@")[1]
-        from_email = (
-            f"{from_email}@{from_email_domain}"
-            if from_email
-            else f"no-reply@{from_email_domain}"
-        )
+        if from_email:
+            from_email = f"{from_email}@{from_email_domain}"
 
         if email_owner:
             from_email = f"{email_owner} <{from_email}>"

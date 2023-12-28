@@ -5,8 +5,6 @@ import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Avatar from "@mui/material/Avatar";
 import imgAvatar from "../../images/birthdays/cristian-gonzales copy.jpeg";
-import emergency from "../../images/blog/emergency.png";
-import blog1 from "../../images/blog/blog-1.png";
 import article1 from "../../images/articles/article1.jpg";
 import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";

@@ -173,6 +173,7 @@ export const Sgc = () => {
     };
 
     const handleCancelClick = (id) => () => {
+        setSelectedFileUpdate(null);
         setRowModesModel({
             ...rowModesModel,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -209,33 +210,57 @@ export const Sgc = () => {
     };
 
     const processRowUpdate = async (newRow) => {
-        console.log(newRow);
-        // const updatedRow = { ...newRow, isNew: false };
-        // setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        // showSnack("success", "Se ha actualizado la fila correctamente.");
-        // return updatedRow;
-        try {
-            const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
-                method: "PATCH",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(newRow),
-            });
+        if (selectedFileUpdate) {
+            const formData = new FormData();
+            formData.append("file", selectedFileUpdate);
+            formData.append("area", newRow.area);
+            formData.append("type", newRow.type);
+            formData.append("sub_type", newRow.sub_type);
+            formData.append("name", newRow.name);
+            formData.append("version", newRow.version);
 
-            if (!response.ok) {
+            try {
+                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
+                    method: "PATCH",
+                    credentials: "include",
+                    body: formData,
+                });
                 const data = await response.json();
-                console.error(data);
-                throw new Error(response.statusText);
-            } else if (response.status === 200) {
-                const data = await response.json();
-                getFiles();
-                showSnack("success", "El archivo ha sido actualizado correctamente.");
-                return data;
+                if (!response.ok) {
+                    throw new Error(data.detail);
+                } else if (response.status === 200) {
+                    getFiles();
+                    showSnack("success", "El archivo ha sido actualizado correctamente.");
+                    return data;
+                }
+            } catch (error) {
+                console.error(error);
+                showSnack("error", error.message);
             }
-        } catch (error) {
-            console.error(error);
+        } else {
+            try {
+                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
+                    method: "PATCH",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(newRow),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    console.error(data);
+                    throw new Error(response.statusText);
+                } else if (response.status === 200) {
+                    const data = await response.json();
+                    getFiles();
+                    showSnack("success", "El registro ha sido actualizado correctamente.");
+                    return data;
+                }
+            } catch (error) {
+                console.error(error);
+            }
         }
     };
 
@@ -253,12 +278,9 @@ export const Sgc = () => {
         hiddenFileInput.current.click();
     };
 
-    const handleFileChange = (id) => {
-        return () => (event) => {
-            console.log(id);
-            console.log(event);
-            // Rest of your code handling the file change event
-        };
+    const handleFileChange = (id, event) => {
+        showSnack("info", "El archivo ha sido cargado correctamente. Selecciona guardar para actualizar el registro.");
+        setSelectedFileUpdate(event.target.files[0]);
     };
 
     const CustomToolbar = () => {
@@ -372,7 +394,7 @@ export const Sgc = () => {
                 if (isInEditMode) {
                     return [
                         <>
-                            <input type="file" ref={hiddenFileInput} onChange={() => handleFileChange(GridRowParams.id)()} style={{ display: "none" }} />
+                            <input type="file" ref={hiddenFileInput} onChange={(event) => handleFileChange(GridRowParams.id, event)} style={{ display: "none" }} />
                             <GridActionsCellItem
                                 icon={<UploadFileIcon />}
                                 label="upload"

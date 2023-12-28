@@ -24,9 +24,7 @@ class TestSGC(BaseTestCase):
     def setUp(self):
         """Set up for the test"""
         super().setUp()
-        with open(
-            "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx", "rb"
-        ) as file:
+        with open("utils/excels/Lista_Robinson.xlsx", "rb") as file:
             file_content = file.read()
         self.file_data = {
             "name": "Test File",
@@ -90,16 +88,20 @@ class TestSGC(BaseTestCase):
     #     # Assert that the response status code is HTTP 400 Bad Request
     #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    # def test_create_file_with_invalid_file(self):
-    #     """Test creating a file with invalid file"""
-    #     self.file_data["file"] = SimpleUploadedFile("Test_SGC_Robinson.xlsx", b"")
-    #     response = self.client.post(
-    #         reverse("SGCFile-list"),
-    #         self.file_data,
-    #         format="multipart",
-    #         cookies=self.client.cookies,
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_create_file_with_invalid_file(self):
+        """Test creating a file with invalid file"""
+        with open("static/logo_cyc.png", "rb") as file:
+            file_content = file.read()
+        self.file_data["file"] = SimpleUploadedFile(
+            "Test_SGC_Robinson.png", file_content
+        )
+        response = self.client.post(
+            reverse("SGCFile-list"),
+            self.file_data,
+            format="multipart",
+            cookies=self.client.cookies,
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     # def test_create_file_with_invalid_file_extension(self):
     #     """Test creating a file with invalid file extension"""
@@ -125,6 +127,7 @@ class TestSGC(BaseTestCase):
 
     def test_update_file(self):
         """Test updating a file"""
+        self.test_create_file()
         response = self.client.post(
             reverse("SGCFile-list"),
             self.file_data,

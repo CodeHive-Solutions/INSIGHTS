@@ -7,16 +7,15 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
-    { value: "Castañeda Camacho Pablo Cesar - Presidente", label: "Castañeda Camacho Pablo Cesar - Presidente" },
-    { value: "César Alberto Garzón Navas - Gerente General	", label: "César Alberto Garzón Navas - Gerente General" },
-    { value: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
-    { value: "Jeanneth Pinzón - Gerente Gestión Humana ", label: "Jeanneth Pinzón - Gerente Gestión Humana" },
-    { value: "Angela Maria Durán Gutierrez - Gerente Planeación", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
-    { value: "Melida Sandoval Cabra - Gerente Administrativa", label: "Melida Sandoval Cabra - Gerente Administrativa" },
-    { value: "Adriana Nataly Páez Castiblanco - Gerente Operaciones", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
-    { value: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo" },
-    { value: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas", label: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas" },
-    { value: "Andrés Beltrán - Director Financiero", label: "Andrés Beltrán	- Director Financiero" },
+    { value: "Castañeda Camacho Pablo Cesar", label: "Castañeda Camacho Pablo Cesar - Presidente" },
+    { value: "César Alberto Garzón Navas", label: "César Alberto Garzón Navas - Gerente General" },
+    { value: "Mario Ernesto Girón Salazar", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
+    { value: "Jeanneth Pinzón", label: "Jeanneth Pinzón - Gerente Gestión Humana" },
+    { value: "Angela Maria Durán Gutierrez", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
+    { value: "Melida Sandoval Cabra", label: "Melida Sandoval Cabra - Gerente Administrativa" },
+    { value: "Adriana Nataly Páez Castiblanco", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
+    { value: "Diego Fernando Gonzalez", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo" },
+    { value: "Hector Gabriel Sotelo", label: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas" },
 ];
 
 const motivos = [
@@ -27,7 +26,7 @@ const motivos = [
 ];
 
 const validationSchema = Yup.object().shape({
-    area: Yup.string().required("Campo requerido"),
+    name: Yup.string().required("Campo requerido"),
     motivo: Yup.string().required("Campo requerido"),
     description: Yup.string().required("Campo requerido"),
 });
@@ -116,11 +115,11 @@ const Suggestions = () => {
                     ortografía para que tu mensaje sea totalmente legible.
                 </Typography>
             </Box>
-            <Formik initialValues={{ area: "", motivo: "", description: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+            <Formik initialValues={{ name: "", motivo: "", description: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
                 {}
                 <Form>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                        <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
+                        <FormikTextField type="select" options={areas} name="name" label="Area" autoComplete="off" spellCheck={false} />
 
                         <FormikTextField type="select" options={motivos} name="motivo" label="Motivo" autoComplete="off" spellCheck={false} />
 

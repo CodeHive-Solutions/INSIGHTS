@@ -8,12 +8,12 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { useNavigate } from "react-router-dom";
-import emergency from "../../images/blog/emergency.png";
 import Skeleton from "@mui/material/Skeleton";
 import article1 from "../../images/articles/article1.jpg";
 import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
+
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -42,9 +42,9 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
                 textAlign: "left",
                 cursor: "pointer",
                 transition: "transform 0.3s ease",
-                // "&:hover": {
-                //     transform: "scale(1.05)",
-                // },
+                "&:hover": {
+                    transform: "scale(1.05)",
+                },
             }}
             onClick={handleCardClick}
         >

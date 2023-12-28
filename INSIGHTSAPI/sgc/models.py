@@ -38,8 +38,8 @@ class SGCFile(models.Model):
     file = models.FileField(
         upload_to="files/SGC/",
         validators=[
-            FileExtensionValidator(["xlsx", "pdf", "docx", "doc", "pptx"]),
-            file_content_validator,
+            # FileExtensionValidator(["xlsx", "pdf", "docx", "doc", "pptx"]),
+            file_content_validator
         ],
     )
 
