@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Container, Box, Typography, Button } from "@mui/material";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -54,6 +54,10 @@ const Quality = () => {
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(campaigns[0]); // Set default campaign
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const handleFileInputChange = (event) => {
         const file = event.target.files[0];

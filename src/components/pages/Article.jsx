@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import { useParams } from "react-router-dom";
 import Container from "@mui/material/Container";
@@ -18,6 +18,9 @@ const homeImages = [
 ];
 
 const ArticlePage = () => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
     // Get the articleId from the route parameters
     const { articleId } = useParams();
 

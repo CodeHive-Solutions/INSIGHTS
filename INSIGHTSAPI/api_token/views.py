@@ -15,14 +15,19 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.data and "access" in response.data:
+            if settings.DEBUG:
+                samesite = "None"
+                path = None
+            else:
+                samesite = "Lax"
+                path = "/token/refresh/"
             response.set_cookie(
                 "access-token",
                 str(response.data["access"]),
                 max_age=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"].seconds,
                 httponly=True,
                 secure=True,
-                # samesite='Lax',
-                samesite="None",
+                samesite=samesite,
                 domain=".cyc-bpo.com",
             )
             response.set_cookie(
@@ -31,10 +36,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 max_age=60 * 60 * 30,
                 httponly=True,
                 secure=True,
-                # samesite="Lax",
-                samesite="None",
                 domain=".cyc-bpo.com",
-                # path="/token/refresh/",
+                samesite=samesite,
+                path=path,
             )
         return response
 
@@ -64,6 +68,7 @@ class CustomTokenRefreshView(TokenRefreshView):
 @api_view(["POST"])
 @permission_classes([AllowAny])
 def logout_view(request):
+    """Logout the user."""
     logout(request)
     response = Response({"message": "Logout successful"}, status=200)
     response.delete_cookie(

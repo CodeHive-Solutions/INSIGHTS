@@ -107,7 +107,9 @@ export const Sgc = () => {
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
-    const [editAccess, setEditAccess] = useState(true);
+    const [addPermission, setAddPermission] = useState(false);
+    const [editPermission, setEditPermission] = useState(false);
+    const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -124,11 +126,15 @@ export const Sgc = () => {
                 method: "GET",
                 credentials: "include",
             });
+
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                setRows(data);
+                setRows(data.objects);
+                setAddPermission(data.permissions.add);
+                setEditPermission(data.permissions.change);
+                setDeletePermission(data.permissions.delete);
             }
         } catch (error) {
             console.error(error);
@@ -296,7 +302,7 @@ export const Sgc = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {editAccess ? (
+                {addPermission ? (
                     <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                         AÑADIR
                     </Button>
@@ -374,14 +380,14 @@ export const Sgc = () => {
             headerName: "Area",
             width: 75,
             type: "singleSelect",
-            editable: editAccess,
+            editable: editPermission,
             valueOptions: areas,
         },
 
-        { field: "type", headerName: "Tipo", width: 70, type: "singleSelect", editable: editAccess, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
-        { field: "sub_type", headerName: "Subtipo", width: 100, editable: editAccess },
-        { field: "name", headerName: "Nombre", width: 550, editable: editAccess },
-        { field: "version", headerName: "Version", width: 70, editable: editAccess },
+        { field: "type", headerName: "Tipo", width: 70, type: "singleSelect", editable: editPermission, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
+        { field: "sub_type", headerName: "Subtipo", width: 100, editable: editPermission },
+        { field: "name", headerName: "Nombre", width: 550, editable: editPermission },
+        { field: "version", headerName: "Version", width: 70, editable: editPermission },
         {
             field: "file",
             headerName: "Archivo",
@@ -421,7 +427,7 @@ export const Sgc = () => {
         },
     ];
 
-    if (editAccess) {
+    if (editPermission || deletePermission) {
         columns.push({
             field: "actions",
             headerName: "Acciones",
@@ -454,10 +460,18 @@ export const Sgc = () => {
                     ];
                 }
 
-                return [
-                    <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
-                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />,
-                ];
+                if (editPermission && deletePermission) {
+                    return [
+                        <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
+                        <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />,
+                    ];
+                } else if (editPermission && !deletePermission) {
+                    <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />;
+                } else if (!editPermission && deletePermission) {
+                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />;
+                } else {
+                    return [];
+                }
             },
         });
         const nombreColumn = columns.find((column) => column.field === "nombre");

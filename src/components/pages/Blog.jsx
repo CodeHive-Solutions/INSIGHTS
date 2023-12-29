@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 import Card from "@mui/material/Card";
@@ -22,6 +22,9 @@ const homeImages = [
 ];
 
 const MediaCard = ({ title, subtitle, img, articleId }) => {
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
     const [imageLoaded, setImageLoaded] = useState(false);
 
     const handleImageLoaded = () => {

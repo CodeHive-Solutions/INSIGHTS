@@ -28,9 +28,10 @@ class TestSGC(BaseTestCase):
             file_content = file.read()
         self.file_data = {
             "name": "Test File",
-            "area": Area.objects.first().name,
+            "area": "SGC",
             "type": "Document",
             "sub_type": "xlsx",
+            "version": "1.0",
             "file": SimpleUploadedFile("Test_SGC_Robinson.xlsx", file_content),
         }
         for i in range(1, 12):
@@ -46,6 +47,36 @@ class TestSGC(BaseTestCase):
         temp_folder = tempfile.mkdtemp()
         self.media_directory = temp_folder
         settings.MEDIA_ROOT = self.media_directory
+
+    def test_get_file(self):
+        """Test getting a file"""
+        file = SGCFile.objects.create(**self.file_data)
+        response = self.client.get(
+            reverse("SGCFile-detail", kwargs={"pk": file.id}),
+            cookies=self.client.cookies,
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data.get("name"), "Test File")
+        self.assertEqual(response.data.get("area"), "SGC")
+        self.assertEqual(response.data.get("type"), "Document")
+        self.assertEqual(response.data.get("sub_type"), "xlsx")
+        self.assertEqual(response.data.get("version"), "1.0")
+        self.assertEqual(response.data.get("file"), None)
+
+    def test_get_list_of_files(self):
+        """Test getting a list of files"""
+        SGCFile.objects.create(**self.file_data)
+        response = self.client.get(
+            reverse("SGCFile-list"),
+            cookies=self.client.cookies,
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        print(response.data)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0].get("name"), "Test File")
+        self.assertEqual(response.data.permissions.get("add"), False)
 
     def test_create_file(self):
         """Test creating a file"""

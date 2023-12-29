@@ -245,11 +245,11 @@ const Navbar = () => {
                         <IconButton onClick={handleClickMenu} size="small">
                             <MenuIcon />
                         </IconButton>
-                    ) : (
+                    ) : ( 
                         <>
                             <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
                             <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
-                            <CustomNavLink to="/logged/sgc">Gestor Documental</CustomNavLink>
+                            <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                             <Typography
                                 onMouseEnter={handleUtilitariosMenuOpen}
                                 anchorEl={anchorElUtils}

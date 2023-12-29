@@ -72,7 +72,8 @@ def send_email(
         from_email_domain = sender_email.split("@")[1]
         if from_email:
             from_email = f"{from_email}@{from_email_domain}"
-
+        else:
+            from_email = sender_email
         if email_owner:
             from_email = f"{email_owner} <{from_email}>"
         email = EmailMessage(
