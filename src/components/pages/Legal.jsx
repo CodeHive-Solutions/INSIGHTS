@@ -19,6 +19,8 @@ import { Formik, Form, useField, useFormikContext } from "formik";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Save from "@mui/icons-material/Save";
 import { getApiUrl } from "../../assets/getApi";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { Tooltip } from "@mui/material";
 
 import {
     GridRowModes,
@@ -70,18 +72,6 @@ const FormikTextField = ({ label, type, options, multiline, rows, ...props }) =>
     }
 };
 
-const VisuallyHiddenInput = styled("input")({
-    clip: "rect(0 0 0 0)",
-    clipPath: "inset(50%)",
-    height: 1,
-    overflow: "hidden",
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    whiteSpace: "nowrap",
-    width: 1,
-});
-
 const initialRows = [
     { id: 1, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
     { id: 2, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
@@ -101,20 +91,14 @@ const initialRows = [
 ];
 
 export const Legal = () => {
-    const hiddenFileInput = useRef(null);
-    const [rowModesModel, setRowModesModel] = useState({});
     const [rows, setRows] = useState(initialRows);
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [addPermission, setAddPermission] = useState(false);
-    const [editPermission, setEditPermission] = useState(false);
     const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [selectedFileUpdate, setSelectedFileUpdate] = useState(null);
-    const [fileName, setFileName] = useState("Cargar Archivo");
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -146,10 +130,6 @@ export const Legal = () => {
         getFiles();
     }, []);
 
-    const handleDownloadFile = (id) => {
-        window.open(`${getApiUrl()}services/file-download/sgc/${id}`);
-    };
-
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setFileName("Cargar Archivo");
@@ -167,33 +147,6 @@ export const Legal = () => {
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
-
-    const handleEditClick = (id) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    };
-
-    const handleRowEditStop = (params, event) => {
-        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-            event.defaultMuiPrevented = true;
-        }
-    };
-
-    const handleCancelClick = (id) => () => {
-        setSelectedFileUpdate(null);
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
-
-        const editedRow = rows.find((row) => row.id === id);
-        if (editedRow.isNew) {
-            setRows(rows.filter((row) => row.id !== id));
-        }
-    };
-
-    const handleSaveClick = (id) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-    };
 
     const handleDeleteClick = async (id) => {
         try {
@@ -213,80 +166,6 @@ export const Legal = () => {
             showSnack("error", error.message);
             setSnackbarMessage("Error al eliminar la meta: " + error.message);
         }
-    };
-
-    const processRowUpdate = async (newRow) => {
-        if (selectedFileUpdate) {
-            const formData = new FormData();
-            formData.append("file", selectedFileUpdate);
-            formData.append("area", newRow.area);
-            formData.append("type", newRow.type);
-            formData.append("sub_type", newRow.sub_type);
-            formData.append("name", newRow.name);
-            formData.append("version", newRow.version);
-
-            try {
-                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
-                    method: "PATCH",
-                    credentials: "include",
-                    body: formData,
-                });
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data.detail);
-                } else if (response.status === 200) {
-                    getFiles();
-                    showSnack("success", "El archivo ha sido actualizado correctamente.");
-                    return data;
-                }
-            } catch (error) {
-                console.error(error);
-                showSnack("error", error.message);
-            }
-        } else {
-            try {
-                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
-                    method: "PATCH",
-                    credentials: "include",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(newRow),
-                });
-
-                if (!response.ok) {
-                    const data = await response.json();
-                    console.error(data);
-                    throw new Error(response.statusText);
-                } else if (response.status === 200) {
-                    const data = await response.json();
-                    getFiles();
-                    showSnack("success", "El registro ha sido actualizado correctamente.");
-                    return data;
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        }
-    };
-
-    const handleRowModesModelChange = (newRowModesModel) => {
-        setRowModesModel(newRowModesModel);
-    };
-
-    const handleProcessRowUpdateError = useCallback((error) => {
-        console.error(error);
-        showSnack("error", error.message, true);
-        // setSnackbar({ children: error.message, severity: "error" });
-    }, []);
-
-    const handleClickFile = (id) => {
-        hiddenFileInput.current.click();
-    };
-
-    const handleFileChange = (id, event) => {
-        showSnack("info", "El archivo ha sido cargado correctamente. Selecciona guardar para actualizar el registro.");
-        setSelectedFileUpdate(event.target.files[0]);
     };
 
     const CustomToolbar = () => {
@@ -375,77 +254,77 @@ export const Legal = () => {
 
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
-        { field: "clients", headerName: "Clientes", width: 100, editable: editPermission },
-        { field: "city", headerName: "Ciudad", width: 100, editable: editPermission },
-        { field: "description", headerName: "Descripción", width: 100, editable: editPermission },
-        { field: "expected_date", headerName: "Fecha de Inicio Estimada", width: 100, editable: editPermission },
-        { field: "contract_value", headerName: "Valor del Contrato", width: 100, editable: editPermission },
-        { field: "monthly_billing", headerName: "Facturación Mensual", width: 100, editable: editPermission },
-        { field: "duration", headerName: "Duración", width: 100, editable: editPermission },
-        { field: "contact", headerName: "Contacto", width: 100, editable: editPermission },
-        { field: "number", headerName: "Teléfono", width: 100, editable: editPermission },
-        { field: "start_date", headerName: "Fecha Inicio", width: 100, editable: editPermission },
+        { field: "clients", headerName: "Clientes", width: 750, editable: false },
+        { field: "city", headerName: "Ciudad", width: 100, editable: false },
+        { field: "description", headerName: "Descripción", width: 100, editable: false },
+        { field: "expected_date", headerName: "Fecha de Inicio Estimada", width: 100, editable: false },
+        { field: "contract_value", headerName: "Valor del Contrato", width: 100, editable: false },
+        { field: "monthly_billing", headerName: "Facturación Mensual", width: 100, editable: false },
+        { field: "duration", headerName: "Duración", width: 100, editable: false },
+        { field: "contact", headerName: "Contacto", width: 100, editable: false },
+        { field: "number", headerName: "Teléfono", width: 100, editable: false },
+        { field: "start_date", headerName: "Fecha Inicio", width: 100, editable: false },
         {
             field: "responsibility_policy_non_contractual",
             headerName: "Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento",
             width: 100,
-            editable: editPermission,
+            editable: false,
         },
-        { field: "compliance_policy", headerName: "Póliza de Cumplimiento", width: 100, editable: editPermission },
+        { field: "compliance_policy", headerName: "Póliza de Cumplimiento", width: 100, editable: false },
         {
             field: "responsibility_policy_data_loss",
             headerName: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos",
             width: 100,
-            editable: editPermission,
+            editable: false,
         },
-        { field: "contract_renewal", headerName: "Renovación del Contrato", width: 100, editable: editPermission },
+        { field: "contract_renewal", headerName: "Renovación del Contrato", width: 100, editable: false },
     ];
 
-    if (editPermission || deletePermission) {
+    if (deletePermission) {
         columns.push({
             field: "actions",
             headerName: "Acciones",
             width: 100,
             type: "actions",
+            editable: false,
             cellClassName: "actions",
             getActions: ({ id }) => {
                 const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
                     return [
-                        <GridActionsCellItem
-                            icon={<SaveIcon />}
-                            label="Save"
-                            sx={{
-                                color: "primary.main",
-                            }}
-                            onClick={handleSaveClick(id)}
-                        />,
-                        <GridActionsCellItem
-                            icon={<CancelIcon />}
-                            label="Cancel"
-                            className="textPrimary"
-                            onClick={handleCancelClick(id)}
-                            sx={{
-                                color: "primary.main",
-                            }}
-                            color="inherit"
-                        />,
+                        <Tooltip title="Guardar Cambios">
+                            <GridActionsCellItem
+                                sx={{ transition: ".3s ease", "&:hover": { color: "green" } }}
+                                icon={<SaveIcon />}
+                                label="Save"
+                                onClick={handleSaveClick(id)}
+                            />
+                        </Tooltip>,
+                        <Tooltip title="Cancelar Cambios">
+                            <GridActionsCellItem
+                                icon={<CancelIcon />}
+                                label="Cancel"
+                                className="textPrimary"
+                                onClick={handleCancelClick(id)}
+                                sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                            />
+                        </Tooltip>,
                     ];
                 }
-
-                if (editPermission && deletePermission) {
-                    return [
-                        <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
-                        <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />,
-                    ];
-                } else if (editPermission && !deletePermission) {
-                    <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />;
-                } else if (!editPermission && deletePermission) {
-                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />;
-                } else {
-                    return [];
-                }
+                return [
+                    <Tooltip title="Mas Detalles">
+                        <GridActionsCellItem sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }} icon={<MoreHorizIcon />} label="Detalles" />
+                    </Tooltip>,
+                    <Tooltip title="Eliminar Registro">
+                        <GridActionsCellItem
+                            sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                            icon={<DeleteIcon />}
+                            label="Eliminar"
+                            onClick={() => handleDeleteClick(id)}
+                        />
+                    </Tooltip>,
+                ];
             },
         });
         const nombreColumn = columns.find((column) => column.field === "nombre");
@@ -453,6 +332,32 @@ export const Legal = () => {
             nombreColumn.width -= 100; // Adjust the width as needed
         }
     }
+    const hiddenColumns = columns.map((column) => column.field);
+
+    const columnVisibilityModel = {
+        ...Object.fromEntries(hiddenColumns.map((field) => [field, false])),
+        id: true,
+        clients: true,
+        duration: true,
+        start_date: true,
+    };
+
+    const createInitialState = {
+        filter: {
+            filterModel: {
+                items: [],
+                quickFilterExcludeHiddenColumns: true,
+            },
+        },
+        pagination: {
+            paginationModel: {
+                pageSize: 12,
+            },
+        },
+        columns: {
+            columnVisibilityModel: columnVisibilityModel,
+        },
+    };
 
     return (
         <>
@@ -468,21 +373,16 @@ export const Legal = () => {
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Contratos y Polizas Legales
+                    Contratos y Pólizas Legales
                 </Typography>
                 <DataGrid
                     sx={{ width: "100%" }}
                     columns={columns}
                     rows={rows}
-                    editMode="row"
+                    initialState={createInitialState}
                     slots={{
                         toolbar: CustomToolbar,
                     }}
-                    rowModesModel={rowModesModel}
-                    onRowEditStop={handleRowEditStop}
-                    onRowModesModelChange={handleRowModesModelChange}
-                    processRowUpdate={processRowUpdate}
-                    onProcessRowUpdateError={handleProcessRowUpdateError}
                 ></DataGrid>
             </Container>
             <motion.div

@@ -28,7 +28,7 @@ const campaigns = [
     {
         value: "falabella",
         label: "Falabella",
-        routeOrigin: "172.16.0.46/banco_falabella_call/BOGOTA/LLAMADAS_PREDICTIVO/",
+        routeOrigin: "//172.16.0.46/banco_falabella_call/BOGOTA/LLAMADAS_PREDICTIVO/",
         routeDestination: `172.16.0.12\\Control-Calidad\\PRIVADA\\Llamadas\\Banco Falabella`,
     },
     {

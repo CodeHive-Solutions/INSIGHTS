@@ -19,6 +19,7 @@ import { Formik, Form, useField, useFormikContext } from "formik";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Save from "@mui/icons-material/Save";
 import { getApiUrl } from "../../assets/getApi";
+import { Tooltip } from "@mui/material";
 
 import {
     GridRowModes,
@@ -147,7 +148,8 @@ export const Sgc = () => {
     }, []);
 
     const handleDownloadFile = (id) => {
-        window.open(`${getApiUrl()}services/file-download/sgc/${id}`);
+        // open the link in other tab
+        window.open(`${getApiUrl()}services/file-download/sgc/${id}`, "_blank");
     };
 
     const handleCloseDialog = () => {
@@ -414,14 +416,18 @@ export const Sgc = () => {
                 }
 
                 return [
-                    <GridActionsCellItem
-                        icon={<FileDownloadIcon />}
-                        label="download"
-                        onClick={() => handleDownloadFile(GridRowParams.row.id)}
-                        sx={{
-                            color: "primary.main",
-                        }}
-                    />,
+                    <Tooltip title="Descargar Archivo">
+                        <GridActionsCellItem
+                            icon={<FileDownloadIcon />}
+                            label="download"
+                            onClick={() => handleDownloadFile(GridRowParams.row.id)}
+                            sx={{
+                                "&:hover": {
+                                    color: "primary.main",
+                                },
+                            }}
+                        />
+                    </Tooltip>,
                 ];
             },
         },
@@ -439,36 +445,64 @@ export const Sgc = () => {
 
                 if (isInEditMode) {
                     return [
-                        <GridActionsCellItem
-                            icon={<SaveIcon />}
-                            label="Save"
-                            sx={{
-                                color: "primary.main",
-                            }}
-                            onClick={handleSaveClick(id)}
-                        />,
-                        <GridActionsCellItem
-                            icon={<CancelIcon />}
-                            label="Cancel"
-                            className="textPrimary"
-                            onClick={handleCancelClick(id)}
-                            sx={{
-                                color: "primary.main",
-                            }}
-                            color="inherit"
-                        />,
+                        <Tooltip title="Guardar Cambios">
+                            <GridActionsCellItem
+                                sx={{ transition: ".3s ease", "&:hover": { color: "green" } }}
+                                icon={<SaveIcon />}
+                                label="Save"
+                                onClick={handleSaveClick(id)}
+                            />
+                        </Tooltip>,
+                        <Tooltip title="Cancelar Cambios">
+                            <GridActionsCellItem
+                                icon={<CancelIcon />}
+                                label="Cancel"
+                                className="textPrimary"
+                                onClick={handleCancelClick(id)}
+                                sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                            />
+                        </Tooltip>,
                     ];
                 }
 
                 if (editPermission && deletePermission) {
                     return [
-                        <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
-                        <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />,
+                        <Tooltip title="Editar Registro">
+                            <GridActionsCellItem
+                                sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }}
+                                icon={<EditIcon />}
+                                label="Editar"
+                                onClick={handleEditClick(id)}
+                            />
+                        </Tooltip>,
+                        <Tooltip title="Eliminar Registro">
+                            <GridActionsCellItem
+                                sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                                icon={<DeleteIcon />}
+                                label="Eliminar"
+                                onClick={() => handleDeleteClick(id)}
+                            />
+                        </Tooltip>,
                     ];
                 } else if (editPermission && !deletePermission) {
-                    <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />;
+                    <Tooltip title="Editar Registro">
+                        <GridActionsCellItem
+                            sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }}
+                            icon={<EditIcon />}
+                            label="Editar"
+                            onClick={handleEditClick(id)}
+                        />
+                    </Tooltip>;
                 } else if (!editPermission && deletePermission) {
-                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />;
+                    <Tooltip title="Eliminar Registro">
+                        <GridActionsCellItem
+                            sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                            icon={<DeleteIcon />}
+                            label="Eliminar"
+                            onClick={() => handleDeleteClick(id)}
+                        />
+                        ,
+                    </Tooltip>;
                 } else {
                     return [];
                 }
