@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Container, Box, Typography, Button } from "@mui/material";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -6,7 +6,7 @@ import { styled } from "@mui/material/styles";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import Collapse from "@mui/material/Collapse";
 import SaveIcon from "@mui/icons-material/Save";
-import quality from "../../images/quality/quality.jpg";
+import quality from "../../images/quality/files.jpg";
 import { LoadingButton } from "@mui/lab";
 import SnackbarAlert from "../common/SnackBarAlert";
 import MenuItem from "@mui/material/MenuItem";
@@ -26,16 +26,16 @@ const VisuallyHiddenInput = styled("input")({
 
 const campaigns = [
     {
-        value: "FALABELLA",
+        value: "falabella",
         label: "Falabella",
         routeOrigin: "172.16.0.46/banco_falabella_call/BOGOTA/LLAMADAS_PREDICTIVO/",
-        routeDestination: `172.16.0.12\Control-Calidad\PRIVADA\Llamadas Banco Falabella`,
+        routeDestination: `172.16.0.12\\Control-Calidad\\PRIVADA\\Llamadas\\Banco Falabella`,
     },
     {
-        value: "BANCO AGRARIO",
+        value: "banco_agrario",
         label: "Banco Agrario",
-        routeOrigin: "Por definir",
-        routeDestination: "Por definir",
+        routeOrigin: "\\172.16.0.106\\banco_agrario_call\\LLAMADAS_PREDICTIVO",
+        routeDestination: "\\172.16.0.12\\Control-Calidad\\PRIVADA\\Llamadas\\Banco Agrario",
     },
     {
         value: "CLARO",
@@ -54,6 +54,10 @@ const Quality = () => {
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(campaigns[0]); // Set default campaign
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     const handleFileInputChange = (event) => {
         const file = event.target.files[0];
@@ -81,10 +85,11 @@ const Quality = () => {
 
     const handleUpload = async () => {
         setLoading(true);
+        console.log(selectedCampaign.value);
         if (selectedFile) {
             const formData = new FormData();
             formData.append("file", selectedFile);
-            formData.append("campaign", "falabella");
+            formData.append("campaign", selectedCampaign.value);
 
             try {
                 const response = await fetch(`${getApiUrl()}files/call-transfer-list/`, {
@@ -100,7 +105,7 @@ const Quality = () => {
                         throw new Error(response.statusText);
                     } else if (response.status === 400) {
                         const data = await response.json();
-                        showSnack("error", data.message);
+                        showSnack("error", data.error);
                         throw new Error(response.statusText);
                     } else if (response.status === 422) {
                         showSnack("error", "El archivo no cumple con el formato.");
@@ -121,7 +126,6 @@ const Quality = () => {
                 }
                 if (response.status === 200) {
                     const data = await response.json();
-                    console.log(data);
                     if (data.fails.length === 0) {
                         showSnack("success", "Archivos trasladados correctamente.");
                     } else {
@@ -169,7 +173,7 @@ const Quality = () => {
                     <TextField sx={{ width: "600px" }} label="ruta-origen" value={selectedCampaign.routeOrigin} disabled></TextField>
                     <ArrowDownwardIcon color="primary" />
                     <TextField sx={{ width: "600px" }} label="ruta-destino" value={selectedCampaign.routeDestination} disabled></TextField>
-                    {selectedCampaign.value === "FALABELLA" ? (
+                    {selectedCampaign.value === "falabella" || selectedCampaign.value === "banco_agrario" ? (
                         <Collapse in={openCollapse}>
                             <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
                                 SUBIR ARCHIVO
@@ -180,7 +184,7 @@ const Quality = () => {
                 </Box>
                 <Collapse in={!openCollapse}>
                     <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: "1rem" }}>
-                        {selectedCampaign.value === "FALABELLA" ? (
+                        {selectedCampaign.value === "falabella" || selectedCampaign.value === "banco_agrario" ? (
                             <>
                                 <Typography color="primary.main" variant="subtitle2">
                                     {fileName}
@@ -191,7 +195,7 @@ const Quality = () => {
                                         <VisuallyHiddenInput accept=".csv" type="file" onChange={handleFileInputChange} />
                                     </Button>
                                     <LoadingButton onClick={handleUpload} startIcon={<SaveIcon />} variant="contained" loading={loading}>
-                                        Guardar
+                                        Trasladar
                                     </LoadingButton>
                                 </Box>
                             </>

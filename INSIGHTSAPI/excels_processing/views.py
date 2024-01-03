@@ -1,6 +1,5 @@
 """This module contains the views for the excels_processing app."""
 import logging
-from math import e
 import os
 import shutil
 import re
@@ -9,10 +8,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
-import os
 import mysql.connector
 from .excel_functions import upload_df_to_table, file_to_data_frame
-from django.db import transaction
 
 
 logger = logging.getLogger("requests")
@@ -68,7 +65,7 @@ def robinson_list(request):
                     "message": "No data was inserted.",
                     "uploaded_rows": uploaded_rows,
                     "database_rows": total_rows,
-                    "rows_updated": rows,
+                    "updated_rows": rows,
                 },
                 status=200,
             )
@@ -84,11 +81,11 @@ def robinson_list(request):
 def call_transfer_list(request):
     """Change the path of the calls to the another location."""
     if not request.user.has_perm("excels_processing.call_transfer"):
-        return Response("Access denied", status=403)
+        return Response({"error": "Access denied"}, status=403)
     if not request.POST.get("campaign"):
-        return Response("No campaign found in the request", status=400)
-    if not "file" in request.FILES:
-        return Response("No file found in the request", status=400)
+        return Response({"error": "No campaign found in the request"}, status=400)
+    if "file" not in request.FILES:
+        return Response({"error": "No file found in the request"}, status=400)
     campaign = str(request.POST.get("campaign")).lower()
     # check if the folder exists
     file = request.FILES["file"]
@@ -98,19 +95,25 @@ def call_transfer_list(request):
     missing_columns = [
         column for column in required_columns if column not in data_f.columns
     ]
-    logger.info(f"Missing columns: {data_f.columns}")
+    logger.info("Missing columns: %s", data_f.columns)
     if missing_columns:
-        return Response(f"Missing columns: {', '.join(missing_columns)}", status=400)
+        return Response(
+            {"error": f"Missing columns: {', '.join(missing_columns)}"}, status=400
+        )
     # Transfer the calls files to the new path
     paths = {
         "falabella_old": "/var/servers/falabella/BOGOTA/LLAMADAS_PREDICTIVO/",
         "falabella_new": "/var/servers/calidad/Llamadas Banco Falabella/",
-        "test_old": "/var/servers/falabella/test/test/",
-        "test_new": "/var/servers/calidad/test/test/",
+        "banco_agrario_old": "/var/servers/banco_agrario/LLAMADAS_PREDICTIVO/",
+        "banco_agrario_new": "/var/servers/calidad/Llamadas Banco Agrario/",
+        "test_banco_agrario_old": "/var/servers/banco_agrario/test/test/",
+        "test_banco_agrario_new": "/var/servers/calidad/test/test/",
+        "test_falabella_old": "/var/servers/falabella/test/test/",
+        "test_falabella_new": "/var/servers/calidad/test/test/",
     }
+
     path_old = os.path.join(paths[f"{campaign}_old"], "{date:%Y/%m/%d/OUT/}")
     path_new = os.path.join(paths[f"{campaign}_new"], "{entry.name}")
-    # pattern = re.compile(r"_(\d+)-")
     fails = []
 
     for row in data_f.itertuples(index=False):
@@ -121,23 +124,31 @@ def call_transfer_list(request):
         date = datetime.strptime(str(row.FECHA).split(" ", maxsplit=1)[0], "%d/%m/%Y")
         number = str(int(row.NUMERO))
         match = None
-        pattern = re.compile(rf"_{number}-")
+        if "banco_agrario" in campaign:
+            pattern = re.compile(rf"_{number}_")
+        elif "falabella" in campaign:
+            pattern = re.compile(rf"_{number}-")
+        else:
+            return Response({"error": "Invalid campaign"}, status=400)
 
         if not os.path.exists(path_old.format(date=date)):
-            return Response("Folder for that date does not exist.", status=400)
+            return Response(
+                {"error": "Folder for that date does not exist."}, status=400
+            )
         for entry in os.scandir(path_old.format(date=date)):
             if entry.name.endswith(".mp3") and pattern.search(entry.name):
                 try:
+                    final_path = path_new.format(entry=entry)
                     # Transfer the file
                     shutil.copy2(
                         entry.path,
-                        path_new.format(entry=entry),
+                        final_path,
                     )
                     match = True
                     break
                 except Exception as error:
                     logger.critical(error)
-                    return Response(str(error), status=500)
+                    return Response({"error": str(error)}, status=500)
         if match is not True:
             fails.append(number)
     return Response({"message": "Files transferred successfully.", "fails": fails})

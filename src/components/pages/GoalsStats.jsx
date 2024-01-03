@@ -31,20 +31,21 @@ const AnalisisMetas = () => {
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [coordinator, setCoordinator] = useState("");
+    const [selectedOption, setSelectedOption] = useState("delivery");
     const [rows, setRows] = useState([]);
     const [rowModesModel, setRowModesModel] = useState({});
     const [isLoading, setIsLoading] = useState(true); // Add a loading state
     const [yearsArray, setYearsArray] = useState([]); // Add a loading state
-    const [cedula, setCedula] = useState("");
     const [open, setOpen] = useState(false);
     const [link, setLink] = useState();
     const handleClose = () => setOpen(false);
     const monthRef = useRef();
     const yearRef = useRef();
+    const goalType = useRef(null);
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/`, {
+            const response = await fetch(`https://insights-api.cyc-bpo.com/goals/`, {
                 method: "GET",
             });
 
@@ -75,18 +76,18 @@ const AnalisisMetas = () => {
             if (response.status === 200) {
                 const data = await response.json();
                 const modifiedData = data.map((row) => {
-                    if (row.quantity > 999) {
+                    if (row.quantity_goal > 999) {
                         const formatter = new Intl.NumberFormat("es-CO", {
                             style: "currency",
                             currency: "COP",
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0,
                         });
-                        const value = row.quantity;
+                        const value = row.quantity_goal;
                         const formattedValue = formatter.format(value);
-                        row.quantity = formattedValue;
-                    } else if (row.quantity < 1) {
-                        row.quantity = Math.round(row.quantity * 100) + "%";
+                        row.quantity_goal = formattedValue;
+                    } else if (row.quantity_goal < 1) {
+                        row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
                     }
                     return {
                         ...row,
@@ -115,7 +116,7 @@ const AnalisisMetas = () => {
 
     useEffect(() => {
         handleSave();
-    }, [cedula, coordinator]); // Add cedula and coordinator as dependencies to useEffect
+    }, [coordinator]); // Add cedula and coordinator as dependencies to useEffect
 
     const handleDeleteClick = async (register_cedula) => {
         try {
@@ -142,61 +143,14 @@ const AnalisisMetas = () => {
         }
     };
 
-    const initialColumns = [
-        { field: "cedula", headerName: "Cedula", width: 100 },
-        { field: "quantity", headerName: "Meta", width: 140, editable: true },
-        { field: "clean_desk", headerName: "Clean Desk", width: 80, editable: true },
-        { field: "quality", headerName: "Calidad", width: 80, editable: true },
-        { field: "result", headerName: "Resultado", width: 80, editable: true },
-        { field: "total", headerName: "Total", width: 80, editable: true },
-        { field: "last_update", headerName: "Fecha de modificación", width: 155 },
-        { field: "accepted", headerName: "Aprobación Meta", width: 125 },
-        { field: "accepted_execution", headerName: "Aprobación Ejecución", width: 150 },
+    const goalsColumns = [
+        { field: "cedula", headerName: "Cedula", width: 200 },
+        { field: "quantity_goal", headerName: "Meta", width: 240 },
+        { field: "last_update", headerName: "Fecha de modificación", width: 255 },
+        { field: "accepted", headerName: "Aprobación Meta", width: 225 },
         {
             field: "goal_date",
             headerName: "Fecha de la meta",
-            width: 150,
-            sortComparator: (v1, v2) => {
-                // Extraer el mes y el año de los valores
-                const [mes1, año1] = v1.split("-");
-                const [mes2, año2] = v2.split("-");
-                // Crear un objeto con los nombres de los meses en español y sus números correspondientes
-                const meses = {
-                    ENERO: 1,
-                    FEBRERO: 2,
-                    MARZO: 3,
-                    ABRIL: 4,
-                    MAYO: 5,
-                    JUNIO: 6,
-                    JULIO: 7,
-                    AGOSTO: 8,
-                    SEPTIEMBRE: 9,
-                    OCTUBRE: 10,
-                    NOVIEMBRE: 11,
-                    DICIEMBRE: 12,
-                };
-                // Convertir los meses a números
-                const num1 = meses[mes1];
-                const num2 = meses[mes2];
-                // Comparar los años primero, y si son iguales, comparar los meses
-                if (año1 < año2) {
-                    return -1;
-                } else if (año1 > año2) {
-                    return 1;
-                } else {
-                    if (num1 < num2) {
-                        return -1;
-                    } else if (num1 > num2) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-                }
-            },
-        },
-        {
-            field: "execution_date",
-            headerName: "Fecha de la ejecucion de la meta",
             width: 150,
             sortComparator: (v1, v2) => {
                 // Extraer el mes y el año de los valores
@@ -266,8 +220,214 @@ const AnalisisMetas = () => {
         //     },
         // },
     ];
+    // const initialColumns = [
+    //     { field: "cedula", headerName: "Cedula", width: 100 },
+    //     { field: "quantity", headerName: "Meta", width: 140, editable: true },
+    //     { field: "clean_desk", headerName: "Clean Desk", width: 80, editable: true },
+    //     { field: "quality", headerName: "Calidad", width: 80, editable: true },
+    //     { field: "result", headerName: "Resultado", width: 80, editable: true },
+    //     { field: "total", headerName: "Total", width: 80, editable: true },
+    //     { field: "last_update", headerName: "Fecha de modificación", width: 155 },
+    //     { field: "accepted", headerName: "Aprobación Meta", width: 125 },
+    //     { field: "accepted_execution", headerName: "Aprobación Ejecución", width: 150 },
+    //     {
+    //         field: "goal_date",
+    //         headerName: "Fecha de la meta",
+    //         width: 150,
+    //         sortComparator: (v1, v2) => {
+    //             // Extraer el mes y el año de los valores
+    //             const [mes1, año1] = v1.split("-");
+    //             const [mes2, año2] = v2.split("-");
+    //             // Crear un objeto con los nombres de los meses en español y sus números correspondientes
+    //             const meses = {
+    //                 ENERO: 1,
+    //                 FEBRERO: 2,
+    //                 MARZO: 3,
+    //                 ABRIL: 4,
+    //                 MAYO: 5,
+    //                 JUNIO: 6,
+    //                 JULIO: 7,
+    //                 AGOSTO: 8,
+    //                 SEPTIEMBRE: 9,
+    //                 OCTUBRE: 10,
+    //                 NOVIEMBRE: 11,
+    //                 DICIEMBRE: 12,
+    //             };
+    //             // Convertir los meses a números
+    //             const num1 = meses[mes1];
+    //             const num2 = meses[mes2];
+    //             // Comparar los años primero, y si son iguales, comparar los meses
+    //             if (año1 < año2) {
+    //                 return -1;
+    //             } else if (año1 > año2) {
+    //                 return 1;
+    //             } else {
+    //                 if (num1 < num2) {
+    //                     return -1;
+    //                 } else if (num1 > num2) {
+    //                     return 1;
+    //                 } else {
+    //                     return 0;
+    //                 }
+    //             }
+    //         },
+    //     },
+    //     {
+    //         field: "execution_date",
+    //         headerName: "Fecha de la ejecucion de la meta",
+    //         width: 150,
+    //         sortComparator: (v1, v2) => {
+    //             // Extraer el mes y el año de los valores
+    //             const [mes1, año1] = v1.split("-");
+    //             const [mes2, año2] = v2.split("-");
+    //             // Crear un objeto con los nombres de los meses en español y sus números correspondientes
+    //             const meses = {
+    //                 ENERO: 1,
+    //                 FEBRERO: 2,
+    //                 MARZO: 3,
+    //                 ABRIL: 4,
+    //                 MAYO: 5,
+    //                 JUNIO: 6,
+    //                 JULIO: 7,
+    //                 AGOSTO: 8,
+    //                 SEPTIEMBRE: 9,
+    //                 OCTUBRE: 10,
+    //                 NOVIEMBRE: 11,
+    //                 DICIEMBRE: 12,
+    //             };
+    //             // Convertir los meses a números
+    //             const num1 = meses[mes1];
+    //             const num2 = meses[mes2];
+    //             // Comparar los años primero, y si son iguales, comparar los meses
+    //             if (año1 < año2) {
+    //                 return -1;
+    //             } else if (año1 > año2) {
+    //                 return 1;
+    //             } else {
+    //                 if (num1 < num2) {
+    //                     return -1;
+    //                 } else if (num1 > num2) {
+    //                     return 1;
+    //                 } else {
+    //                     return 0;
+    //                 }
+    //             }
+    //         },
+    //     },
+    //     // {
+    //     //     field: "actions",
+    //     //     type: "actions",
+    //     //     headerName: "Acciones",
+    //     //     width: 100,
+    //     //     cellClassName: "actions",
+    //     //     getActions: ({ id }) => {
+    //     //         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+    //     //         if (isInEditMode) {
+    //     //             return [
+    //     //                 <GridActionsCellItem
+    //     //                     icon={<SaveOutlinedIcon />}
+    //     //                     label="Save"
+    //     //                     key={id}
+    //     //                     sx={{
+    //     //                         color: "primary.main",
+    //     //                     }}
+    //     //                     onClick={handleSaveClick(id)}
+    //     //                 />,
+    //     //                 <GridActionsCellItem key={id} icon={<CancelOutlinedIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} />,
+    //     //             ];
+    //     //         }
 
-    const [columns, setColumns] = useState(initialColumns);
+    //     //         return [
+    //     //             <GridActionsCellItem key={id} icon={<EditOutlinedIcon />} label="Edit" onClick={handleEditClick(id)} />,
+    //     //             <GridActionsCellItem key={id} icon={<DeleteOutlineOutlinedIcon />} label="Delete" onClick={() => handleDeleteClick(id)} />,
+    //     //         ];
+    //     //     },
+    //     // },
+    // ];
+
+    const executionColumns = [
+        { field: "cedula", headerName: "Cedula", width: 100 },
+        { field: "quantity_execution", headerName: "Meta", width: 140 },
+        { field: "clean_desk", headerName: "Clean Desk", width: 100 },
+        { field: "quality", headerName: "Calidad", width: 80 },
+        { field: "result", headerName: "Resultado", width: 100 },
+        { field: "total", headerName: "Total", width: 80 },
+        { field: "last_update", headerName: "Fecha de modificación", width: 180 },
+        { field: "accepted_execution", headerName: "Aprobación", width: 170 },
+        {
+            field: "execution_date",
+            headerName: "Mes de la ejecución",
+            width: 180,
+            sortComparator: (v1, v2) => {
+                // Extraer el mes y el año de los valores
+                const [mes1, año1] = v1.split("-");
+                const [mes2, año2] = v2.split("-");
+                // Crear un objeto con los nombres de los meses en español y sus números correspondientes
+                const meses = {
+                    ENERO: 1,
+                    FEBRERO: 2,
+                    MARZO: 3,
+                    ABRIL: 4,
+                    MAYO: 5,
+                    JUNIO: 6,
+                    JULIO: 7,
+                    AGOSTO: 8,
+                    SEPTIEMBRE: 9,
+                    OCTUBRE: 10,
+                    NOVIEMBRE: 11,
+                    DICIEMBRE: 12,
+                };
+                // Convertir los meses a números
+                const num1 = meses[mes1];
+                const num2 = meses[mes2];
+                // Comparar los años primero, y si son iguales, comparar los meses
+                if (año1 < año2) {
+                    return -1;
+                } else if (año1 > año2) {
+                    return 1;
+                } else {
+                    if (num1 < num2) {
+                        return -1;
+                    } else if (num1 > num2) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            },
+        },
+        // {
+        //     field: "actions",
+        //     type: "actions",
+        //     headerName: "Acciones",
+        //     width: 100,
+        //     cellClassName: "actions",
+        //     getActions: ({ id }) => {
+        //         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+        //         if (isInEditMode) {
+        //             return [
+        //                 <GridActionsCellItem
+        //                     icon={<SaveOutlinedIcon />}
+        //                     label="Save"
+        //                     key={id}
+        //                     sx={{
+        //                         color: "primary.main",
+        //                     }}
+        //                     onClick={handleSaveClick(id)}
+        //                 />,
+        //                 <GridActionsCellItem key={id} icon={<CancelOutlinedIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} />,
+        //             ];
+        //         }
+
+        //         return [
+        //             <GridActionsCellItem key={id} icon={<EditOutlinedIcon />} label="Edit" onClick={handleEditClick(id)} />,
+        //             <GridActionsCellItem key={id} icon={<DeleteOutlineOutlinedIcon />} label="Delete" onClick={() => handleDeleteClick(id)} />,
+        //         ];
+        //     },
+        // },
+    ];
+
+    const [columns, setColumns] = useState(goalsColumns);
 
     const handleCloseSnackbar = (event, reason) => {
         if (reason === "clickaway") {
@@ -420,11 +580,13 @@ const AnalisisMetas = () => {
 
     const handleFilter = async (event) => {
         event.preventDefault();
-
         try {
-            const response = await fetch(`${getApiUrl()}goals/?month=${monthRef.current.value}-${yearRef.current.value}&cedula=${cedula}`, {
-                method: "GET",
-            });
+            const response = await fetch(
+                `https://insights-api.cyc-bpo.com/goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`,
+                {
+                    method: "GET",
+                }
+            );
 
             if (!response.ok) {
                 if (response.status === 500) {
@@ -454,18 +616,18 @@ const AnalisisMetas = () => {
                 const data = await response.json();
                 /* just wait he is going to sleep in the lunch time I think, after that he will be okay */
                 const modifiedData = data.map((row) => {
-                    if (row.quantity > 999) {
+                    if (row.quantity_goal > 999) {
                         const formatter = new Intl.NumberFormat("es-CO", {
                             style: "currency",
                             currency: "COP",
                             minimumFractionDigits: 0,
                             maximumFractionDigits: 0,
                         });
-                        const value = row.quantity;
+                        const value = row.quantity_goal;
                         const formattedValue = formatter.format(value);
-                        row.quantity = formattedValue;
-                    } else if (row.quantity < 1) {
-                        row.quantity = Math.round(row.quantity * 100) + "%";
+                        row.quantity_goal = formattedValue;
+                    } else if (row.quantity_goal < 1) {
+                        row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
                     }
                     return {
                         ...row,
@@ -486,7 +648,14 @@ const AnalisisMetas = () => {
                     };
                 });
                 // Create a new columns array based on the initial columns but with the field name changed
-                const updatedColumns = initialColumns.map((column) => {
+                let currentColumns = [];
+                if (goalType.current.value === "delivery") {
+                    currentColumns = goalsColumns;
+                } else if (goalType.current.value === "execution") {
+                    currentColumns = executionColumns;
+                }
+
+                const updatedColumns = currentColumns.map((column) => {
                     if (column.field === "last_update") {
                         // Change the field and header name for 'last_update' column
                         return {
@@ -498,7 +667,7 @@ const AnalisisMetas = () => {
                     return column; // Keep other columns unchanged
                 });
 
-                // Update the 'columns' state with the modified columns
+                // // Update the 'columns' state with the modified columns
                 setColumns(updatedColumns);
                 setRows(modifiedData);
             }
@@ -507,47 +676,75 @@ const AnalisisMetas = () => {
         }
     };
 
+    const handleTypeGoalChange = (event) => {
+        const selectedValue = event.target.value;
+        setSelectedOption(selectedValue);
+        // Perform actions based on the selected value
+        if (selectedValue === "delivery" && monthRef.current.value === "" && yearRef.current.value === "") {
+            setColumns(goalsColumns);
+        } else if (selectedValue === "execution" && monthRef.current.value === "" && yearRef.current.value === "") {
+            setColumns(executionColumns);
+        }
+    };
+
     return (
         <>
             {isLoading ? (
                 <Container
                     sx={{
-                        height: "100vh",
-                        width: "100%",
-                        display: "flex",
+                        height: "100%",
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "column",
                         marginTop: "1rem",
+                        pt: "5rem",
                     }}
                 >
                     <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                         Análisis de Metas
                     </Typography>
-                    <Box component="form" sx={{ display: "flex", gap: "2rem", p: "1rem" }} onSubmit={handleFilter}>
-                        <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Mes" inputRef={monthRef}>
-                            {months.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Año" inputRef={yearRef}>
-                            {yearsArray.map((option) => (
-                                <MenuItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </MenuItem>
-                            ))}
-                        </TextField>
-                        <Button variant="outlined" size="small" type="submit">
-                            Filtrar
-                        </Button>
+                    <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
+                        <Box>
+                            <TextField
+                                onChange={handleTypeGoalChange}
+                                required
+                                defaultValue="delivery"
+                                sx={{ width: "10rem" }}
+                                size="small"
+                                variant="filled"
+                                select
+                                label="Tipo de meta"
+                                inputRef={goalType}
+                            >
+                                <MenuItem value={"delivery"}>Entrega</MenuItem>
+                                <MenuItem value={"execution"}>Ejecución</MenuItem>
+                            </TextField>
+                        </Box>
+                        <Box component="form" sx={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }} onSubmit={handleFilter}>
+                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Mes" inputRef={monthRef}>
+                                {months.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Año" inputRef={yearRef}>
+                                {yearsArray.map((option) => (
+                                    <MenuItem key={option.value} value={option.value}>
+                                        {option.label}
+                                    </MenuItem>
+                                ))}
+                            </TextField>
+                            <Button variant="outlined" size="small" type="submit">
+                                Filtrar
+                            </Button>
+                        </Box>
                     </Box>
                     <DataGrid
                         rows={rows}
                         editMode="row"
                         columns={columns}
-                        sx={{ maxHeight: "500px" }}
+                        sx={{ maxHeight: "600px", height: "500px" }}
                         csvOptions={{
                             fileName: "customerDataBase",
                             delimiter: ";",

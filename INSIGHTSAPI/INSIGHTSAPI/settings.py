@@ -18,11 +18,15 @@ import ldap  # type: ignore
 from django_auth_ldap.config import LDAPSearch  # type: ignore
 from dotenv import load_dotenv
 
-if not os.path.isfile("/var/env/INSIGHTS.env"):
+
+ENV_PATH = Path("/var/env/INSIGHTS.env")
+
+if not os.path.isfile(ENV_PATH):
     raise FileNotFoundError("The env file was not found.")
 
-load_dotenv("/var/env/INSIGHTS.env")
+load_dotenv(ENV_PATH)
 
+# This allows to use the server with a self signed certificate
 ssl._create_default_https_context = ssl._create_unverified_context
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -30,6 +34,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+SENDFILE_ROOT = MEDIA_ROOT
+
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "static"
@@ -43,7 +49,11 @@ SECRET_KEY = "django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") is not None else False
 
-ALLOWED_HOSTS = ["insights-api.cyc-bpo.com", "insights-api-dev.cyc-bpo.com"]
+
+if DEBUG:
+    ALLOWED_HOSTS = ["insights-api-dev.cyc-bpo.com"]
+else:
+    ALLOWED_HOSTS = ["insights-api.cyc-bpo.com"]
 
 # Application definition
 
@@ -64,6 +74,8 @@ INSTALLED_APPS = [
     "sgc",
     "users",
     "excels_processing",
+    "pqrs",
+    "django_sendfile",
 ]
 
 MIDDLEWARE = [
@@ -88,6 +100,7 @@ REST_FRAMEWORK = {
     # ],
 }
 
+
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True
 
@@ -95,6 +108,7 @@ CORS_ALLOW_CREDENTIALS = True
 if not DEBUG:
     CORS_ALLOWED_ORIGINS = [
         "https://insights.cyc-bpo.com",
+        "https://staffnet-api.cyc-bpo.com/",
     ]
 
 ROOT_URLCONF = "INSIGHTSAPI.urls"
@@ -115,13 +129,12 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "INSIGHTSAPI.custom.email_backend.CustomEmailBackend"
 EMAIL_HOST = "mail.cyc-services.com.co"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "mismetas@cyc-services.com.co"
-EMAIL_HOST_PASSWORD = os.environ["C_2023"]
-DEFAULT_FROM_EMAIL = "mismetas@cyc-services.com.co"
+EMAIL_HOST_USER = "no-reply@cyc-services.com.co"
+EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -154,7 +167,7 @@ DATABASES = {
     #     'NAME': 'asteriskdb',
     # }
     # 'intranet': { # MySQL too old
-    #     "user": "mtc",
+    #     "user": "root",
     #     "password": os.environ["LEYES"],
     #     "host": "172.16.0.6",
     #     "port": "3306",
@@ -254,7 +267,7 @@ LOGGING = {
         },
         "django.request": {
             "handlers": ["exception_file"],
-            "level": "INFO",
+            "level": "DEBUG",
             "propagate": False,
         },
         "django_auth_ldap": {
@@ -287,6 +300,11 @@ AUTH_LDAP_USER_ATTR_MAP = {
 # AUTH_LDAP_USER_DN_TEMPLATE = 'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 # AUTH_LDAP_USER_DN_TEMPLATE = '(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
+
+if DEBUG:
+    SENDFILE_BACKEND = "django_sendfile.backends.development"
+else:
+    SENDFILE_BACKEND = "django_sendfile.backends.simple"
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=15),

@@ -18,6 +18,7 @@ import * as Yup from "yup";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Save from "@mui/icons-material/Save";
+import { getApiUrl } from "../../assets/getApi";
 
 import {
     GridRowModes,
@@ -100,21 +101,60 @@ const initialRows = [
 ];
 
 export const Sgc = () => {
+    const hiddenFileInput = useRef(null);
     const [rowModesModel, setRowModesModel] = useState({});
     const [rows, setRows] = useState(initialRows);
-    const hiddenFileInput = useRef(null);
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
-    const [editAccess, setEditAccess] = useState(true);
+    const [addPermission, setAddPermission] = useState(false);
+    const [editPermission, setEditPermission] = useState(false);
+    const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFileUpdate, setSelectedFileUpdate] = useState(null);
+    const [fileName, setFileName] = useState("Cargar Archivo");
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
-    const handleCloseDialog = () => setOpenDialog(false);
+    const getFiles = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}sgc/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail);
+            } else if (response.status === 200) {
+                setRows(data.objects);
+                setAddPermission(data.permissions.add);
+                setEditPermission(data.permissions.change);
+                setDeletePermission(data.permissions.delete);
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    useEffect(() => {
+        getFiles();
+    }, []);
+
+    const handleDownloadFile = (id) => {
+        window.open(`${getApiUrl()}services/file-download/sgc/${id}`);
+    };
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setFileName("Cargar Archivo");
+        setSelectedFile(null);
+    };
     const handleOpenDialog = () => setOpenDialog(true);
 
     const showSnack = (severity, message, error) => {
@@ -139,6 +179,7 @@ export const Sgc = () => {
     };
 
     const handleCancelClick = (id) => () => {
+        setSelectedFileUpdate(null);
         setRowModesModel({
             ...rowModesModel,
             [id]: { mode: GridRowModes.View, ignoreModifications: true },
@@ -154,15 +195,79 @@ export const Sgc = () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
 
-    const handleDeleteClick = (id) => () => {
-        setRows(rows.filter((row) => row.id !== id));
+    const handleDeleteClick = async (id) => {
+        try {
+            const response = await fetch(`${getApiUrl()}sgc/${id}`, {
+                method: "delete",
+                credentials: "include",
+            });
+            if (response.status === 204) {
+                setRows(rows.filter((row) => row.id !== id));
+                getFiles();
+                showSnack("success", "Se ha eliminado el registro correctamente.");
+            } else {
+                showSnack("error", "Error al eliminar el registro");
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+            setSnackbarMessage("Error al eliminar la meta: " + error.message);
+        }
     };
 
-    const processRowUpdate = (newRow) => {
-        const updatedRow = { ...newRow, isNew: false };
-        setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
-        showSnack("success", "Se ha actualizado la fila correctamente.");
-        return updatedRow;
+    const processRowUpdate = async (newRow) => {
+        if (selectedFileUpdate) {
+            const formData = new FormData();
+            formData.append("file", selectedFileUpdate);
+            formData.append("area", newRow.area);
+            formData.append("type", newRow.type);
+            formData.append("sub_type", newRow.sub_type);
+            formData.append("name", newRow.name);
+            formData.append("version", newRow.version);
+
+            try {
+                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
+                    method: "PATCH",
+                    credentials: "include",
+                    body: formData,
+                });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.detail);
+                } else if (response.status === 200) {
+                    getFiles();
+                    showSnack("success", "El archivo ha sido actualizado correctamente.");
+                    return data;
+                }
+            } catch (error) {
+                console.error(error);
+                showSnack("error", error.message);
+            }
+        } else {
+            try {
+                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
+                    method: "PATCH",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(newRow),
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    console.error(data);
+                    throw new Error(response.statusText);
+                } else if (response.status === 200) {
+                    const data = await response.json();
+                    getFiles();
+                    showSnack("success", "El registro ha sido actualizado correctamente.");
+                    return data;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
     };
 
     const handleRowModesModelChange = (newRowModesModel) => {
@@ -170,21 +275,18 @@ export const Sgc = () => {
     };
 
     const handleProcessRowUpdateError = useCallback((error) => {
-        console.log(error);
+        console.error(error);
         showSnack("error", error.message, true);
         // setSnackbar({ children: error.message, severity: "error" });
     }, []);
 
     const handleClickFile = (id) => {
         hiddenFileInput.current.click();
-        console.log(id);
     };
 
-    const handleFileChange = (event) => {
-        const fileUploaded = event.target.files[0];
-        // Now you can use the fileUploaded object for further processing
-        console.log(fileUploaded);
-        showSnack("success", "Se ha cargado el archivo correctamente.");
+    const handleFileChange = (id, event) => {
+        showSnack("info", "El archivo ha sido cargado correctamente. Selecciona guardar para actualizar el registro.");
+        setSelectedFileUpdate(event.target.files[0]);
     };
 
     const CustomToolbar = () => {
@@ -200,9 +302,11 @@ export const Sgc = () => {
                         utf8WithBom: true,
                     }}
                 />
-                <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
-                    AÑADIR
-                </Button>
+                {addPermission ? (
+                    <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                        AÑADIR
+                    </Button>
+                ) : null}
                 <Box sx={{ textAlign: "end", flex: "1" }}>
                     <GridToolbarQuickFilter />
                 </Box>
@@ -210,49 +314,63 @@ export const Sgc = () => {
         );
     };
 
-    const handleSubmit = (values) => {
-        console.log(values);
-        // console.log(values);
-        // try {
-        //     const response = await fetch(`${getApiUrl()}sgc`, {
-        //         method: "POST",
-        //         credentials: "include",
-        //         body: JSON.stringify(values),
-        //     });
-        //     const data = await response.json();
-        //     if (!response.ok) {
-        //         navigate("/", { replace: true });
-        //         throw new Error(data.detail);
-        //     } else if (response.status === 200) {
-        //         showSnack("success", "Se ha cargado el archivo correctamente.");
-        //     }
-        // } catch (error) {
-        //     console.error(error);
-        //     showSnack("error", error.message);
-        // }
+    const handleSubmit = async (values) => {
+        const formData = new FormData();
+        formData.append("area", values.area);
+        formData.append("type", values.tipo);
+        formData.append("sub_type", values.subtipo);
+        formData.append("name", values.nombre);
+        formData.append("version", values.version);
+        formData.append("file", selectedFile);
+        console.log(formData);
+
+        try {
+            const response = await fetch(`${getApiUrl()}sgc/`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail);
+            } else if (response.status === 201) {
+                handleCloseDialog();
+                getFiles();
+                showSnack("success", "Se ha cargado el archivo correctamente.");
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    const handleFileInputChange = (event) => {
+        setFileName(event.target.files[0].name);
+        setSelectedFile(event.target.files[0]);
     };
 
     const areas = [
-        { value: "DE", label: "DE" },
-        { value: "GA", label: "GA" },
-        { value: "GC", label: "GC" },
-        { value: "GH", label: "GH" },
-        { value: "GL", label: "GL" },
-        { value: "GP", label: "GP" },
-        { value: "GR", label: "GR" },
-        { value: "GS", label: "GS" },
-        { value: "GT", label: "GT" },
-        { value: "SG-SST", label: "SG-SST" },
+        { value: "GESTION TECNOLOGICA", label: "GT" },
+        { value: "GESTION HUMANA", label: "GH" },
+        { value: "DIRECCIONAMIENTO ESTRATEGICO", label: "DE" },
+        { value: "GESTION DE PROCESOS", label: "GP" },
+        { value: "GESTION CARTERA", label: "GC" },
+        { value: "GESTION ADMINISTRATIVA", label: "GA" },
+        { value: "GESTION LEGAL", label: "GL" },
+        { value: "GESTION RIESGO", label: "GR" },
+        { value: "CONTROL INTERNO", label: "CI" },
+        { value: "GESTION DE SERVICIO", label: "GS" },
+        { value: "SISTEMA DE GESTION DE SEGURIDAD Y SALUD EN EL TRABAJO", label: "SST-GA" },
     ];
 
     const tipos = [
-        { value: "CR", label: "CR" },
-        { value: "IN", label: "IN" },
-        { value: "MA", label: "MA" },
         { value: "P", label: "P" },
-        { value: "PL", label: "PL" },
         { value: "PR", label: "PR" },
+        { value: "PL", label: "PL" },
         { value: "RG", label: "RG" },
+        { value: "MA", label: "MA" },
+        { value: "IN", label: "IN" },
+        { value: "CR", label: "CR" },
     ];
 
     const columns = [
@@ -260,36 +378,36 @@ export const Sgc = () => {
         {
             field: "area",
             headerName: "Area",
-            width: 70,
+            width: 75,
             type: "singleSelect",
-            editable: editAccess,
-            valueOptions: ["DE", "GA", "GC", "GH", "GL", "GP", "GR", "GS", "GT", "SG-SST"],
+            editable: editPermission,
+            valueOptions: areas,
         },
 
-        { field: "tipo", headerName: "Tipo", width: 70, type: "singleSelect", editable: editAccess, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
-        { field: "subtipo", headerName: "Subtipo", width: 70, editable: editAccess },
-        { field: "nombre", headerName: "Nombre", width: 700, editable: editAccess },
-        { field: "version", headerName: "Version", width: 70, editable: editAccess },
+        { field: "type", headerName: "Tipo", width: 70, type: "singleSelect", editable: editPermission, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
+        { field: "sub_type", headerName: "Subtipo", width: 100, editable: editPermission },
+        { field: "name", headerName: "Nombre", width: 550, editable: editPermission },
+        { field: "version", headerName: "Version", width: 70, editable: editPermission },
         {
-            field: "archivo",
+            field: "file",
             headerName: "Archivo",
             width: 80,
             type: "actions",
             cellClassName: "actions",
-            getActions: ({ id }) => {
-                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+            getActions: (GridRowParams) => {
+                const isInEditMode = rowModesModel[GridRowParams.id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
                     return [
                         <>
-                            <input type="file" ref={hiddenFileInput} onChange={handleFileChange} style={{ display: "none" }} />
+                            <input type="file" ref={hiddenFileInput} onChange={(event) => handleFileChange(GridRowParams.id, event)} style={{ display: "none" }} />
                             <GridActionsCellItem
                                 icon={<UploadFileIcon />}
-                                label="Save"
+                                label="upload"
                                 sx={{
                                     color: "primary.main",
                                 }}
-                                onClick={() => handleClickFile(id)}
+                                onClick={() => handleClickFile(GridRowParams.id)}
                             />
                         </>,
                     ];
@@ -298,7 +416,8 @@ export const Sgc = () => {
                 return [
                     <GridActionsCellItem
                         icon={<FileDownloadIcon />}
-                        label="Save"
+                        label="download"
+                        onClick={() => handleDownloadFile(GridRowParams.row.id)}
                         sx={{
                             color: "primary.main",
                         }}
@@ -308,7 +427,7 @@ export const Sgc = () => {
         },
     ];
 
-    if (editAccess) {
+    if (editPermission || deletePermission) {
         columns.push({
             field: "actions",
             headerName: "Acciones",
@@ -341,10 +460,18 @@ export const Sgc = () => {
                     ];
                 }
 
-                return [
-                    <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
-                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={handleDeleteClick(id)} />,
-                ];
+                if (editPermission && deletePermission) {
+                    return [
+                        <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
+                        <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />,
+                    ];
+                } else if (editPermission && !deletePermission) {
+                    <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />;
+                } else if (!editPermission && deletePermission) {
+                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />;
+                } else {
+                    return [];
+                }
             },
         });
         const nombreColumn = columns.find((column) => column.field === "nombre");
@@ -367,7 +494,7 @@ export const Sgc = () => {
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Sistema de Gestión de Calidad
+                    Gestión Documental
                 </Typography>
                 <DataGrid
                     sx={{ width: "100%" }}
@@ -395,25 +522,42 @@ export const Sgc = () => {
             <Dialog fullWidth={true} maxWidth="md" open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Cargar nuevo archivo</DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={{ area: "", tipo: "", subtipo: "", nombre: "", version: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
-                        <Form>
-                            <Box sx={{ display: "flex", gap: ".5rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="select" options={tipos} name="tipo" label="Tipo" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
-                                {/* <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
-                                    <Button sx={{ width: "100%" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
-                                        Cargar archivo
-                                        <VisuallyHiddenInput type="file" />
-                                    </Button>
-                                </Box> */}
-                            </Box>
-                            <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                                Guardar
-                            </Button>
-                        </Form>
+                    <Formik
+                        initialValues={{ area: "", tipo: "", subtipo: "", nombre: "", version: "", file: "" }}
+                        validationSchema={validationSchema}
+                        onSubmit={handleSubmit}
+                    >
+                        {(formik) => (
+                            <Form>
+                                <Box sx={{ display: "flex", gap: ".5rem", pt: "0.5rem", flexWrap: "wrap" }}>
+                                    <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="select" options={tipos} name="tipo" label="Tipo" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
+                                    <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
+                                        <Button sx={{ width: "100%", overflow: "hidden" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
+                                            {fileName}
+                                            <VisuallyHiddenInput
+                                                id="file"
+                                                name="file"
+                                                type="file"
+                                                accept=".pdf, .xlsx"
+                                                onChange={
+                                                    handleFileInputChange
+                                                    // Formik doesn't automatically handle file inputs, so we need to manually
+                                                    // update the 'file' field when a file is selected
+                                                    // formik.setFieldValue("file", event.currentTarget.files[0]);
+                                                }
+                                            />
+                                        </Button>
+                                    </Box>
+                                </Box>
+                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                    Guardar
+                                </Button>
+                            </Form>
+                        )}
                     </Formik>
                 </DialogContent>
             </Dialog>

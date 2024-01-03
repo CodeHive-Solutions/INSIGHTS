@@ -19,12 +19,13 @@ import Test from "./components/pages/Test";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";
-import Suggestions from "./components/pages/Suggestions";
+import Suggestions from "./components/pages/Pqrs";
 import ImageUploader from "./components/Test";
 import UploadFiles from "./components/pages/UploadFiles";
 import EthicalLine from "./components/pages/EthicalLine";
 import BasicDocument from "./components/shared/GoalsPDF";
 import Quality from "./components/pages/Quality";
+import Legal from "./components/pages/Legal";
 
 const theme = createTheme({
     typography: {
@@ -71,7 +72,7 @@ const router = createBrowserRouter([
     // },
     {
         path: "test",
-        element: <Test />,
+        element: <GoalsStats />,
     },
     {
         path: "ethical-line",
@@ -111,7 +112,7 @@ const router = createBrowserRouter([
                 element: <UploadFiles />,
             },
             {
-                path: "sugerencias",
+                path: "suggestions",
                 element: <Suggestions />,
             },
             {
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
             {
                 path: "quality",
                 element: <Quality />,
+            },
+            {
+                path: "legal",
+                element: <Legal />,
             },
         ],
     },

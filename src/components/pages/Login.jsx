@@ -1,6 +1,6 @@
 import { Box, Typography, Button, TextField, Link } from "@mui/material";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
-import login_image from "../../images/login/login-image.webp";
+import login_image from "../../images/login/new-login-image.jpg";
 import Alert from "@mui/material/Alert";
 import Collapse from "@mui/material/Collapse";
 import React from "react";
@@ -96,7 +96,7 @@ const Login = () => {
             if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
                 showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
             } else {
-                console.log(error.message);
+                console.error(error.message);
                 showSnack("error", error.message);
             }
             setIsSubmitting(false);

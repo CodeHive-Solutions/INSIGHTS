@@ -78,40 +78,43 @@ const EthicalLine = () => {
             rest = { ...rest, contact };
         }
 
+        const descriptionValue = values.description.replace(/\n/g, "<br>");
+        rest = { ...rest, description: descriptionValue };
+
         console.log(rest);
-        // setLoadingBar(true);
-        // showSnack("success", "Sugerencia enviada correctamente");
+        setLoadingBar(true);
+        showSnack("success", "Sugerencia enviada correctamente");
 
-        // try {
-        //     const response = await fetch(`${getApiUrl()}suggestions/`, {
-        //         method: "POST",
-        //         headers: { "Content-Type": "application/json" },
-        //         body: JSON.stringify(values),
-        //         credentials: "include",
-        //     });
+        try {
+            const response = await fetch(`${getApiUrl()}services/send-ethical-line/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(rest),
+                credentials: "include",
+            });
 
-        //     setLoadingBar(false);
+            setLoadingBar(false);
 
-        //     const data = await response.json();
+            const data = await response.json();
 
-        //     if (!response.ok) {
-        //         throw new Error(data.detail);
-        //     }
+            if (!response.ok) {
+                throw new Error(data.detail);
+            }
 
-        //     if (response.status === 200) {
-        //     }
-        // } catch (error) {
-        //     console.error(error);
+            if (response.status === 200) {
+            }
+        } catch (error) {
+            console.error(error);
 
-        //     if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
-        //         showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
-        //     } else {
-        //         console.log(error.message);
-        //         showSnack("error", error.message);
-        //     }
+            if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
+                showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
+            } else {
+                console.log(error.message);
+                showSnack("error", error.message);
+            }
 
-        //     setLoadingBar(false);
-        // }
+            setLoadingBar(false);
+        }
     };
 
     const FormikTextField = ({ label, type, options, multiline, rows, width, ...props }) => {
@@ -156,18 +159,18 @@ const EthicalLine = () => {
                 <Typography variant={"h1"} sx={{ textAlign: "center", pb: "15px", color: "white", fontWeight: "400", pt: "6rem" }}>
                     Linea Ética
                 </Typography>
-                <Box class="wave wave1"></Box>
-                <Box class="wave wave2"></Box>
-                <Box class="wave wave3"></Box>
-                <Box class="wave wave4"></Box>
+                <Box className="wave wave1"></Box>
+                <Box className="wave wave2"></Box>
+                <Box className="wave wave3"></Box>
+                <Box className="wave wave4"></Box>
             </Box>
             {/* <img src={ethicalLineBackground} alt="" /> */}
-            <Box sx={{ position: "fixed", p: "2rem", color: "primary.main" }}>
-                <Button onClick={() => navigate("/")} startIcon={<ArrowBackIosNewIcon />}>
-                    Volver
-                </Button>
-            </Box>
             <Container sx={{ height: "max-content", py: "5rem" }}>
+                <Box sx={{ color: "primary.main" }}>
+                    <Button onClick={() => navigate("/")} startIcon={<ArrowBackIosNewIcon />}>
+                        Volver
+                    </Button>
+                </Box>
                 {/* <Typography variant={"h3"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "400" }}>
                     Linea Ética
                 </Typography> */}
@@ -183,7 +186,7 @@ const EthicalLine = () => {
                         Objetivo
                     </Typography>
                     <Typography variant="body1">
-                        El objetivo de la línea ética es promover un ambiente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
+                        El objetivo de la línea ética es promover un amente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
                         denunciar cualquier situación que pueda poner en riesgo la integridad de las personas, los recursos de la empresa o el cumplimiento de sus
                         obligaciones legales.
                     </Typography>
@@ -202,9 +205,8 @@ const EthicalLine = () => {
                         ¿Cómo reportar?
                     </Typography>
                     <ul>
-                        <li>Llamando al número telefónico [número]</li>
-                        <li>Enviando un correo electrónico a la dirección [dirección]</li>
-                        <li>Completando el formulario en línea en la página web de la empresa</li>
+                        <li>Para realizar un reporte, le invitamos a completar el formulario disponible al final de esta página. Agradecemos su colaboración.</li>
+                        {/* <li>Completando el formulario en línea en la página web de la empresa</li> */}
                     </ul>
                     <Typography sx={{ fontWeight: "500" }} variant="h5">
                         Confidencialidad

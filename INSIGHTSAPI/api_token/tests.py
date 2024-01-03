@@ -31,23 +31,6 @@ class LDAPAuthenticationTest(APITestCase):
             if conn:
                 conn.unbind_s()
 
-    # def test_get_user_info(self):
-    #     """Test that the LDAP server is reachable."""
-    #     ldap_server_uri = settings.AUTH_LDAP_SERVER_URI
-    #     ldap_bind_dn = settings.AUTH_LDAP_BIND_DN
-    #     ldap_bind_password = settings.AUTH_LDAP_BIND_PASSWORD
-    #     conn = None
-    #     try:
-    #         conn = ldap.initialize(ldap_server_uri)
-    #         conn.simple_bind_s(ldap_bind_dn, ldap_bind_password)
-    #         result = conn.search_s("OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO", ldap.SCOPE_SUBTREE, "(sAMAccountName=StaffNet)")
-    #         print(result)
-    #     except ldap.LDAPError as err:
-    #         self.fail(f"Error: {err}")
-    #     finally:
-    #         if conn:
-    #             conn.unbind_s()
-
 
 class TokenCheckTest(APITestCase):
     """Test the token authentication."""

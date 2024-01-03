@@ -15,6 +15,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import include, path
+from django.conf import settings
+from django.conf.urls.static import static
+from sgc.views import upload_data
 
 
 urlpatterns = [
@@ -22,4 +25,7 @@ urlpatterns = [
     path("token/", include("api_token.urls")),
     path("files/", include("excels_processing.urls")),
     path("sgc/", include("sgc.urls")),
+    path("pqrs/", include("pqrs.urls")),
+    path("services/", include("services.urls")),
+    path("tasks/", upload_data),
 ]

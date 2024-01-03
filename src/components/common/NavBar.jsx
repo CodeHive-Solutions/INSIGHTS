@@ -80,6 +80,48 @@ const Navbar = () => {
     //         refreshToken(refreshTimer);
     //     }
     // }, []);
+    const getGoal = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}goals/15225716/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.detail);
+            }
+
+            if (response.status === 200) {
+                setGoalCedula(data.cedula);
+                if (data.accepted) {
+                    setGoalAccepted(true);
+                } else if (data.declined) {
+                    setGoalDeclined(true);
+                } else if (data.additional_info.length > 0) {
+                    setGoalAdvisorClaro(data.additional_info);
+                } else if (data.quantity_goal && data.criteria_goal) {
+                    setGoalQuantity(data.quantity_goal);
+                    setGoalCriteria(data.criteria_goal);
+                }
+                if (data.executionAccepted) {
+                    setExecutionAcceptedGoal(true);
+                } else if (data.executionDeclined) {
+                    setExecutionDeclinedGoal(true);
+                } else if (data.total) {
+                    setExecutionTotalGoal(true);
+                    setResult(data.result);
+                    setEvaluation(data.evaluation);
+                    setQuality(data.quality);
+                    setCleanDesk(data.clean_desk);
+                    setTotal(data.total);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleOpenDialog = () => setOpenDialog(true);
 
@@ -205,9 +247,9 @@ const Navbar = () => {
                         </IconButton>
                     ) : (
                         <>
-                            <CustomNavLink to="/logged/sgc">SGC</CustomNavLink>
-                            <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                             <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
+                            <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
+                            <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                             <Typography
                                 onMouseEnter={handleUtilitariosMenuOpen}
                                 anchorEl={anchorElUtils}
@@ -221,7 +263,7 @@ const Navbar = () => {
                                     borderBottomColor: "transparent",
                                 }}
                             >
-                                Utilitarios
+                                Servicios
                             </Typography>
 
                             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -277,20 +319,20 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                <MenuItem onClick={handleClose}>
+                {/* <MenuItem onClick={handleClose}>
                     <Avatar /> Perfil
                 </MenuItem>
                 <MenuItem onClick={handleClose}>
                     <Avatar /> Mi cuenta
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleOpenDialog}>
                     <ListItemIcon>
                         <FlagIcon fontSize="small" />
                     </ListItemIcon>
-                    Mi Meta: $250.000.000
+                    Mi Meta
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={handleClose}>
+                {/* <MenuItem onClick={handleClose}>
                     <ListItemIcon>
                         <RequestPageIcon fontSize="small" />
                     </ListItemIcon>
@@ -307,7 +349,7 @@ const Navbar = () => {
                         <Settings fontSize="small" />
                     </ListItemIcon>
                     Configuración
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -372,7 +414,7 @@ const Navbar = () => {
                     <ListItemIcon>
                         <Settings />
                     </ListItemIcon>
-                    SGC
+                    Gestión Documental
                 </MenuItem>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Tooltip title="Configuración de cuenta">
@@ -423,11 +465,11 @@ const Navbar = () => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <Box onMouseLeave={handleCloseUtils}>
-                    <MenuItem onClick={() => navigate("/logged/sugerencias")}>
+                    <MenuItem onClick={() => navigate("/logged/suggestions")}>
                         <ListItemIcon>
                             <FeedbackIcon fontSize="small" />
                         </ListItemIcon>
-                        Sugerencias
+                        PQRS
                     </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
@@ -446,6 +488,12 @@ const Navbar = () => {
                             <DriveFileMoveIcon fontSize="small" />
                         </ListItemIcon>
                         Trasladar Archivos
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/logged/legal")}>
+                        <ListItemIcon>
+                            <DriveFileMoveIcon fontSize="small" />
+                        </ListItemIcon>
+                        Contratos y Polizas Legales
                     </MenuItem>
                 </Box>
             </Menu>

@@ -20,7 +20,7 @@ import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
 import hectorSotelo from "../../images/managers/hector-sotelo.png";
 import pablo from "../../images/managers/pablo.jpeg";
 import aboutUs from "../../images/about/img-about-2.jpg";
-import organigrama from "../../images/about/organigrama.png";
+import organigrama from "../../images/about/organigrama.jpg";
 
 //mission images
 import mission1 from "../../images/about/image-mission.jpg";
@@ -39,19 +39,61 @@ const homeImages = [
 ];
 
 const managements = [
-    { name: "Cesar Garzón", management: "Gerente General", image: cesarGarzon },
-    { name: "Javier Torres", management: "Gerente de Tecnología", image: javierTorres },
-    { name: "Yanneth Pinzón ", management: "Gerente de Gestión Humana", image: yannethPinzon },
-    { name: "Angela Duran", management: "Gerente de Planeación", image: angelaDuran },
-    { name: "Adriana Páez", management: "Gerente de Operaciones", image: adrianaPaez },
-    { name: "Hector Sotelo", management: "Gerente de Operaciones de Ventas", image: hectorSotelo },
-    { name: "Diego González", management: "Gerente de Legal y Riesgo", image: diegoGonzales },
+    {
+        name: "Cesar Garzón",
+        management: "Gerente General",
+        image: cesarGarzon,
+        description:
+            "Garantizar la sostenibilidad de la compañía a través de la planeación, liderazgo y control de las diferentes áreas que permitan alcanzar los objetivos establecidos con los clientes, el recurso humano y los accionistas.",
+    },
+    {
+        name: "Diego González",
+        management: "Gerente de Legal y Riesgo",
+        image: diegoGonzales,
+        description:
+            "LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.",
+    },
+    {
+        name: "Angela Duran",
+        management: "Gerente de Planeación",
+        image: angelaDuran,
+        description:
+            "Planificar, coordinar, dirigir y controlar las actividades que impactan el óptimo funcionamiento de la organización, garantizando un cumplimiento de los procesos establecidos con los más altos estándares de calidad.",
+    },
+    {
+        name: "Adriana Páez",
+        management: "Gerente de Operaciones",
+        image: adrianaPaez,
+        description:
+            "Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.",
+    },
+    {
+        name: "Hector Sotelo",
+        management: "Gerente de Operaciones de Ventas",
+        image: hectorSotelo,
+        description:
+            "Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.",
+    },
+    {
+        name: "Jeanneth Pinzón ",
+        management: "Gerente de Gestión Humana",
+        image: yannethPinzon,
+        description:
+            "Proveer, mantener y desarrollar un recurso humano altamente calificado y motivado para alcanzar los objetivos de la organización a través de la aplicación de programas enfocados en conectar al Talento Humano con el propósito de la compañía desde sus habilidades, motivaciones, conocimientos y pasiones, para así apalancar efectivamente el éxito de los objetivos del negocio y a su vez velar por el cumplimiento de las normas y procedimientos vigentes",
+    },
     {
         name: "Mario Giron",
         management: "Gerente de Riesgo y Control Interno",
         image: marioGiron,
+        description: `Resguardar los recursos de la empresa para evitar pérdidas o faltas que puedan afectar su rentabilidad en un marco de gestión de riesgos, donde son identificados, evaluados y controlados, los cuales son informados, comunicados y monitoreados, mediante procesos de auditoría. \n \nAtender procesos de auditoria externas periódicamente de los clientes, entes certificadores, entes de control y firmas evaluadoras de riesgos.`,
     },
-    { name: " Melida Sandoval", management: "Gerente Administrativa", image: melidaSandoval },
+    {
+        name: "Melida Sandoval",
+        management: "Gerente Administrativa",
+        image: melidaSandoval,
+        description:
+            "Planear, controlar las políticas de administración de recursos financieros, garantizando el abastecimiento oportuno de bienes y servicios que permiten el adecuado funcionamiento de la organización,  manteniendo un  adecuado relacionamiento con los bancos para asegurar la disponibilidad y el control de los recursos financieros de la compañía y controlando la causación contable de manera oportuna.",
+    },
 ];
 
 const About = () => {
@@ -74,7 +116,7 @@ const About = () => {
                     )}
                 </Box>
                 <Box sx={{ width: "35rem" }}>
-                    <Typography sx={{ color: "gray" }}>
+                    <Typography sx={{ color: "gray", textAlign: "justify" }}>
                         Somos una compañía con más de 18 años de experiencia en el mercado, especializada en ofrecer soluciones para fortalecer ciclos de riesgo;
                         proveemos alternativas para los procesos de originación, mantenimiento y recuperación de cartera. En la implementación de servicios BPO,
                         trabajamos con estándares metodológicos de calidad que nos permiten la optimización de procesos para garantizar resultados que maximicen la
@@ -123,7 +165,7 @@ const About = () => {
             >
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <img style={{ borderRadius: 5 }} src={mission2} height={300} alt="" />
-                    <Box sx={{ width: "100%" }}>
+                    <Box sx={{ width: "550px" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Misión
                         </Typography>
@@ -132,8 +174,8 @@ const About = () => {
                         </Typography>
                     </Box>
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pr: "5rem", gap: "2rem" }}>
-                    <Box sx={{ width: "20%", textAlign: "end" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
+                    <Box sx={{ width: "550px", textAlign: "justify" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Visión
                         </Typography>
@@ -144,9 +186,9 @@ const About = () => {
                     </Box>
                     <img style={{ borderRadius: "8px" }} src={mission1} height={300} alt="" />
                 </Box>
-                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", pl: "10rem", gap: "2rem" }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <img style={{ borderRadius: "8px" }} src={value1} height={300} alt="" />
-                    <Box sx={{ width: "30%" }}>
+                    <Box sx={{ width: "550px" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestros Valores Corporativos
                         </Typography>
@@ -243,7 +285,7 @@ const About = () => {
                             sx={{
                                 maxWidth: 350,
                                 width: 350,
-                                height: 450,
+                                height: 700,
                                 position: "relative",
                                 overflow: "hidden",
                                 transition: "transform 0.3s ease",
@@ -257,8 +299,11 @@ const About = () => {
                                 <Typography gutterBottom variant="h5" component="div">
                                     {item.name}
                                 </Typography>
-                                <Typography variant="body2" color="gray">
+                                <Typography variant="subtitle2" color="gray">
                                     {item.management}
+                                </Typography>
+                                <Typography key={index} variant="body2" sx={{ whiteSpace: "break-spaces", textAlign: "justify" }}>
+                                    {item.description}
                                 </Typography>
                             </CardContent>
                         </Card>

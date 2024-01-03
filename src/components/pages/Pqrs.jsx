@@ -7,20 +7,15 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
-    { value: "Presidencia - Pablo César Castañeda Camacho", label: "Presidencia - Pablo César Castañeda Camacho" },
-    { value: "Gerencia General - Jose Fernando Duran", label: "Gerencia General - Jose Fernando Duran" },
-    { value: "Gerencia de Cuentas - Nelson Acevedo", label: "Gerencia de Cuentas - Nelson Acevedo" },
-    { value: "Gerencia de Cuenta Banco Falabella - Adriana Páez", label: "Gerencia de Cuenta Banco Falabella - Adriana Páez" },
-    { value: "Gerencia de Cuenta Claro - Adriana Barrera", label: "Gerencia de Cuenta Claro - Adriana Barrera" },
-    { value: "Gerencia de Planeacion - Angela Duran", label: "Gerencia de Planeacion - Angela Duran" },
-    { value: "Gerencia de Tecnología - Javier Torres", label: "Gerencia de Tecnología - Javier Torres" },
-    { value: "Gerencia SGSI Control interno - Mario Ernesto Giron", label: "Gerencia SGSI Control interno - Mario Ernesto Giron" },
-    { value: "Gerencia de Operaciones - Angela Duran", label: "Gerencia de Operaciones - Angela Duran" },
-    { value: "Gerencia Legal y de Riesgo - César Garzón", label: "Gerencia Legal y de Riesgo - César Garzón" },
-    { value: "Gerencia Administrativa - Melida Sandoval", label: "Gerencia Administrativa - Melida Sandoval" },
-    { value: "Gerencia de Gestión Humana - Jeanneth Pinzón", label: "Gerencia de Gestión Humana - Jeanneth Pinzón" },
-    { value: "Gerencia Contable - Melida Sandoval", label: "Gerencia Contable - Melida Sandoval" },
-    { value: "Dinerum - Opticoom - Lila Marcela Avila Tordecilla", label: "Dinerum - Opticoom - Lila Marcela Avila Tordecilla" },
+    { value: "Castañeda Camacho Pablo Cesar", label: "Castañeda Camacho Pablo Cesar - Presidente" },
+    { value: "César Alberto Garzón Navas", label: "César Alberto Garzón Navas - Gerente General" },
+    { value: "Mario Ernesto Girón Salazar", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
+    { value: "Jeanneth Pinzón", label: "Jeanneth Pinzón - Gerente Gestión Humana" },
+    { value: "Angela Maria Durán Gutierrez", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
+    { value: "Melida Sandoval Cabra", label: "Melida Sandoval Cabra - Gerente Administrativa" },
+    { value: "Adriana Nataly Páez Castiblanco", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
+    { value: "Diego Fernando Gonzalez", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo" },
+    { value: "Hector Gabriel Sotelo", label: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas" },
 ];
 
 const motivos = [
@@ -31,9 +26,9 @@ const motivos = [
 ];
 
 const validationSchema = Yup.object().shape({
-    area: Yup.string().required("Campo requerido"),
+    name: Yup.string().required("Campo requerido"),
     motivo: Yup.string().required("Campo requerido"),
-    mensaje: Yup.string().required("Campo requerido"),
+    description: Yup.string().required("Campo requerido"),
 });
 
 const Suggestions = () => {
@@ -54,10 +49,9 @@ const Suggestions = () => {
 
     const handleSubmit = async (values) => {
         setLoadingBar(true);
-        showSnack("success", "Sugerencia enviada correctamente");
 
         try {
-            const response = await fetch(`${getApiUrl()}suggestions/`, {
+            const response = await fetch(`${getApiUrl()}pqrs/complaints/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -80,7 +74,7 @@ const Suggestions = () => {
             if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
                 showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
             } else {
-                console.log(error.message);
+                console.error(error.message);
                 showSnack("error", error.message);
             }
 
@@ -107,18 +101,29 @@ const Suggestions = () => {
     };
 
     return (
-        <Container sx={{ height: "100vh", mt: "5rem" }}>
-            <Typography variant={"h4"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
-                Sugerencias
-            </Typography>
-            <Formik initialValues={{ area: "", motivo: "", mensaje: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+        <Container sx={{ height: "100%", mt: "5rem" }}>
+            <Box sx={{ pb: "1rem" }}>
+                <Typography variant={"h4"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }}>
+                    PQRS
+                </Typography>
+                <Typography variant={"body"}>
+                    En esta sección puedes enviar un mensaje a alguna de las Gerencias de la Compañía según tus intereses. De manera muy respetuosa puedes redactar un
+                    mensaje dando a conocer tus inconformidades, inconvenientes, sugerencias o felicitaciones a la Gerencia a la cual desees enviar el mensaje.
+                    <br />
+                    <br />
+                    Ten en cuenta que el mensaje que envíes sólo lo conocerás tú y el Gerente del área a la que lo envíes. Procura redactar con prudencia y buena
+                    ortografía para que tu mensaje sea totalmente legible.
+                </Typography>
+            </Box>
+            <Formik initialValues={{ name: "", motivo: "", description: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                {}
                 <Form>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                        <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
+                        <FormikTextField type="select" options={areas} name="name" label="Area" autoComplete="off" spellCheck={false} />
 
                         <FormikTextField type="select" options={motivos} name="motivo" label="Motivo" autoComplete="off" spellCheck={false} />
 
-                        <FormikTextField width="100%" type="text" multiline={true} rows={8} name="mensaje" label="Mensaje" autoComplete="off" spellCheck={false} />
+                        <FormikTextField width="100%" type="text" multiline={true} rows={8} name="description" label="Mensaje" autoComplete="off" spellCheck={false} />
                         <Button disabled={loadingBar} type="submit" sx={{ width: "max-content" }} variant="outlined" endIcon={<SendIcon />}>
                             Enviar
                         </Button>
