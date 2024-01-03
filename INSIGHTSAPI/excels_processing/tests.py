@@ -88,6 +88,18 @@ class CallTransferTestCase(BaseTestCase):
         request = self.client.post(reverse("call-transfer-list"))
         self.assertEqual(request.status_code, 403)
 
+    def test_connection_to_quality_server(self):
+        """Test the connection to the quality server"""
+        self.assertGreater(len(os.listdir("/var/servers/calidad/")), 0)
+
+    def test_connection_to_falabella_server(self):
+        """Test the connection to the falabella server"""
+        self.assertGreater(len(os.listdir("/var/servers/falabella/")), 0)
+
+    def test_connection_to_banco_agrario_server(self):
+        """Test the connection to the banco agrario server"""
+        self.assertGreater(len(os.listdir("/var/servers/banco_agrario/")), 0)
+
     def test_upload_call_transfer_file_falabella(self):
         """Test uploading a call transfer file to the server"""
         # Create the folders for the test

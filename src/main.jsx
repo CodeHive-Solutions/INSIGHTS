@@ -25,6 +25,7 @@ import UploadFiles from "./components/pages/UploadFiles";
 import EthicalLine from "./components/pages/EthicalLine";
 import BasicDocument from "./components/shared/GoalsPDF";
 import Quality from "./components/pages/Quality";
+import Legal from "./components/pages/Legal";
 
 const theme = createTheme({
     typography: {
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
             {
                 path: "quality",
                 element: <Quality />,
+            },
+            {
+                path: "legal",
+                element: <Legal />,
             },
         ],
     },

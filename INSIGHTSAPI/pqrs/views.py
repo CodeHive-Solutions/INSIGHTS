@@ -15,6 +15,7 @@ from .serializers import (
     SuggestionSerializer,
     OtherSerializer,
 )
+from django.conf import settings
 
 
 logger = logging.getLogger("requests")
@@ -57,12 +58,17 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                         {"error": f"No se encontró el email de {name}"},
                         status=status.HTTP_404_NOT_FOUND,
                     )
+                if settings.DEBUG:
+                    cc_emails = ["juan.carreno@cyc-bpo.com"]
+                else:
+                    # cc_emails = ["marlon.botero@cyc-bpo.com"]
+                    cc_emails = ["juan.carreno@cyc-bpo.com"]
                 errors = send_email(
                     sender_user="mismetas",
                     subject="Nueva PQRS",
                     message=f"<p>El usuario {user.first_name} {user.last_name} ha creado una nueva PQRS: </p> {request.data['description']}",
                     to_emails=[row[0]],
-                    # cc_emails=[""]
+                    cc_emails=cc_emails,
                     html_content=True,
                     email_owner="PQRS",
                     return_path="heibert.mogollon@cyc-bpo.com",

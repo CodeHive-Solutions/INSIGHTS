@@ -245,7 +245,7 @@ const Navbar = () => {
                         <IconButton onClick={handleClickMenu} size="small">
                             <MenuIcon />
                         </IconButton>
-                    ) : ( 
+                    ) : (
                         <>
                             <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
                             <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
@@ -488,6 +488,12 @@ const Navbar = () => {
                             <DriveFileMoveIcon fontSize="small" />
                         </ListItemIcon>
                         Trasladar Archivos
+                    </MenuItem>
+                    <MenuItem onClick={() => navigate("/logged/legal")}>
+                        <ListItemIcon>
+                            <DriveFileMoveIcon fontSize="small" />
+                        </ListItemIcon>
+                        Contratos y Polizas Legales
                     </MenuItem>
                 </Box>
             </Menu>
