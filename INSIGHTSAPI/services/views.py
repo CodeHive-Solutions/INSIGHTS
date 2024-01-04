@@ -44,8 +44,8 @@ def send_report_ethical_line(request):
     contact_info = ""
     if "contact_info" in request.data:
         contact_info = f"<p>El usuario desea ser contactado mediante:</p>{request.data['contact_info']}"
-    if settings.DEBUG:
-        to_emails = (["heibert.mogollon@cyc-bpo.com", "juan.carreno@cyc-bpo.com"],)
+    if settings.DEBUG or "test" in request.data["complaint"].lower():
+        to_emails = ["heibert.mogollon@cyc-bpo.com", "juan.carreno@cyc-bpo.com"]
     else:
         to_emails = [
             "cesar.garzon@cyc-bpo.com",

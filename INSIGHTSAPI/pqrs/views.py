@@ -58,11 +58,10 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                         {"error": f"No se encontró el email de {name}"},
                         status=status.HTTP_404_NOT_FOUND,
                     )
-                if settings.DEBUG:
+                if request.data.get("type") == "Test" or settings.DEBUG:
                     cc_emails = ["juan.carreno@cyc-bpo.com"]
                 else:
-                    # cc_emails = ["marlon.botero@cyc-bpo.com"]
-                    cc_emails = ["juan.carreno@cyc-bpo.com"]
+                    cc_emails = ["marlon.botero@cyc-bpo.com"]
                 errors = send_email(
                     sender_user="mismetas",
                     subject="Nueva PQRS",

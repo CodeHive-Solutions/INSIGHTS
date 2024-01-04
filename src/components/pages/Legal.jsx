@@ -46,12 +46,20 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import "../../index.css";
 
 const validationSchema = Yup.object().shape({
-    area: Yup.string().required("Campo requerido"),
-    tipo: Yup.string().required("Campo requerido"),
-    subtipo: Yup.string().required("Campo requerido"),
-    nombre: Yup.string().required("Campo requerido"),
-    version: Yup.string().required("Campo requerido"),
-    // archivo: Yup.string().required("Campo requerido"),
+    name: Yup.string().required("Campo requerido"),
+    city: Yup.string().required("Campo requerido"),
+    description: Yup.string().required("Campo requerido"),
+    expected_start_date: Yup.string().required("Campo requerido"),
+    value: Yup.string().required("Campo requerido"),
+    monthly_cost: Yup.string().required("Campo requerido"),
+    duration: Yup.string().required("Campo requerido"),
+    contact: Yup.string().required("Campo requerido"),
+    contact_telephone: Yup.string().required("Campo requerido"),
+    start_date: Yup.string().required("Campo requerido"),
+    civil_responsibility_policy: Yup.string().required("Campo requerido"),
+    compliance_policy: Yup.string().required("Campo requerido"),
+    insurance_policy: Yup.string().required("Campo requerido"),
+    renovation_date: Yup.string().required("Campo requerido"),
 });
 
 const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
@@ -67,6 +75,21 @@ const FormikTextField = ({ label, type, options, multiline, rows, ...props }) =>
                 ))}
             </TextField>
         );
+    } else if (type === "date") {
+        return (
+            <TextField
+                InputLabelProps={{ shrink: true }}
+                sx={{ width: "270px" }}
+                rows={rows}
+                type={type}
+                label={label}
+                {...field}
+                helperText={errorText}
+                error={!!errorText}
+            />
+        );
+    } else if (multiline) {
+        return <TextField sx={{ width: "600px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
     } else {
         return <TextField sx={{ width: "270px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
     }
@@ -126,15 +149,11 @@ export const Legal = () => {
         }
     };
 
-    useEffect(() => {
-        getFiles();
-    }, []);
+    // useEffect(() => {
+    //     getFiles();
+    // }, []);
 
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-        setFileName("Cargar Archivo");
-        setSelectedFile(null);
-    };
+    const handleCloseDialog = () => setOpenDialog(false);
     const handleOpenDialog = () => setOpenDialog(true);
 
     const showSnack = (severity, message, error) => {
@@ -150,7 +169,7 @@ export const Legal = () => {
 
     const handleDeleteClick = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}sgc/${id}`, {
+            const response = await fetch(`${getApiUrl()}contact/${id}`, {
                 method: "delete",
                 credentials: "include",
             });
@@ -181,11 +200,9 @@ export const Legal = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {addPermission ? (
-                    <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
-                        AÑADIR
-                    </Button>
-                ) : null}
+                <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                    AÑADIR
+                </Button>
                 <Box sx={{ textAlign: "end", flex: "1" }}>
                     <GridToolbarQuickFilter />
                 </Box>
@@ -194,38 +211,24 @@ export const Legal = () => {
     };
 
     const handleSubmit = async (values) => {
-        const formData = new FormData();
-        formData.append("area", values.area);
-        formData.append("type", values.tipo);
-        formData.append("sub_type", values.subtipo);
-        formData.append("name", values.nombre);
-        formData.append("version", values.version);
-        formData.append("file", selectedFile);
-        console.log(formData);
-
         try {
-            const response = await fetch(`${getApiUrl()}sgc/`, {
+            const response = await fetch(`${getApiUrl()}contracts/`, {
                 method: "POST",
                 credentials: "include",
-                body: formData,
+                body: JSON.stringify(values),
+                headers: { "Content-Type": "application/json" },
             });
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 201) {
                 handleCloseDialog();
-                getFiles();
                 showSnack("success", "Se ha cargado el archivo correctamente.");
             }
         } catch (error) {
             console.error(error);
             showSnack("error", error.message);
         }
-    };
-
-    const handleFileInputChange = (event) => {
-        setFileName(event.target.files[0].name);
-        setSelectedFile(event.target.files[0]);
     };
 
     const areas = [
@@ -254,92 +257,68 @@ export const Legal = () => {
 
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
-        { field: "clients", headerName: "Clientes", width: 750, editable: false },
+        { field: "name", headerName: "Clientes", width: 750, editable: false },
         { field: "city", headerName: "Ciudad", width: 100, editable: false },
         { field: "description", headerName: "Descripción", width: 100, editable: false },
         { field: "expected_date", headerName: "Fecha de Inicio Estimada", width: 100, editable: false },
-        { field: "contract_value", headerName: "Valor del Contrato", width: 100, editable: false },
-        { field: "monthly_billing", headerName: "Facturación Mensual", width: 100, editable: false },
+        { field: "value", headerName: "Valor del Contrato", width: 100, editable: false },
+        { field: "monthly_cost", headerName: "Facturación Mensual", width: 100, editable: false },
         { field: "duration", headerName: "Duración", width: 100, editable: false },
         { field: "contact", headerName: "Contacto", width: 100, editable: false },
-        { field: "number", headerName: "Teléfono", width: 100, editable: false },
+        { field: "contact_telephone", headerName: "Teléfono", width: 100, editable: false },
         { field: "start_date", headerName: "Fecha Inicio", width: 100, editable: false },
         {
-            field: "responsibility_policy_non_contractual",
+            field: "civil_responsibility_policy",
             headerName: "Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento",
             width: 100,
             editable: false,
         },
         { field: "compliance_policy", headerName: "Póliza de Cumplimiento", width: 100, editable: false },
         {
-            field: "responsibility_policy_data_loss",
+            field: "insurance_policy",
             headerName: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos",
             width: 100,
             editable: false,
         },
-        { field: "contract_renewal", headerName: "Renovación del Contrato", width: 100, editable: false },
+        { field: "renovation_date", headerName: "Renovación del Contrato", width: 100, editable: false },
     ];
 
-    if (deletePermission) {
-        columns.push({
-            field: "actions",
-            headerName: "Acciones",
-            width: 100,
-            type: "actions",
-            editable: false,
-            cellClassName: "actions",
-            getActions: ({ id }) => {
-                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+    columns.push({
+        field: "actions",
+        headerName: "Acciones",
+        width: 100,
+        type: "actions",
+        cellClassName: "actions",
+        getActions: ({ id }) => {
+            return [
+                <Tooltip title="Mas Detalles">
+                    <GridActionsCellItem sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }} icon={<MoreHorizIcon />} label="Detalles" />
+                </Tooltip>,
+                <Tooltip title="Eliminar Registro">
+                    <GridActionsCellItem
+                        sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                        icon={<DeleteIcon />}
+                        label="Eliminar"
+                        onClick={() => handleDeleteClick(id)}
+                    />
+                </Tooltip>,
+            ];
+        },
+    });
 
-                if (isInEditMode) {
-                    return [
-                        <Tooltip title="Guardar Cambios">
-                            <GridActionsCellItem
-                                sx={{ transition: ".3s ease", "&:hover": { color: "green" } }}
-                                icon={<SaveIcon />}
-                                label="Save"
-                                onClick={handleSaveClick(id)}
-                            />
-                        </Tooltip>,
-                        <Tooltip title="Cancelar Cambios">
-                            <GridActionsCellItem
-                                icon={<CancelIcon />}
-                                label="Cancel"
-                                className="textPrimary"
-                                onClick={handleCancelClick(id)}
-                                sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
-                            />
-                        </Tooltip>,
-                    ];
-                }
-                return [
-                    <Tooltip title="Mas Detalles">
-                        <GridActionsCellItem sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }} icon={<MoreHorizIcon />} label="Detalles" />
-                    </Tooltip>,
-                    <Tooltip title="Eliminar Registro">
-                        <GridActionsCellItem
-                            sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
-                            icon={<DeleteIcon />}
-                            label="Eliminar"
-                            onClick={() => handleDeleteClick(id)}
-                        />
-                    </Tooltip>,
-                ];
-            },
-        });
-        const nombreColumn = columns.find((column) => column.field === "nombre");
-        if (nombreColumn) {
-            nombreColumn.width -= 100; // Adjust the width as needed
-        }
+    const nombreColumn = columns.find((column) => column.field === "nombre");
+    if (nombreColumn) {
+        nombreColumn.width -= 100; // Adjust the width as needed
     }
     const hiddenColumns = columns.map((column) => column.field);
 
     const columnVisibilityModel = {
         ...Object.fromEntries(hiddenColumns.map((field) => [field, false])),
         id: true,
-        clients: true,
+        name: true,
         duration: true,
         start_date: true,
+        actions: true,
     };
 
     const createInitialState = {
@@ -393,45 +372,76 @@ export const Legal = () => {
                 className="privacy-screen"
             />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
-            <Dialog fullWidth={true} maxWidth="md" open={openDialog} onClose={handleCloseDialog}>
-                <DialogTitle>Cargar nuevo archivo</DialogTitle>
+            <Dialog fullWidth={true} maxWidth="200px" open={openDialog} onClose={handleCloseDialog}>
+                <DialogTitle>Añadir un nuevo registro</DialogTitle>
                 <DialogContent>
                     <Formik
-                        initialValues={{ area: "", tipo: "", subtipo: "", nombre: "", version: "", file: "" }}
+                        initialValues={{
+                            name: "",
+                            city: "",
+                            description: "",
+                            expected_start_date: "",
+                            value: "",
+                            monthly_cost: "",
+                            duration: "",
+                            contact: "",
+                            contact_telephone: "",
+                            start_date: "",
+                            civil_responsibility_policy: "",
+                            compliance_policy: "",
+                            insurance_policy: "",
+                            renovation_date: "",
+                        }}
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
                     >
-                        {(formik) => (
-                            <Form>
-                                <Box sx={{ display: "flex", gap: ".5rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                    <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
-                                    <FormikTextField type="select" options={tipos} name="tipo" label="Tipo" autoComplete="off" spellCheck={false} />
-                                    <FormikTextField type="text" name="subtipo" label="Subtipo" autoComplete="off" spellCheck={false} />
-                                    <FormikTextField type="text" name="nombre" label="Nombre" autoComplete="off" spellCheck={false} />
-                                    <FormikTextField type="text" name="version" label="Version" autoComplete="off" spellCheck={false} />
-                                    <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
-                                        <Button sx={{ width: "100%", overflow: "hidden" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
-                                            {fileName}
-                                            <VisuallyHiddenInput
-                                                id="file"
-                                                name="file"
-                                                type="file"
-                                                accept=".pdf, .xlsx"
-                                                onChange={
-                                                    handleFileInputChange
-                                                    // Formik doesn't automatically handle file inputs, so we need to manually
-                                                    // update the 'file' field when a file is selected
-                                                    // formik.setFieldValue("file", event.currentTarget.files[0]);
-                                                }
-                                            />
-                                        </Button>
-                                    </Box>
+                        <Form>
+                            <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
+                                <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact" label="Contacto" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
+                                <Box>
+                                    <FormikTextField
+                                        type="text"
+                                        multiline={true}
+                                        rows={3}
+                                        name="civil_responsibility_policy"
+                                        label="Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento"
+                                        autoComplete="off"
+                                        spellCheck={false}
+                                    />
+                                    <FormikTextField
+                                        multiline={true}
+                                        rows={3}
+                                        type="text"
+                                        name="compliance_policy"
+                                        label="Póliza de Cumplimiento"
+                                        autoComplete="off"
+                                        spellCheck={false}
+                                    />
+                                    <FormikTextField
+                                        type="text"
+                                        multiline={true}
+                                        rows={3}
+                                        name="insurance_policy"
+                                        label="Póliza Seguros de Responsabilidad Profesional por Perdida de Datos"
+                                        autoComplete="off"
+                                        spellCheck={false}
+                                    />
                                 </Box>
-                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                                    Guardar
-                                </Button>
-                            </Form>
-                        )}
+                                <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
+                            </Box>
+                            <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                Guardar
+                            </Button>
+                        </Form>
                     </Formik>
                 </DialogContent>
             </Dialog>

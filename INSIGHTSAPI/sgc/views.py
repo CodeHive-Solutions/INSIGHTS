@@ -17,72 +17,61 @@ from rest_framework.decorators import api_view
 
 logger = logging.getLogger("requests")
 
-
-@api_view(["GET"])
-def upload_data(request):
-    try:
-        file_data = SGCFile.objects.get(id=5918).area
-        logger.info(file_data)
-        logger.info(Area.objects.get(id=3).name)
-    except SGCFile.DoesNotExist:
-        return Response({"status": "SGCFile not found"}, status=404)
-
-    return Response({"status": file_data})
-    # connection = mysql.connector.connect(
-    #     host="172.16.0.6",
-    #     user="root",
-    #     password=os.environ["LEYES"],
-    #     database="userscyc",
-    # )
-    # cursor = connection.cursor(dictionary=True)
-    # cursor.execute(
-    #     """
-    #     SELECT
-    #         area as area,
-    #         tipo as type,
-    #         subtipo as sub_type,
-    #         nombre as name,
-    #         archivo as file,
-    #         version as version,
-    #         tipo_documento as tipo_documento
-    #     FROM userscyc.documentos_sgc
-    #     """
-    # )
-    # rows = cursor.fetchall()
-    # cursor.close()
-    # connection.close()
-    # # print(rows)
-    # sgc_files_to_create = []
-    # types_dict = {
-    #     1: "P",
-    #     2: "PR",
-    #     3: "PL",
-    #     4: "RG",
-    #     8: "MA",
-    #     9: "IN",
-    #     11: "CR",
-    # }
-    # for row in rows:
-    #     row["name"] = fix_text(row["name"])
-    #     row["type"] = types_dict.get(row["type"])
-    #     if row["tipo_documento"] == 2:
-    #         name = row["name"] + ".xlsx"
-    #     elif row["tipo_documento"] == 1:
-    #         name = row["name"] + ".pdf"
-    #     else:
-    #         name = row["name"]
-    #     content_file = ContentFile(row["file"], name=name)
-    #     sgc_files_to_create.append(
-    #         SGCFile(
-    #             name=row["name"],
-    #             area=Area.objects.get(id=row["area"]).name,
-    #             type=row["type"],
-    #             sub_type=row["sub_type"],
-    #             version=row["version"],
-    #             file=content_file,
-    #         )
-    #     )
-    # SGCFile.objects.bulk_create(sgc_files_to_create)
+# connection = mysql.connector.connect(
+#     host="172.16.0.6",
+#     user="root",
+#     password=os.environ["LEYES"],
+#     database="userscyc",
+# )
+# cursor = connection.cursor(dictionary=True)
+# cursor.execute(
+#     """
+#     SELECT
+#         area as area,
+#         tipo as type,
+#         subtipo as sub_type,
+#         nombre as name,
+#         archivo as file,
+#         version as version,
+#         tipo_documento as tipo_documento
+#     FROM userscyc.documentos_sgc
+#     """
+# )
+# rows = cursor.fetchall()
+# cursor.close()
+# connection.close()
+# # print(rows)
+# sgc_files_to_create = []
+# types_dict = {
+#     1: "P",
+#     2: "PR",
+#     3: "PL",
+#     4: "RG",
+#     8: "MA",
+#     9: "IN",
+#     11: "CR",
+# }
+# for row in rows:
+#     row["name"] = fix_text(row["name"])
+#     row["type"] = types_dict.get(row["type"])
+#     if row["tipo_documento"] == 2:
+#         name = row["name"] + ".xlsx"
+#     elif row["tipo_documento"] == 1:
+#         name = row["name"] + ".pdf"
+#     else:
+#         name = row["name"]
+#     content_file = ContentFile(row["file"], name=name)
+#     sgc_files_to_create.append(
+#         SGCFile(
+#             name=row["name"],
+#             area=Area.objects.get(id=row["area"]).name,
+#             type=row["type"],
+#             sub_type=row["sub_type"],
+#             version=row["version"],
+#             file=content_file,
+#         )
+#     )
+# SGCFile.objects.bulk_create(sgc_files_to_create)
 
 
 class SGCFileViewSet(viewsets.ModelViewSet):

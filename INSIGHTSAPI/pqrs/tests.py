@@ -12,8 +12,16 @@ class PQRSViewTest(BaseTestCase):
     def setUp(self):
         """Set up test."""
         super().setUp()
-        self.area = Area.objects.create(name="Test")
-        self.area.save()
+
+    def test_get_complaints(self):
+        """Test get complaints."""
+        response = self.client.get("/pqrs/complaints/")
+        self.assertEqual(response.status_code, 405)
+
+    def test_get_all_complaints(self):
+        """Test get all complaints."""
+        response = self.client.get("/pqrs/complaints/all/")
+        self.assertEqual(response.status_code, 405)
 
     def test_create_complaint(self):
         """Test create complaint."""
@@ -66,7 +74,3 @@ class PQRSViewTest(BaseTestCase):
             },
         )
         self.assertEqual(response.status_code, 201)
-
-    def tearDown(self):
-        """Tear down test."""
-        self.area.delete()

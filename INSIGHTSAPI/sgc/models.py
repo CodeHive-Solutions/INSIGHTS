@@ -1,15 +1,14 @@
 """This file contains the models for the SGC app."""
+import logging
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
-import logging
 import os
 import magic
 
 
 def file_content_validator(value):
     """Validates that the uploaded file is valid."""
-    print("something")
     valid_types = [
         "Microsoft Word 2007+",
         "PDF document",
@@ -21,9 +20,6 @@ def file_content_validator(value):
         raise ValidationError("El archivo no puede pesar mas de 10MB")
     mime = magic.Magic()
     file_type = mime.from_buffer(value.read())  # Read a small portion of the file
-    logger = logging.getLogger("requests")
-    logger.info("value.size")
-    logger.info(file_type)
     value.seek(0)  # Reset the file pointer to the beginning for further use
 
     if not file_type in valid_types:
@@ -50,4 +46,4 @@ class SGCFile(models.Model):
 
     def __str__(self):
         """String representation of the model."""
-        return self.name
+        return str(self.name)

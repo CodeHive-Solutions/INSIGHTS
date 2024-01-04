@@ -55,7 +55,7 @@ class EthicalLineTest(APITestCase):
                 "description": "Test Description",
             },
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.data)
 
     def test_send_report_ethical_line_with_contact(self):
         """Test send report ethical line."""
@@ -67,4 +67,4 @@ class EthicalLineTest(APITestCase):
                 "contact_info": "Test contact info",
             },
         )
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.data)
