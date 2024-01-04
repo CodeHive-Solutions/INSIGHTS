@@ -65,21 +65,25 @@ const validationSchema = Yup.object().shape({
 const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
     const [field, meta] = useField(props);
     const errorText = meta.error && meta.touched ? meta.error : "";
-    if (type === "select") {
+    if (label === "Renovación del contrato") {
         return (
-            <TextField sx={{ width: "270px" }} defaultValue="" select type={type} label={label} {...field} helperText={errorText} error={!!errorText}>
-                {options.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                        {option.label}
-                    </MenuItem>
-                ))}
-            </TextField>
+            <TextField
+                sx={{ width: "800px" }}
+                InputLabelProps={{ shrink: true }}
+                multiline={multiline}
+                rows={rows}
+                type={type}
+                label={label}
+                {...field}
+                helperText={errorText}
+                error={!!errorText}
+            />
         );
     } else if (type === "date") {
         return (
             <TextField
                 InputLabelProps={{ shrink: true }}
-                sx={{ width: "270px" }}
+                sx={{ width: "390px" }}
                 rows={rows}
                 type={type}
                 label={label}
@@ -89,9 +93,9 @@ const FormikTextField = ({ label, type, options, multiline, rows, ...props }) =>
             />
         );
     } else if (multiline) {
-        return <TextField sx={{ width: "600px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
+        return <TextField sx={{ width: "800px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
     } else {
-        return <TextField sx={{ width: "270px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
+        return <TextField sx={{ width: "390px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
     }
 };
 
@@ -127,9 +131,9 @@ export const Legal = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const getFiles = async () => {
+    const getPolicies = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}sgc/`, {
+            const response = await fetch(`${getApiUrl()}contracts/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -138,10 +142,10 @@ export const Legal = () => {
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                setRows(data.objects);
-                setAddPermission(data.permissions.add);
-                setEditPermission(data.permissions.change);
-                setDeletePermission(data.permissions.delete);
+                setRows(data);
+                // setAddPermission(data.permissions.add);
+                // setEditPermission(data.permissions.change);
+                // setDeletePermission(data.permissions.delete);
             }
         } catch (error) {
             console.error(error);
@@ -149,9 +153,9 @@ export const Legal = () => {
         }
     };
 
-    // useEffect(() => {
-    //     getFiles();
-    // }, []);
+    useEffect(() => {
+        getPolicies();
+    }, []);
 
     const handleCloseDialog = () => setOpenDialog(false);
     const handleOpenDialog = () => setOpenDialog(true);
@@ -169,13 +173,13 @@ export const Legal = () => {
 
     const handleDeleteClick = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}contact/${id}`, {
+            const response = await fetch(`${getApiUrl()}contracts/${id}`, {
                 method: "delete",
                 credentials: "include",
             });
             if (response.status === 204) {
                 setRows(rows.filter((row) => row.id !== id));
-                getFiles();
+                getPolicies();
                 showSnack("success", "Se ha eliminado el registro correctamente.");
             } else {
                 showSnack("error", "Error al eliminar el registro");
@@ -200,7 +204,7 @@ export const Legal = () => {
                         utf8WithBom: true,
                     }}
                 />
-                <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                     AÑADIR
                 </Button>
                 <Box sx={{ textAlign: "end", flex: "1" }}>
@@ -223,6 +227,7 @@ export const Legal = () => {
                 throw new Error(data.detail);
             } else if (response.status === 201) {
                 handleCloseDialog();
+                getPolicies();
                 showSnack("success", "Se ha cargado el archivo correctamente.");
             }
         } catch (error) {
@@ -230,30 +235,6 @@ export const Legal = () => {
             showSnack("error", error.message);
         }
     };
-
-    const areas = [
-        { value: "GESTION TECNOLOGICA", label: "GT" },
-        { value: "GESTION HUMANA", label: "GH" },
-        { value: "DIRECCIONAMIENTO ESTRATEGICO", label: "DE" },
-        { value: "GESTION DE PROCESOS", label: "GP" },
-        { value: "GESTION CARTERA", label: "GC" },
-        { value: "GESTION ADMINISTRATIVA", label: "GA" },
-        { value: "GESTION LEGAL", label: "GL" },
-        { value: "GESTION RIESGO", label: "GR" },
-        { value: "CONTROL INTERNO", label: "CI" },
-        { value: "GESTION DE SERVICIO", label: "GS" },
-        { value: "SISTEMA DE GESTION DE SEGURIDAD Y SALUD EN EL TRABAJO", label: "SST-GA" },
-    ];
-
-    const tipos = [
-        { value: "P", label: "P" },
-        { value: "PR", label: "PR" },
-        { value: "PL", label: "PL" },
-        { value: "RG", label: "RG" },
-        { value: "MA", label: "MA" },
-        { value: "IN", label: "IN" },
-        { value: "CR", label: "CR" },
-    ];
 
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
@@ -372,7 +353,7 @@ export const Legal = () => {
                 className="privacy-screen"
             />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
-            <Dialog fullWidth={true} maxWidth="200px" open={openDialog} onClose={handleCloseDialog}>
+            <Dialog maxWidth={"md"} open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Añadir un nuevo registro</DialogTitle>
                 <DialogContent>
                     <Formik
@@ -407,7 +388,7 @@ export const Legal = () => {
                                 <FormikTextField type="text" name="contact" label="Contacto" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
-                                <Box>
+                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
                                     <FormikTextField
                                         type="text"
                                         multiline={true}
@@ -437,10 +418,10 @@ export const Legal = () => {
                                     />
                                 </Box>
                                 <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
+                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                    Guardar
+                                </Button>
                             </Box>
-                            <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                                Guardar
-                            </Button>
                         </Form>
                     </Formik>
                 </DialogContent>

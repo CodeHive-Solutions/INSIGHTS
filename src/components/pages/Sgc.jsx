@@ -305,7 +305,7 @@ export const Sgc = () => {
                     }}
                 />
                 {addPermission ? (
-                    <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                    <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                         AÑADIR
                     </Button>
                 ) : null}
