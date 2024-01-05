@@ -9,7 +9,7 @@ import article1 from "../../images/articles/article1.jpg";
 import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
-
+import article5 from "../../images/blog/article5.jpg";
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -126,6 +126,30 @@ const ArticlePage = () => {
             <p>En resumen, C&C Services se ha convertido en un referente en el ámbito empresarial al priorizar el bienestar integral de sus empleados. Su enfoque estratégico y proactivo hacia el bienestar físico, mental y emocional ha demostrado ser un motor clave para una fuerza laboral productiva y satisfecha.</p>
         </article>`,
         },
+        {
+            id: 5,
+            title: "C&C Services SAS avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza",
+            subtitle: "Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RAAC.",
+            img: article5,
+            content: ` <article>
+    <h1>Proceso de Certificación de Empresa</h1>
+    <p>Desde el año 2023, la empresa ha iniciado un relevante proceso de certificación en el marco del Referencial de Autorregulación Asociación Colombiana de la Industria de la Cobranza (RAAC), liderado por COLCOB (Asociación Colombiana de la Industria de la Cobranza).</p>
+    <p>Este proceso de certificación se desarrolla en dos etapas, cada una con sus respectivas fases, buscando fortalecer y optimizar los estándares de operación de la empresa.</p>
+    <p>En la primera etapa, ejecutada durante el 2023, la empresa participó en una consultoría brindada por COLCOB. Esta agremiación, que reúne a las casas de cobranzas más destacadas en Colombia, reconoció a C&C Sevices entre los 10 primeros lugares en su ranking.</p>
+    <p>Tras finalizar esta consultoría y tomar en consideración oportunidades de mejora identificadas, la empresa dio inicio al proceso oficial de certificación con la empresa SGS. Este proceso se divide en dos fases: la primera tendrá lugar el próximo 18 de enero, donde se llevará a cabo una revisión general de las 7 dimensiones establecidas; la segunda fase se llevará a cabo del 6 al 9 de febrero, profundizando en la validación de las evidencias y el cumplimiento de los diferentes puntos de la norma.</p>
+    <p>Las 7 dimensiones clave que aborda este proceso son:</p>
+    <ul>
+      <li><b> Gobierno Corporativo:</b> Conjunto de políticas, normas y procedimientos que regulan el funcionamiento de los órganos de gobierno de la empresa.</li>
+      <li><b>Gestión Operacional:</b> Políticas y procedimientos que rigen la administración de los procesos y el modelo de operación de la empresa.</li>
+      <li><b>Gestión del Talento Humano:</b> Normativas relacionadas con la adecuada administración de los procesos vinculados al personal de la empresa.</li>
+      <li><b>Gestión de Calidad y Servicio:</b> Regulación de los procesos relacionados con la calidad de los productos y servicios, así como la satisfacción del cliente.</li>
+      <li><b>Gestión de Riesgos:</b> Normas que regulan la gestión de los riesgos asociados al modelo de negocio y operación.</li>
+      <li><b>Gestión de Tecnología:</b> Políticas para la administración de recursos tecnológicos, soporte operativo y seguridad de la información.</li>
+      <li><b>Metodología para la gestión, mejora y excelencia:</b> Procedimientos para potenciar procesos críticos mediante supervisión, control y documentación.</li>
+    </ul>
+    <p>Cada uno de nosotros hace parte de esta certificación, por lo cual los invitamos a que con sus jefes inmediatos consulten de qué manera van a estar aportando y en equipo garanticemos cerrar de manera exitosa.</p>
+  </article>`,
+        },
         // Add more articles here...
     ];
 
@@ -141,7 +165,7 @@ const ArticlePage = () => {
 
     return (
         <Container sx={{ height: "max-content" }}>
-            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", px: "5rem", pt: "7rem", pb: "2rem", gap: "3rem" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", px: "5rem", pt: "7rem", pb: "2rem", gap: "2rem" }}>
                 <Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bolder", fontSize: "3em", fontFamily: "Poppins" }}>
                     {article.title}
                 </Typography>

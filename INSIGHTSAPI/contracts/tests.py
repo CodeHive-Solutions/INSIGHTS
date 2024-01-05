@@ -17,9 +17,18 @@ class TestContracts(BaseTestCase):
         self.data = {
             "name": "Contract 1",
             "description": "Contract 1 description",
+            "city": "City 1",
+            "expected_start_date": "2020-01-01",
             "start_date": "2020-01-01",
-            "end_date": "2020-12-31",
+            "renovation_date": "2020-12-31",
             "value": 1000000,
+            "monthly_cost": 10000,
+            "duration": "2020-01-01",
+            "contact": "John Doe",
+            "contact_telephone": "1234567890",
+            "civil_responsibility_policy": "Civil Responsibility Policy",
+            "compliance_policy": "Compliance Policy",
+            "insurance_policy": "Insurance Policy",
         }
         self.contract = Contract.objects.create(**self.data)
         self.user = User.objects.get(username="staffnet")

@@ -149,7 +149,7 @@ export const Sgc = () => {
 
     const handleDownloadFile = (id) => {
         // open the link in other tab
-        window.open(`${getApiUrl()}services/file-download/sgc/${id}`, "_blank");
+        window.location.href = `${getApiUrl()}services/file-download/sgc/${id}`;
     };
 
     const handleCloseDialog = () => {

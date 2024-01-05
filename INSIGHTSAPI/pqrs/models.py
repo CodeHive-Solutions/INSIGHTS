@@ -13,7 +13,7 @@ def validate_max_length_1000(value):
 class Complaint(models.Model):
     """This class represents the complaint model."""
 
-    area = models.CharField(max_length=60)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
     description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50, default="PENDING")
@@ -24,7 +24,7 @@ class Complaint(models.Model):
 class Congratulation(models.Model):
     """This class represents the congratulation model."""
 
-    area = models.CharField(max_length=60)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
     description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
@@ -33,7 +33,7 @@ class Congratulation(models.Model):
 class Suggestion(models.Model):
     """This class represents the suggestion model."""
 
-    area = models.CharField(max_length=60)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
     description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50, default="PENDING")
@@ -44,7 +44,7 @@ class Suggestion(models.Model):
 class Other(models.Model):
     """This class represents the other model."""
 
-    area = models.CharField(max_length=60)
+    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
     description = models.TextField(validators=[validate_max_length_1000])
     created_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50, default="PENDING")

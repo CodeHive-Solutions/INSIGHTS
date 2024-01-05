@@ -126,6 +126,7 @@ export const Legal = () => {
     const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
+    const [openDialogEdit, setOpenDialogEdit] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -158,7 +159,9 @@ export const Legal = () => {
     }, []);
 
     const handleCloseDialog = () => setOpenDialog(false);
+    const handleCloseDialogEdit = () => setOpenDialogEdit(false);
     const handleOpenDialog = () => setOpenDialog(true);
+    const handleOpenDialogEdit = () => setOpenDialogEdit(true);
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -228,7 +231,29 @@ export const Legal = () => {
             } else if (response.status === 201) {
                 handleCloseDialog();
                 getPolicies();
-                showSnack("success", "Se ha cargado el archivo correctamente.");
+                showSnack("success", "Se ha creado el registro correctamente.");
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    const handleSubmitEdit = async (values) => {
+        try {
+            const response = await fetch(`${getApiUrl()}contracts/`, {
+                method: "POST",
+                credentials: "include",
+                body: JSON.stringify(values),
+                headers: { "Content-Type": "application/json" },
+            });
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail);
+            } else if (response.status === 201) {
+                handleCloseDialog();
+                getPolicies();
+                showSnack("success", "Se ha creado el registro correctamente.");
             }
         } catch (error) {
             console.error(error);
@@ -239,29 +264,8 @@ export const Legal = () => {
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
         { field: "name", headerName: "Clientes", width: 750, editable: false },
-        { field: "city", headerName: "Ciudad", width: 100, editable: false },
-        { field: "description", headerName: "Descripción", width: 100, editable: false },
-        { field: "expected_date", headerName: "Fecha de Inicio Estimada", width: 100, editable: false },
-        { field: "value", headerName: "Valor del Contrato", width: 100, editable: false },
-        { field: "monthly_cost", headerName: "Facturación Mensual", width: 100, editable: false },
         { field: "duration", headerName: "Duración", width: 100, editable: false },
-        { field: "contact", headerName: "Contacto", width: 100, editable: false },
-        { field: "contact_telephone", headerName: "Teléfono", width: 100, editable: false },
         { field: "start_date", headerName: "Fecha Inicio", width: 100, editable: false },
-        {
-            field: "civil_responsibility_policy",
-            headerName: "Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento",
-            width: 100,
-            editable: false,
-        },
-        { field: "compliance_policy", headerName: "Póliza de Cumplimiento", width: 100, editable: false },
-        {
-            field: "insurance_policy",
-            headerName: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos",
-            width: 100,
-            editable: false,
-        },
-        { field: "renovation_date", headerName: "Renovación del Contrato", width: 100, editable: false },
     ];
 
     columns.push({
@@ -273,7 +277,12 @@ export const Legal = () => {
         getActions: ({ id }) => {
             return [
                 <Tooltip title="Mas Detalles">
-                    <GridActionsCellItem sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }} icon={<MoreHorizIcon />} label="Detalles" />
+                    <GridActionsCellItem
+                        onClick={handleOpenDialog}
+                        sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }}
+                        icon={<MoreHorizIcon />}
+                        label="Detalles"
+                    />
                 </Tooltip>,
                 <Tooltip title="Eliminar Registro">
                     <GridActionsCellItem
@@ -286,38 +295,6 @@ export const Legal = () => {
             ];
         },
     });
-
-    const nombreColumn = columns.find((column) => column.field === "nombre");
-    if (nombreColumn) {
-        nombreColumn.width -= 100; // Adjust the width as needed
-    }
-    const hiddenColumns = columns.map((column) => column.field);
-
-    const columnVisibilityModel = {
-        ...Object.fromEntries(hiddenColumns.map((field) => [field, false])),
-        id: true,
-        name: true,
-        duration: true,
-        start_date: true,
-        actions: true,
-    };
-
-    const createInitialState = {
-        filter: {
-            filterModel: {
-                items: [],
-                quickFilterExcludeHiddenColumns: true,
-            },
-        },
-        pagination: {
-            paginationModel: {
-                pageSize: 12,
-            },
-        },
-        columns: {
-            columnVisibilityModel: columnVisibilityModel,
-        },
-    };
 
     return (
         <>
@@ -339,7 +316,6 @@ export const Legal = () => {
                     sx={{ width: "100%" }}
                     columns={columns}
                     rows={rows}
-                    initialState={createInitialState}
                     slots={{
                         toolbar: CustomToolbar,
                     }}
@@ -375,6 +351,80 @@ export const Legal = () => {
                         }}
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
+                    >
+                        <Form>
+                            <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
+                                <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact" label="Contacto" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
+                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
+                                    <FormikTextField
+                                        type="text"
+                                        multiline={true}
+                                        rows={3}
+                                        name="civil_responsibility_policy"
+                                        label="Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento"
+                                        autoComplete="off"
+                                        spellCheck={false}
+                                    />
+                                    <FormikTextField
+                                        multiline={true}
+                                        rows={3}
+                                        type="text"
+                                        name="compliance_policy"
+                                        label="Póliza de Cumplimiento"
+                                        autoComplete="off"
+                                        spellCheck={false}
+                                    />
+                                    <FormikTextField
+                                        type="text"
+                                        multiline={true}
+                                        rows={3}
+                                        name="insurance_policy"
+                                        label="Póliza Seguros de Responsabilidad Profesional por Perdida de Datos"
+                                        autoComplete="off"
+                                        spellCheck={false}
+                                    />
+                                </Box>
+                                <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
+                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                    Guardar
+                                </Button>
+                            </Box>
+                        </Form>
+                    </Formik>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog maxWidth={"md"} open={openDialogEdit} onClose={handleCloseDialogEdit}>
+                <DialogTitle>Añadir un nuevo registro</DialogTitle>
+                <DialogContent>
+                    <Formik
+                        initialValues={{
+                            name: "",
+                            city: "",
+                            description: "",
+                            expected_start_date: "",
+                            value: "",
+                            monthly_cost: "",
+                            duration: "",
+                            contact: "",
+                            contact_telephone: "",
+                            start_date: "",
+                            civil_responsibility_policy: "",
+                            compliance_policy: "",
+                            insurance_policy: "",
+                            renovation_date: "",
+                        }}
+                        validationSchema={validationSchema}
+                        onSubmit={handleSubmitEdit}
                     >
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>

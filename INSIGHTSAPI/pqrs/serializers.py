@@ -2,6 +2,7 @@
 from os import read
 from rest_framework import serializers
 from .models import Complaint, Congratulation, Suggestion, Other
+from users.models import User
 from hierarchy.models import Area
 
 
@@ -20,10 +21,24 @@ class BasePQRSSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        validated_data[
-            "area"
-        ] = user.area  # Assign the user's area to the Complaint's area
+        name = self.context["request"].data["name"].split("-")
+        firstname = name[0].strip()
+        lastname = name[1].strip()
+        user = User.objects.filter(first_name=firstname, last_name=lastname).first()
+        if not user:
+            raise serializers.ValidationError(
+                {"error": f"El usuario {firstname, lastname} no existe."}
+            )
+        validated_data["area"] = Area.objects.get(name=user.area)
+        # validated_data[
+        # "area"
+        # ] = user.area  # Assign the user's area to the Complaint's area
+        # area = Area.objects.get(name=validated_data["name"].split("-")[0])
+        # if not area:
+        # raise serializers.ValidationError(
+        # {"error": f"El área {validated_data['name']} no existe."}
+        # )
+        # validated_data["area"] = area
         return super().create(validated_data)
 
 

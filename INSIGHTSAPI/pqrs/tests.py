@@ -1,6 +1,6 @@
-from django.test import TestCase
 from hierarchy.models import Area
 from services.tests import BaseTestCase
+from users.models import User
 
 
 # Create your tests here.
@@ -10,8 +10,14 @@ class PQRSViewTest(BaseTestCase):
     databases = {"default", "staffnet"}
 
     def setUp(self):
-        """Set up test."""
+        """Set up the test case."""
         super().setUp()
+        Area.objects.create(name="Test")
+        staffUser = User.objects.get(username="staffnet")
+        # Update the first_name and last_name of the user
+        staffUser.first_name = "HEIBERT STEVEN"
+        staffUser.last_name = "MOGOLLON MAHECHA"
+        staffUser.save()
 
     def test_get_complaints(self):
         """Test get complaints."""
@@ -28,9 +34,9 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/complaints/",
             {
-                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
                 "type": "Test",
-                "description": "Test",
+                "description": "Test1",
                 "contact_info": "Test",
             },
         )
@@ -41,7 +47,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/congratulations/",
             {
-                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",
@@ -54,7 +60,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/suggestions/",
             {
-                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",
@@ -67,7 +73,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/others/",
             {
-                "name": "MOGOLLON MAHECHA HEIBERT STEVEN",
+                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",

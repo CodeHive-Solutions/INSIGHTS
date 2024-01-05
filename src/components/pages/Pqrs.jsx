@@ -7,15 +7,15 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
-    { value: "Castañeda Camacho Pablo Cesar", label: "Castañeda Camacho Pablo Cesar - Presidente" },
-    { value: "César Alberto Garzón Navas", label: "César Alberto Garzón Navas - Gerente General" },
-    { value: "Mario Ernesto Girón Salazar", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
-    { value: "Jeanneth Pinzón", label: "Jeanneth Pinzón - Gerente Gestión Humana" },
-    { value: "Angela Maria Durán Gutierrez", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
-    { value: "Melida Sandoval Cabra", label: "Melida Sandoval Cabra - Gerente Administrativa" },
-    { value: "Adriana Nataly Páez Castiblanco", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
-    { value: "Diego Fernando Gonzalez", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo" },
-    { value: "Hector Gabriel Sotelo", label: "Hector Gabriel Sotelo - Gerente de Operaciones Ventas" },
+    { value: "CASTAÑEDA CAMACHO - PABLO CESAR", label: "Castañeda Camacho Pablo Cesar - Presidente" },
+    { value: "GARZON NAVAS - CESAR ALBERTO", label: "César Alberto Garzón Navas - Gerente General" },
+    { value: "GIRON SALAZAR - MARIO ERNESTO", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
+    { value: "PINZON MARTINEZ - YANNETH OTILIA", label: "Jeanneth Pinzón - Gerente Gestión Humana" },
+    { value: "DURAN GUTIERREZ - ANGELA MARIA", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
+    { value: "SANDOVAL - CABRA MELIDA", label: "Melida Sandoval Cabra - Gerente Administrativa" },
+    { value: "PAEZ CASTIBLANCO - ADRIANA NATALY", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
+    { value: "GONZALEZ MORA - DIEGO FERNANDO", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo" },
+    { value: "SOTELO PEÑA - HECTOR GABRIEL", label: "Héctor Gabriel Sotelo - Gerente de Operaciones Ventas" },
 ];
 
 const motivos = [

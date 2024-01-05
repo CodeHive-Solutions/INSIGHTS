@@ -31,6 +31,10 @@ import benefit2 from "../../images/benefits-vacancies/MicrosoftTeams-image5.png"
 import benefit3 from "../../images/benefits-vacancies/MicrosoftTeams-image6.png";
 import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png";
 
+import politicaObjetivo from "../../images/home-carousel/politica-objetivo.png";
+import principiosISO from "../../images/home-carousel/principios-iso.png";
+import iso27001 from "../../images/home-carousel/iso-27001.png";
+
 //vacancies
 import vancie1 from "../../images/vacancies/1.jpg";
 import vancie2 from "../../images/vacancies/2.jpg";
@@ -55,7 +59,7 @@ const vacancies = [
     { image: realBenefit2, title: "Beneficio 2" },
 ];
 
-const homeImages = [{ image: image2024 }, { image: realImage2 }, { image: realImage3 }];
+const homeImages = [{ image: image2024 }];
 const birthdays = [
     { image: barbaraVanegas, name: "nombre ejemplo", description: "Yanbal" },
     { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
