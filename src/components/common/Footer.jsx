@@ -42,10 +42,6 @@ const Footer = () => {
                         onClick={() => window.open("https://www.linkedin.com/company/c-c-services-sas/", "_blank")}
                         sx={{ cursor: "pointer", fontSize: 25, color: "white" }}
                     />
-                    <InstagramIcon
-                        onClick={() => window.open("https://instagram.com/cycservicessas?igshid=MzRlODBiNWFlZA==", "_blank")}
-                        sx={{ cursor: "pointer", fontSize: 25, color: "white" }}
-                    />
                 </Box>
             </Box>
 

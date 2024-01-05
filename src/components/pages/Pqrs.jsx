@@ -7,6 +7,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
+    { value: "CARREÑO DAZA - JUAN SEBASTIAN", label: "CARREÑO DAZA JUAN SEBASTIAN" },
     { value: "CASTAÑEDA CAMACHO - PABLO CESAR", label: "Castañeda Camacho Pablo Cesar - Presidente" },
     { value: "GARZON NAVAS - CESAR ALBERTO", label: "César Alberto Garzón Navas - Gerente General" },
     { value: "GIRON SALAZAR - MARIO ERNESTO", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },

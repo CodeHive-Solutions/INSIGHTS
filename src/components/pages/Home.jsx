@@ -59,26 +59,7 @@ const vacancies = [
     { image: realBenefit2, title: "Beneficio 2" },
 ];
 
-const homeImages = [{ image: image2024 }];
-const birthdays = [
-    { image: barbaraVanegas, name: "nombre ejemplo", description: "Yanbal" },
-    { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-    { image: tuliaCalderon, name: "nombre ejemplo", description: "Yanbal" },
-    { image: cristianGonzales, name: "nombre ejemplo", description: "BBVA" },
-];
-const birthdays2 = [
-    { image: cristianGonzales, name: "nombre ejemplo", description: "Yanbal" },
-    { image: barbaraVanegas, name: "nombre ejemplo", description: "BBVA" },
-    { image: carolGuerrero, name: "nombre ejemplo", description: "Yanbal" },
-    { image: tuliaCalderon, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-];
-
-const birthdays3 = [
-    { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-    { image: cristianGonzales, name: "nombre ejemplo", description: "Yanbal" },
-    { image: barbaraVanegas, name: "nombre ejemplo", description: "BBVA" },
-    { image: tuliaCalderon, name: "nombre ejemplo", description: "Yanbal" },
-];
+const homeImages = [{ image: image2024 }, { image: politicaObjetivo }, { image: principiosISO }, { image: iso27001 }];
 
 const Home = () => {
     const [openDialog, setOpenDialog] = useState(false);

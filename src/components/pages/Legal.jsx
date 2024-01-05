@@ -62,6 +62,23 @@ const validationSchema = Yup.object().shape({
     renovation_date: Yup.string().required("Campo requerido"),
 });
 
+const validationSchemaEdit = Yup.object().shape({
+    name_edit: Yup.string().required("Campo requerido"),
+    city_edit: Yup.string().required("Campo requerido"),
+    description_edit: Yup.string().required("Campo requerido"),
+    expected_start_date_edit: Yup.string().required("Campo requerido"),
+    value_edit: Yup.string().required("Campo requerido"),
+    monthly_cost_edit: Yup.string().required("Campo requerido"),
+    duration_edit: Yup.string().required("Campo requerido"),
+    contact_edit: Yup.string().required("Campo requerido"),
+    contact_telephone_edit: Yup.string().required("Campo requerido"),
+    start_date_edit: Yup.string().required("Campo requerido"),
+    civil_responsibility_policy_edit: Yup.string().required("Campo requerido"),
+    compliance_policy_edit: Yup.string().required("Campo requerido"),
+    insurance_policy_edit: Yup.string().required("Campo requerido"),
+    renovation_date_edit: Yup.string().required("Campo requerido"),
+});
+
 const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
     const [field, meta] = useField(props);
     const errorText = meta.error && meta.touched ? meta.error : "";
@@ -122,6 +139,7 @@ export const Legal = () => {
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
+    const [details, setDetails] = useState();
     const [addPermission, setAddPermission] = useState(false);
     const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
@@ -144,6 +162,30 @@ export const Legal = () => {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
                 setRows(data);
+                // setAddPermission(data.permissions.add);
+                // setEditPermission(data.permissions.change);
+                // setDeletePermission(data.permissions.delete);
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
+    const getDetails = async (id) => {
+        try {
+            const response = await fetch(`${getApiUrl()}contracts/${id}`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                throw new Error(data.detail);
+            } else if (response.status === 200) {
+                console.log(data);
+                setDetails(data);
+                handleOpenDialogEdit();
                 // setAddPermission(data.permissions.add);
                 // setEditPermission(data.permissions.change);
                 // setDeletePermission(data.permissions.delete);
@@ -278,7 +320,7 @@ export const Legal = () => {
             return [
                 <Tooltip title="Mas Detalles">
                     <GridActionsCellItem
-                        onClick={handleOpenDialog}
+                        onClick={() => getDetails(id)}
                         sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }}
                         icon={<MoreHorizIcon />}
                         label="Detalles"
@@ -334,20 +376,20 @@ export const Legal = () => {
                 <DialogContent>
                     <Formik
                         initialValues={{
-                            name: "",
-                            city: "",
-                            description: "",
-                            expected_start_date: "",
-                            value: "",
-                            monthly_cost: "",
-                            duration: "",
-                            contact: "",
-                            contact_telephone: "",
-                            start_date: "",
-                            civil_responsibility_policy: "",
-                            compliance_policy: "",
-                            insurance_policy: "",
-                            renovation_date: "",
+                            name_edit: "",
+                            city_edit: "",
+                            description_edit: "",
+                            expected_start_date_edit: "",
+                            value_edit: "",
+                            monthly_cost_edit: "",
+                            duration_edit: "",
+                            contact_edit: "",
+                            contact_telephone_edit: "",
+                            start_date_edit: "",
+                            civil_responsibility_policy_edit: "",
+                            compliance_policy_edit: "",
+                            insurance_policy_edit: "",
+                            renovation_date_edit: "",
                         }}
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
@@ -406,44 +448,25 @@ export const Legal = () => {
             <Dialog maxWidth={"md"} open={openDialogEdit} onClose={handleCloseDialogEdit}>
                 <DialogTitle>Añadir un nuevo registro</DialogTitle>
                 <DialogContent>
-                    <Formik
-                        initialValues={{
-                            name: "",
-                            city: "",
-                            description: "",
-                            expected_start_date: "",
-                            value: "",
-                            monthly_cost: "",
-                            duration: "",
-                            contact: "",
-                            contact_telephone: "",
-                            start_date: "",
-                            civil_responsibility_policy: "",
-                            compliance_policy: "",
-                            insurance_policy: "",
-                            renovation_date: "",
-                        }}
-                        validationSchema={validationSchema}
-                        onSubmit={handleSubmitEdit}
-                    >
+                    <Formik initialValues={details} validationSchema={validationSchemaEdit} onSubmit={handleSubmitEdit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact" label="Contacto" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="name_edit" label="Clientes" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="city_edit" label="Ciudad" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="description_edit" label="Descripción" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="expected_start_date_edit" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="value_edit" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="monthly_cost_edit" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="duration_edit" label="Duración" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact_edit" label="Contacto" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact_telephone_edit" label="Teléfono" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="start_date_edit" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
                                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
                                     <FormikTextField
                                         type="text"
                                         multiline={true}
                                         rows={3}
-                                        name="civil_responsibility_policy"
+                                        name="civil_responsibility_policy_edit"
                                         label="Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento"
                                         autoComplete="off"
                                         spellCheck={false}
@@ -452,7 +475,7 @@ export const Legal = () => {
                                         multiline={true}
                                         rows={3}
                                         type="text"
-                                        name="compliance_policy"
+                                        name="compliance_policy_edit"
                                         label="Póliza de Cumplimiento"
                                         autoComplete="off"
                                         spellCheck={false}
@@ -461,13 +484,13 @@ export const Legal = () => {
                                         type="text"
                                         multiline={true}
                                         rows={3}
-                                        name="insurance_policy"
+                                        name="insurance_policy_edit"
                                         label="Póliza Seguros de Responsabilidad Profesional por Perdida de Datos"
                                         autoComplete="off"
                                         spellCheck={false}
                                     />
                                 </Box>
-                                <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="renovation_date_edit" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
                                 <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
                                     Guardar
                                 </Button>
