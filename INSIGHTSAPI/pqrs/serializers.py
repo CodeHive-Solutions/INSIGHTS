@@ -22,12 +22,12 @@ class BasePQRSSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         name = self.context["request"].data["name"].split("-")
-        firstname = name[0].strip()
-        lastname = name[1].strip()
+        firstname = name[1].strip()
+        lastname = name[0].strip()
         user = User.objects.filter(first_name=firstname, last_name=lastname).first()
         if not user:
             raise serializers.ValidationError(
-                {"error": f"El usuario {firstname, lastname} no existe."}
+                {"error": f"El usuario {firstname + lastname} no existe."}
             )
         validated_data["area"] = Area.objects.get(name=user.area)
         # validated_data[

@@ -42,9 +42,12 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
         """Save the post data when creating a new model instance."""
         if not "name" in self.request.data:
             return Response({"error": "El nombre es requerido"}, status=400)
+        if not "type" in self.request.data:
+            return Response({"error": "El tipo es requerido"}, status=400)
         response = super().create(request, *args, **kwargs)
         user = self.request.user
-        name = self.request.data["name"]
+        name = self.request.data["name"].split("-")
+        name = f"{name[0].strip()} {name[1].strip()}"
 
         if response.status_code == status.HTTP_201_CREATED:
             with connections["staffnet"].cursor() as cursor:

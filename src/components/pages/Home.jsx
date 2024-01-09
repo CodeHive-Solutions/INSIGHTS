@@ -34,6 +34,7 @@ import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png"
 import politicaObjetivo from "../../images/home-carousel/politica-objetivo.png";
 import principiosISO from "../../images/home-carousel/principios-iso.png";
 import iso27001 from "../../images/home-carousel/iso-27001.png";
+import raac from "../../images/home-carousel/raac.png";
 
 //vacancies
 import vancie1 from "../../images/vacancies/1.jpg";
@@ -48,7 +49,7 @@ import realBenefit2 from "../../images/benefits/2.png";
 import { RepeatOneSharp } from "@mui/icons-material";
 
 const benefits = [
-    { image: vancie5, title: "Beneficio 1" },
+    // { image: vancie5, title: "Beneficio 1" },
     { image: realBenefit2, title: "Beneficio 2" },
 ];
 
@@ -56,10 +57,10 @@ const vacancies = [
     // { image: benefit3, title: "Vacante 1" },
     // { image: benefit4, title: "Vacante 2" },
     { image: vancie5, title: "Beneficio 1" },
-    { image: realBenefit2, title: "Beneficio 2" },
+    // { image: realBenefit2, title: "Beneficio 2" },
 ];
 
-const homeImages = [{ image: image2024 }, { image: politicaObjetivo }, { image: principiosISO }, { image: iso27001 }];
+const homeImages = [{ image: image2024 }, { image: politicaObjetivo }, { image: principiosISO }, { image: iso27001 }, { image: raac }];
 
 const Home = () => {
     const [openDialog, setOpenDialog] = useState(false);

@@ -96,4 +96,10 @@ class User(AbstractUser):
             area, _ = Area.objects.get_or_create(name=result[1])
             self.area_id = area.id
         self.set_unusable_password()
+        # Iterate through all fields in the model
+        for field in self._meta.fields:
+            # Check if the field is a CharField or TextField
+            if isinstance(field, (models.CharField, models.TextField)):
+                # Convert the field value to uppercase
+                setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)

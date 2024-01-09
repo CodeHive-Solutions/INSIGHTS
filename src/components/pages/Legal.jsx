@@ -21,6 +21,8 @@ import Save from "@mui/icons-material/Save";
 import { getApiUrl } from "../../assets/getApi";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Tooltip } from "@mui/material";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { IconButton } from "@mui/material";
 
 import {
     GridRowModes,
@@ -62,89 +64,18 @@ const validationSchema = Yup.object().shape({
     renovation_date: Yup.string().required("Campo requerido"),
 });
 
-const validationSchemaEdit = Yup.object().shape({
-    name_edit: Yup.string().required("Campo requerido"),
-    city_edit: Yup.string().required("Campo requerido"),
-    description_edit: Yup.string().required("Campo requerido"),
-    expected_start_date_edit: Yup.string().required("Campo requerido"),
-    value_edit: Yup.string().required("Campo requerido"),
-    monthly_cost_edit: Yup.string().required("Campo requerido"),
-    duration_edit: Yup.string().required("Campo requerido"),
-    contact_edit: Yup.string().required("Campo requerido"),
-    contact_telephone_edit: Yup.string().required("Campo requerido"),
-    start_date_edit: Yup.string().required("Campo requerido"),
-    civil_responsibility_policy_edit: Yup.string().required("Campo requerido"),
-    compliance_policy_edit: Yup.string().required("Campo requerido"),
-    insurance_policy_edit: Yup.string().required("Campo requerido"),
-    renovation_date_edit: Yup.string().required("Campo requerido"),
-});
-
-const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
-    const [field, meta] = useField(props);
-    const errorText = meta.error && meta.touched ? meta.error : "";
-    if (label === "Renovación del contrato") {
-        return (
-            <TextField
-                sx={{ width: "800px" }}
-                InputLabelProps={{ shrink: true }}
-                multiline={multiline}
-                rows={rows}
-                type={type}
-                label={label}
-                {...field}
-                helperText={errorText}
-                error={!!errorText}
-            />
-        );
-    } else if (type === "date") {
-        return (
-            <TextField
-                InputLabelProps={{ shrink: true }}
-                sx={{ width: "390px" }}
-                rows={rows}
-                type={type}
-                label={label}
-                {...field}
-                helperText={errorText}
-                error={!!errorText}
-            />
-        );
-    } else if (multiline) {
-        return <TextField sx={{ width: "800px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
-    } else {
-        return <TextField sx={{ width: "390px" }} multiline={multiline} rows={rows} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
-    }
-};
-
-const initialRows = [
-    { id: 1, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 2, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 3, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 4, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 5, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 6, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 7, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 8, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 9, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 10, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 11, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 12, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 13, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 14, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 15, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-];
-
 export const Legal = () => {
-    const [rows, setRows] = useState(initialRows);
+    const [rows, setRows] = useState([]);
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
-    const [details, setDetails] = useState();
+    const [details, setDetails] = useState({});
     const [addPermission, setAddPermission] = useState(false);
     const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
+    const [disabled, setDisabled] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -201,9 +132,20 @@ export const Legal = () => {
     }, []);
 
     const handleCloseDialog = () => setOpenDialog(false);
-    const handleCloseDialogEdit = () => setOpenDialogEdit(false);
+    const handleCloseDialogEdit = () => {
+        setOpenDialogEdit(false);
+        setDisabled(false);
+    };
+
     const handleOpenDialog = () => setOpenDialog(true);
-    const handleOpenDialogEdit = () => setOpenDialogEdit(true);
+    const handleOpenDialogEdit = () => {
+        setDisabled(true);
+        setOpenDialogEdit(true);
+    };
+
+    const handleDisabledChange = () => {
+        setDisabled(!disabled);
+    };
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -283,8 +225,8 @@ export const Legal = () => {
 
     const handleSubmitEdit = async (values) => {
         try {
-            const response = await fetch(`${getApiUrl()}contracts/`, {
-                method: "POST",
+            const response = await fetch(`${getApiUrl()}contracts/${values.id}/`, {
+                method: "PATCH",
                 credentials: "include",
                 body: JSON.stringify(values),
                 headers: { "Content-Type": "application/json" },
@@ -292,14 +234,77 @@ export const Legal = () => {
             const data = await response.json();
             if (!response.ok) {
                 throw new Error(data.detail);
-            } else if (response.status === 201) {
-                handleCloseDialog();
+            } else if (response.status === 200) {
+                handleCloseDialogEdit();
                 getPolicies();
-                showSnack("success", "Se ha creado el registro correctamente.");
+                showSnack("success", "Se ha actualizado el registro correctamente.");
             }
         } catch (error) {
             console.error(error);
             showSnack("error", error.message);
+        }
+    };
+
+    const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
+        const [field, meta] = useField(props);
+        const errorText = meta.error && meta.touched ? meta.error : "";
+        if (label === "Renovación del contrato") {
+            return (
+                <TextField
+                    sx={{ width: "800px" }}
+                    InputLabelProps={{ shrink: true }}
+                    multiline={multiline}
+                    rows={rows}
+                    type={type}
+                    label={label}
+                    disabled={disabled}
+                    {...field}
+                    helperText={errorText}
+                    error={!!errorText}
+                />
+            );
+        } else if (type === "date") {
+            return (
+                <TextField
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ width: "390px" }}
+                    rows={rows}
+                    type={type}
+                    label={label}
+                    disabled={disabled}
+                    {...field}
+                    helperText={errorText}
+                    error={!!errorText}
+                />
+            );
+        } else if (multiline) {
+            return (
+                <TextField
+                    sx={{ width: "800px" }}
+                    disabled={disabled}
+                    multiline={multiline}
+                    rows={rows}
+                    type={type}
+                    label={label}
+                    {...field}
+                    helperText={errorText}
+                    error={!!errorText}
+                />
+            );
+        } else {
+            return (
+                <TextField
+                    sx={{ width: "390px" }}
+                    disabled={disabled}
+                    multiline={multiline}
+                    rows={rows}
+                    type={type}
+                    label={label}
+                    {...field}
+                    helperText={errorText}
+                    error={!!errorText}
+                />
+            );
         }
     };
 
@@ -337,6 +342,23 @@ export const Legal = () => {
             ];
         },
     });
+
+    const initialValues = {
+        name_edit: "asdfasdfds",
+        city_edit: "",
+        description_edit: "",
+        expected_start_date_edit: "",
+        value_edit: "",
+        monthly_cost_edit: "",
+        duration_edit: "",
+        contact_edit: "",
+        contact_telephone_edit: "",
+        start_date_edit: "",
+        civil_responsibility_policy_edit: "",
+        compliance_policy_edit: "",
+        insurance_policy_edit: "",
+        renovation_date_edit: "",
+    };
 
     return (
         <>
@@ -446,27 +468,32 @@ export const Legal = () => {
             </Dialog>
 
             <Dialog maxWidth={"md"} open={openDialogEdit} onClose={handleCloseDialogEdit}>
-                <DialogTitle>Añadir un nuevo registro</DialogTitle>
+                <DialogTitle sx={{ display: "flex", width: "100%", justifyContent: "space-between" }}>
+                    <Box>Detalles del registro</Box>
+                    <IconButton sx={{ color: "primary.main" }} aria-label="edit" onClick={handleDisabledChange}>
+                        <ModeEditIcon />
+                    </IconButton>
+                </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={details} validationSchema={validationSchemaEdit} onSubmit={handleSubmitEdit}>
+                    <Formik initialValues={details} validationSchema={validationSchema} onSubmit={handleSubmitEdit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="text" name="name_edit" label="Clientes" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="city_edit" label="Ciudad" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="description_edit" label="Descripción" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="expected_start_date_edit" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="value_edit" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="monthly_cost_edit" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="duration_edit" label="Duración" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact_edit" label="Contacto" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact_telephone_edit" label="Teléfono" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="start_date_edit" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact" label="Contacto" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
                                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
                                     <FormikTextField
                                         type="text"
                                         multiline={true}
                                         rows={3}
-                                        name="civil_responsibility_policy_edit"
+                                        name="civil_responsibility_policy"
                                         label="Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento"
                                         autoComplete="off"
                                         spellCheck={false}
@@ -475,7 +502,7 @@ export const Legal = () => {
                                         multiline={true}
                                         rows={3}
                                         type="text"
-                                        name="compliance_policy_edit"
+                                        name="compliance_policy"
                                         label="Póliza de Cumplimiento"
                                         autoComplete="off"
                                         spellCheck={false}
@@ -484,14 +511,14 @@ export const Legal = () => {
                                         type="text"
                                         multiline={true}
                                         rows={3}
-                                        name="insurance_policy_edit"
+                                        name="insurance_policy"
                                         label="Póliza Seguros de Responsabilidad Profesional por Perdida de Datos"
                                         autoComplete="off"
                                         spellCheck={false}
                                     />
                                 </Box>
-                                <FormikTextField type="date" name="renovation_date_edit" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
-                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
+                                <Button disabled={disabled} type="submit" startIcon={<SaveIcon></SaveIcon>}>
                                     Guardar
                                 </Button>
                             </Box>

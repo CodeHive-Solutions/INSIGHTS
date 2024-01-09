@@ -269,7 +269,7 @@ const EthicalLine = () => {
                                 </FormControl>
 
                                 <Collapse in={collapse}>
-                                    <FormikTextField type="text" name="contact" label="Correo o número de contacto" autoComplete="off" spellCheck={false} />
+                                    <FormikTextField width={330} type="text" name="contact" label="Correo o número de contacto" autoComplete="off" spellCheck={false} />
                                 </Collapse>
 
                                 <Button disabled={loadingBar} type="submit" sx={{ width: "max-content" }} variant="outlined" endIcon={<SendIcon />}>

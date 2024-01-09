@@ -34,20 +34,20 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/complaints/",
             {
-                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
+                "name": "MOGOLLON MAHECHA - HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test1",
                 "contact_info": "Test",
             },
         )
-        self.assertEqual(response.status_code, 201)
+        self.assertEqual(response.status_code, 201, response.data)
 
     def test_create_congratulation(self):
         """Test create congratulation."""
         response = self.client.post(
             "/pqrs/congratulations/",
             {
-                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
+                "name": "MOGOLLON MAHECHA - HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",
@@ -60,7 +60,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/suggestions/",
             {
-                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
+                "name": "MOGOLLON MAHECHA - HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",
@@ -73,7 +73,7 @@ class PQRSViewTest(BaseTestCase):
         response = self.client.post(
             "/pqrs/others/",
             {
-                "name": "HEIBERT STEVEN - MOGOLLON MAHECHA",
+                "name": "MOGOLLON MAHECHA - HEIBERT STEVEN",
                 "type": "Test",
                 "description": "Test",
                 "contact_info": "Test",

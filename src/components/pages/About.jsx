@@ -40,6 +40,12 @@ const homeImages = [
 
 const managements = [
     {
+        name: "Pablo Castañeda",
+        management: "Presidente",
+        image: pablo,
+        description: "",
+    },
+    {
         name: "Cesar Garzón",
         management: "Gerente General",
         image: cesarGarzon,

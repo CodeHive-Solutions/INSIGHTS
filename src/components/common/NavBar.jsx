@@ -467,12 +467,6 @@ const Navbar = () => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <Box onMouseLeave={handleCloseUtils}>
-                    <MenuItem onClick={() => navigate("/logged/suggestions")}>
-                        <ListItemIcon>
-                            <FeedbackIcon fontSize="small" />
-                        </ListItemIcon>
-                        PQRS
-                    </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
@@ -491,12 +485,12 @@ const Navbar = () => {
                         </ListItemIcon>
                         Trasladar Archivos
                     </MenuItem>
-                    {/* <MenuItem onClick={() => navigate("/logged/legal")}>
+                    <MenuItem onClick={() => navigate("/logged/legal")}>
                         <ListItemIcon>
                             <PolicyIcon fontSize="small" />
                         </ListItemIcon>
                         Contratos y Pólizas Legales
-                    </MenuItem> */}
+                    </MenuItem>
                 </Box>
             </Menu>
             <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} />
