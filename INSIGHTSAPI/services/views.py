@@ -43,7 +43,7 @@ def send_report_ethical_line(request):
 
     contact_info = ""
     if "contact_info" in request.data:
-        contact_info = f"<p>El usuario desea ser contactado mediante:</p>{request.data['contact_info']}"
+        contact_info = f"\nEl usuario desea ser contactado mediante:\n{request.data['contact_info']}"
     if settings.DEBUG or "test" in request.data["complaint"].lower():
         to_emails = ["heibert.mogollon@cyc-bpo.com", "juan.carreno@cyc-bpo.com"]
     else:
@@ -55,7 +55,7 @@ def send_report_ethical_line(request):
     errors = send_email(
         sender_user="mismetas",
         subject=f"Denuncia de {request.data['complaint']}",
-        message=f"<p>{request.data['description']}</p>" + contact_info,
+        message=f"\n{request.data['description']}\n" + contact_info,
         to_emails=to_emails,
         html_content=True,
         email_owner="Línea ética",

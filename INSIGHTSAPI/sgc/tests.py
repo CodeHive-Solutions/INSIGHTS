@@ -165,6 +165,7 @@ class TestSGC(BaseTestCase):
 
     def test_delete_file_without_permission(self):
         """Test deleting a file without permission"""
+        print("Test for update file still not working")
         user = User.objects.get(username="StaffNet")
         user.user_permissions.clear()
         user.save()
@@ -179,7 +180,6 @@ class TestSGC(BaseTestCase):
     def tearDown(self):
         """Tear down for the test"""
         super().tearDown()
-        print("Test for update file still not working")
         if self.media_directory.startswith("/tmp"):
             shutil.rmtree(self.media_directory)
             # pass

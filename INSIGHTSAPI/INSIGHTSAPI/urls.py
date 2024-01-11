@@ -17,8 +17,7 @@ Including another URLconf
 from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
-
-# from sgc.views import upload_data
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 urlpatterns = [
@@ -29,5 +28,6 @@ urlpatterns = [
     path("pqrs/", include("pqrs.urls")),
     path("services/", include("services.urls")),
     path("contracts/", include("contracts.urls")),
-    # path("tasks/", upload_data),
 ]
+
+urlpatterns += staticfiles_urlpatterns()

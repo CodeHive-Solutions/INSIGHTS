@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import CarouselComponent from "../shared/Carousel";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import { Typography, Box, Dialog } from "@mui/material";
 import { motion, useIsPresent } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -21,6 +19,8 @@ import realImage2 from "../../images/home-carousel/3.jpg";
 import realImage3 from "../../images/home-carousel/4.jpg";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 import image2024 from "../../images/home-carousel/2024.png";
+import MediaCover from "../shared/VideoCard.jsx";
+
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
 import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
@@ -35,6 +35,7 @@ import politicaObjetivo from "../../images/home-carousel/politica-objetivo.png";
 import principiosISO from "../../images/home-carousel/principios-iso.png";
 import iso27001 from "../../images/home-carousel/iso-27001.png";
 import raac from "../../images/home-carousel/raac.png";
+import campaigns from "../../images/home-carousel/campaigns.png";
 
 //vacancies
 import vancie1 from "../../images/vacancies/1.jpg";
@@ -48,6 +49,7 @@ import realBenefit1 from "../../images/benefits/1.png";
 import realBenefit2 from "../../images/benefits/2.png";
 import { RepeatOneSharp } from "@mui/icons-material";
 
+import video from "../../videos/futbol.mp4";
 const benefits = [
     // { image: vancie5, title: "Beneficio 1" },
     { image: realBenefit2, title: "Beneficio 2" },
@@ -60,7 +62,15 @@ const vacancies = [
     // { image: realBenefit2, title: "Beneficio 2" },
 ];
 
-const homeImages = [{ image: image2024 }, { image: politicaObjetivo }, { image: principiosISO }, { image: iso27001 }, { image: raac }];
+const homeImages = [
+    { image: image2024 },
+    { image: politicaObjetivo },
+    { image: principiosISO },
+    { image: iso27001 },
+    { image: raac },
+    { image: campaigns },
+    { image: video, video: true },
+];
 
 const Home = () => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -72,6 +82,17 @@ const Home = () => {
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
+    const videoRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const togglePlay = () => {
+        if (isPlaying) {
+            videoRef.current.pause();
+        } else {
+            videoRef.current.play();
+        }
+        setIsPlaying(!isPlaying);
+    };
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -85,14 +106,14 @@ const Home = () => {
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`https://staffnet-api.cyc-bpo.com/profile-picture/${employee.cedula}`, {
+                const imageResponse = await fetch(`${getApiUrl(true)}${employee.cedula}`, {
                     method: "GET",
                 });
 
                 // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
                     return {
-                        image: `https://staffnet-api.cyc-bpo.com/profile-picture/${employee.cedula}`,
+                        image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
                         name: employee.nombre,
                         description: employee.campana_general,
                     };
@@ -113,7 +134,7 @@ const Home = () => {
 
     const getBirthdaysId = async () => {
         try {
-            const response = await fetch("https://staffnet-api.cyc-bpo.com/profile-picture/birthday", {
+            const response = await fetch(`${getApiUrl(true)}profile-picture/birthday`, {
                 method: "GET",
             });
 
@@ -272,6 +293,13 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"650px"} width={"600px"} />
                 </Box>
             </Box>
+            {/* <div>
+                <video autoPlay loop width="640" height="360">
+                    <source src={video} type="video/mp4" />
+                    Your browser does not support the video tag.
+                </video>
+            </div> */}
+            <MediaCover />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
