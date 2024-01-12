@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect } from "react";
 import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover, Dialog } from "@mui/material";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
@@ -243,47 +243,47 @@ const Navbar = () => {
                     }}
                 >
                     <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/logged/home")} />
-                    {isMobile ? (
+                    {/* {isMobile ? (
                         <IconButton onClick={handleClickMenu} size="small">
                             <MenuIcon />
                         </IconButton>
                     ) : (
-                        <>
-                            <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
-                            <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
-                            <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
-                            <Typography
-                                onMouseEnter={handleUtilitariosMenuOpen}
-                                anchorEl={anchorElUtils}
-                                sx={{
-                                    minWidth: 100,
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    borderBottom: "2px solid transparent", // Add a transparent bottom border
-                                    transition: "all 0.3s ease",
-                                    padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
-                                    borderBottomColor: "transparent",
-                                }}
-                            >
-                                Servicios
-                            </Typography>
+                        <> */}
+                    <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
+                    <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
+                    <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
+                    <Typography
+                        onMouseEnter={handleUtilitariosMenuOpen}
+                        anchorel={anchorElUtils}
+                        sx={{
+                            minWidth: 100,
+                            textAlign: "center",
+                            cursor: "pointer",
+                            borderBottom: "2px solid transparent", // Add a transparent bottom border
+                            transition: "all 0.3s ease",
+                            padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
+                            borderBottomColor: "transparent",
+                        }}
+                    >
+                        Servicios
+                    </Typography>
 
-                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <Tooltip title="Configuración de cuenta">
-                                    <IconButton
-                                        onClick={handleClick}
-                                        size="small"
-                                        sx={{ ml: 2 }}
-                                        aria-controls={open ? "account-menu" : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? "true" : undefined}
-                                    >
-                                        <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-                                    </IconButton>
-                                </Tooltip>
-                            </Box>
-                        </>
-                    )}
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <Tooltip title="Configuración de cuenta">
+                            <IconButton
+                                onClick={handleClick}
+                                size="small"
+                                sx={{ ml: 2 }}
+                                aria-controls={open ? "account-menu" : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? "true" : undefined}
+                            >
+                                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                    {/* </>
+                    )} */}
                 </Box>
             </Box>
             <Menu

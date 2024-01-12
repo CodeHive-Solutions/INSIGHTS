@@ -81,7 +81,6 @@ const EthicalLine = () => {
         const descriptionValue = values.description.replace(/\n/g, "<br>");
         rest = { ...rest, description: descriptionValue };
 
-        console.log(rest);
         setLoadingBar(true);
         showSnack("success", "Sugerencia enviada correctamente");
 
@@ -109,7 +108,7 @@ const EthicalLine = () => {
             if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
                 showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
             } else {
-                console.log(error.message);
+                console.error(error.message);
                 showSnack("error", error.message);
             }
 

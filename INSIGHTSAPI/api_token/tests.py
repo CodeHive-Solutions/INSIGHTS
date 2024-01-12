@@ -2,6 +2,7 @@
 import os
 from django.urls import reverse
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
@@ -15,6 +16,9 @@ class LDAPAuthenticationTest(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
+        self.superuser = get_user_model().objects.create_superuser(
+            username="Zeus", password="1234"
+        )
 
     def test_ldap_connection(self):
         """Test that the LDAP server is reachable."""
@@ -83,3 +87,13 @@ class TokenCheckTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response = client.post(reverse("robinson-list"), {}, format="json", cookies=client.cookies)  # type: ignore
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_superuser(self):
+        """test that superusers can access to the django admin."""
+        get_user_model().objects.create_superuser(username="Zeus", password="1234")
+        logged = self.client.login(username="Zeus", password="12341")
+        self.assertTrue(logged)
+        response = self.client.get(reverse("admin:index"))
+        self.assertEqual(response.status_code, 200)
+        # Check that the response contains the admin panel text
+        self.assertContains(response, "Django administration")

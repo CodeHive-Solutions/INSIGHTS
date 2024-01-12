@@ -1,6 +1,7 @@
 """Test module for SGC"""
 import os
 import shutil
+import tempfile
 from services.tests import BaseTestCase
 from rest_framework import status
 from users.models import User
@@ -8,7 +9,6 @@ from django.contrib.auth.models import Permission
 from django.urls import reverse
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-import tempfile
 from hierarchy.models import Area
 from .models import SGCFile
 
@@ -91,7 +91,7 @@ class TestSGC(BaseTestCase):
 
     def test_create_file_with_invalid_file(self):
         """Test creating a file with invalid file"""
-        with open("static/logo_cyc.png", "rb") as file:
+        with open("static/services/Logo_cyc.png", "rb") as file:
             file_content = file.read()
         self.file_data["file"] = SimpleUploadedFile(
             "Test_SGC_Robinson.xlsx", file_content

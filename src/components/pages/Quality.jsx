@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TextField, Container, Box, Typography, Button } from "@mui/material";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
@@ -54,6 +54,7 @@ const Quality = () => {
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(campaigns[0]); // Set default campaign
+    const callType = useRef();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -85,11 +86,11 @@ const Quality = () => {
 
     const handleUpload = async () => {
         setLoading(true);
-        console.log(selectedCampaign.value);
         if (selectedFile) {
             const formData = new FormData();
             formData.append("file", selectedFile);
             formData.append("campaign", selectedCampaign.value);
+            formData.append("folder", callType.current.value);
 
             try {
                 const response = await fetch(`${getApiUrl()}files/call-transfer-list/`, {
@@ -169,6 +170,14 @@ const Quality = () => {
                                 {option.label}
                             </MenuItem>
                         ))}
+                    </TextField>
+                    <TextField sx={{ width: "600px" }} inputRef={callType} label="Tipo de Llamadas" select defaultValue="">
+                        <MenuItem key="inbound" value="in">
+                            Inbound
+                        </MenuItem>
+                        <MenuItem key="outbound" value="out">
+                            Outbound
+                        </MenuItem>
                     </TextField>
                     <TextField sx={{ width: "600px" }} label="ruta-origen" value={selectedCampaign.routeOrigin} disabled></TextField>
                     <ArrowDownwardIcon color="primary" />

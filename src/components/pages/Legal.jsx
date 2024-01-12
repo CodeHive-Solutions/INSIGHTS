@@ -114,7 +114,6 @@ export const Legal = () => {
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                console.log(data);
                 setDetails(data);
                 handleOpenDialogEdit();
                 // setAddPermission(data.permissions.add);

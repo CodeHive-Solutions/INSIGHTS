@@ -19,7 +19,6 @@ import realImage2 from "../../images/home-carousel/3.jpg";
 import realImage3 from "../../images/home-carousel/4.jpg";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 import image2024 from "../../images/home-carousel/2024.png";
-import MediaCover from "../shared/VideoCard.jsx";
 
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
@@ -141,6 +140,9 @@ const Home = () => {
             const data = await response.json();
 
             if (!response.ok) {
+                if (response.status === 404) {
+                    return;
+                }
                 throw new Error(data.detail);
             }
 
@@ -204,7 +206,7 @@ const Home = () => {
                 style={{ originX: isPresent ? 0 : 1 }}
                 className="privacy-screen"
             /> */}
-            <Box sx={{ display: "flex", mt: "4rem", textAlign: "center", justifyContent: "center" }}>
+            <Box sx={{ display: "flex", mt: "5.5rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"650px"} width={"100%"} />
             </Box>
             {/* <Box
@@ -222,6 +224,20 @@ const Home = () => {
                 <Box className="wave wave3"></Box>
                 <Box className="wave wave4"></Box>
             </Box> */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                <Typography
+                    color="primary"
+                    id="section1"
+                    sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
+                >
+                    ¡C&C Apoyando el fútbol femenino!
+                </Typography>
+                <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <video style={{ borderRadius: "8px", width: 1200 }} controls>
+                        <source src={video} type="video/mp4" />
+                    </video>
+                </Box>
+            </Box>
             <Box
                 sx={{
                     display: "flex",
@@ -293,13 +309,6 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"650px"} width={"600px"} />
                 </Box>
             </Box>
-            {/* <div>
-                <video autoPlay loop width="640" height="360">
-                    <source src={video} type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
-            </div> */}
-            <MediaCover />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

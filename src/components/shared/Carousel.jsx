@@ -20,7 +20,6 @@ function Item(props) {
     const { item, height, width, day } = props;
     const { name, description, image, video } = item;
     if (video) {
-        console.log("entrando video");
         return (
             <video style={{ borderRadius: "8px" }} controls width="90%" height="650px">
                 <source src={videoURL} type="video/mp4" />
@@ -29,7 +28,7 @@ function Item(props) {
         );
     } else {
         return (
-            <Box>
+            <Box> 
                 <Box
                     sx={{
                         height: height,

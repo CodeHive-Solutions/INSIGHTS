@@ -56,7 +56,7 @@ else:
 # Application definition
 
 INSTALLED_APPS = [
-    # "django.contrib.admin",
+    "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -217,6 +217,7 @@ USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
+    "api_token.cookie_JWT.CustomAuthBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 

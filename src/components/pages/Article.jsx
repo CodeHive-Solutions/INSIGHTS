@@ -60,6 +60,7 @@ const ArticlePage = () => {
                 <br/>
                 <br/>
                 ¡Bienvenidos a bordo!
+                img
             `,
             date: "Hace 2 horas",
         },

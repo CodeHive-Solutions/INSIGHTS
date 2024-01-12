@@ -306,7 +306,6 @@ export const Sgc = () => {
         formData.append("name", values.nombre);
         formData.append("version", values.version);
         formData.append("file", selectedFile);
-        console.log(formData);
 
         try {
             const response = await fetch(`${getApiUrl()}sgc/`, {

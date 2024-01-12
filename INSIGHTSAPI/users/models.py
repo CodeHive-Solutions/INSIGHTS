@@ -26,8 +26,9 @@ class User(AbstractUser):
     profile_picture = models.ImageField(
         upload_to="images/pictures/", validators=[validate_file_extension]
     )
-    # email = models.EmailField(unique=True, null=True, blank=False)
-    email = None
+    # This field cannot be used because RH does not have the company email
+    email = models.EmailField(null=True, blank=True, unique=True)
+    # email = None
     area = models.ForeignKey(
         "hierarchy.Area",
         on_delete=models.CASCADE,
@@ -38,8 +39,6 @@ class User(AbstractUser):
     job_title = models.CharField(max_length=100, null=True, blank=True)
     date_joined = None
     last_login = None
-    is_superuser = None
-    is_staff = None
 
     @property
     def is_active(self):
@@ -61,6 +60,7 @@ class User(AbstractUser):
             "database": "userscyc",
         }
         connection = None
+        # Remove the email field because RH does not have the company email
         try:
             # I have to connect to the intranet database to get the cedula because in StaffNet there is no windows user
             connection = mysql.connector.connect(**db_config)
@@ -70,6 +70,8 @@ class User(AbstractUser):
             result = cursor.fetchone()
             if result:
                 self.cedula = result[0]
+            elif self.username == "Zeus":
+                self.cedula = 123456789
             else:
                 raise ValidationError(
                     "El usuario no tiene cedula en la base de datos de la intranet"
@@ -86,20 +88,26 @@ class User(AbstractUser):
                 [self.cedula],
             )
             result = db_connection.fetchone()
-            if self.cedula == 999999999:
+            if self.cedula == 999999999 or self.cedula == 123456789:
                 result = ("Administrador", "Administrador")
             elif not result:
                 raise ValidationError(
                     "El usuario no tiene cargo en la base de datos de staffnet"
                 )
+            if not "asesor" in result[0].lower():
+                self.is_staff = True
             self.job_title = result[0]
             area, _ = Area.objects.get_or_create(name=result[1])
             self.area_id = area.id
-        self.set_unusable_password()
+        # if not self.is_superuser:
+        # self.set_unusable_password()
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField
-            if isinstance(field, (models.CharField, models.TextField)):
-                # Convert the field value to uppercase
+            if (
+                isinstance(field, (models.CharField, models.TextField))
+                and field.name != "password"
+                and self.__dict__[field.name]
+            ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)

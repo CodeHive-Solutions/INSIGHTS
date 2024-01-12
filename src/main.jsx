@@ -11,7 +11,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import About from "./components/pages/About";
-import UploadGoals from "./components/pages/UploadGoals";
 import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
 import "./index.css";
@@ -25,7 +24,6 @@ import EthicalLine from "./components/pages/EthicalLine";
 import BasicDocument from "./components/shared/GoalsPDF";
 import Quality from "./components/pages/Quality";
 import Legal from "./components/pages/Legal";
-import MediaCover from "./components/shared/VideoCard";
 
 const theme = createTheme({
     typography: {
@@ -45,18 +43,18 @@ const theme = createTheme({
             '"Segoe UI Symbol"',
         ].join(","),
     },
-    // palette: {
-    //     primary: {
-    //         main: "#0076A8",
-    //     },
-    //     secondary: {
-    //         main: "#59CBE8",
-    //     },
-    //     text: {
-    //         primary: "#131313",
-    //         secondary: "#999999",
-    //     },
-    // },
+    palette: {
+        primary: {
+            main: "#0076A8",
+        },
+        secondary: {
+            main: "#59CBE8",
+        },
+        text: {
+            primary: "#131313",
+            secondary: "#999999",
+        },
+    },
 });
 
 const router = createBrowserRouter([
@@ -70,10 +68,6 @@ const router = createBrowserRouter([
     //     element: <UploadFiles />,
     //     errorElement: <ErrorPage />,
     // },
-    {
-        path: "test",
-        element: <MediaCover />,
-    },
     {
         path: "ethical-line",
         element: <EthicalLine />,
@@ -148,12 +142,14 @@ function AnimatedRoutes() {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
-        <CssBaseline>
-            <RouterProvider router={router}>
-                <AnimatePresence mode="wait">
-                    <AnimatedRoutes />
-                </AnimatePresence>
-            </RouterProvider>
-        </CssBaseline>
+        <ThemeProvider theme={theme}>
+            <CssBaseline>
+                <RouterProvider router={router}>
+                    <AnimatePresence mode="wait">
+                        <AnimatedRoutes />
+                    </AnimatePresence>
+                </RouterProvider>
+            </CssBaseline>
+        </ThemeProvider>
     </React.StrictMode>
 );
