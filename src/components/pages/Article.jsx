@@ -9,7 +9,7 @@ import article1 from "../../images/articles/article1.jpg";
 import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
-
+import article5 from "../../images/blog/article5.jpg";
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -38,10 +38,10 @@ const ArticlePage = () => {
             nameAuthor: "Sebastian",
             tags: ["Customer Experience", "Call Center", "BPO"],
             content: `
-                En un emocionante desarrollo, C&C Services S.A.S se complace en dar la bienvenida a varias campañas nuevas a nuestra creciente familia. Estamos encantados de tener a bordo a Seguros Bolívar, NuBank, Minuto de Dios, y nuestra propia campaña interna.
+                En un emocionante desarrollo, C&C Services S.A.S se complace en dar la bienvenida a varias campañas nuevas a nuestra creciente familia. Estamos encantados de tener a bordo a El Libertador del grupo Seguros Bolívar, NuBank, Cooperativa Minuto de Dios, Banco Santander y nuestra propia campaña interna.
                 <br/>
                 <br/>
-                <b>Seguros Bolívar:</b> Con una reputación sólida y una amplia gama de servicios, Seguros Bolívar es un nombre de confianza en el sector de seguros. Estamos emocionados de trabajar con ellos y ofrecer servicios de BPO de alta calidad para mejorar aún más su eficiencia operativa.
+                <b>El Libertador:</b> Por parte del grupo Seguros Bolivar presentamos a la campaña el Libertador con una reputación sólida y una amplia gama de servicios, siendo uno de los nombres de confianza en el sector de seguros. Estamos emocionados de trabajar con ellos y ofrecer servicios de BPO de alta calidad para mejorar aún más su eficiencia operativa.
                 <br/>
                 <br/>
                 <b> Campaña propia: </b> Nuestra propia campaña interna es un testimonio de nuestro compromiso con la innovación y la mejora continua. Esta iniciativa nos permitirá explorar nuevas estrategias y enfoques para ofrecer un servicio excepcional a nuestros clientes.
@@ -50,13 +50,17 @@ const ArticlePage = () => {
                 <b>NuBank:</b> Como uno de los bancos digitales más grandes y de más rápido crecimiento, NuBank está revolucionando el sector financiero. Estamos ansiosos por apoyar su crecimiento y ayudarles a ofrecer una experiencia bancaria sin problemas a sus clientes.
                 <br/>
                 <br/>
-                <b>Minuto de Dios:</b> Esta campaña se centra en la recuperación de cartera. Su objetivo es asegurar que los recursos se utilicen de manera efectiva y eficiente, permitiendo a Minuto de Dios continuar su misión de hacer una diferencia en las vidas de las personas. Estamos emocionados de apoyar esta importante iniciativa y ayudar a Minuto de Dios a maximizar su impacto.
+                <b>Cooperativa Minuto de Dios:</b> Esta campaña se centra en la recuperación de cartera. Su objetivo es asegurar que los recursos se utilicen de manera efectiva y eficiente, permitiendo a Cooperativa Minuto de Dios continuar su misión de hacer una diferencia en las vidas de las personas. Estamos emocionados de apoyar esta importante iniciativa y ayudar a Cooperativa Minuto de Dios a maximizar su impacto.
+                <br/>
+                <br/>
+                <b>Campaña Banco Santander:</b> Estamos entusiasmados de presentar la nueva campaña del Banco Santander, una institución reconocida por su trayectoria sólida y su compromiso con la excelencia en servicios financieros. Esta colaboración nos llena de orgullo, ya que nos permite ofrecer soluciones innovadoras que optimizan la experiencia bancaria para nuestros clientes. Estamos comprometidos con el éxito de esta iniciativa, la cual reafirma nuestro compromiso de seguir marcando la pauta en la industria financiera.
                 <br/>
                 <br/>
                 Estamos emocionados por las oportunidades que estas nuevas campañas traerán y estamos comprometidos a ofrecer servicios de BPO de la más alta calidad. Agradecemos a todos nuestros nuevos socios por su confianza en nosotros y esperamos una colaboración exitosa.
                 <br/>
                 <br/>
                 ¡Bienvenidos a bordo!
+                img
             `,
             date: "Hace 2 horas",
         },
@@ -126,6 +130,30 @@ const ArticlePage = () => {
             <p>En resumen, C&C Services se ha convertido en un referente en el ámbito empresarial al priorizar el bienestar integral de sus empleados. Su enfoque estratégico y proactivo hacia el bienestar físico, mental y emocional ha demostrado ser un motor clave para una fuerza laboral productiva y satisfecha.</p>
         </article>`,
         },
+        {
+            id: 5,
+            title: "C&C Services SAS avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza",
+            subtitle: "Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RAAC.",
+            img: article5,
+            content: ` <article>
+            <h1>Proceso de Certificación de Empresa</h1>
+            <p>Desde el año 2023, la empresa ha iniciado un relevante proceso de certificación en el marco del Referencial de Autorregulación Asociación Colombiana de la Industria de la Cobranza (RAAC), liderado por COLCOB (Asociación Colombiana de la Industria de la Cobranza).</p>
+            <p>Este proceso de certificación se desarrolla en dos etapas, cada una con sus respectivas fases, buscando fortalecer y optimizar los estándares de operación de la empresa.</p>
+            <p>En la primera etapa, ejecutada durante el 2023, la empresa participó en una consultoría brindada por COLCOB. Esta agremiación, que reúne a las casas de cobranzas más destacadas en Colombia, reconoció a C&C Sevices entre los 10 primeros lugares en su ranking.</p>
+            <p>Tras finalizar esta consultoría y tomar en consideración oportunidades de mejora identificadas, la empresa dio inicio al proceso oficial de certificación con la empresa SGS. Este proceso se divide en dos fases: la primera tendrá lugar el próximo 18 de enero, donde se llevará a cabo una revisión general de las 7 dimensiones establecidas; la segunda fase se llevará a cabo del 6 al 9 de febrero, profundizando en la validación de las evidencias y el cumplimiento de los diferentes puntos de la norma.</p>
+            <p>Las 7 dimensiones clave que aborda este proceso son:</p>
+            <ul>
+            <li><b> Gobierno Corporativo:</b> Conjunto de políticas, normas y procedimientos que regulan el funcionamiento de los órganos de gobierno de la empresa.</li>
+            <li><b>Gestión Operacional:</b> Políticas y procedimientos que rigen la administración de los procesos y el modelo de operación de la empresa.</li>
+            <li><b>Gestión del Talento Humano:</b> Normativas relacionadas con la adecuada administración de los procesos vinculados al personal de la empresa.</li>
+            <li><b>Gestión de Calidad y Servicio:</b> Regulación de los procesos relacionados con la calidad de los productos y servicios, así como la satisfacción del cliente.</li>
+            <li><b>Gestión de Riesgos:</b> Normas que regulan la gestión de los riesgos asociados al modelo de negocio y operación.</li>
+            <li><b>Gestión de Tecnología:</b> Políticas para la administración de recursos tecnológicos, soporte operativo y seguridad de la información.</li>
+            <li><b>Metodología para la gestión, mejora y excelencia:</b> Procedimientos para potenciar procesos críticos mediante supervisión, control y documentación.</li>
+            </ul>
+            <p>Cada uno de nosotros hace parte de esta certificación, por lo cual los invitamos a que con sus jefes inmediatos consulten de qué manera van a estar aportando y en equipo garanticemos cerrar de manera exitosa.</p>
+            </article>`,
+        },
         // Add more articles here...
     ];
 
@@ -141,7 +169,7 @@ const ArticlePage = () => {
 
     return (
         <Container sx={{ height: "max-content" }}>
-            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", px: "5rem", pt: "7rem", pb: "2rem", gap: "3rem" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", px: "5rem", pt: "7rem", pb: "2rem", gap: "2rem" }}>
                 <Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bolder", fontSize: "3em", fontFamily: "Poppins" }}>
                     {article.title}
                 </Typography>

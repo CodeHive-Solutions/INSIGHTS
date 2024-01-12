@@ -17,6 +17,7 @@ import ssl
 import ldap  # type: ignore
 from django_auth_ldap.config import LDAPSearch  # type: ignore
 from dotenv import load_dotenv
+import sys
 
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
@@ -37,14 +38,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 SENDFILE_ROOT = MEDIA_ROOT
 
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static"
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-01_50pjn@2&6dy%6ze562l3)&%j_z891auca!#c#xb+#$z+pqf"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") is not None else False
@@ -72,10 +70,12 @@ INSTALLED_APPS = [
     "api_token",
     "hierarchy",
     "sgc",
+    "contracts",
     "users",
     "excels_processing",
     "pqrs",
     "django_sendfile",
+    "services",
 ]
 
 MIDDLEWARE = [
@@ -84,6 +84,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "INSIGHTSAPI.middleware.logging.LoggingMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -101,6 +102,15 @@ REST_FRAMEWORK = {
 }
 
 
+if not "test" in sys.argv:
+    SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_HTTPONLY = True
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True
 
@@ -108,7 +118,7 @@ CORS_ALLOW_CREDENTIALS = True
 if not DEBUG:
     CORS_ALLOWED_ORIGINS = [
         "https://insights.cyc-bpo.com",
-        "https://staffnet-api.cyc-bpo.com/",
+        "https://staffnet-api.cyc-bpo.com",
     ]
 
 ROOT_URLCONF = "INSIGHTSAPI.urls"
@@ -207,6 +217,7 @@ USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
+    "api_token.cookie_JWT.CustomAuthBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -214,7 +225,8 @@ AUTHENTICATION_BACKENDS = [
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

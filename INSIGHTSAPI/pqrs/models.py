@@ -5,8 +5,8 @@ from django.core.exceptions import ValidationError
 
 def validate_max_length_1000(value):
     """Validate the max length of the description field."""
-    if len(value) > 1000:
-        raise ValidationError("The maximum length is 1000 characters.")
+    if len(value) > 2000:
+        raise ValidationError("The maximum length is 2000 characters.")
 
 
 # Create your models here.

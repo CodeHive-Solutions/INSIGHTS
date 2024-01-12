@@ -86,6 +86,8 @@ def call_transfer_list(request):
         return Response({"error": "No campaign found in the request"}, status=400)
     if "file" not in request.FILES:
         return Response({"error": "No file found in the request"}, status=400)
+    if "folder" not in request.POST:
+        return Response({"error": "No folder found in the request"}, status=400)
     campaign = str(request.POST.get("campaign")).lower()
     # check if the folder exists
     file = request.FILES["file"]
@@ -112,7 +114,9 @@ def call_transfer_list(request):
         "test_falabella_new": "/var/servers/calidad/test/test/",
     }
 
-    path_old = os.path.join(paths[f"{campaign}_old"], "{date:%Y/%m/%d/OUT/}")
+    path_old = os.path.join(
+        paths[f"{campaign}_old"], "{date:%Y/%m/%d/}", request.POST.get("folder")
+    )
     path_new = os.path.join(paths[f"{campaign}_new"], "{entry.name}")
     fails = []
 
@@ -122,7 +126,7 @@ def call_transfer_list(request):
             continue
 
         date = datetime.strptime(str(row.FECHA).split(" ", maxsplit=1)[0], "%d/%m/%Y")
-        number = str(int(row.NUMERO))
+        number = str(row.NUMERO)
         match = None
         if "banco_agrario" in campaign:
             pattern = re.compile(rf"_{number}_")

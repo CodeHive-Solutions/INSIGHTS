@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import CarouselComponent from "../shared/Carousel";
 import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
 import { Typography, Box, Dialog } from "@mui/material";
 import { motion, useIsPresent } from "framer-motion";
 import { useInView } from "react-intersection-observer";
@@ -21,6 +19,7 @@ import realImage2 from "../../images/home-carousel/3.jpg";
 import realImage3 from "../../images/home-carousel/4.jpg";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 import image2024 from "../../images/home-carousel/2024.png";
+
 // images
 import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
 import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
@@ -30,6 +29,12 @@ import benefit1 from "../../images/benefits-vacancies/MicrosoftTeams-image4.png"
 import benefit2 from "../../images/benefits-vacancies/MicrosoftTeams-image5.png";
 import benefit3 from "../../images/benefits-vacancies/MicrosoftTeams-image6.png";
 import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png";
+
+import politicaObjetivo from "../../images/home-carousel/politica-objetivo.png";
+import principiosISO from "../../images/home-carousel/principios-iso.png";
+import iso27001 from "../../images/home-carousel/iso-27001.png";
+import raac from "../../images/home-carousel/raac.png";
+import campaigns from "../../images/home-carousel/campaigns.png";
 
 //vacancies
 import vancie1 from "../../images/vacancies/1.jpg";
@@ -43,8 +48,9 @@ import realBenefit1 from "../../images/benefits/1.png";
 import realBenefit2 from "../../images/benefits/2.png";
 import { RepeatOneSharp } from "@mui/icons-material";
 
+import video from "../../videos/futbol.mp4";
 const benefits = [
-    { image: vancie5, title: "Beneficio 1" },
+    // { image: vancie5, title: "Beneficio 1" },
     { image: realBenefit2, title: "Beneficio 2" },
 ];
 
@@ -52,28 +58,17 @@ const vacancies = [
     // { image: benefit3, title: "Vacante 1" },
     // { image: benefit4, title: "Vacante 2" },
     { image: vancie5, title: "Beneficio 1" },
-    { image: realBenefit2, title: "Beneficio 2" },
+    // { image: realBenefit2, title: "Beneficio 2" },
 ];
 
-const homeImages = [{ image: image2024 }, { image: realImage2 }, { image: realImage3 }];
-const birthdays = [
-    { image: barbaraVanegas, name: "nombre ejemplo", description: "Yanbal" },
-    { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-    { image: tuliaCalderon, name: "nombre ejemplo", description: "Yanbal" },
-    { image: cristianGonzales, name: "nombre ejemplo", description: "BBVA" },
-];
-const birthdays2 = [
-    { image: cristianGonzales, name: "nombre ejemplo", description: "Yanbal" },
-    { image: barbaraVanegas, name: "nombre ejemplo", description: "BBVA" },
-    { image: carolGuerrero, name: "nombre ejemplo", description: "Yanbal" },
-    { image: tuliaCalderon, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-];
-
-const birthdays3 = [
-    { image: carolGuerrero, name: "nombre ejemplo", description: "Scotiabank Colpatria" },
-    { image: cristianGonzales, name: "nombre ejemplo", description: "Yanbal" },
-    { image: barbaraVanegas, name: "nombre ejemplo", description: "BBVA" },
-    { image: tuliaCalderon, name: "nombre ejemplo", description: "Yanbal" },
+const homeImages = [
+    { image: image2024 },
+    { image: politicaObjetivo },
+    { image: principiosISO },
+    { image: iso27001 },
+    { image: raac },
+    { image: campaigns },
+    { image: video, video: true },
 ];
 
 const Home = () => {
@@ -86,6 +81,17 @@ const Home = () => {
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
+    const videoRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
+    const togglePlay = () => {
+        if (isPlaying) {
+            videoRef.current.pause();
+        } else {
+            videoRef.current.play();
+        }
+        setIsPlaying(!isPlaying);
+    };
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -99,14 +105,14 @@ const Home = () => {
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`https://staffnet-api.cyc-bpo.com/profile-picture/${employee.cedula}`, {
+                const imageResponse = await fetch(`${getApiUrl(true)}${employee.cedula}`, {
                     method: "GET",
                 });
 
                 // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
                     return {
-                        image: `https://staffnet-api.cyc-bpo.com/profile-picture/${employee.cedula}`,
+                        image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
                         name: employee.nombre,
                         description: employee.campana_general,
                     };
@@ -127,13 +133,16 @@ const Home = () => {
 
     const getBirthdaysId = async () => {
         try {
-            const response = await fetch("https://staffnet-api.cyc-bpo.com/profile-picture/birthday", {
+            const response = await fetch(`${getApiUrl(true)}profile-picture/birthday`, {
                 method: "GET",
             });
 
             const data = await response.json();
 
             if (!response.ok) {
+                if (response.status === 404) {
+                    return;
+                }
                 throw new Error(data.detail);
             }
 
@@ -197,7 +206,7 @@ const Home = () => {
                 style={{ originX: isPresent ? 0 : 1 }}
                 className="privacy-screen"
             /> */}
-            <Box sx={{ display: "flex", mt: "4rem", textAlign: "center", justifyContent: "center" }}>
+            <Box sx={{ display: "flex", mt: "5.5rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"650px"} width={"100%"} />
             </Box>
             {/* <Box
@@ -215,6 +224,20 @@ const Home = () => {
                 <Box className="wave wave3"></Box>
                 <Box className="wave wave4"></Box>
             </Box> */}
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                <Typography
+                    color="primary"
+                    id="section1"
+                    sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
+                >
+                    ¡C&C Apoyando el fútbol femenino!
+                </Typography>
+                <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <video style={{ borderRadius: "8px", width: 1200 }} controls>
+                        <source src={video} type="video/mp4" />
+                    </video>
+                </Box>
+            </Box>
             <Box
                 sx={{
                     display: "flex",

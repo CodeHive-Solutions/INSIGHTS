@@ -19,6 +19,7 @@ import { Formik, Form, useField, useFormikContext } from "formik";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Save from "@mui/icons-material/Save";
 import { getApiUrl } from "../../assets/getApi";
+import { Tooltip } from "@mui/material";
 
 import {
     GridRowModes,
@@ -82,28 +83,10 @@ const VisuallyHiddenInput = styled("input")({
     width: 1,
 });
 
-const initialRows = [
-    { id: 1, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 2, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 3, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 4, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 5, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 6, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 7, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 8, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 9, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 10, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 11, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 12, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 13, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 14, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-    { id: 15, area: "DE", tipo: "MA", subtipo: "F003", nombre: "MATRIZ DE CAMBIOS Y MEJORAS", version: "001" },
-];
-
 export const Sgc = () => {
     const hiddenFileInput = useRef(null);
     const [rowModesModel, setRowModesModel] = useState({});
-    const [rows, setRows] = useState(initialRows);
+    const [rows, setRows] = useState([]);
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
@@ -147,7 +130,8 @@ export const Sgc = () => {
     }, []);
 
     const handleDownloadFile = (id) => {
-        window.open(`${getApiUrl()}services/file-download/sgc/${id}`);
+        // open the link in other tab
+        window.location.href = `${getApiUrl()}services/file-download/sgc/${id}`;
     };
 
     const handleCloseDialog = () => {
@@ -303,7 +287,7 @@ export const Sgc = () => {
                     }}
                 />
                 {addPermission ? (
-                    <Button onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                    <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                         AÑADIR
                     </Button>
                 ) : null}
@@ -322,7 +306,6 @@ export const Sgc = () => {
         formData.append("name", values.nombre);
         formData.append("version", values.version);
         formData.append("file", selectedFile);
-        console.log(formData);
 
         try {
             const response = await fetch(`${getApiUrl()}sgc/`, {
@@ -414,14 +397,18 @@ export const Sgc = () => {
                 }
 
                 return [
-                    <GridActionsCellItem
-                        icon={<FileDownloadIcon />}
-                        label="download"
-                        onClick={() => handleDownloadFile(GridRowParams.row.id)}
-                        sx={{
-                            color: "primary.main",
-                        }}
-                    />,
+                    <Tooltip title="Descargar Archivo">
+                        <GridActionsCellItem
+                            icon={<FileDownloadIcon />}
+                            label="download"
+                            onClick={() => handleDownloadFile(GridRowParams.row.id)}
+                            sx={{
+                                "&:hover": {
+                                    color: "primary.main",
+                                },
+                            }}
+                        />
+                    </Tooltip>,
                 ];
             },
         },
@@ -439,36 +426,64 @@ export const Sgc = () => {
 
                 if (isInEditMode) {
                     return [
-                        <GridActionsCellItem
-                            icon={<SaveIcon />}
-                            label="Save"
-                            sx={{
-                                color: "primary.main",
-                            }}
-                            onClick={handleSaveClick(id)}
-                        />,
-                        <GridActionsCellItem
-                            icon={<CancelIcon />}
-                            label="Cancel"
-                            className="textPrimary"
-                            onClick={handleCancelClick(id)}
-                            sx={{
-                                color: "primary.main",
-                            }}
-                            color="inherit"
-                        />,
+                        <Tooltip title="Guardar Cambios">
+                            <GridActionsCellItem
+                                sx={{ transition: ".3s ease", "&:hover": { color: "green" } }}
+                                icon={<SaveIcon />}
+                                label="Save"
+                                onClick={handleSaveClick(id)}
+                            />
+                        </Tooltip>,
+                        <Tooltip title="Cancelar Cambios">
+                            <GridActionsCellItem
+                                icon={<CancelIcon />}
+                                label="Cancel"
+                                className="textPrimary"
+                                onClick={handleCancelClick(id)}
+                                sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                            />
+                        </Tooltip>,
                     ];
                 }
 
                 if (editPermission && deletePermission) {
                     return [
-                        <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />,
-                        <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />,
+                        <Tooltip title="Editar Registro">
+                            <GridActionsCellItem
+                                sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }}
+                                icon={<EditIcon />}
+                                label="Editar"
+                                onClick={handleEditClick(id)}
+                            />
+                        </Tooltip>,
+                        <Tooltip title="Eliminar Registro">
+                            <GridActionsCellItem
+                                sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                                icon={<DeleteIcon />}
+                                label="Eliminar"
+                                onClick={() => handleDeleteClick(id)}
+                            />
+                        </Tooltip>,
                     ];
                 } else if (editPermission && !deletePermission) {
-                    <GridActionsCellItem icon={<EditIcon />} label="Editar" onClick={handleEditClick(id)} />;
+                    <Tooltip title="Editar Registro">
+                        <GridActionsCellItem
+                            sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }}
+                            icon={<EditIcon />}
+                            label="Editar"
+                            onClick={handleEditClick(id)}
+                        />
+                    </Tooltip>;
                 } else if (!editPermission && deletePermission) {
-                    <GridActionsCellItem icon={<DeleteIcon />} label="Eliminar" onClick={() => handleDeleteClick(id)} />;
+                    <Tooltip title="Eliminar Registro">
+                        <GridActionsCellItem
+                            sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
+                            icon={<DeleteIcon />}
+                            label="Eliminar"
+                            onClick={() => handleDeleteClick(id)}
+                        />
+                        ,
+                    </Tooltip>;
                 } else {
                     return [];
                 }

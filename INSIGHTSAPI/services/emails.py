@@ -1,13 +1,14 @@
 """Email service."""
 
 import logging
-from typing import List, Union
+from typing import List
 from smtplib import SMTP
 import ssl
 import os
 from imaplib import IMAP4_SSL
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.template.loader import render_to_string
 
 
 logger = logging.getLogger("requests")
@@ -27,7 +28,7 @@ def send_email(
     from_email=None,
     cc_emails=None,
     bcc_emails=None,
-    html_content=False,
+    html_content=True,
     attachments=None,
     reply_to=None,
     return_path=None,
@@ -42,7 +43,7 @@ def send_email(
     - subject (str): The subject of the email.
     - message (str): The content of the email.
     - to_emails (Union[str, List[str]]): The recipient(s) of the email.
-    - from_email (str): The sender of the email just put the name it will use the same @ that the sender_user.
+    - from_email (str): The email sender to show, just put the name it will use the same @ that the sender_user.
     - cc_emails (Union[str, List[str]]): The CC recipient(s) of the email.
     - bcc_emails (Union[str, List[str]]): The BCC recipient(s) of the email.
     - html_content (bool): Whether the content of the email is HTML.
@@ -76,9 +77,14 @@ def send_email(
             from_email = sender_email
         if email_owner:
             from_email = f"{email_owner} <{from_email}>"
+
+        email_content = render_to_string(
+            "email_template.html", {"message": message, "title": subject}
+        )
+        # print(email_content)
         email = EmailMessage(
             subject,
-            message,
+            email_content,
             from_email,
             to_emails,
             cc=cc_emails,

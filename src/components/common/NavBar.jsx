@@ -1,4 +1,4 @@
-import { React, useState, useEffect, useRef } from "react";
+import { React, useState, useEffect } from "react";
 import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover, Dialog } from "@mui/material";
 import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
@@ -21,6 +21,7 @@ import FeedbackIcon from "@mui/icons-material/Feedback";
 import Goals from "../shared/Goals";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import { getApiUrl } from "../../assets/getApi";
+import PolicyIcon from "@mui/icons-material/Policy";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -36,50 +37,51 @@ const Navbar = () => {
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
 
-    // const refreshToken = async (refreshTimer) => {
-    //     try {
-    //         const response = await fetch(`${getApiUrl()}token/refresh/`, {
-    //             method: "POST",
-    //             credentials: "include",
-    //         });
+    const refreshToken = async (refreshTimer) => {
+        try {
+            const response = await fetch(`${getApiUrl()}token/refresh/`, {
+                method: "POST",
+                credentials: "include",
+            });
 
-    //         const data = await response.json();
+            const data = await response.json();
 
-    //         if (!response.ok) {
-    //             if (refreshTimer) {
-    //                 localStorage.removeItem("refresh-timer-ls");
-    //             }
-    //             navigate("/", { replace: true });
-    //             throw new Error(data.detail);
-    //         } else if (response.status === 200) {
-    //             if (refreshTimer === null) {
-    //                 localStorage.setItem(
-    //                     "refresh-timer-ls",
-    //                     JSON.stringify({
-    //                         expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
-    //                     })
-    //                 );
-    //             } else {
-    //                 let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
-    //                 refreshTimer.expiry = new Date().getTime() + 15 * 60 * 60 * 1000; // 15 hours from now
+            if (!response.ok) {
+                if (refreshTimer) {
+                    localStorage.removeItem("refresh-timer-ls");
+                }
+                navigate("/", { replace: true });
+                throw new Error(data.detail);
+            } else if (response.status === 200) {
+                if (refreshTimer === null) {
+                    localStorage.setItem(
+                        "refresh-timer-ls",
+                        JSON.stringify({
+                            expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
+                        })
+                    );
+                } else {
+                    let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
+                    refreshTimer.expiry = new Date().getTime() + 15 * 60 * 60 * 1000; // 15 hours from now
 
-    //                 // Store the item again
-    //                 localStorage.setItem("refresh-timer-ls", JSON.stringify(refreshTimer));
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
+                    // Store the item again
+                    localStorage.setItem("refresh-timer-ls", JSON.stringify(refreshTimer));
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
-    // useEffect(() => {
-    //     let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
+    useEffect(() => {
+        let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
 
-    //     // Check if the item has expired
-    //     if (refreshTimer === null || refreshTimer.expiry < new Date().getTime()) {
-    //         refreshToken(refreshTimer);
-    //     }
-    // }, []);
+        // Check if the item has expired
+        if (refreshTimer === null || refreshTimer.expiry < new Date().getTime()) {
+            refreshToken(refreshTimer);
+        }
+    }, []);
+
     const getGoal = async () => {
         try {
             const response = await fetch(`${getApiUrl()}goals/15225716/`, {
@@ -241,47 +243,47 @@ const Navbar = () => {
                     }}
                 >
                     <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/logged/home")} />
-                    {isMobile ? (
+                    {/* {isMobile ? (
                         <IconButton onClick={handleClickMenu} size="small">
                             <MenuIcon />
                         </IconButton>
                     ) : (
-                        <>
-                            <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
-                            <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
-                            <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
-                            <Typography
-                                onMouseEnter={handleUtilitariosMenuOpen}
-                                anchorEl={anchorElUtils}
-                                sx={{
-                                    minWidth: 100,
-                                    textAlign: "center",
-                                    cursor: "pointer",
-                                    borderBottom: "2px solid transparent", // Add a transparent bottom border
-                                    transition: "all 0.3s ease",
-                                    padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
-                                    borderBottomColor: "transparent",
-                                }}
-                            >
-                                Servicios
-                            </Typography>
+                        <> */}
+                    <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
+                    <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
+                    <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
+                    <Typography
+                        onMouseEnter={handleUtilitariosMenuOpen}
+                        anchorel={anchorElUtils}
+                        sx={{
+                            minWidth: 100,
+                            textAlign: "center",
+                            cursor: "pointer",
+                            borderBottom: "2px solid transparent", // Add a transparent bottom border
+                            transition: "all 0.3s ease",
+                            padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
+                            borderBottomColor: "transparent",
+                        }}
+                    >
+                        Servicios
+                    </Typography>
 
-                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                                <Tooltip title="Configuración de cuenta">
-                                    <IconButton
-                                        onClick={handleClick}
-                                        size="small"
-                                        sx={{ ml: 2 }}
-                                        aria-controls={open ? "account-menu" : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? "true" : undefined}
-                                    >
-                                        <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
-                                    </IconButton>
-                                </Tooltip>
-                            </Box>
-                        </>
-                    )}
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                        <Tooltip title="Configuración de cuenta">
+                            <IconButton
+                                onClick={handleClick}
+                                size="small"
+                                sx={{ ml: 2 }}
+                                aria-controls={open ? "account-menu" : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? "true" : undefined}
+                            >
+                                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                    {/* </>
+                    )} */}
                 </Box>
             </Box>
             <Menu
@@ -465,12 +467,6 @@ const Navbar = () => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <Box onMouseLeave={handleCloseUtils}>
-                    <MenuItem onClick={() => navigate("/logged/suggestions")}>
-                        <ListItemIcon>
-                            <FeedbackIcon fontSize="small" />
-                        </ListItemIcon>
-                        PQRS
-                    </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
@@ -491,9 +487,9 @@ const Navbar = () => {
                     </MenuItem>
                     <MenuItem onClick={() => navigate("/logged/legal")}>
                         <ListItemIcon>
-                            <DriveFileMoveIcon fontSize="small" />
+                            <PolicyIcon fontSize="small" />
                         </ListItemIcon>
-                        Contratos y Polizas Legales
+                        Contratos y Pólizas Legales
                     </MenuItem>
                 </Box>
             </Menu>

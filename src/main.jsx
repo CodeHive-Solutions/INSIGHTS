@@ -11,7 +11,6 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import CssBaseline from "@mui/material/CssBaseline";
 import About from "./components/pages/About";
-import UploadGoals from "./components/pages/UploadGoals";
 import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
 import "./index.css";
@@ -19,7 +18,6 @@ import Test from "./components/pages/Test";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";
-import Suggestions from "./components/pages/Pqrs";
 import ImageUploader from "./components/Test";
 import UploadFiles from "./components/pages/UploadFiles";
 import EthicalLine from "./components/pages/EthicalLine";
@@ -71,10 +69,6 @@ const router = createBrowserRouter([
     //     errorElement: <ErrorPage />,
     // },
     {
-        path: "test",
-        element: <GoalsStats />,
-    },
-    {
         path: "ethical-line",
         element: <EthicalLine />,
     },
@@ -110,10 +104,6 @@ const router = createBrowserRouter([
             {
                 path: "upload-files",
                 element: <UploadFiles />,
-            },
-            {
-                path: "suggestions",
-                element: <Suggestions />,
             },
             {
                 path: "goals-stats",

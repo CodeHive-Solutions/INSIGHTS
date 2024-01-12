@@ -120,7 +120,7 @@ class CallTransferTestCase(BaseTestCase):
         ) as file_obj:
             response = self.client.post(
                 reverse("call-transfer-list"),
-                {"file": file_obj, "campaign": "test_falabella"},
+                {"file": file_obj, "campaign": "test_falabella", "folder": "OUT"},
                 cookies=self.client.cookies,  # type: ignore
             )
             self.assertEqual(response.status_code, 200, response.data)  # type: ignore
@@ -132,7 +132,7 @@ class CallTransferTestCase(BaseTestCase):
     def test_upload_call_transfer_file_banco_agrario(self):
         """Test uploading a call transfer file to the server"""
         # Create the folders for the test
-        path_banco_agrario = "/var/servers/banco_agrario/test/test/2023/12/05/OUT/"
+        path_banco_agrario = "/var/servers/banco_agrario/test/test/2023/12/05/IN/"
         os.makedirs(path_banco_agrario, exist_ok=True)
         with open(
             path_banco_agrario
@@ -150,7 +150,7 @@ class CallTransferTestCase(BaseTestCase):
         ) as file_obj:
             response = self.client.post(
                 reverse("call-transfer-list"),
-                {"file": file_obj, "campaign": "test_banco_agrario"},
+                {"file": file_obj, "campaign": "test_banco_agrario", "folder": "IN"},
                 cookies=self.client.cookies,  # type: ignore
             )
             self.assertEqual(response.status_code, 200, response.data)

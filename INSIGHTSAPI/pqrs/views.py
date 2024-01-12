@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from services.emails import send_email
 from django.db import connections
+from django.conf import settings
 from .models import Complaint, Congratulation, Suggestion, Other
 from .serializers import (
     ComplaintSerializer,
@@ -15,7 +16,6 @@ from .serializers import (
     SuggestionSerializer,
     OtherSerializer,
 )
-from django.conf import settings
 
 
 logger = logging.getLogger("requests")
@@ -40,11 +40,14 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Save the post data when creating a new model instance."""
-        user = self.request.user
         if not "name" in self.request.data:
             return Response({"error": "El nombre es requerido"}, status=400)
-        name = self.request.data["name"]
+        if not "type" in self.request.data:
+            return Response({"error": "El tipo es requerido"}, status=400)
         response = super().create(request, *args, **kwargs)
+        user = self.request.user
+        name = self.request.data["name"].split("-")
+        name = f"{name[0].strip()} {name[1].strip()}"
 
         if response.status_code == status.HTTP_201_CREATED:
             with connections["staffnet"].cursor() as cursor:
@@ -58,11 +61,10 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                         {"error": f"No se encontró el email de {name}"},
                         status=status.HTTP_404_NOT_FOUND,
                     )
-                if settings.DEBUG:
+                if "test" in request.data.get("type").lower() or settings.DEBUG:
                     cc_emails = ["juan.carreno@cyc-bpo.com"]
                 else:
-                    # cc_emails = ["marlon.botero@cyc-bpo.com"]
-                    cc_emails = ["juan.carreno@cyc-bpo.com"]
+                    cc_emails = ["marlon.botero@cyc-bpo.com"]
                 errors = send_email(
                     sender_user="mismetas",
                     subject="Nueva PQRS",

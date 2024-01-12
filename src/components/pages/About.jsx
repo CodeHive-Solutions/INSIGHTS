@@ -40,6 +40,12 @@ const homeImages = [
 
 const managements = [
     {
+        name: "Pablo Castañeda",
+        management: "Presidente",
+        image: pablo,
+        description: "",
+    },
+    {
         name: "Cesar Garzón",
         management: "Gerente General",
         image: cesarGarzon,
@@ -54,7 +60,7 @@ const managements = [
             "LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.",
     },
     {
-        name: "Angela Duran",
+        name: "Angela Durán",
         management: "Gerente de Planeación",
         image: angelaDuran,
         description:
@@ -68,11 +74,11 @@ const managements = [
             "Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.",
     },
     {
-        name: "Hector Sotelo",
+        name: "Héctor Gabriel Sotelo",
         management: "Gerente de Operaciones de Ventas",
         image: hectorSotelo,
         description:
-            "Liderar, planificar y controlar las operaciones de las campañas de Cobranzas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.",
+            "Liderar, planificar y controlar las operaciones de las campañas de Servicios y Ventas, con equipos productivos y con alta calidad que garanticen los resultados frente a los clientes y la rentabilidad de cada una de ellas.",
     },
     {
         name: "Jeanneth Pinzón ",
@@ -88,7 +94,7 @@ const managements = [
         description: `Resguardar los recursos de la empresa para evitar pérdidas o faltas que puedan afectar su rentabilidad en un marco de gestión de riesgos, donde son identificados, evaluados y controlados, los cuales son informados, comunicados y monitoreados, mediante procesos de auditoría. \n \nAtender procesos de auditoria externas periódicamente de los clientes, entes certificadores, entes de control y firmas evaluadoras de riesgos.`,
     },
     {
-        name: "Melida Sandoval",
+        name: "Mélida Sandoval",
         management: "Gerente Administrativa",
         image: melidaSandoval,
         description:
@@ -196,7 +202,12 @@ const About = () => {
                         <Typography variant="body2" sx={{ fontSize: "16px", color: "gray" }}>
                             En C&C, los valores corporativos constituyen la columna vertebral de nuestra cultura y orientan cada faceta de la operación. Son el motor que
                             nos impulsa hacia adelante, permitiéndonos cumplir con las expectativas de clientes, empleados y comunidades, al tiempo que construimos un
-                            futuro sostenible y exitoso.
+                            futuro sostenible y exitoso:
+                            <li>Pasión</li>
+                            <li>Integridad</li>
+                            <li>Innovación</li>
+                            <li>Impacto Social</li>
+                            <li>Excelencia</li>
                         </Typography>
                     </Box>
                 </Box>
