@@ -30,6 +30,7 @@ urlpatterns = [
     path("services/", include("services.urls")),
     path("contracts/", include("contracts.urls")),
     path("admin/", admin.site.urls),
+    path("accounts/", include("django.contrib.auth.urls")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

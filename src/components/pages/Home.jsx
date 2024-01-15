@@ -6,41 +6,19 @@ import { motion, useIsPresent } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
-import { useNavigate } from "react-router-dom";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
-//images carousel test
-import imageTest from "../../images/home-carousel/image00001.jpg";
-import imageTest1 from "../../images/home-carousel/image00002.jpeg";
-import imageTest2 from "../../images/home-carousel/image00003.jpeg";
-import imageTest3 from "../../images/home-carousel/image00004.jpeg";
-import imageTest4 from "../../images/home-carousel/image00006.jpeg";
-import realImage2 from "../../images/home-carousel/3.jpg";
-import realImage3 from "../../images/home-carousel/4.jpg";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 import image2024 from "../../images/home-carousel/2024.png";
+import Blog from "./Blog.jsx";
 
 // images
-import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
-import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
-import tuliaCalderon from "../../images/birthdays/tulia-calderon.jpeg";
-import carolGuerrero from "../../images/birthdays/carol-guerrero.jpeg";
-import benefit1 from "../../images/benefits-vacancies/MicrosoftTeams-image4.png";
-import benefit2 from "../../images/benefits-vacancies/MicrosoftTeams-image5.png";
-import benefit3 from "../../images/benefits-vacancies/MicrosoftTeams-image6.png";
-import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png";
-
 import politicaObjetivo from "../../images/home-carousel/politica-objetivo.png";
 import principiosISO from "../../images/home-carousel/principios-iso.png";
 import iso27001 from "../../images/home-carousel/iso-27001.png";
 import raac from "../../images/home-carousel/raac.png";
 import campaigns from "../../images/home-carousel/campaigns.png";
 
-//vacancies
-import vancie1 from "../../images/vacancies/1.jpg";
-import vancie2 from "../../images/vacancies/2.jpg";
-import vancie3 from "../../images/vacancies/3.png";
-import vancie4 from "../../images/vacancies/4.jpg";
 import vancie5 from "../../images/vacancies/5.png";
 
 //benefits
@@ -62,13 +40,9 @@ const vacancies = [
 ];
 
 const homeImages = [
-    { image: image2024 },
-    { image: politicaObjetivo },
-    { image: principiosISO },
-    { image: iso27001 },
     { image: raac },
-    { image: campaigns },
-    { image: video, video: true },
+    { image: campaigns, description: "C&C Apoyando el fútbol femenino" },
+    // { image: video, video: true },
 ];
 
 const Home = () => {
@@ -105,7 +79,7 @@ const Home = () => {
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`${getApiUrl(true)}${employee.cedula}`, {
+                const imageResponse = await fetch(`${getApiUrl(true)}profile-picture/${employee.cedula}`, {
                     method: "GET",
                 });
 
@@ -309,6 +283,7 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"650px"} width={"600px"} />
                 </Box>
             </Box>
+            <Blog></Blog>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

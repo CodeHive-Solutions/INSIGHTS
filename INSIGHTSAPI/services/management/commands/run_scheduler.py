@@ -5,10 +5,15 @@ from django.utils import timezone
 from django.db.models import Q
 from contracts.models import Contract
 from services.emails import send_email
+import logging
+
+logger = logging.getLogger("requests")
 
 
 class Command(BaseCommand):
     """Class to run the scheduler"""
+
+    logger.error("Error in scheduler")
 
     help = "Run scheduled tasks"
 
@@ -53,9 +58,9 @@ class Command(BaseCommand):
                 message,
                 to_email,
                 cc_emails=[
-                    None
-                    # "juan.carreno@cyc-bpo.com",
+                    "juan.carreno@cyc-bpo.com",
                     # "heibert.mogollon@gmail.com",
+                    "heibert.mogollon@cyc-bpo.com",
                     # "marcela.osorio@cyc-bpo.com",
                 ],
                 save_message=True,

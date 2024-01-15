@@ -91,7 +91,7 @@ class TokenCheckTest(APITestCase):
     def test_superuser(self):
         """test that superusers can access to the django admin."""
         get_user_model().objects.create_superuser(username="Zeus", password="1234")
-        logged = self.client.login(username="Zeus", password="12341")
+        logged = self.client.login(username="Zeus", password="1234")
         self.assertTrue(logged)
         response = self.client.get(reverse("admin:index"))
         self.assertEqual(response.status_code, 200)
