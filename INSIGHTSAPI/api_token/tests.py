@@ -1,12 +1,14 @@
 """Test the authentication."""
 import os
+import ldap  # type: ignore
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Permission
 from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework.test import APIClient
-import ldap  # type: ignore
+from users.models import User
 
 
 class LDAPAuthenticationTest(APITestCase):
@@ -46,6 +48,10 @@ class TokenCheckTest(APITestCase):
 
     def test_token_obtain(self):
         """Test that the token obtain endpoint works correctly."""
+        user = User.objects.create_user(
+            username="staffnet", password=os.environ["StaffNetLDAP"]
+        )
+        user.user_permissions.add(Permission.objects.first())
         client = self.client
         url = reverse("obtain-token")
         response = client.post(
@@ -56,6 +62,10 @@ class TokenCheckTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("access-token", client.cookies)
         self.assertIn("refresh-token", client.cookies)
+        self.assertEqual(
+            response.data["permissions"],
+            user.get_all_permissions(),
+        )
 
     def test_token_obtain_fail(self):
         """Test that the token obtain endpoint works correctly."""
@@ -96,4 +106,4 @@ class TokenCheckTest(APITestCase):
         response = self.client.get(reverse("admin:index"))
         self.assertEqual(response.status_code, 200)
         # Check that the response contains the admin panel text
-        self.assertContains(response, "Django administration")
+        self.assertContains(response, "Sitio administrativo")

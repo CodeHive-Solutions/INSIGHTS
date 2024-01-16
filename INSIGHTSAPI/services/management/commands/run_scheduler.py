@@ -59,9 +59,7 @@ class Command(BaseCommand):
                 to_email,
                 cc_emails=[
                     "juan.carreno@cyc-bpo.com",
-                    # "heibert.mogollon@gmail.com",
                     "heibert.mogollon@cyc-bpo.com",
-                    # "marcela.osorio@cyc-bpo.com",
                 ],
                 save_message=True,
                 email_owner="Contratos C&C",

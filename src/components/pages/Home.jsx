@@ -13,35 +13,31 @@ import image2024 from "../../images/home-carousel/2024.png";
 import Blog from "./Blog.jsx";
 
 // images
-import politicaObjetivo from "../../images/home-carousel/politica-objetivo.png";
-import principiosISO from "../../images/home-carousel/principios-iso.png";
-import iso27001 from "../../images/home-carousel/iso-27001.png";
 import raac from "../../images/home-carousel/raac.png";
 import campaigns from "../../images/home-carousel/campaigns.png";
-
+import auxiliarContable from "../../images/home-carousel/auxiliar-contable.png";
+import auxiliarOperativo from "../../images/home-carousel/auxiliar-operativo.png";
+import asesorComercial from "../../images/home-carousel/asesor-comercial.png";
+import negociadoresSinExperiencia from "../../images/home-carousel/negociadores-sin-experiencia.png";
+import asesorNegociadores from "../../images/home-carousel/asesores-negociadores.png";
 import vancie5 from "../../images/vacancies/5.png";
 
 //benefits
-import realBenefit1 from "../../images/benefits/1.png";
 import realBenefit2 from "../../images/benefits/2.png";
-import { RepeatOneSharp } from "@mui/icons-material";
 
 import video from "../../videos/futbol.mp4";
-const benefits = [
-    // { image: vancie5, title: "Beneficio 1" },
-    { image: realBenefit2, title: "Beneficio 2" },
-];
+const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const vacancies = [
-    // { image: benefit3, title: "Vacante 1" },
-    // { image: benefit4, title: "Vacante 2" },
-    { image: vancie5, title: "Beneficio 1" },
-    // { image: realBenefit2, title: "Beneficio 2" },
-];
+const vacancies = [{ image: vancie5, title: "Beneficio 1" }];
 
 const homeImages = [
     { image: raac },
-    { image: campaigns, description: "C&C Apoyando el fútbol femenino" },
+    { image: campaigns },
+    { image: auxiliarContable },
+    { image: auxiliarOperativo },
+    { image: asesorComercial },
+    { image: negociadoresSinExperiencia },
+    { image: asesorNegociadores },
     // { image: video, video: true },
 ];
 
@@ -181,7 +177,7 @@ const Home = () => {
                 className="privacy-screen"
             /> */}
             <Box sx={{ display: "flex", mt: "5.5rem", textAlign: "center", justifyContent: "center" }}>
-                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"650px"} width={"100%"} />
+                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"650px"} width={"90%"} />
             </Box>
             {/* <Box
                 className="waveWrapper"

@@ -94,13 +94,11 @@ class User(AbstractUser):
                 raise ValidationError(
                     "El usuario no tiene cargo en la base de datos de staffnet"
                 )
-            if not "asesor" in result[0].lower():
-                self.is_staff = True
             self.job_title = result[0]
             area, _ = Area.objects.get_or_create(name=result[1])
             self.area_id = area.id
-        # if not self.is_superuser:
-        # self.set_unusable_password()
+            if not self.is_superuser:
+                self.set_unusable_password()
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField

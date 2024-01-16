@@ -3,6 +3,7 @@ import os
 from unittest import TestCase
 from datetime import timedelta
 from io import StringIO
+from django.test import Client
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -10,6 +11,7 @@ from django.db.models import Q
 from django.core.management import call_command
 from contracts.models import Contract
 from .emails import send_email
+import logging
 
 
 class BaseTestCase(APITestCase):
@@ -120,7 +122,6 @@ class SchedulerTest(TestCase):
         # Run the logic to check for contract renewal
         stdout = StringIO()
         management_command_output = call_command("run_scheduler", stdout=stdout)
-        print(stdout.getvalue())
 
         self.assertIn(
             f"Email sent for contract {contract_30_days.name} to ['heibert",

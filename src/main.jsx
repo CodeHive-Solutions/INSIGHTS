@@ -63,14 +63,13 @@ const router = createBrowserRouter([
         element: <Login />,
         errorElement: <ErrorPage isLogin={true} />,
     },
-    // {
-    //     path: "/upload-files",
-    //     element: <UploadFiles />,
-    //     errorElement: <ErrorPage />,
-    // },
     {
         path: "ethical-line",
         element: <EthicalLine />,
+    },
+    {
+        path: "test",
+        element: <Test />,
     },
     {
         path: "goal-pdf",
@@ -108,10 +107,6 @@ const router = createBrowserRouter([
             {
                 path: "goals-stats",
                 element: <GoalsStats />,
-            },
-            {
-                path: "test",
-                element: <Test />,
             },
             {
                 path: "quality",
