@@ -6,69 +6,38 @@ import { motion, useIsPresent } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
 import "../../index.css";
-import { useNavigate } from "react-router-dom";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
-//images carousel test
-import imageTest from "../../images/home-carousel/image00001.jpg";
-import imageTest1 from "../../images/home-carousel/image00002.jpeg";
-import imageTest2 from "../../images/home-carousel/image00003.jpeg";
-import imageTest3 from "../../images/home-carousel/image00004.jpeg";
-import imageTest4 from "../../images/home-carousel/image00006.jpeg";
-import realImage2 from "../../images/home-carousel/3.jpg";
-import realImage3 from "../../images/home-carousel/4.jpg";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 import image2024 from "../../images/home-carousel/2024.png";
+import Blog from "./Blog.jsx";
 
 // images
-import barbaraVanegas from "../../images/birthdays/barbara-vanegas.jpeg";
-import cristianGonzales from "../../images/birthdays/cristian-gonzales.jpeg";
-import tuliaCalderon from "../../images/birthdays/tulia-calderon.jpeg";
-import carolGuerrero from "../../images/birthdays/carol-guerrero.jpeg";
-import benefit1 from "../../images/benefits-vacancies/MicrosoftTeams-image4.png";
-import benefit2 from "../../images/benefits-vacancies/MicrosoftTeams-image5.png";
-import benefit3 from "../../images/benefits-vacancies/MicrosoftTeams-image6.png";
-import benefit4 from "../../images/benefits-vacancies/MicrosoftTeams-image7.png";
-
-import politicaObjetivo from "../../images/home-carousel/politica-objetivo.png";
-import principiosISO from "../../images/home-carousel/principios-iso.png";
-import iso27001 from "../../images/home-carousel/iso-27001.png";
 import raac from "../../images/home-carousel/raac.png";
 import campaigns from "../../images/home-carousel/campaigns.png";
-
-//vacancies
-import vancie1 from "../../images/vacancies/1.jpg";
-import vancie2 from "../../images/vacancies/2.jpg";
-import vancie3 from "../../images/vacancies/3.png";
-import vancie4 from "../../images/vacancies/4.jpg";
-import vancie5 from "../../images/vacancies/5.png";
-
+import auxiliarContable from "../../images/home-carousel/auxiliar-contable.png";
+import auxiliarOperativo from "../../images/home-carousel/auxiliar-operativo.png";
+import asesorComercial from "../../images/home-carousel/asesor-comercial.png";
+import negociadoresSinExperiencia from "../../images/home-carousel/negociadores-sin-experiencia.png";
+import asesorNegociadores from "../../images/home-carousel/asesores-negociadores.png";
+import isos from "../../images/home-carousel/isos.png";
+import vacanciesCarousel from "../../images/home-carousel/vacancies.png";
+import image1280x720 from "../../images/home-carousel/1280-720.jpg";
 //benefits
-import realBenefit1 from "../../images/benefits/1.png";
 import realBenefit2 from "../../images/benefits/2.png";
-import { RepeatOneSharp } from "@mui/icons-material";
 
 import video from "../../videos/futbol.mp4";
-const benefits = [
-    // { image: vancie5, title: "Beneficio 1" },
-    { image: realBenefit2, title: "Beneficio 2" },
-];
+const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const vacancies = [
-    // { image: benefit3, title: "Vacante 1" },
-    // { image: benefit4, title: "Vacante 2" },
-    { image: vancie5, title: "Beneficio 1" },
-    // { image: realBenefit2, title: "Beneficio 2" },
-];
+const vacancies = [{ image: raac, title: "Beneficio 1" }];
 
 const homeImages = [
-    { image: image2024 },
-    { image: politicaObjetivo },
-    { image: principiosISO },
-    { image: iso27001 },
     { image: raac },
     { image: campaigns },
-    { image: video, video: true },
+    { image: isos },
+    { image: vacanciesCarousel },
+    { image: image1280x720 },
+    // { image: video, video: true },
 ];
 
 const Home = () => {
@@ -105,22 +74,39 @@ const Home = () => {
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`${getApiUrl(true)}${employee.cedula}`, {
+                const imageResponse = await fetch(`${getApiUrl(true)}profile-picture/${employee.cedula}`, {
                     method: "GET",
                 });
+
+                const fullName = "RAMIREZ JULIO";
+
+                // Split the full name into individual names and last names
+                const nameParts = fullName.split(" ");
+
+                // Extract the first name
+                const firstName = nameParts.length > 2 ? nameParts[2] : "";
+
+                // Extract the first last name (if exists)
+                const firstLastName = nameParts.length > 0 ? nameParts[0] : "";
+
+                // Create the formatted name
+                const formattedName = `${firstName} ${firstLastName}`.trim();
+
+                console.log(formattedName);
 
                 // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
                     return {
                         image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
-                        name: employee.nombre,
+                        name: formattedName,
                         description: employee.campana_general,
                     };
                 }
+
                 // If image not found, return null
                 return {
                     image: Avatar,
-                    name: employee.nombre,
+                    name: formattedName,
                     description: employee.campana_general,
                 };
             } catch (error) {
@@ -206,31 +192,16 @@ const Home = () => {
                 style={{ originX: isPresent ? 0 : 1 }}
                 className="privacy-screen"
             /> */}
-            <Box sx={{ display: "flex", mt: "5.5rem", textAlign: "center", justifyContent: "center" }}>
-                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"650px"} width={"100%"} />
+            <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
+                <CarouselComponent items={homeImages} height={"648px"} width={"1152px"} />
             </Box>
-            {/* <Box
-                className="waveWrapper"
-                sx={{
-                    width: "100%",
-                    height: "20vh",
-                    backgroundSize: "cover",
-                    backgroundColor: "#f0f0f0",
-                    padding: "20px",
-                }}
-            >
-                <Box className="wave wave1"></Box>
-                <Box className="wave wave2"></Box>
-                <Box className="wave wave3"></Box>
-                <Box className="wave wave4"></Box>
-            </Box> */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                 <Typography
                     color="primary"
                     id="section1"
                     sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
                 >
-                    ¡C&C Apoyando el fútbol femenino!
+                    ¡C&C Apoyando el deporte!
                 </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <video style={{ borderRadius: "8px", width: 1200 }} controls>

@@ -108,6 +108,9 @@ const About = () => {
     }, []);
     const isSmallScreen = useMediaQuery("(max-width:600px)");
 
+    const currentYear = new Date().getFullYear();
+    const yearsOfExperience = currentYear - 2005;
+
     return (
         <Box sx={{ display: "flex", gap: "5rem", flexDirection: "column", width: "100%", marginTop: "6rem" }}>
             <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
@@ -123,8 +126,8 @@ const About = () => {
                 </Box>
                 <Box sx={{ width: "35rem" }}>
                     <Typography sx={{ color: "gray", textAlign: "justify" }}>
-                        Somos una compañía con más de 18 años de experiencia en el mercado, especializada en ofrecer soluciones para fortalecer ciclos de riesgo;
-                        proveemos alternativas para los procesos de originación, mantenimiento y recuperación de cartera. En la implementación de servicios BPO,
+                        Somos una compañía con más de {yearsOfExperience} años de experiencia en el mercado, especializada en ofrecer soluciones para fortalecer ciclos de
+                        riesgo; proveemos alternativas para los procesos de originación, mantenimiento y recuperación de cartera. En la implementación de servicios BPO,
                         trabajamos con estándares metodológicos de calidad que nos permiten la optimización de procesos para garantizar resultados que maximicen la
                         rentabilidad de la operación de nuestros clientes y les facilite concentrarse en su core de negocio. Nos enfocamos en prestar servicios de Contact
                         Center y BPO de alta calidad con un talento humano que genere valor a nuestros clientes, basados en prácticas innovadoras, experiencia, solidez en

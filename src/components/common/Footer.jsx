@@ -70,9 +70,6 @@ const Footer = () => {
                 <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/sgc")} variant="subtitle2" color="white">
                     Gestión Documental
                 </Typography>
-                <Typography sx={{ cursor: "pointer" }} onClick={() => navigate("/logged/suggestions")} variant="subtitle2" color="white">
-                    PQR
-                </Typography>
             </Box>
         </Box>
     );

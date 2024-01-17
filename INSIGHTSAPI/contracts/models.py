@@ -1,9 +1,12 @@
+"""This module contains the Contract model. """
 from django.db import models
 from simple_history.models import HistoricalRecords
 
 
 # Create your models here.
 class Contract(models.Model):
+    """This class represents the Contract model."""
+
     name = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     description = models.CharField(max_length=200)

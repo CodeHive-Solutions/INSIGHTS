@@ -1,6 +1,6 @@
 """Tests for the users app."""
-import ldap
 import os
+import ldap # type: ignore
 from users.models import User
 from django.contrib.auth.models import Permission
 from django.test import TestCase

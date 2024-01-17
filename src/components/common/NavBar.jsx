@@ -22,6 +22,7 @@ import Goals from "../shared/Goals";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import { getApiUrl } from "../../assets/getApi";
 import PolicyIcon from "@mui/icons-material/Policy";
+import Sidebar from "../common/Sidebar";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -36,6 +37,11 @@ const Navbar = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
+    const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+    const toggleSidebar = (openServices) => {
+        setSidebarOpen(openServices);
+    };
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -238,6 +244,7 @@ const Navbar = () => {
                         display: "flex",
                         justifyContent: "space-evenly",
                         alignItems: "center",
+                        // padding: "1rem 2rem",
                         backgroundColor: "rgba(255,255,255, 0.9)",
                         backdropFilter: "blur(10px)",
                     }}
@@ -334,24 +341,6 @@ const Navbar = () => {
                     Mi Meta
                 </MenuItem>
                 <Divider />
-                {/* <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                        <RequestPageIcon fontSize="small" />
-                    </ListItemIcon>
-                    Desprendible de nomina
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                        <FeedIcon fontSize="small" />
-                    </ListItemIcon>
-                    Certificación laboral
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                        <Settings fontSize="small" />
-                    </ListItemIcon>
-                    Configuración
-                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />

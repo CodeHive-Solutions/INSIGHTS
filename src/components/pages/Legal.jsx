@@ -52,11 +52,17 @@ const validationSchema = Yup.object().shape({
     city: Yup.string().required("Campo requerido"),
     description: Yup.string().required("Campo requerido"),
     expected_start_date: Yup.string().required("Campo requerido"),
-    value: Yup.string().required("Campo requerido"),
-    monthly_cost: Yup.string().required("Campo requerido"),
+    value: Yup.string()
+        .typeError("Valores incorrectos")
+        .required("Campo requerido")
+        .matches(/^\d{1,3}(\.\d{3})*(,\d{1,2})?$/, "Formato incorrecto. Ejemplo válido: 100.000.000,09"),
+    monthly_cost: Yup.string()
+        .typeError("Valores incorrectos")
+        .required("Campo requerido")
+        .matches(/^\d{1,3}(\.\d{3})*(,\d{1,2})?$/, "Formato incorrecto. Ejemplo válido: 100.000.000,09"),
     duration: Yup.string().required("Campo requerido"),
     contact: Yup.string().required("Campo requerido"),
-    contact_telephone: Yup.string().required("Campo requerido"),
+    contact_telephone: Yup.number().typeError("Numero de teléfono incorrecto").required("Campo requerido"),
     start_date: Yup.string().required("Campo requerido"),
     civil_responsibility_policy: Yup.string().required("Campo requerido"),
     compliance_policy: Yup.string().required("Campo requerido"),
@@ -201,6 +207,22 @@ export const Legal = () => {
     };
 
     const handleSubmit = async (values) => {
+        const formatCOPValue = (value) => {
+            return value.replace(/\./g, "").replace(",", ".");
+        };
+
+        const formatCOPFields = (values) => {
+            const fieldsToFormat = ["value", "monthly_cost", "insurance_policy"];
+
+            fieldsToFormat.forEach((field) => {
+                if (values[field]) {
+                    values[field] = formatCOPValue(values[field]);
+                }
+            });
+        };
+
+        formatCOPFields(values);
+
         try {
             const response = await fetch(`${getApiUrl()}contracts/`, {
                 method: "POST",
@@ -223,6 +245,21 @@ export const Legal = () => {
     };
 
     const handleSubmitEdit = async (values) => {
+        const formatCOPValue = (value) => {
+            return value.replace(/\./g, "").replace(",", ".");
+        };
+
+        const formatCOPFields = (values) => {
+            const fieldsToFormat = ["value", "monthly_cost", "insurance_policy"];
+
+            fieldsToFormat.forEach((field) => {
+                if (values[field]) {
+                    values[field] = formatCOPValue(values[field]);
+                }
+            });
+        };
+
+        formatCOPFields(values);
         try {
             const response = await fetch(`${getApiUrl()}contracts/${values.id}/`, {
                 method: "PATCH",
@@ -397,20 +434,20 @@ export const Legal = () => {
                 <DialogContent>
                     <Formik
                         initialValues={{
-                            name_edit: "",
-                            city_edit: "",
-                            description_edit: "",
-                            expected_start_date_edit: "",
-                            value_edit: "",
-                            monthly_cost_edit: "",
-                            duration_edit: "",
-                            contact_edit: "",
-                            contact_telephone_edit: "",
-                            start_date_edit: "",
-                            civil_responsibility_policy_edit: "",
-                            compliance_policy_edit: "",
-                            insurance_policy_edit: "",
-                            renovation_date_edit: "",
+                            name: "",
+                            city: "",
+                            description: "",
+                            expected_start_date: "",
+                            value: "",
+                            monthly_cost: "",
+                            duration: "",
+                            contact: "",
+                            contact_telephone: "",
+                            start_date: "",
+                            civil_responsibility_policy: "",
+                            compliance_policy: "",
+                            insurance_policy: "",
+                            renovation_date: "",
                         }}
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
@@ -424,7 +461,7 @@ export const Legal = () => {
                                 <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact" label="Contacto" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="text" name="contact" label="Nombre del Contacto" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
                                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>

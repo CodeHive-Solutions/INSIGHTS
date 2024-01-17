@@ -76,6 +76,7 @@ INSTALLED_APPS = [
     "pqrs",
     "django_sendfile",
     "services",
+    "blog",
 ]
 
 MIDDLEWARE = [
@@ -207,11 +208,15 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "es-CO"
 
 TIME_ZONE = "America/Bogota"
 
 USE_I18N = True
+
+USE_L10N = True
+
+USE_THOUSAND_SEPARATOR = True
 
 USE_TZ = False
 
@@ -234,6 +239,15 @@ STATIC_ROOT = BASE_DIR / "static"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 log_dir = os.path.join(BASE_DIR, "utils", "logs")
+# Create another log file for each minute
+now = datetime.now()
+year_month = now.strftime("%Y-%B")
+month = now.strftime("%B")
+# Create the log file
+if not os.path.exists(os.path.join(log_dir, year_month)):
+    os.makedirs(os.path.join(log_dir, year_month))
+# Set the log directory
+
 
 LOGGING = {
     "version": 1,
@@ -251,7 +265,7 @@ LOGGING = {
         "response_file": {
             "level": "INFO",
             "class": "logging.FileHandler",
-            "filename": os.path.join(log_dir, "requests.log"),
+            "filename": os.path.join(log_dir, year_month, f"requests_{month}.log"),
             "formatter": "time-lvl-msg",
         },
         "exception_file": {

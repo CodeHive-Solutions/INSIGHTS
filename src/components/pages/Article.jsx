@@ -10,6 +10,7 @@ import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
+
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -60,7 +61,6 @@ const ArticlePage = () => {
                 <br/>
                 <br/>
                 ¡Bienvenidos a bordo!
-                img
             `,
             date: "Hace 2 horas",
         },

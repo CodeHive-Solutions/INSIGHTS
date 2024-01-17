@@ -21,8 +21,8 @@ class TestContracts(BaseTestCase):
             "expected_start_date": "2020-01-01",
             "start_date": "2020-01-01",
             "renovation_date": "2020-12-31",
-            "value": 1000000,
-            "monthly_cost": 10000,
+            "value": 1000000.10,
+            "monthly_cost": 10000.11,
             "duration": "2020-01-01",
             "contact": "John Doe",
             "contact_telephone": "1234567890",
@@ -83,6 +83,8 @@ class TestContracts(BaseTestCase):
     def test_get_one_contract(self):
         """Test the get one contract endpoint."""
         response = self.client.get(f"/contracts/{self.contract.id}/")
+        self.assertEqual(response.data["value"], "1.000.000,10")
+        self.assertEqual(response.data["monthly_cost"], "10.000,11")
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["name"], "Contract 1")
 

@@ -23,9 +23,9 @@ class User(AbstractUser):
     """Custom user model."""
 
     cedula = models.IntegerField(null=False, blank=False, unique=True)
-    profile_picture = models.ImageField(
-        upload_to="images/pictures/", validators=[validate_file_extension]
-    )
+    # profile_picture = models.ImageField(
+    #     upload_to="images/pictures/", validators=[validate_file_extension]
+    # )
     # This field cannot be used because RH does not have the company email
     email = models.EmailField(null=True, blank=True, unique=True)
     # email = None
@@ -94,13 +94,11 @@ class User(AbstractUser):
                 raise ValidationError(
                     "El usuario no tiene cargo en la base de datos de staffnet"
                 )
-            if not "asesor" in result[0].lower():
-                self.is_staff = True
             self.job_title = result[0]
             area, _ = Area.objects.get_or_create(name=result[1])
             self.area_id = area.id
-        # if not self.is_superuser:
-        # self.set_unusable_password()
+            if not self.is_superuser:
+                self.set_unusable_password()
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField

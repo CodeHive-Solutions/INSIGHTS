@@ -1,6 +1,6 @@
 """This module defines the views for the contracts app."""
 from rest_framework import viewsets
-from services.permissions import DjangoModelViewPermissions
+from services.permissions import CustomGetDjangoModelViewPermissions
 from .models import Contract
 from .serializers import ContractSerializer
 
@@ -11,4 +11,4 @@ class ContractViewSet(viewsets.ModelViewSet):
 
     queryset = Contract.objects.all()
     serializer_class = ContractSerializer
-    permission_classes = [DjangoModelViewPermissions]
+    permission_classes = [CustomGetDjangoModelViewPermissions]

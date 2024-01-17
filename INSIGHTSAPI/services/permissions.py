@@ -2,7 +2,7 @@
 from rest_framework import permissions
 
 
-class DjangoModelViewPermissions(permissions.DjangoModelPermissions):
+class CustomGetDjangoModelViewPermissions(permissions.DjangoModelPermissions):
     """
     Similar to DjangoModelPermissions, but also checks for 'view' permission.
     """

@@ -5,6 +5,9 @@ from django.utils import timezone
 from django.db.models import Q
 from contracts.models import Contract
 from services.emails import send_email
+import logging
+
+logger = logging.getLogger("requests")
 
 
 class Command(BaseCommand):
@@ -53,10 +56,8 @@ class Command(BaseCommand):
                 message,
                 to_email,
                 cc_emails=[
-                    None
-                    # "juan.carreno@cyc-bpo.com",
-                    # "heibert.mogollon@gmail.com",
-                    # "marcela.osorio@cyc-bpo.com",
+                    "juan.carreno@cyc-bpo.com",
+                    "heibert.mogollon@cyc-bpo.com",
                 ],
                 save_message=True,
                 email_owner="Contratos C&C",
