@@ -129,7 +129,7 @@ def call_transfer_list(request):
         number = str(row.NUMERO)
         match = None
         if "banco_agrario" in campaign:
-            pattern = re.compile(rf"_{number}_")
+            pattern = re.compile(rf"{number}_")
         elif "falabella" in campaign:
             pattern = re.compile(rf"_{number}-")
         else:

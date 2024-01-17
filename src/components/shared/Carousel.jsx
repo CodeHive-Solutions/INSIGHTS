@@ -110,18 +110,21 @@ function Item(props) {
         return (
             <>
                 <Box>
-                    <Box
-                        onClick={() => handleClickOpen(image, description)}
-                        sx={{
-                            height: height,
-                            width: width,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            backgroundRepeat: "no-repeat",
-                            backgroundImage: `url(${image})`,
-                            borderRadius: "15px",
-                        }}
-                    ></Box>
+                    <Box>
+                        <Box
+                            onClick={() => handleClickOpen(image, description)}
+                            sx={{
+                                height: height,
+                                width: width,
+                                backgroundColor: "red",
+                                backgroundSize: "contain",
+                                backgroundPosition: "center",
+                                backgroundRepeat: "no-repeat",
+                                backgroundImage: `url(${image})`,
+                                borderRadius: "15px",
+                            }}
+                        ></Box>
+                    </Box>
                     <Box sx={{ padding: "10px" }}>
                         <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                             {day}

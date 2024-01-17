@@ -22,7 +22,7 @@ import Goals from "../shared/Goals";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import { getApiUrl } from "../../assets/getApi";
 import PolicyIcon from "@mui/icons-material/Policy";
-import Sidebar from "../pages/Test";
+import Sidebar from "../common/Sidebar";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -242,16 +242,13 @@ const Navbar = () => {
                 <Box
                     sx={{
                         display: "flex",
-                        justifyContent: "space-between",
+                        justifyContent: "space-evenly",
                         alignItems: "center",
-                        padding: "1rem 2rem",
+                        // padding: "1rem 2rem",
                         backgroundColor: "rgba(255,255,255, 0.9)",
                         backdropFilter: "blur(10px)",
                     }}
                 >
-                    <IconButton onClick={() => toggleSidebar(true)}>
-                        <MenuIcon />
-                    </IconButton>
                     <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/logged/home")} />
                     {/* {isMobile ? (
                         <IconButton onClick={handleClickMenu} size="small">
@@ -259,10 +256,10 @@ const Navbar = () => {
                         </IconButton>
                     ) : (
                         <> */}
-                    {/* <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink> */}
-                    {/* <CustomNavLink to="/logged/blog">Blog</CustomNavLink> */}
-                    {/* <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink> */}
-                    {/* <Typography
+                    <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
+                    <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
+                    <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
+                    <Typography
                         onMouseEnter={handleUtilitariosMenuOpen}
                         anchorel={anchorElUtils}
                         sx={{
@@ -276,7 +273,7 @@ const Navbar = () => {
                         }}
                     >
                         Servicios
-                    </Typography> */}
+                    </Typography>
 
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <Tooltip title="Configuración de cuenta">
@@ -344,24 +341,6 @@ const Navbar = () => {
                     Mi Meta
                 </MenuItem>
                 <Divider />
-                {/* <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                        <RequestPageIcon fontSize="small" />
-                    </ListItemIcon>
-                    Desprendible de nomina
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                        <FeedIcon fontSize="small" />
-                    </ListItemIcon>
-                    Certificación laboral
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                    <ListItemIcon>
-                        <Settings fontSize="small" />
-                    </ListItemIcon>
-                    Configuración
-                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -505,7 +484,6 @@ const Navbar = () => {
             </Menu>
             <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
-            <Sidebar isOpen={isSidebarOpen} toggleDrawer={toggleSidebar} />
         </>
     );
 };

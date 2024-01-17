@@ -14,7 +14,6 @@ import About from "./components/pages/About";
 import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
 import "./index.css";
-import Test from "./components/pages/Test";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";
@@ -66,10 +65,6 @@ const router = createBrowserRouter([
     {
         path: "ethical-line",
         element: <EthicalLine />,
-    },
-    {
-        path: "test",
-        element: <Test />,
     },
     {
         path: "goal-pdf",

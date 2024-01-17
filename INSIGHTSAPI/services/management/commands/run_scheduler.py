@@ -13,8 +13,6 @@ logger = logging.getLogger("requests")
 class Command(BaseCommand):
     """Class to run the scheduler"""
 
-    logger.error("Error in scheduler")
-
     help = "Run scheduled tasks"
 
     def add_arguments(self, parser):

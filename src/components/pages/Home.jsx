@@ -20,24 +20,23 @@ import auxiliarOperativo from "../../images/home-carousel/auxiliar-operativo.png
 import asesorComercial from "../../images/home-carousel/asesor-comercial.png";
 import negociadoresSinExperiencia from "../../images/home-carousel/negociadores-sin-experiencia.png";
 import asesorNegociadores from "../../images/home-carousel/asesores-negociadores.png";
-import vancie5 from "../../images/vacancies/5.png";
-
+import isos from "../../images/home-carousel/isos.png";
+import vacanciesCarousel from "../../images/home-carousel/vacancies.png";
+import image1280x720 from "../../images/home-carousel/1280-720.jpg";
 //benefits
 import realBenefit2 from "../../images/benefits/2.png";
 
 import video from "../../videos/futbol.mp4";
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const vacancies = [{ image: vancie5, title: "Beneficio 1" }];
+const vacancies = [{ image: raac, title: "Beneficio 1" }];
 
 const homeImages = [
     { image: raac },
     { image: campaigns },
-    { image: auxiliarContable },
-    { image: auxiliarOperativo },
-    { image: asesorComercial },
-    { image: negociadoresSinExperiencia },
-    { image: asesorNegociadores },
+    { image: isos },
+    { image: vacanciesCarousel },
+    { image: image1280x720 },
     // { image: video, video: true },
 ];
 
@@ -79,18 +78,35 @@ const Home = () => {
                     method: "GET",
                 });
 
+                const fullName = "RAMIREZ JULIO";
+
+                // Split the full name into individual names and last names
+                const nameParts = fullName.split(" ");
+
+                // Extract the first name
+                const firstName = nameParts.length > 2 ? nameParts[2] : "";
+
+                // Extract the first last name (if exists)
+                const firstLastName = nameParts.length > 0 ? nameParts[0] : "";
+
+                // Create the formatted name
+                const formattedName = `${firstName} ${firstLastName}`.trim();
+
+                console.log(formattedName);
+
                 // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
                     return {
                         image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
-                        name: employee.nombre,
+                        name: formattedName,
                         description: employee.campana_general,
                     };
                 }
+
                 // If image not found, return null
                 return {
                     image: Avatar,
-                    name: employee.nombre,
+                    name: formattedName,
                     description: employee.campana_general,
                 };
             } catch (error) {
@@ -176,31 +192,16 @@ const Home = () => {
                 style={{ originX: isPresent ? 0 : 1 }}
                 className="privacy-screen"
             /> */}
-            <Box sx={{ display: "flex", mt: "5.5rem", textAlign: "center", justifyContent: "center" }}>
-                <CarouselComponent items={homeImages} name={"Hola"} description={"Hola"} height={"650px"} width={"90%"} />
+            <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
+                <CarouselComponent items={homeImages} height={"648px"} width={"1152px"} />
             </Box>
-            {/* <Box
-                className="waveWrapper"
-                sx={{
-                    width: "100%",
-                    height: "20vh",
-                    backgroundSize: "cover",
-                    backgroundColor: "#f0f0f0",
-                    padding: "20px",
-                }}
-            >
-                <Box className="wave wave1"></Box>
-                <Box className="wave wave2"></Box>
-                <Box className="wave wave3"></Box>
-                <Box className="wave wave4"></Box>
-            </Box> */}
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                 <Typography
                     color="primary"
                     id="section1"
                     sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
                 >
-                    ¡C&C Apoyando el fútbol femenino!
+                    ¡C&C Apoyando el deporte!
                 </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <video style={{ borderRadius: "8px", width: 1200 }} controls>
@@ -279,7 +280,6 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"650px"} width={"600px"} />
                 </Box>
             </Box>
-            <Blog></Blog>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
