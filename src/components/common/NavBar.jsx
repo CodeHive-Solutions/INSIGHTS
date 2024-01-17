@@ -276,7 +276,7 @@ const Navbar = () => {
                     </Typography>
 
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <Tooltip title="Configuración de cuenta">
+                        <Tooltip title="Mi Cuenta">
                             <IconButton
                                 onClick={handleClick}
                                 size="small"
@@ -285,7 +285,7 @@ const Navbar = () => {
                                 aria-haspopup="true"
                                 aria-expanded={open ? "true" : undefined}
                             >
-                                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                                <Avatar sx={{ width: 32, height: 32 }} />
                             </IconButton>
                         </Tooltip>
                     </Box>

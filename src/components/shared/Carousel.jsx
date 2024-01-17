@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Carousel from "react-material-ui-carousel";
 import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
@@ -25,9 +25,9 @@ function CarouselComponent(props) {
 }
 
 const test = (image) => {
-    // if (image === "/src/images/home-carousel/2024.png") {
-    console.log(image);
-    // }
+    if (image.includes("vacancies")) {
+        console.log(image);
+    }
 };
 
 function Item(props) {
@@ -35,6 +35,13 @@ function Item(props) {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
+    const [isVacancy, setIsVacancy] = useState(false);
+
+    useEffect(() => {
+        if (props.item.image.includes("vacancies")) {
+            setIsVacancy(true);
+        }
+    }, []);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
@@ -47,7 +54,7 @@ function Item(props) {
         }
     };
 
-    const { item, height, width, day } = props;
+    const { item, height, contain, width, day } = props;
     const { name, description, image, video } = item;
     if (video) {
         return (
@@ -97,11 +104,8 @@ function Item(props) {
             }
         };
 
-        const handleClickOpen = (image, description) => {
-            console.log(description);
-            // if ("vacante" in image) {
-            setOpen(true);
-            // }
+        const handleClickOpen = () => {
+            if (isVacancy) setOpen(true);
         };
 
         const handleClose = () => {
@@ -112,16 +116,16 @@ function Item(props) {
                 <Box>
                     <Box>
                         <Box
-                            onClick={() => handleClickOpen(image, description)}
+                            onClick={() => handleClickOpen()}
                             sx={{
                                 height: height,
                                 width: width,
-                                backgroundColor: "red",
-                                backgroundSize: "contain",
+                                backgroundSize: contain ? "contain" : "cover",
                                 backgroundPosition: "center",
                                 backgroundRepeat: "no-repeat",
                                 backgroundImage: `url(${image})`,
                                 borderRadius: "15px",
+                                cursor: isVacancy ? "pointer" : "default",
                             }}
                         ></Box>
                     </Box>

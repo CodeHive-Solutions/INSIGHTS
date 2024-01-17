@@ -9,27 +9,27 @@ import "../../index.css";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
 import Avatar from "../../images/home-carousel/avatar.jpg";
-import image2024 from "../../images/home-carousel/2024.png";
 import Blog from "./Blog.jsx";
+import { Container } from "@mui/material";
 
 // images
-import raac from "../../images/home-carousel/raac.png";
-import campaigns from "../../images/home-carousel/campaigns.png";
-import auxiliarContable from "../../images/home-carousel/auxiliar-contable.png";
-import auxiliarOperativo from "../../images/home-carousel/auxiliar-operativo.png";
-import asesorComercial from "../../images/home-carousel/asesor-comercial.png";
-import negociadoresSinExperiencia from "../../images/home-carousel/negociadores-sin-experiencia.png";
-import asesorNegociadores from "../../images/home-carousel/asesores-negociadores.png";
-import isos from "../../images/home-carousel/isos.png";
-import vacanciesCarousel from "../../images/home-carousel/vacancies.png";
+import raac from "../../images/home-carousel/racc-1280-720.png";
+import campaigns from "../../images/home-carousel/campaigns-1280-720.png";
+import isos from "../../images/home-carousel/isos-1280-720.png";
+import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
 import image1280x720 from "../../images/home-carousel/1280-720.jpg";
 //benefits
 import realBenefit2 from "../../images/benefits/2.png";
-
+import asesorComercialVacante from "../../images/vacancies/asesor-comercial-vacante.png";
+import asesorNegociacionVacante from "../../images/vacancies/asesor-negociacion-vacante.png";
 import video from "../../videos/futbol.mp4";
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const vacancies = [{ image: raac, title: "Beneficio 1" }];
+const vacancies = [
+    { image: raac, title: "Beneficio 1" },
+    { image: asesorComercialVacante, title: "Beneficio 2" },
+    { image: asesorNegociacionVacante, title: "Beneficio 3" },
+];
 
 const homeImages = [
     { image: raac },
@@ -78,21 +78,19 @@ const Home = () => {
                     method: "GET",
                 });
 
-                const fullName = "RAMIREZ JULIO";
+                const fullName = employee.nombre;
 
                 // Split the full name into individual names and last names
                 const nameParts = fullName.split(" ");
 
                 // Extract the first name
-                const firstName = nameParts.length > 2 ? nameParts[2] : "";
+                const firstName = nameParts.length === 2 ? nameParts[1] : nameParts.length > 2 ? nameParts[2] : "";
 
                 // Extract the first last name (if exists)
                 const firstLastName = nameParts.length > 0 ? nameParts[0] : "";
 
                 // Create the formatted name
                 const formattedName = `${firstName} ${firstLastName}`.trim();
-
-                console.log(formattedName);
 
                 // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
@@ -193,9 +191,9 @@ const Home = () => {
                 className="privacy-screen"
             /> */}
             <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
-                <CarouselComponent items={homeImages} height={"648px"} width={"1152px"} />
+                <CarouselComponent items={homeImages} contain={true} height={"648px"} width={"1152px"} />
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"
                     id="section1"
@@ -203,12 +201,19 @@ const Home = () => {
                 >
                     ¡C&C Apoyando el deporte!
                 </Typography>
+                <Typography sx={{ color: "gray", textAlign: "center" }}>
+                    En C&C Services S.A.S, respaldamos con entusiasmo el deporte y, en particular, el fútbol femenino. A través de nuestro patrocinio, hemos contribuido
+                    al éxito de nuestro equipo, que recientemente se destacó al ganar un torneo destacado. Este logro no solo refuerza nuestro compromiso con la
+                    comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir respaldando y empoderando a
+                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas. ¡En C&C Services S.A.S, creemos en el poder transformador del deporte para
+                    construir un futuro más sólido y unido!
+                </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <video style={{ borderRadius: "8px", width: 1200 }} controls>
+                    <video style={{ borderRadius: "8px", width: "100%" }} controls>
                         <source src={video} type="video/mp4" />
                     </video>
                 </Box>
-            </Box>
+            </Container>
             <Box
                 sx={{
                     display: "flex",
