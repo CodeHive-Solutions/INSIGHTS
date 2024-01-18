@@ -23,6 +23,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Tooltip } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { IconButton } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import {
     GridRowModes,
@@ -76,15 +77,18 @@ export const Legal = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [details, setDetails] = useState({});
-    const [addPermission, setAddPermission] = useState(false);
-    const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const navigate = useNavigate();
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
 
     useEffect(() => {
         window.scrollTo(0, 0);
+        if (!permissions.includes("contracts.view_contract")) {
+            navigate("/logged/home");
+        }
     }, []);
 
     const getPolicies = async () => {
@@ -196,9 +200,11 @@ export const Legal = () => {
                         utf8WithBom: true,
                     }}
                 />
-                <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
-                    AÑADIR
-                </Button>
+                {permissions.includes("contracts.add_contract") ? (
+                    <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
+                        AÑADIR
+                    </Button>
+                ) : null}
                 <Box sx={{ textAlign: "end", flex: "1" }}>
                     <GridToolbarQuickFilter />
                 </Box>

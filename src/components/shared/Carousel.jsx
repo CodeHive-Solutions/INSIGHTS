@@ -3,14 +3,10 @@ import Carousel from "react-material-ui-carousel";
 import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import videoURL from "../../videos/futbol.mp4";
-import { Dialog } from "@mui/material";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
-import { Button } from "@mui/material";
+
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { useNavigate } from "react-router-dom";
 
 function CarouselComponent(props) {
     const { items, height, width, day } = props;
@@ -31,11 +27,11 @@ const test = (image) => {
 };
 
 function Item(props) {
-    const [open, setOpen] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
     const [isVacancy, setIsVacancy] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (props.item.image.includes("vacancies")) {
@@ -64,14 +60,7 @@ function Item(props) {
             </video>
         );
     } else {
-        const getDataUrl = (img) => {
-            const canvas = document.createElement("canvas");
-            const ctx = canvas.getContext("2d");
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            return canvas.toDataURL("image/png");
-        };
+        
 
         const submit = async () => {
             const img = new Image();
@@ -105,12 +94,9 @@ function Item(props) {
         };
 
         const handleClickOpen = () => {
-            if (isVacancy) setOpen(true);
+            if (isVacancy) navigate("/logged/vacancies/");
         };
 
-        const handleClose = () => {
-            setOpen(false);
-        };
         return (
             <>
                 <Box>
@@ -141,21 +127,6 @@ function Item(props) {
                         </Typography>
                     </Box>
                 </Box>
-                <Dialog open={open} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-                    <DialogTitle id="alert-dialog-title">{"¿Desea aplicar a esta vacante?"}</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Si desea aplicar a esta vacante, de click en el botón de confirmar, tus datos serán enviados automáticamente al area de selección para
-                            presentar tu postulación.
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={handleClose}>Cancelar</Button>
-                        <Button onClick={submit} autoFocus>
-                            Confirmar
-                        </Button>
-                    </DialogActions>
-                </Dialog>
                 <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             </>
         );

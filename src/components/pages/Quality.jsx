@@ -11,6 +11,7 @@ import { LoadingButton } from "@mui/lab";
 import SnackbarAlert from "../common/SnackBarAlert";
 import MenuItem from "@mui/material/MenuItem";
 import { getApiUrl } from "../../assets/getApi";
+import { useNavigate } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",
@@ -55,9 +56,13 @@ const Quality = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(campaigns[0]); // Set default campaign
     const callType = useRef();
-
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0);
+        if (!permissions.includes("excels_processing.call_transfer")) {
+            navigate("/logged/home");
+        }
     }, []);
 
     const handleFileInputChange = (event) => {

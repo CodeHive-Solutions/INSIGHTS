@@ -42,16 +42,17 @@ const homeImages = [
 
 const Home = () => {
     const [openDialog, setOpenDialog] = useState(false);
-    const handleOpenDialog = () => setOpenDialog(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
-    const handleCloseSnack = () => setOpenSnack(false);
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
-    const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
+    const videoRef = useRef(null);
+
+    const handleCloseSnack = () => setOpenSnack(false);
+    const handleOpenDialog = () => setOpenDialog(true);
 
     const togglePlay = () => {
         if (isPlaying) {
@@ -264,16 +265,6 @@ const Home = () => {
                 </Box>
             </Grow>
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: "2rem", gap: "2rem", flexWrap: "wrap" }}>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                    <Typography
-                        color="primary"
-                        id="section1"
-                        sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
-                    >
-                        Vacantes
-                    </Typography>
-                    <CarouselComponent items={vacancies} height={"650px"} width={"600px"} />
-                </Box>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                     <Typography
                         color="primary"

@@ -90,14 +90,14 @@ export const Sgc = () => {
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
-    const [addPermission, setAddPermission] = useState(false);
-    const [editPermission, setEditPermission] = useState(false);
-    const [deletePermission, setDeletePermission] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileUpdate, setSelectedFileUpdate] = useState(null);
     const [fileName, setFileName] = useState("Cargar Archivo");
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const editPermission = permissions.includes("sgc.change_sgcfile");
+    const deletePermission = permissions.includes("sgc.delete_sgcfile");
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -115,9 +115,6 @@ export const Sgc = () => {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
                 setRows(data.objects);
-                setAddPermission(data.permissions.add);
-                setEditPermission(data.permissions.change);
-                setDeletePermission(data.permissions.delete);
             }
         } catch (error) {
             console.error(error);
@@ -286,7 +283,7 @@ export const Sgc = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {addPermission ? (
+                {permissions && permissions.includes("sgc.add_sgc_file") ? (
                     <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                         AÑADIR
                     </Button>

@@ -13,10 +13,6 @@ import { useNavigate } from "react-router-dom";
 import { getApiUrl } from "../../assets/getApi";
 
 const UploadFiles = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState("Example");
     const [loading, setLoading] = useState(false);
@@ -24,6 +20,15 @@ const UploadFiles = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        if (permissions.includes("users.upload_robinson_list")) {
+            navigate("/logged/home");
+        }
+    }, []);
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);

@@ -87,7 +87,7 @@ const Login = () => {
                         expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
                     })
                 );
-
+                localStorage.setItem("permissions", JSON.stringify(data.permissions));
                 navigate("/logged/home");
             }
         } catch (error) {

@@ -23,7 +23,7 @@ import EthicalLine from "./components/pages/EthicalLine";
 import BasicDocument from "./components/shared/GoalsPDF";
 import Quality from "./components/pages/Quality";
 import Legal from "./components/pages/Legal";
-
+import Vacancies from "./components/pages/Vacancies";
 const theme = createTheme({
     typography: {
         fontFamily: [
@@ -94,6 +94,10 @@ const router = createBrowserRouter([
             {
                 path: "blog/article/:articleId",
                 element: <Article />,
+            },
+            {
+                path: "vacancies",
+                element: <Vacancies />,
             },
             {
                 path: "upload-files",
