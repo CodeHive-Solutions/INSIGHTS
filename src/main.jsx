@@ -13,7 +13,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import About from "./components/pages/About";
 import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
-import "./index.css";
 import { AnimatePresence } from "framer-motion";
 import { motion } from "framer-motion";
 import { useOutlet } from "react-router-dom";

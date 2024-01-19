@@ -1,67 +1,36 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import CarouselComponent from "../shared/Carousel";
 import Card from "@mui/material/Card";
-import { Typography, Box, Dialog } from "@mui/material";
-import { motion, useIsPresent } from "framer-motion";
+import { Typography, Box } from "@mui/material";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
-import "../../index.css";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
 import Avatar from "../../images/home-carousel/avatar.jpg";
-import Blog from "./Blog.jsx";
 import { Container } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-// images
-import raac from "../../images/home-carousel/racc-1280-720.png";
+// media
 import campaigns from "../../images/home-carousel/campaigns-1280-720.png";
 import isos from "../../images/home-carousel/isos-1280-720.png";
 import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
-import image1280x720 from "../../images/home-carousel/1280-720.jpg";
-//benefits
 import realBenefit2 from "../../images/benefits/2.png";
-import asesorComercialVacante from "../../images/vacancies/asesor-comercial-vacante.png";
-import asesorNegociacionVacante from "../../images/vacancies/asesor-negociacion-vacante.png";
 import video from "../../videos/futbol.mp4";
+import raac from "../../images/home-carousel/raac-1280-720.png";
+
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
-
-const vacancies = [
-    { image: raac, title: "Beneficio 1" },
-    { image: asesorComercialVacante, title: "Beneficio 2" },
-    { image: asesorNegociacionVacante, title: "Beneficio 3" },
-];
-
-const homeImages = [
-    { image: raac },
-    { image: campaigns },
-    { image: isos },
-    { image: vacanciesCarousel },
-    { image: image1280x720 },
-    // { image: video, video: true },
-];
+const homeImages = [{ image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }];
 
 const Home = () => {
-    const [openDialog, setOpenDialog] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
-    const [isPlaying, setIsPlaying] = useState(false);
-    const videoRef = useRef(null);
+    const matches = useMediaQuery("(min-width:1025px)");
 
     const handleCloseSnack = () => setOpenSnack(false);
-    const handleOpenDialog = () => setOpenDialog(true);
-
-    const togglePlay = () => {
-        if (isPlaying) {
-            videoRef.current.pause();
-        } else {
-            videoRef.current.play();
-        }
-        setIsPlaying(!isPlaying);
-    };
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -155,8 +124,6 @@ const Home = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const isPresent = useIsPresent();
-
     const [ref, inView] = useInView({
         triggerOnce: true,
         threshold: 0.5,
@@ -184,15 +151,8 @@ const Home = () => {
 
     return (
         <>
-            {/* <motion.div
-                initial={{ scaleX: 1 }}
-                animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
-                exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
-                style={{ originX: isPresent ? 0 : 1 }}
-                className="privacy-screen"
-            /> */}
             <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
-                <CarouselComponent items={homeImages} contain={true} height={"648px"} width={"1152px"} />
+                <CarouselComponent items={homeImages} contain={true} height={matches ? "648px" : "480px"} width={matches ? "1152px" : "854px"} />
             </Box>
             <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
                 <Typography

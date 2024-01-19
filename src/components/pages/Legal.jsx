@@ -46,7 +46,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
-import "../../index.css";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),

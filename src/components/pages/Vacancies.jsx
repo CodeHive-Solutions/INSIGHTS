@@ -69,9 +69,9 @@ const Vacancies = () => {
     const submitApplyVacancy = async (imageData) => {
         const formData = new FormData();
         formData.append("image", imageData);
-        formData.append("name", vacancyName);
+        formData.append("vacancy", vacancyName);
         try {
-            const response = await fetch(`${getApiUrl()}services/vacancies/`, {
+            const response = await fetch(`${getApiUrl()}services/vacancy/`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -80,15 +80,17 @@ const Vacancies = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.detail);
+                throw new Error(data.error);
             }
 
             if (response.status === 200) {
                 showSnack("success", "Se ha enviado tu postulación correctamente.");
+                setOpenVacancy(false);
             }
         } catch (error) {
             console.error(error);
             showSnack("error", error.message);
+            setOpenVacancy(false);
         }
     };
 
