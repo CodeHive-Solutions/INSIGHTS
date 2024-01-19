@@ -58,7 +58,7 @@ class LoggingMiddleware:
         if (
             request_method in request_data_mapping
             and request_data_mapping[request_method]
-            and response.status_code > 500
+            and response.status_code >= 400
         ):
             request_data = self.mask_sensitive_data(
                 request_data_mapping[request_method]
