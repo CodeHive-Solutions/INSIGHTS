@@ -20,7 +20,6 @@ class LoggingMiddleware:
         """Log the request info"""
         if response.status_code > 500:
             log_info["Response Content"] = response.data
-
         if response.status_code > 500:
             logger.error(
                 "{}".format(
@@ -36,6 +35,7 @@ class LoggingMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
+
         request_file = request.FILES.get("file", None)
 
         log_info = {

@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "django_sendfile",
     "services",
     "blog",
+    "vacancy",
 ]
 
 MIDDLEWARE = [

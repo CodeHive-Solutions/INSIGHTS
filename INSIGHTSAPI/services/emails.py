@@ -61,9 +61,8 @@ def send_email(
     try:
         if sender_user not in ALLOWED_EMAILS:
             raise Exception("Email not allowed")
-        else:
-            sender_email = list(ALLOWED_EMAILS[sender_user].keys())[0]
-            sender_password = ALLOWED_EMAILS[sender_user][sender_email]
+        sender_email = list(ALLOWED_EMAILS[sender_user].keys())[0]
+        sender_password = ALLOWED_EMAILS[sender_user][sender_email]
         smtp_connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
         smtp_connection.ehlo()
         context = ssl.create_default_context()
@@ -97,10 +96,16 @@ def send_email(
             email.extra_headers["Return-Path"] = return_path
 
         if attachments:
+            # This just work for certain objects
             for attachment in attachments:
+                file_name, file_data, content_type = attachment
                 email.attach(
-                    attachment.name, attachment.read(), attachment.content_type
+                    file_name,
+                    file_data,
+                    content_type,
                 )
+            # for attachment in attachments:
+            # email.attach_file(attachment)
 
         if html_content:
             email.content_subtype = "html"
