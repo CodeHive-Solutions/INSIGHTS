@@ -23,13 +23,20 @@ function Item(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log(props.item.image);
         if (props.item.image.includes("vacancies")) {
+            setIsVacancy(true);
+        } else if (props.item.image.includes("isos")) {
             setIsVacancy(true);
         }
     }, []);
 
     const handleClickOpen = () => {
-        if (isVacancy) navigate("/logged/vacancies/");
+        if (isVacancy && props.item.image.includes("isos")) {
+            navigate("/logged/blog/article/6");
+        } else if (isVacancy) {
+            navigate("/logged/vacancies/");
+        }
     };
 
     return (

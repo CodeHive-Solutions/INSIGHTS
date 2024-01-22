@@ -14,6 +14,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import asesorNegociacionVacante from "../../images/vacancies/asesor-negociacion-vacante.png";
 import asesorComercialVacante from "../../images/vacancies/asesor-comercial-vacante.png";
+import test from "../../images/vacancies/test.png";
 
 const MediaCard = ({ img, handleOpenVacancy }) => {
     return (

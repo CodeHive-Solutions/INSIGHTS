@@ -14,11 +14,13 @@ import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
+import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
 ];
 
@@ -86,6 +88,14 @@ const Blog = () => {
                 Blog
             </Typography>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
+                <MediaCard
+                    title={"Elevando Nuestra Empresa: Certificaciones ISO 45001:2018 y 14001:2015"}
+                    subtitle={
+                        "Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores"
+                    }
+                    img={sstGestion}
+                    articleId={6}
+                ></MediaCard>
                 <MediaCard
                     title={"C&C Services SAS avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza"}
                     subtitle={"Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RAAC."}

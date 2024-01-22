@@ -10,6 +10,7 @@ import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
+import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
@@ -45,7 +46,7 @@ const ArticlePage = () => {
                 <b>El Libertador:</b> Por parte del grupo Seguros Bolivar presentamos a la campaña el Libertador con una reputación sólida y una amplia gama de servicios, siendo uno de los nombres de confianza en el sector de seguros. Estamos emocionados de trabajar con ellos y ofrecer servicios de BPO de alta calidad para mejorar aún más su eficiencia operativa.
                 <br/>
                 <br/>
-                <b> Campaña propia: </b> Nuestra propia campaña interna es un testimonio de nuestro compromiso con la innovación y la mejora continua. Esta iniciativa nos permitirá explorar nuevas estrategias y enfoques para ofrecer un servicio excepcional a nuestros clientes.
+                <b> Cartera propia: </b> Nuestra cartera propia interna, es un testimonio de nuestro compromiso con la innovación y la mejora continua. Esta iniciativa nos permitirá explorar nuevas estrategias y enfoques para ofrecer un servicio excepcional a nuestros clientes.
                 <br/>
                 <br/>
                 <b>NuBank:</b> Como uno de los bancos digitales más grandes y de más rápido crecimiento, NuBank está revolucionando el sector financiero. Estamos ansiosos por apoyar su crecimiento y ayudarles a ofrecer una experiencia bancaria sin problemas a sus clientes.
@@ -153,6 +154,14 @@ const ArticlePage = () => {
             </ul>
             <p>Cada uno de nosotros hace parte de esta certificación, por lo cual los invitamos a que con sus jefes inmediatos consulten de qué manera van a estar aportando y en equipo garanticemos cerrar de manera exitosa.</p>
             </article>`,
+        },
+        {
+            id: 6,
+            title: "Elevando Nuestra Empresa: Certificaciones ISO 45001:2018 y 14001:2015",
+            subtitle:
+                "Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores",
+            img: sstGestion,
+            content: ``,
         },
         // Add more articles here...
     ];

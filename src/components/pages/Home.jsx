@@ -163,11 +163,11 @@ const Home = () => {
                     ¡C&C Apoyando el deporte!
                 </Typography>
                 <Typography sx={{ color: "gray", textAlign: "center" }}>
-                    En C&C Services S.A.S, respaldamos con entusiasmo el deporte y, en particular, el fútbol femenino. A través de nuestro patrocinio, hemos contribuido
-                    al éxito de nuestro equipo, que recientemente se destacó al ganar un torneo destacado. Este logro no solo refuerza nuestro compromiso con la
+                    En C&C respaldamos con entusiasmo el deporte y en particular el fútbol femenino. A través de nuestro patrocinio, hemos contribuido al éxito de nuestro
+                    equipo Future Soccer, que recientemente se destacó al ganar el torneo de la copa Nottingham. Este logro no solo refuerza nuestro compromiso con la
                     comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir respaldando y empoderando a
-                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas. ¡En C&C Services S.A.S, creemos en el poder transformador del deporte para
-                    construir un futuro más sólido y unido!
+                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas. ¡En C&C Services creemos en el poder transformador del deporte para construir
+                    un futuro más sólido y unido!
                 </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <video style={{ borderRadius: "8px", width: "100%" }} controls>
