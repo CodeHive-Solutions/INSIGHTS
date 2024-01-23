@@ -1,17 +1,16 @@
 """Test for services. """
-import os
-import base64
-import logging
-from unittest import TestCase
 from datetime import timedelta
-from io import StringIO, BytesIO
+from io import StringIO
+import os
 from rest_framework.test import APITestCase
+from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils import timezone
 from django.core.management import call_command
 from contracts.models import Contract
-from django.templatetags.static import static
-from django.core.files.uploadedfile import SimpleUploadedFile
+from django.conf import settings
+import requests
+
 
 from .emails import send_email
 
@@ -37,7 +36,25 @@ class BaseTestCase(APITestCase):
         self.client.post(reverse("destroy-token"), {}, cookies=self.client.cookies)  # type: ignore
 
 
-# Create your tests here.
+class StaticFilesTest(TestCase):
+    """Test for static files."""
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_external_image_hosted(self):
+        """Test that the external image is hosted."""
+        url = f"https://{settings.ALLOWED_HOSTS[0]}/static/services/Logo_cyc.png"
+        response = requests.get(url, timeout=5)
+        self.assertEqual(response.status_code, 200)
+
+    def test_nonexistent_static_file(self):
+        """Test that a nonexistent static file returns a 404"""
+        url = f"https://{settings.ALLOWED_HOSTS[0]}/static/services/Logo_cyc1.png"
+        response = requests.get(url, timeout=5)
+        self.assertEqual(response.status_code, 404)
+
+
 class EmailServiceTest(APITestCase):
     """Test for email service."""
 
@@ -47,7 +64,6 @@ class EmailServiceTest(APITestCase):
         message = "Test email"
         with open("static/services/asesor-vacante.png", "rb") as image_file:
             image_data = image_file.read()
-            image_io = BytesIO(image_data)
             to_emails = [
                 "heibert.mogollon@cyc-bpo.com",
                 "heibert1.mogollon@gmail.com",

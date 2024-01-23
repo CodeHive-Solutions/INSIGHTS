@@ -41,8 +41,8 @@ class VacancyEmailTest(BaseTestCase):
                 {
                     "vacancy": "Auxiliar de servicios generales TEST",
                     "image": image_data,
-                    # "correo": "test@cyc-bpo.com",
-                    "correo": "heibert.mogollon@cyc-bpo.com",
+                    # "email": "test@cyc-bpo.com",
+                    "email": "heibert.mogollon@cyc-bpo.com",
                 },
             )
         self.assertEqual(response.status_code, 200, response.data)

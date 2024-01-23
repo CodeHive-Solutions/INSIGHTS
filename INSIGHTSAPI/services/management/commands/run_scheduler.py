@@ -47,11 +47,10 @@ class Command(BaseCommand):
                 )
             else:
                 message = f"""El contrato '{contract.name}' necesita ser renovado, terminará en {days_left} días, 
-                este contrato es el encargado de {contract.description} para renovarlo asegurate de ponerte en 
+                este contrato es el encargado de {contract.description} para renovarlo asegúrate de ponerte en 
                 contacto con {contract.contact} mediante {contract.contact_telephone} recuerda que la fecha
                 de renovación es el {contract.renovation_date}"""
-            send_email(
-                "no-reply",
+            errors = send_email(
                 f"{contract.name} necesita ser renovado",
                 message,
                 to_email,
@@ -62,8 +61,17 @@ class Command(BaseCommand):
                 save_message=True,
                 email_owner="Contratos C&C",
             )
-            self.stdout.write(
-                self.style.WARNING(
-                    f"Email sent for contract {contract.name} to {to_email}"
+            if errors:
+                self.stdout.write(self.style.ERROR(f"Error sending email: {errors}"))
+                send_email(
+                    f"Error enviando correo para el contrato {contract.name}",
+                    f"Error enviando correo para el contrato {contract.name}",
+                    ["heibert.mogollon@gmail.com"],
+                    save_message=True,
                 )
-            )
+            else:
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"Email sent for contract {contract.name} to {to_email}"
+                    )
+                )

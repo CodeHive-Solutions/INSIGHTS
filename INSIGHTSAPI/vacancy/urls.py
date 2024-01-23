@@ -3,5 +3,5 @@ from django.urls import path
 from .views import send_email_vacancy
 
 urlpatterns = [
-    path("vacancy/", send_email_vacancy, name="send_email_vacancy"),
+    path("send/", send_email_vacancy, name="send_email_vacancy"),
 ]

@@ -23,15 +23,17 @@ def send_email_vacancy(request):
     vacancy = request.data["vacancy"]
     image_data = request.data["image"]
     name = request.user.get_full_name().title()
-    if "correo" in request.data:
+    if "email" in request.data:
         subject = f"Aplica para {vacancy}"
-        correo = request.data["correo"]
-        to_emails = [correo]
+        email = request.data["email"]
+        to_emails = [email]
         message = f"""
                     <h2>Tu puedes ser el próximo {vacancy}</h2>
                     <p>{name} te ha recomendado para la vacante {vacancy}</p>
                     <p>¡Aprovecha esta oportunidad y aplica!</p>
-                    <img src="data:image/png;base64,{image_data}" alt="imagen_vacante.png" width="100%" href="https://cyc-bpo.com/" />
+                    <a href="https://cyc-bpo.com/contactenos/#Capa_1">
+                    <img src="data:image/png;base64,{image_data}" alt="imagen_vacante.png" width="100%"/>
+                    </a>
                     """
 
     else:
@@ -47,20 +49,20 @@ def send_email_vacancy(request):
                 {"error": "No se encontró información del usuario"}, status=400
             )
         if user_info[0][2]:
-            correo = user_info[0][2]
+            email = user_info[0][2]
         else:
-            correo = user_info[0][1]
-        correo = str(correo).lower()
+            email = user_info[0][1]
+        email = str(email).lower()
         celular = user_info[0][0]
         # to_emails = ["contrataciones@cyc-bpo.com"]
-        to_emails = [correo]
+        to_emails = [email]
         message = f"""
                     <h2>Aplicación a {vacancy}</h2>
                     <p>{name} aplico para {vacancy}</p>
                     <p>Información del usuario:</p>
                     <p>Nombre: {name}</p>
                     <p>Cédula: {user.cedula}</p>
-                    <p>Correo: {correo}</p>
+                    <p>Correo: {email}</p>
                     <p>Celular: {celular}</p>
                     <img src="data:image/png;base64,{image_data}" alt="imagen_vacante.png" width="100%"/>
                     """
@@ -76,6 +78,6 @@ def send_email_vacancy(request):
     if errors:
         return Response({"error": "Hubo un error en el envió del correo"}, status=500)
     return Response(
-        {"message": f'Correo enviado correctamente a "{correo}"'},
+        {"message": f'Correo enviado correctamente a "{email}"'},
         status=200,
     )

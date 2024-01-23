@@ -73,5 +73,5 @@ def send_report_ethical_line(request):
         return_path="heibert.mogollon@cyc-bpo.com",
     )
     if errors:
-        return Response({"error": "Hubo un error en el envió del correo"}, status=400)
+        return Response({"error": "Hubo un error en el envió del correo"}, status=500)
     return Response({"message": "Correo enviado correctamente"}, status=200)
