@@ -62,7 +62,7 @@ class EmailServiceTest(APITestCase):
         """Test send email."""
         subject = "Test email"
         message = "Test email"
-        with open("static/services/asesor-vacante.png", "rb") as image_file:
+        with open("static/services/Logo_cyc.png", "rb") as image_file:
             image_data = image_file.read()
             to_emails = [
                 "heibert.mogollon@cyc-bpo.com",

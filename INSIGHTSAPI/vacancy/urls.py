@@ -1,7 +1,10 @@
 """This module contains the urls for the vacancy app."""
 from django.urls import path
-from .views import send_email_vacancy
+from rest_framework import routers
+from .views import VacancyViewSet, ReferenceViewSet
 
-urlpatterns = [
-    path("send/", send_email_vacancy, name="send_email_vacancy"),
-]
+router = routers.DefaultRouter()
+router.register("vacancy", VacancyViewSet, basename="vacancy")
+router.register("reference", ReferenceViewSet, basename="reference")
+
+urlpatterns = router.urls
