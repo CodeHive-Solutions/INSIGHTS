@@ -23,6 +23,8 @@ import BasicDocument from "./components/shared/GoalsPDF";
 import Quality from "./components/pages/Quality";
 import Legal from "./components/pages/Legal";
 import Vacancies from "./components/pages/Vacancies";
+import CardSlider from "./components/pages/CardSlider";
+
 const theme = createTheme({
     typography: {
         fontFamily: [
@@ -64,6 +66,10 @@ const router = createBrowserRouter([
     {
         path: "ethical-line",
         element: <EthicalLine />,
+    },
+    {
+        path: "test",
+        element: <CardSlider />,
     },
     {
         path: "goal-pdf",

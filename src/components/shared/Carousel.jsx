@@ -18,7 +18,7 @@ function CarouselComponent(props) {
 
 function Item(props) {
     const { item, height, contain, width, day } = props;
-    const { name, description, image } = item;
+    const { name, subtitle, image, description } = item;
     const [isVacancy, setIsVacancy] = useState(false);
     const navigate = useNavigate();
 
@@ -62,8 +62,9 @@ function Item(props) {
                     {name}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                    {description}
+                    {subtitle}
                 </Typography>
+                <Typography variant="body">{description}</Typography>
             </Box>
         </>
     );

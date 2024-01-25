@@ -14,7 +14,7 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import campaigns from "../../images/home-carousel/campaigns-1280-720.png";
 import isos from "../../images/home-carousel/isos-1280-720.png";
 import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
-import realBenefit2 from "../../images/benefits/2.png";
+import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import raac from "../../images/home-carousel/raac-1280-720.png";
 
@@ -67,7 +67,8 @@ const Home = () => {
                     return {
                         image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
                         name: formattedName,
-                        description: employee.campana_general,
+                        subtitle: employee.campana_general,
+                        description: employee.descripcion,
                     };
                 }
 
@@ -75,7 +76,8 @@ const Home = () => {
                 return {
                     image: Avatar,
                     name: formattedName,
-                    description: employee.campana_general,
+                    subtitle: employee.campana_general,
+                    description: employee.descripcion,
                 };
             } catch (error) {
                 return null; // Handle fetch errors by returning null
@@ -166,8 +168,8 @@ const Home = () => {
                     En C&C respaldamos con entusiasmo el deporte y en particular el fútbol femenino. A través de nuestro patrocinio, hemos contribuido al éxito de nuestro
                     equipo Future Soccer, que recientemente se destacó al ganar el torneo de la copa Nottingham. Este logro no solo refuerza nuestro compromiso con la
                     comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir respaldando y empoderando a
-                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas. ¡En C&C Services creemos en el poder transformador del deporte para construir
-                    un futuro más sólido y unido!
+                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas.
+                    <br /> ¡En C&C Services creemos en el poder transformador del deporte para construir un futuro más sólido y unido!
                 </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <video style={{ borderRadius: "8px", width: "100%" }} controls>
@@ -201,21 +203,21 @@ const Home = () => {
             </Box>
             <Grow in={inView}>
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
                         {yesterdayBirthdays.length === 0 ? (
                             noBirthdays("No hubo cumpleaños ayer")
                         ) : (
-                            <CarouselComponent items={yesterdayBirthdays} description={yesterdayBirthdays.nombre} day={"Ayer"} height={"280px"} width={"100%"} />
+                            <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
                         )}
                     </Card>
-                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
                         {todayBirthdays.length === 0 ? (
                             noBirthdays("No hay cumpleaños hoy")
                         ) : (
-                            <CarouselComponent items={todayBirthdays} description={todayBirthdays.nombre} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent items={todayBirthdays} description={"hola"} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
-                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
                         {tomorrowBirthdays.length === 0 ? (
                             noBirthdays("No hay cumpleaños mañana")
                         ) : (
@@ -233,7 +235,7 @@ const Home = () => {
                     >
                         Beneficios
                     </Typography>
-                    <CarouselComponent items={benefits} height={"650px"} width={"600px"} />
+                    <CarouselComponent items={benefits} height={"960px"} width={"540px"} />
                 </Box>
             </Box>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />

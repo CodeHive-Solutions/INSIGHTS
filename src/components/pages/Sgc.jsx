@@ -281,7 +281,7 @@ export const Sgc = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {permissions && permissions.includes("sgc.add_sgc_file") ? (
+                {permissions && permissions.includes("sgc.add_sgcfile") ? (
                     <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                         AÑADIR
                     </Button>
