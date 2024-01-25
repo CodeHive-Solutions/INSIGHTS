@@ -18,18 +18,12 @@ from .emails import send_email
 class BaseTestCase(APITestCase):
     """Base test case for all test cases."""
 
-    def setUp(self, user=None):
+    def setUp(self):
         """Set up the test case."""
-        if user:
-            self.client.post(
-                reverse("obtain-token"),
-                {"username": user, "password": "Password8"},
-            )
-        else:
-            self.client.post(
-                reverse("obtain-token"),
-                {"username": "staffnet", "password": os.environ["StaffNetLDAP"]},
-            )
+        self.client.post(
+            reverse("obtain-token"),
+            {"username": "staffnet", "password": os.environ["StaffNetLDAP"]},
+        )
 
     def tearDown(self):
         """Tear down the test case."""

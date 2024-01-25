@@ -11,6 +11,7 @@ class LoggingMiddleware:
         self.get_response = get_response
 
     def mask_sensitive_data(self, data):
+        """Mask sensitive data from the request"""
         mutable_data = data.copy()
         if "password" in mutable_data:
             mutable_data["password"] = "********"
@@ -19,7 +20,8 @@ class LoggingMiddleware:
     def log_request_info(self, request, response, log_info):
         """Log the request info"""
         if response.status_code >= 400:
-            log_info["Response Content"] = response.data
+            if "data" in response:
+                log_info["Response Content"] = response.data
         if response.status_code >= 500:
             logger.error(
                 "{}".format(
