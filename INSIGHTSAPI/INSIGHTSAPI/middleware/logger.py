@@ -11,6 +11,7 @@ class LoggingMiddleware:
         self.get_response = get_response
 
     def mask_sensitive_data(self, data):
+        """Mask sensitive data from the request"""
         mutable_data = data.copy()
         if "password" in mutable_data:
             mutable_data["password"] = "********"
@@ -18,11 +19,17 @@ class LoggingMiddleware:
 
     def log_request_info(self, request, response, log_info):
         """Log the request info"""
-        if response.status_code > 500:
-            log_info["Response Content"] = response.data
-
-        if response.status_code > 500:
+        if response.status_code >= 400:
+            if "data" in response:
+                log_info["Response Content"] = response.data
+        if response.status_code >= 500:
             logger.error(
+                "{}".format(
+                    ", ".join([f"{key}: {value}" for key, value in log_info.items()])
+                )
+            )
+        elif response.status_code >= 400:
+            logger.warning(
                 "{}".format(
                     ", ".join([f"{key}: {value}" for key, value in log_info.items()])
                 )
@@ -36,6 +43,7 @@ class LoggingMiddleware:
 
     def __call__(self, request):
         response = self.get_response(request)
+
         request_file = request.FILES.get("file", None)
 
         log_info = {
@@ -58,7 +66,7 @@ class LoggingMiddleware:
         if (
             request_method in request_data_mapping
             and request_data_mapping[request_method]
-            and response.status_code > 500
+            and response.status_code >= 400
         ):
             request_data = self.mask_sensitive_data(
                 request_data_mapping[request_method]

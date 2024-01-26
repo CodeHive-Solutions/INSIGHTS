@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "django_sendfile",
     "services",
     "blog",
+    "vacancy",
 ]
 
 MIDDLEWARE = [
@@ -84,7 +85,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "INSIGHTSAPI.middleware.logging.LoggingMiddleware",
+    "INSIGHTSAPI.middleware.logger.LoggingMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

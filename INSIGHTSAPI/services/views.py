@@ -1,12 +1,23 @@
 """Views for the services app."""
+import logging
 import os
+import base64
+from io import BytesIO
+from PIL import Image
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django_sendfile import sendfile
 from django.shortcuts import get_object_or_404
-from .emails import send_email
 from django.conf import settings
+from django.db import connections
+from django.utils import safestring
+from users.models import User
+from .emails import send_email
+
+
+logger = logging.getLogger("requests")
 
 
 class FileDownloadMixin(APIView):
@@ -62,5 +73,5 @@ def send_report_ethical_line(request):
         return_path="heibert.mogollon@cyc-bpo.com",
     )
     if errors:
-        return Response({"error": "Hubo un error en el envió del correo"}, status=400)
+        return Response({"error": "Hubo un error en el envió del correo"}, status=500)
     return Response({"message": "Correo enviado correctamente"}, status=200)

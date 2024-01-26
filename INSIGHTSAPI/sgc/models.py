@@ -3,7 +3,6 @@ import logging
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
-import os
 import magic
 
 

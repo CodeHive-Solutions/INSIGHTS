@@ -1,66 +1,36 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import CarouselComponent from "../shared/Carousel";
 import Card from "@mui/material/Card";
-import { Typography, Box, Dialog } from "@mui/material";
-import { motion, useIsPresent } from "framer-motion";
+import { Typography, Box } from "@mui/material";
 import { useInView } from "react-intersection-observer";
 import Grow from "@mui/material/Grow";
-import "../../index.css";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
 import Avatar from "../../images/home-carousel/avatar.jpg";
-import image2024 from "../../images/home-carousel/2024.png";
-import Blog from "./Blog.jsx";
+import { Container } from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
-// images
-import raac from "../../images/home-carousel/raac.png";
-import campaigns from "../../images/home-carousel/campaigns.png";
-import auxiliarContable from "../../images/home-carousel/auxiliar-contable.png";
-import auxiliarOperativo from "../../images/home-carousel/auxiliar-operativo.png";
-import asesorComercial from "../../images/home-carousel/asesor-comercial.png";
-import negociadoresSinExperiencia from "../../images/home-carousel/negociadores-sin-experiencia.png";
-import asesorNegociadores from "../../images/home-carousel/asesores-negociadores.png";
-import isos from "../../images/home-carousel/isos.png";
-import vacanciesCarousel from "../../images/home-carousel/vacancies.png";
-import image1280x720 from "../../images/home-carousel/1280-720.jpg";
-//benefits
-import realBenefit2 from "../../images/benefits/2.png";
-
+// media
+import campaigns from "../../images/home-carousel/campaigns-1280-720.png";
+import isos from "../../images/home-carousel/isos-1280-720.png";
+import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
+import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
+import raac from "../../images/home-carousel/raac-1280-720.png";
+
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
-
-const vacancies = [{ image: raac, title: "Beneficio 1" }];
-
-const homeImages = [
-    { image: raac },
-    { image: campaigns },
-    { image: isos },
-    { image: vacanciesCarousel },
-    { image: image1280x720 },
-    // { image: video, video: true },
-];
+const homeImages = [{ image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }];
 
 const Home = () => {
-    const [openDialog, setOpenDialog] = useState(false);
-    const handleOpenDialog = () => setOpenDialog(true);
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
-    const handleCloseSnack = () => setOpenSnack(false);
     const [todayBirthdays, setTodayBirthdays] = useState([]);
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
-    const videoRef = useRef(null);
-    const [isPlaying, setIsPlaying] = useState(false);
+    const matches = useMediaQuery("(min-width:1025px)");
 
-    const togglePlay = () => {
-        if (isPlaying) {
-            videoRef.current.pause();
-        } else {
-            videoRef.current.play();
-        }
-        setIsPlaying(!isPlaying);
-    };
+    const handleCloseSnack = () => setOpenSnack(false);
 
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
@@ -78,13 +48,13 @@ const Home = () => {
                     method: "GET",
                 });
 
-                const fullName = "RAMIREZ JULIO";
+                const fullName = employee.nombre;
 
                 // Split the full name into individual names and last names
                 const nameParts = fullName.split(" ");
 
                 // Extract the first name
-                const firstName = nameParts.length > 2 ? nameParts[2] : "";
+                const firstName = nameParts.length === 2 ? nameParts[1] : nameParts.length > 2 ? nameParts[2] : "";
 
                 // Extract the first last name (if exists)
                 const firstLastName = nameParts.length > 0 ? nameParts[0] : "";
@@ -92,14 +62,13 @@ const Home = () => {
                 // Create the formatted name
                 const formattedName = `${firstName} ${firstLastName}`.trim();
 
-                console.log(formattedName);
-
                 // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
                     return {
                         image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
                         name: formattedName,
-                        description: employee.campana_general,
+                        subtitle: employee.campana_general,
+                        description: employee.descripcion,
                     };
                 }
 
@@ -107,7 +76,8 @@ const Home = () => {
                 return {
                     image: Avatar,
                     name: formattedName,
-                    description: employee.campana_general,
+                    subtitle: employee.campana_general,
+                    description: employee.descripcion,
                 };
             } catch (error) {
                 return null; // Handle fetch errors by returning null
@@ -156,8 +126,6 @@ const Home = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const isPresent = useIsPresent();
-
     const [ref, inView] = useInView({
         triggerOnce: true,
         threshold: 0.5,
@@ -185,17 +153,10 @@ const Home = () => {
 
     return (
         <>
-            {/* <motion.div
-                initial={{ scaleX: 1 }}
-                animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
-                exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
-                style={{ originX: isPresent ? 0 : 1 }}
-                className="privacy-screen"
-            /> */}
             <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
-                <CarouselComponent items={homeImages} height={"648px"} width={"1152px"} />
+                <CarouselComponent items={homeImages} contain={true} height={matches ? "648px" : "480px"} width={matches ? "1152px" : "854px"} />
             </Box>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+            <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"
                     id="section1"
@@ -203,12 +164,19 @@ const Home = () => {
                 >
                     ¡C&C Apoyando el deporte!
                 </Typography>
+                <Typography sx={{ color: "gray", textAlign: "center" }}>
+                    En C&C respaldamos con entusiasmo el deporte y en particular el fútbol femenino. A través de nuestro patrocinio, hemos contribuido al éxito de nuestro
+                    equipo Future Soccer, que recientemente se destacó al ganar el torneo de la copa Nottingham. Este logro no solo refuerza nuestro compromiso con la
+                    comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir respaldando y empoderando a
+                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas.
+                    <br /> ¡En C&C Services creemos en el poder transformador del deporte para construir un futuro más sólido y unido!
+                </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <video style={{ borderRadius: "8px", width: 1200 }} controls>
+                    <video style={{ borderRadius: "8px", width: "100%" }} controls>
                         <source src={video} type="video/mp4" />
                     </video>
                 </Box>
-            </Box>
+            </Container>
             <Box
                 sx={{
                     display: "flex",
@@ -235,21 +203,21 @@ const Home = () => {
             </Box>
             <Grow in={inView}>
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
                         {yesterdayBirthdays.length === 0 ? (
                             noBirthdays("No hubo cumpleaños ayer")
                         ) : (
-                            <CarouselComponent items={yesterdayBirthdays} description={yesterdayBirthdays.nombre} day={"Ayer"} height={"280px"} width={"100%"} />
+                            <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
                         )}
                     </Card>
-                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
                         {todayBirthdays.length === 0 ? (
                             noBirthdays("No hay cumpleaños hoy")
                         ) : (
-                            <CarouselComponent items={todayBirthdays} description={todayBirthdays.nombre} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent items={todayBirthdays} description={"hola"} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
-                    <Card sx={{ maxWidth: 350, width: 350, height: 450 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
                         {tomorrowBirthdays.length === 0 ? (
                             noBirthdays("No hay cumpleaños mañana")
                         ) : (
@@ -265,19 +233,9 @@ const Home = () => {
                         id="section1"
                         sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
                     >
-                        Vacantes
-                    </Typography>
-                    <CarouselComponent items={vacancies} height={"650px"} width={"600px"} />
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                    <Typography
-                        color="primary"
-                        id="section1"
-                        sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
-                    >
                         Beneficios
                     </Typography>
-                    <CarouselComponent items={benefits} height={"650px"} width={"600px"} />
+                    <CarouselComponent items={benefits} height={"960px"} width={"540px"} />
                 </Box>
             </Box>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />

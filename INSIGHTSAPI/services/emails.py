@@ -21,10 +21,10 @@ ALLOWED_EMAILS = {
 
 
 def send_email(
-    sender_user: str,
     subject: str,
     message: str,
     to_emails: List[str],
+    sender_user="no-reply",
     from_email=None,
     cc_emails=None,
     bcc_emails=None,
@@ -34,12 +34,13 @@ def send_email(
     return_path=None,
     save_message=True,
     email_owner=None,
+    safe_mode=False,
 ) -> None | Exception:
     """
     Send an email.
 
     Parameters:
-    - sender_user (str): The email for authentication.
+    - sender_user (str): The email for authentication options: 'mismetas', 'no-reply'.
     - subject (str): The subject of the email.
     - message (str): The content of the email.
     - to_emails (Union[str, List[str]]): The recipient(s) of the email.
@@ -51,7 +52,7 @@ def send_email(
     - reply_to (Union[str, List[str]]): The reply-to address(es).
     - return_path (str): The return-path address in case of error.
     - save_message (bool): Whether to save a copy of the email to the 'sent' folder.
-    - email_owner (str): The email name showed.
+    - email_owner (str): The name of the owner of the email is showed in some alerts.
 
     Returns:
     - None in case of success.
@@ -60,9 +61,8 @@ def send_email(
     try:
         if sender_user not in ALLOWED_EMAILS:
             raise Exception("Email not allowed")
-        else:
-            sender_email = list(ALLOWED_EMAILS[sender_user].keys())[0]
-            sender_password = ALLOWED_EMAILS[sender_user][sender_email]
+        sender_email = list(ALLOWED_EMAILS[sender_user].keys())[0]
+        sender_password = ALLOWED_EMAILS[sender_user][sender_email]
         smtp_connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
         smtp_connection.ehlo()
         context = ssl.create_default_context()
@@ -79,7 +79,8 @@ def send_email(
             from_email = f"{email_owner} <{from_email}>"
 
         email_content = render_to_string(
-            "email_template.html", {"message": message, "title": subject}
+            "email_template.html",
+            {"message": message, "title": subject, "safe_mode": safe_mode},
         )
         # print(email_content)
         email = EmailMessage(
@@ -89,11 +90,22 @@ def send_email(
             to_emails,
             cc=cc_emails,
             bcc=bcc_emails,
-            attachments=attachments,
             reply_to=reply_to,
         )
         if return_path:
             email.extra_headers["Return-Path"] = return_path
+
+        if attachments:
+            # This just work for certain objects
+            for attachment in attachments:
+                file_name, file_data, content_type = attachment
+                email.attach(
+                    file_name,
+                    file_data,
+                    content_type,
+                )
+            # for attachment in attachments:
+            # email.attach_file(attachment)
 
         if html_content:
             email.content_subtype = "html"

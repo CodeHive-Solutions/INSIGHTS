@@ -17,16 +17,16 @@ class SGCFileSerializer(serializers.ModelSerializer):
         model = SGCFile
         fields = "__all__"
 
-    def validate(self, data):
+    def validate(self, attrs):
         """
         Custom validation method to capture model validation errors.
         """
         instance = self.Meta.model(
-            **data
+            **attrs
         )  # Create a model instance with the provided data
 
         try:
             instance.full_clean()  # Trigger model validation
         except ValidationError as e:
             raise serializers.ValidationError(detail=e.message_dict)
-        return data
+        return attrs

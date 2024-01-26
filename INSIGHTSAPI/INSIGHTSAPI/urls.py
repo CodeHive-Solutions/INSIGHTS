@@ -29,6 +29,7 @@ urlpatterns = [
     path("contracts/", include("contracts.urls")),
     path("blog/", include("blog.urls")),
     path("admin/", admin.site.urls),
+    path("vacancy/", include("vacancy.urls")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

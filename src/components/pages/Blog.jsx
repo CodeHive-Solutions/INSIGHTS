@@ -14,11 +14,14 @@ import despedida from "../../images/blog/despedida.jpg";
 import cibersecurity from "../../images/blog/cibersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
+import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
+import carteraPropia from "../../images/blog/cartera-propia.jpg";
 
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
+    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
 ];
 
@@ -87,8 +90,22 @@ const Blog = () => {
             </Typography>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
                 <MediaCard
+                    title={"Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO"}
+                    subtitle={"Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO"}
+                    img={carteraPropia}
+                    articleId={7}
+                ></MediaCard>
+                <MediaCard
+                    title={"Elevando Nuestra Empresa: Certificaciones ISO 45001:2018 y 14001:2015"}
+                    subtitle={
+                        "Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores"
+                    }
+                    img={sstGestion}
+                    articleId={6}
+                ></MediaCard>
+                <MediaCard
                     title={"C&C Services SAS avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza"}
-                    subtitle={"Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RAAC."}
+                    subtitle={"Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RACC."}
                     img={article5}
                     articleId={5}
                 ></MediaCard>
@@ -98,12 +115,7 @@ const Blog = () => {
                     img={article1}
                     articleId={1}
                 ></MediaCard>
-                <MediaCard
-                    title={"C&C Services Celebra una Integración Innovadora para Cerrar el Año 2023 con Éxito"}
-                    subtitle={"Celebrando el Poder del Compartir y la Eucaristía como Símbolo de Agradecimiento"}
-                    img={despedida}
-                    articleId={2}
-                ></MediaCard>
+
                 <MediaCard
                     title={"Desarrollo Profesional en el Mundo del BPO"}
                     subtitle={"C&C Services y la Ciberseguridad en la Era Actual"}

@@ -14,7 +14,12 @@
         </tr>
         <tr>
             <td colspan="2" style="padding: 20px; border-bottom: 2px solid #ddd;">
-                <p>{{message}}</p>
+                {% if safe_mode %}
+                    <p>{{ message | safe }}</p>
+                {% else %}
+                    <p>{{ message }}</p>
+                {% endif %}
+
             </td>
         </tr>
         <tr id="contact-info">

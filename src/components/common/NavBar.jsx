@@ -38,10 +38,7 @@ const Navbar = () => {
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-    const toggleSidebar = (openServices) => {
-        setSidebarOpen(openServices);
-    };
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -81,7 +78,7 @@ const Navbar = () => {
 
     useEffect(() => {
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
-
+        console.log(permissions);
         // Check if the item has expired
         if (refreshTimer === null || refreshTimer.expiry < new Date().getTime()) {
             refreshToken(refreshTimer);
@@ -259,6 +256,7 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/about-us">Sobre Nosotros</CustomNavLink>
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
+                    <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
                     <Typography
                         onMouseEnter={handleUtilitariosMenuOpen}
                         anchorel={anchorElUtils}
@@ -276,7 +274,7 @@ const Navbar = () => {
                     </Typography>
 
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <Tooltip title="Configuración de cuenta">
+                        <Tooltip title="Mi Cuenta">
                             <IconButton
                                 onClick={handleClick}
                                 size="small"
@@ -285,7 +283,7 @@ const Navbar = () => {
                                 aria-haspopup="true"
                                 aria-expanded={open ? "true" : undefined}
                             >
-                                <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+                                <Avatar sx={{ width: 32, height: 32 }} />
                             </IconButton>
                         </Tooltip>
                     </Box>
@@ -456,30 +454,37 @@ const Navbar = () => {
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <Box onMouseLeave={handleCloseUtils}>
+                    {/* {permissions && permissions.includes()} */}
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
                         Análisis de Metas
                     </MenuItem>
-                    <MenuItem onClick={() => navigate("/logged/upload-files")}>
-                        <ListItemIcon>
-                            <UploadFileIcon fontSize="small" />
-                        </ListItemIcon>
-                        Cargue de Archivos
-                    </MenuItem>
-                    <MenuItem onClick={() => navigate("/logged/quality")}>
-                        <ListItemIcon>
-                            <DriveFileMoveIcon fontSize="small" />
-                        </ListItemIcon>
-                        Trasladar Archivos
-                    </MenuItem>
-                    <MenuItem onClick={() => navigate("/logged/legal")}>
-                        <ListItemIcon>
-                            <PolicyIcon fontSize="small" />
-                        </ListItemIcon>
-                        Contratos y Pólizas Legales
-                    </MenuItem>
+                    {permissions && permissions.includes("users.upload_robinson_list") ? (
+                        <MenuItem onClick={() => navigate("/logged/upload-files")}>
+                            <ListItemIcon>
+                                <UploadFileIcon fontSize="small" />
+                            </ListItemIcon>
+                            Cargue de Archivos
+                        </MenuItem>
+                    ) : null}
+                    {permissions && permissions.includes("excels_processing.call_transfer") ? (
+                        <MenuItem onClick={() => navigate("/logged/quality")}>
+                            <ListItemIcon>
+                                <DriveFileMoveIcon fontSize="small" />
+                            </ListItemIcon>
+                            Trasladar Archivos
+                        </MenuItem>
+                    ) : null}
+                    {permissions && permissions.includes("contracts.view_contract") ? (
+                        <MenuItem onClick={() => navigate("/logged/legal")}>
+                            <ListItemIcon>
+                                <PolicyIcon fontSize="small" />
+                            </ListItemIcon>
+                            Contratos y Pólizas Legales
+                        </MenuItem>
+                    ) : null}
                 </Box>
             </Menu>
             <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} />

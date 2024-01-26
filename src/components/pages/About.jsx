@@ -30,7 +30,7 @@ import mission4 from "../../images/about/image-mission-4.jpg";
 
 //corporative values images
 import value1 from "../../images/about/corporative-values.jpg";
-
+import CardSlider from "./CardSlider";
 const homeImages = [
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
     { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
@@ -323,6 +323,7 @@ const About = () => {
                         </Card>
                     ))}
                 </Container>
+                <CardSlider />
             </Box>
         </Box>
     );
