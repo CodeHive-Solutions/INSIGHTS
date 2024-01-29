@@ -18,8 +18,6 @@ def validate_and_convert_to_webp(value):
         raise ValidationError("El archivo no puede pesar mas de 10MB")
     try:
         img = Image.open(BytesIO(value.read()))
-        # img.verify()
-        # img = Image.open(BytesIO(value.read()))
         if img.format != "WEBP":
             # convert to webp
             webp_bytes = BytesIO()

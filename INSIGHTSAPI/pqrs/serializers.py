@@ -1,9 +1,9 @@
 """This file contains the serializers for the PQRS model."""
 from os import read
 from rest_framework import serializers
-from .models import Complaint, Congratulation, Suggestion, Other
 from users.models import User
 from hierarchy.models import Area
+from .models import Complaint, Congratulation, Suggestion, Other
 
 
 class BasePQRSSerializer(serializers.ModelSerializer):

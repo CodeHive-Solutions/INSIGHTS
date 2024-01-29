@@ -16,8 +16,6 @@ Including another URLconf
 """
 from django.urls import include, path
 from django.contrib import admin
-from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
 
 urlpatterns = [
     path("goals/", include("goals.urls")),
@@ -32,4 +30,9 @@ urlpatterns = [
     path("vacancy/", include("vacancy.urls")),
 ]
 
-urlpatterns += staticfiles_urlpatterns()
+# if settings.DEBUG:
+# urlpatterns += staticfiles_urlpatterns()
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# if settings.DEBUG:
+# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,13 +1,26 @@
 """Serializers for the SGC app. """
+import magic
 from rest_framework import serializers
-from .models import SGCFile
-from django.core.exceptions import ValidationError
+from .models import SGCFile, SGCArea
+
+
+class SGCAreaSerializer(serializers.ModelSerializer):
+    """Serializer for the Task model."""
+
+    class Meta:
+        """Meta class for the Task serializer."""
+
+        model = SGCArea
+        fields = "__all__"
 
 
 class SGCFileSerializer(serializers.ModelSerializer):
     """Serializer for the Task model."""
 
     file = serializers.FileField(write_only=True)
+    area = serializers.SlugRelatedField(
+        queryset=SGCArea.objects.all(), slug_field="name"
+    )
 
     """Serializer for the Task model."""
 
@@ -17,16 +30,25 @@ class SGCFileSerializer(serializers.ModelSerializer):
         model = SGCFile
         fields = "__all__"
 
-    def validate(self, attrs):
+    def validate_file(self, value):
         """
         Custom validation method to capture model validation errors.
         """
-        instance = self.Meta.model(
-            **attrs
-        )  # Create a model instance with the provided data
+        valid_types = [
+            "Microsoft Word 2007+",
+            "PDF document",
+            "Microsoft PowerPoint 2007+",
+            "Microsoft Excel 2007+",
+            "Microsoft Word 97-2003",
+        ]
+        if value.size > 10000000:
+            raise serializers.ValidationError("El archivo no puede pesar mas de 10MB")
+        mime = magic.Magic()
+        file_type = mime.from_buffer(value.read())  # Read a small portion of the file
+        value.seek(0)  # Reset the file pointer to the beginning for further use
 
-        try:
-            instance.full_clean()  # Trigger model validation
-        except ValidationError as e:
-            raise serializers.ValidationError(detail=e.message_dict)
-        return attrs
+        if not file_type in valid_types:
+            raise serializers.ValidationError(
+                "Formato de archivo no válido. Se aceptan los siguientes tipos: .docx, .pdf, .pptx, .xlsx, .doc"
+            )
+        return value
