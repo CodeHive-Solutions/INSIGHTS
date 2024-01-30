@@ -2,6 +2,7 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from .views import SGCFileViewSet, SGCFileDownloadViewSet
+from .views import massive_update
 
 router = DefaultRouter()
 router.register("", SGCFileViewSet, basename="SGCFile")
@@ -15,4 +16,5 @@ urlpatterns = [
         SGCFileDownloadViewSet.as_view({"get": "get"}),
         name="sgc_file_download",
     ),
+    # path("massive-update/", massive_update, name="massive-update"),
 ]

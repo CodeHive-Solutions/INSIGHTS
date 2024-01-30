@@ -17,7 +17,7 @@ class SGCAreaSerializer(serializers.ModelSerializer):
 class SGCFileSerializer(serializers.ModelSerializer):
     """Serializer for the Task model."""
 
-    file = serializers.FileField(write_only=True)
+    file = serializers.FileField()
     area = serializers.SlugRelatedField(
         queryset=SGCArea.objects.all(), slug_field="name"
     )
