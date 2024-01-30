@@ -120,7 +120,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 if not DEBUG:
     CORS_ALLOWED_ORIGINS = [
-        "https://insights.cyc-bpo.com",
+        "https://intranet.cyc-bpo.com",
         "https://staffnet-api.cyc-bpo.com",
     ]
 

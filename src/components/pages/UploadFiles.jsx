@@ -22,10 +22,9 @@ const UploadFiles = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const navigate = useNavigate();
-
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (permissions.includes("users.upload_robinson_list")) {
+        if (!permissions.includes("users.upload_robinson_list")) {
             navigate("/logged/home");
         }
     }, []);
