@@ -185,8 +185,9 @@ const Vacancies = () => {
         const formData = new FormData();
         formData.append("vacancy_name", nameAddVacancy.current.value);
         formData.append("image", fileImage);
+
         try {
-            const response = fetch(`${getApiUrl()}vacancy/vacancy/`, {
+            const response = await fetch(`${getApiUrl()}vacancy/vacancy/`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -199,6 +200,7 @@ const Vacancies = () => {
             }
 
             if (response.status === 201) {
+                getVacancies();
                 showSnack("success", "La vacante ha sido añadida correctamente.");
                 setOpenAddVacancy(false);
                 setFileImage(null);

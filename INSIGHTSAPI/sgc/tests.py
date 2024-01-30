@@ -186,6 +186,15 @@ class TestSGC(BaseTestCase):
         # Assert that the response status code is HTTP 403 Forbidden
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_massive_update(self):
+        """Test massive update"""
+        response = self.client.get(
+            reverse("massive-update"),
+            format="multipart",
+            cookies=self.client.cookies,
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+
     def tearDown(self):
         """Tear down for the test"""
         super().tearDown()

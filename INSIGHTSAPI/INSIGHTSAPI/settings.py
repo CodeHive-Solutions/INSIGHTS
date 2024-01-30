@@ -120,7 +120,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 if not DEBUG:
     CORS_ALLOWED_ORIGINS = [
-        "https://insights.cyc-bpo.com",
+        "https://intranet.cyc-bpo.com",
         "https://staffnet-api.cyc-bpo.com",
     ]
 
@@ -241,7 +241,6 @@ STATIC_ROOT = BASE_DIR / "static"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 log_dir = os.path.join(BASE_DIR, "utils", "logs")
-print(log_dir)
 # Create another log file for each minute
 now = datetime.now()
 year_month = now.strftime("%Y-%B")
