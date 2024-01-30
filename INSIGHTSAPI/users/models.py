@@ -27,7 +27,7 @@ class User(AbstractUser):
     #     upload_to="images/pictures/", validators=[validate_file_extension]
     # )
     # This field cannot be used because RH does not have the company email
-    email = models.EmailField(null=True, blank=True, unique=True)
+    email = models.EmailField(null=True, blank=True)
     # email = None
     area = models.ForeignKey(
         "hierarchy.Area",
