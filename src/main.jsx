@@ -24,6 +24,7 @@ import Quality from "./components/pages/Quality";
 import Legal from "./components/pages/Legal";
 import Vacancies from "./components/pages/Vacancies";
 import CardSlider from "./components/pages/CardSlider";
+import VacanciesReferred from "./components/pages/VacanciesReferred";
 
 const theme = createTheme({
     typography: {
@@ -119,6 +120,10 @@ const router = createBrowserRouter([
             {
                 path: "legal",
                 element: <Legal />,
+            },
+            {
+                path: "vacancies-referred",
+                element: <VacanciesReferred />,
             },
         ],
     },

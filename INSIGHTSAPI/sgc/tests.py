@@ -9,8 +9,7 @@ from django.contrib.auth.models import Permission
 from django.urls import reverse
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-from hierarchy.models import Area
-from .models import SGCFile
+from .models import SGCFile, SGCArea
 
 
 class TestSGC(BaseTestCase):
@@ -23,16 +22,15 @@ class TestSGC(BaseTestCase):
         super().setUp()
         with open("utils/excels/Lista_Robinson.xlsx", "rb") as file:
             file_content = file.read()
+        area = SGCArea.objects.create(short_name="SGC", name="SistemaGC")
         self.file_data = {
             "name": "Test File",
-            "area": "SGC",
+            "area": area.name,
             "type": "Document",
             "sub_type": "xlsx",
             "version": "1.0",
             "file": SimpleUploadedFile("Test_SGC_Robinson.xlsx", file_content),
         }
-        # for i in range(1, 12):
-        # area = Area.objects.create(name=f"Area {i}")
         user = User.objects.get(username="StaffNet")
         permission_add = Permission.objects.get(codename="add_sgcfile")
         user.user_permissions.add(permission_add)
@@ -47,6 +45,7 @@ class TestSGC(BaseTestCase):
 
     def test_get_file(self):
         """Test getting a file"""
+        self.file_data["area"] = SGCArea.objects.first()
         file = SGCFile.objects.create(**self.file_data)
         response = self.client.get(
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
@@ -55,7 +54,7 @@ class TestSGC(BaseTestCase):
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.data.get("name"), "Test File")
-        self.assertEqual(response.data.get("area"), "SGC")
+        self.assertEqual(response.data.get("area"), "SistemaGC")
         self.assertEqual(response.data.get("type"), "Document")
         self.assertEqual(response.data.get("sub_type"), "xlsx")
         self.assertEqual(response.data.get("version"), "1.0")
@@ -63,6 +62,7 @@ class TestSGC(BaseTestCase):
 
     def test_get_list_of_files(self):
         """Test getting a list of files"""
+        self.file_data["area"] = SGCArea.objects.first()
         SGCFile.objects.create(**self.file_data)
         response = self.client.get(
             reverse("SGCFile-list"),
@@ -70,8 +70,8 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data["objects"][0].get("name"), "Test File")
+        self.assertEqual(len(response.data), 2)
         self.assertTrue(response.data["permissions"].get("add"))
 
     def test_create_file(self):
@@ -89,7 +89,7 @@ class TestSGC(BaseTestCase):
         )
         self.assertTrue(file_exist, os.listdir(self.media_directory))
 
-    def test_create_file_with_invalid_file(self):
+    def test_create_file_with_invalid_file_extension(self):
         """Test creating a file with invalid file"""
         with open("static/services/Logo_cyc.png", "rb") as file:
             file_content = file.read()
@@ -102,11 +102,14 @@ class TestSGC(BaseTestCase):
             format="multipart",
             cookies=self.client.cookies,
         )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertIn("Formato de archivo no válido", response.data["file"][0])
 
-    def test_create_file_with_invalid_file_extension(self):
+    def test_create_file_with_invalid_file(self):
         """Test creating a file with invalid file extension"""
-        self.file_data["file"] = SimpleUploadedFile("Test_SGC_Robinson.txt", b"")
+        self.file_data["file"] = SimpleUploadedFile("Test_SGC_Robinson.xlsx", b"12")
         response = self.client.post(
             reverse("SGCFile-list"),
             self.file_data,
@@ -114,7 +117,7 @@ class TestSGC(BaseTestCase):
             cookies=self.client.cookies,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertRaises(ValueError)
+        self.assertIn("Formato de archivo no válido", response.data["file"][0])
 
     def test_create_large_file(self):
         """Test creating a large file"""
@@ -132,12 +135,16 @@ class TestSGC(BaseTestCase):
                 cookies=self.client.cookies,
             )
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            self.assertIn(
+                "El archivo no puede pesar mas de 10MB", response.data["file"]
+            )
 
     def test_update_file_without_permission(self):
         """Test updating a file without permission"""
         user = User.objects.get(username="StaffNet")
         user.user_permissions.clear()
         user.save()
+        self.file_data["area"] = SGCArea.objects.first()
         file = SGCFile.objects.create(**self.file_data)
         self.file_data["name"] = "Test File Updated"
         response = self.client.put(
@@ -151,6 +158,7 @@ class TestSGC(BaseTestCase):
 
     def test_delete_file(self):
         """Test deleting a file"""
+        self.file_data["area"] = SGCArea.objects.first()
         file = SGCFile.objects.create(**self.file_data)
         response = self.client.delete(
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
@@ -169,6 +177,7 @@ class TestSGC(BaseTestCase):
         user = User.objects.get(username="StaffNet")
         user.user_permissions.clear()
         user.save()
+        self.file_data["area"] = SGCArea.objects.first()
         file = SGCFile.objects.create(**self.file_data)
         response = self.client.delete(
             reverse("SGCFile-detail", kwargs={"pk": file.id}),

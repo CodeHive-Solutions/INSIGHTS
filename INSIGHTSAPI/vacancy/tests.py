@@ -42,7 +42,6 @@ class VacancyTest(BaseTestCase):
             )
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(Vacancy.objects.count(), 1)
-        print(response.data)
 
     def tearDown(self):
         super().tearDown()
@@ -77,10 +76,36 @@ class ReferenceTest(BaseTestCase):
         response = self.client.post(
             reverse("reference-list"),
             {
-                "refer_to": "Juan Test",
-                "email": "heibert.mogollon@cyc-bpo.com",
-                "phone": "1234567890",
+                "name": "Juan Test",
+                "phone_number": "1234567890",
                 "vacancy": 1,
+            },
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+
+
+class VacancyApplyTest(BaseTestCase):
+    """Test for vacancy apply."""
+
+    databases = ["default", "staffnet"]
+
+    def test_vacancy_apply(self):
+        """Test vacancy apply."""
+        with open("static/vacancy/asesor-vacante.png", "rb") as image_data:
+            image = SimpleUploadedFile(
+                "asesor-vacante.png", image_data.read(), content_type="image/png"
+            )
+            vacancy = Vacancy.objects.create(
+                vacancy_name="Auxiliar de servicios generales TEST",
+                image=image,
+            )
+        user = User.objects.get(username="staffnet")
+        user.cedula = "1000065648"
+        user.save()
+        response = self.client.post(
+            reverse("vacancy_apply"),
+            {
+                "vacancy": vacancy.id,
             },
         )
         self.assertEqual(response.status_code, 200, response.data)

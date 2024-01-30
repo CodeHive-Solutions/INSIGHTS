@@ -46,6 +46,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.getenv("DEBUG") is not None else False
+# DEBUG = False
 
 
 if DEBUG:
@@ -240,6 +241,7 @@ STATIC_ROOT = BASE_DIR / "static"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 log_dir = os.path.join(BASE_DIR, "utils", "logs")
+print(log_dir)
 # Create another log file for each minute
 now = datetime.now()
 year_month = now.strftime("%Y-%B")

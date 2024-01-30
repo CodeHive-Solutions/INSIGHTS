@@ -19,6 +19,7 @@ import { Collapse } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
+import AddIcon from "@mui/icons-material/Add";
 
 const MediaCard = ({ img, handleOpenVacancy }) => {
     return (
@@ -46,14 +47,47 @@ const Vacancies = () => {
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
     const [image, setImage] = useState();
-    const [vacancyName, setVacancyName] = useState();
+    const [vacancyId, setVacancyId] = useState();
     const [openCollapse, setOpenCollapse] = useState(false);
     const [openAddVacancy, setOpenAddVacancy] = useState(false);
     const nameAddVacancy = useRef();
-    const emailRef = useRef();
-    const [fileImage, setFileImage] = useState("Subir Imagen");
-    const [imageName, setImageName] = useState("");
+    const nameRef = useRef();
+    const phoneNumberRef = useRef();
+    const [fileImage, setFileImage] = useState();
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const addPermission = permissions.includes("vacancy.add_vacancy");
+    const [vacancies, setVacancies] = useState([{}]);
+    const [imageName, setImageName] = useState("Subir Imagen");
+    const [vacancyDescription, setVacancyDescription] = useState(
+        "Si desea aplicar a esta vacante, de click en el botón de confirmar, tus datos serán enviados automáticamente al area de selección para presentar tu postulación."
+    );
+
+    const getVacancies = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}vacancy/vacancy/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error);
+            }
+
+            if (response.status === 200) {
+                setVacancies(data);
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+            setOpenCollapse(false);
+            setOpenVacancy(false);
+        }
+    };
+
     useEffect(() => {
+        getVacancies();
         window.scrollTo(0, 0);
     }, []);
 
@@ -69,36 +103,42 @@ const Vacancies = () => {
         width: 1,
     });
 
-    const getDataUrl = (img) => {
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        return canvas.toDataURL("image/png");
-    };
-
-    const constructImage = (refer) => {
-        const img = new Image();
-        console.log(image);
-        img.src = image;
-        img.onload = () => {
-            const imageData = getDataUrl(img);
-            if (!refer) {
-                submitReferVacancy(imageData);
-            } else {
-                submitApplyVacancy(imageData);
-            }
-        };
-    };
-
-    const submitReferVacancy = async (imageData) => {
+    const submitReferVacancy = async () => {
         const formData = new FormData();
-        formData.append("image", imageData);
-        formData.append("vacancy_name", vacancyName);
-        formData.append("email", emailRef.current.value);
+        formData.append("vacancy", vacancyId);
+        formData.append("phone_number", phoneNumberRef.current.value);
+        formData.append("name", nameRef.current.value);
         try {
-            const response = await fetch(`${getApiUrl()}vacancy/send/`, {
+            const response = await fetch(`${getApiUrl()}vacancy/reference/`, {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error);
+            }
+
+            if (response.status === 200) {
+                showSnack("success", "La información de la vacante ha sido enviada correctamente.");
+                setOpenVacancy(false);
+                setOpenCollapse(false);
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+            setOpenCollapse(false);
+            setOpenVacancy(false);
+        }
+    };
+
+    const submitApplyVacancy = async () => {
+        const formData = new FormData();
+        formData.append("vacancy", vacancyId);
+        try {
+            const response = await fetch(`${getApiUrl()}vacancy/apply/`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
@@ -121,34 +161,6 @@ const Vacancies = () => {
         }
     };
 
-    const submitApplyVacancy = async (imageData) => {
-        const formData = new FormData();
-        formData.append("image", imageData);
-        formData.append("vacancy", vacancyName);
-        try {
-            const response = await fetch(`${getApiUrl()}vacancy/`, {
-                method: "POST",
-                body: formData,
-                credentials: "include",
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error);
-            }
-
-            if (response.status === 200) {
-                showSnack("success", "La información de la vacante ha sido enviada correctamente.");
-                setOpenVacancy(false);
-            }
-        } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
-            setOpenVacancy(false);
-        }
-    };
-
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
         setMessage(message);
@@ -158,32 +170,75 @@ const Vacancies = () => {
         }
     };
 
-    const handleCloseVacancy = () => setOpenVacancy(false);
+    const handleCloseVacancy = () => {
+        setOpenVacancy(false);
+        setOpenCollapse(false);
+    };
+
     const handleCloseAddVacancy = () => {
         setOpenAddVacancy(false);
         setFileImage(null);
         setImageName("Cargar Imagen");
     };
 
-    const submitAddVacancy = () => {
-        constructImage(true);
-        setOpenAddVacancy(false);
+    const submitAddVacancy = async () => {
+        const formData = new FormData();
+        formData.append("vacancy_name", nameAddVacancy.current.value);
+        formData.append("image", fileImage);
+        try {
+            const response = fetch(`${getApiUrl()}vacancy/vacancy/`, {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data);
+            }
+
+            if (response.status === 201) {
+                showSnack("success", "La vacante ha sido añadida correctamente.");
+                setOpenAddVacancy(false);
+                setFileImage(null);
+                setImageName("Cargar Imagen");
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+            setFileImage(null);
+            setImageName("Cargar Imagen");
+            setOpenAddVacancy(false);
+        }
     };
 
-    const handleOpenVacancy = (img, vacancyName) => {
+    const handleOpenVacancy = (img, vacancyName, vacancyId) => {
         setImage(img);
-        setVacancyName(vacancyName);
+        setVacancyId(vacancyId);
         setOpenVacancy(true);
     };
 
     const handleOpenAddVacancy = () => setOpenAddVacancy(true);
 
     const handleCloseSnack = () => setOpenSnack(false);
-    const handleOpenCollapse = () => setOpenCollapse(!openCollapse);
+    const handleOpenCollapse = () => {
+        setOpenCollapse(true);
+        setVacancyDescription(
+            "Si estás interesado en postular un referido a esta vacante, llena los datos que se solicitan, estos serán enviados automáticamente al área de selección."
+        );
+    };
+
+    const handleCloseCollapse = () => {
+        setOpenCollapse(false);
+        setVacancyDescription(
+            "Si desea aplicar a esta vacante, de click en el botón de confirmar, tus datos serán enviados automáticamente al area de selección para presentar tu postulación."
+        );
+    };
 
     const handleFileInputChange = (event) => {
         setImageName(event.target.files[0].name);
-        setSelectedFile(event.target.files[0]);
+        setFileImage(event.target.files[0]);
     };
 
     return (
@@ -193,6 +248,7 @@ const Vacancies = () => {
                     height: "max-content",
                     width: "100%",
                     display: "flex",
+                    gap: "1rem",
                     justifyContent: "center",
                     alignItems: "center",
                     flexDirection: "column",
@@ -202,14 +258,21 @@ const Vacancies = () => {
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                     Vacantes disponibles
                 </Typography>
-                <Button onClick={handleOpenAddVacancy}>Añadir</Button>
+                {addPermission && (
+                    <Button variant="contained" startIcon={<AddIcon></AddIcon>} onClick={handleOpenAddVacancy}>
+                        Añadir
+                    </Button>
+                )}
                 <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
-                    <MediaCard handleOpenVacancy={() => handleOpenVacancy(asesorComercialVacante, "Asesor Comercial")} img={asesorComercialVacante}></MediaCard>
-                    <MediaCard handleOpenVacancy={() => handleOpenVacancy(asesorNegociacionVacante, "Asesor de Negociación")} img={asesorNegociacionVacante}></MediaCard>
-                    <MediaCard
-                        handleOpenVacancy={() => handleOpenVacancy(asesorNegociacionSinExperienciaVacante, "Asesor de Negociación Sin Experiencia")}
-                        img={asesorNegociacionSinExperienciaVacante}
-                    ></MediaCard>
+                    {vacancies.map((vacancy, index) => {
+                        return (
+                            <MediaCard
+                                key={index}
+                                handleOpenVacancy={() => handleOpenVacancy(vacancy.image, vacancy.vacancy_name, vacancy.id)}
+                                img={vacancy.image}
+                            ></MediaCard>
+                        );
+                    })}
                 </Box>
             </Container>
             <Dialog open={openAddVacancy} onClose={handleCloseAddVacancy} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
@@ -217,14 +280,14 @@ const Vacancies = () => {
 
                 <Box sx={{ flexDirection: "column", p: "1rem 1.5rem ", display: "flex", alignItems: "start" }}>
                     <TextField inputRef={nameAddVacancy} sx={{ width: "400px", mb: "1rem" }} label="Nombre de la Vacante"></TextField>
-                    <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "270px" }}>
+                    <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "400px" }}>
                         <Button sx={{ width: "100%", overflow: "hidden" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
-                            {fileImage}
+                            {imageName}
                             <VisuallyHiddenInput
                                 id="file"
                                 name="file"
                                 type="file"
-                                accept=".pdf, .xlsx"
+                                accept=".jpg, .png, .jpeg, .webp"
                                 onChange={
                                     handleFileInputChange
                                     // Formik doesn't automatically handle file inputs, so we need to manually
@@ -243,16 +306,14 @@ const Vacancies = () => {
             <Dialog open={openVacancy} onClose={handleCloseVacancy} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Desea aplicar a esta vacante?"}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText id="alert-dialog-description">
-                        Si desea aplicar a esta vacante, de click en el botón de confirmar, tus datos serán enviados automáticamente al area de selección para presentar
-                        tu postulación.
-                    </DialogContentText>
+                    <DialogContentText id="alert-dialog-description">{vacancyDescription}</DialogContentText>
                 </DialogContent>
                 <Collapse in={openCollapse}>
                     <Box sx={{ flexDirection: "column", p: "1rem 1.5rem ", display: "flex", alignItems: "start" }}>
-                        <TextField inputRef={emailRef} sx={{ width: "400px", mb: "1rem" }} label="Correo electrónico de la persona a referir"></TextField>
+                        <TextField inputRef={nameRef} sx={{ width: "400px", mb: "1rem" }} label="Nombre del referido"></TextField>
+                        <TextField inputRef={phoneNumberRef} sx={{ width: "400px", mb: "1rem" }} label="Numero de celular del referido"></TextField>
                         <Box sx={{ display: "flex", gap: "2rem" }}>
-                            <Button onClick={handleOpenCollapse}>Cancelar</Button>
+                            <Button onClick={handleCloseCollapse}>Cancelar</Button>
                             <Button onClick={submitReferVacancy}>Enviar</Button>
                         </Box>
                     </Box>
@@ -261,7 +322,7 @@ const Vacancies = () => {
                     <DialogActions>
                         <Button onClick={handleCloseVacancy}>Cancelar</Button>
                         <Button onClick={handleOpenCollapse}>Referir a un conocido</Button>
-                        <Button onClick={constructImage}>Confirmar</Button>
+                        <Button onClick={submitApplyVacancy}>Confirmar</Button>
                     </DialogActions>
                 </Collapse>
             </Dialog>

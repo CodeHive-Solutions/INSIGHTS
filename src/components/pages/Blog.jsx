@@ -17,14 +17,6 @@ import article5 from "../../images/blog/article5.jpg";
 import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
 import carteraPropia from "../../images/blog/cartera-propia.jpg";
 
-const homeImages = [
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
-];
-
 const MediaCard = ({ title, subtitle, img, articleId }) => {
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -89,9 +81,15 @@ const Blog = () => {
                 Blog
             </Typography>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
-                <MediaCard
+                {/* <MediaCard
                     title={"Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO"}
                     subtitle={"Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO"}
+                    img={carteraPropia}
+                    articleId={7}
+                ></MediaCard> */}
+                <MediaCard
+                    title={"Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO"}
+                    subtitle={"Cartera Propia en C&C: Innovación y Experiencia en Recuperación de Cartera"}
                     img={carteraPropia}
                     articleId={7}
                 ></MediaCard>

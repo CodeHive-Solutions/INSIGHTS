@@ -5,6 +5,8 @@ from .views import SGCFileViewSet, SGCFileDownloadViewSet
 
 router = DefaultRouter()
 router.register("", SGCFileViewSet, basename="SGCFile")
+# router.register("areas", SGCFileViewSet, basename="SGCArea")
+
 
 urlpatterns = [
     path("", include(router.urls)),

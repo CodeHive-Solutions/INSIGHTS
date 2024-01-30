@@ -22,13 +22,12 @@ class Reference(models.Model):
     made_by = models.ForeignKey(
         "users.User", related_name="references", on_delete=models.DO_NOTHING
     )
-    refer_to = models.CharField(max_length=100)
-    email = models.EmailField(max_length=100)
-    phone = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    phone_number = models.CharField(max_length=100)
     vacancy = models.ForeignKey(
         Vacancy, related_name="references", on_delete=models.DO_NOTHING
     )
 
     def __str__(self):
         """This method returns a string representation of the reference."""
-        return str(self.refer_to)
+        return str(self.name)

@@ -1,37 +1,32 @@
 """This file contains the models for the SGC app."""
 import logging
+import magic
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
-import magic
 
 
 def file_content_validator(value):
     """Validates that the uploaded file is valid."""
-    valid_types = [
-        "Microsoft Word 2007+",
-        "PDF document",
-        "Microsoft PowerPoint 2007+",
-        "Microsoft Excel 2007+",
-        "Microsoft Word 97-2003",
-    ]
-    if value.size > 10000000:
-        raise ValidationError("El archivo no puede pesar mas de 10MB")
-    mime = magic.Magic()
-    file_type = mime.from_buffer(value.read())  # Read a small portion of the file
-    value.seek(0)  # Reset the file pointer to the beginning for further use
+    # print("Validating file content")
 
-    if not file_type in valid_types:
-        raise ValidationError(
-            "Formato de archivo no válido. Se aceptan los siguientes tipos: .docx, .pdf, .pptx, .xlsx, .doc"
-        )
+
+class SGCArea(models.Model):
+    """Model for the SGC areas."""
+
+    short_name = models.CharField(max_length=20)
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        """String representation of the model."""
+        return str(self.name)
 
 
 class SGCFile(models.Model):
     """Model for the SGC files."""
 
     name = models.CharField(max_length=200)
-    area = models.CharField(max_length=100)
+    area = models.ForeignKey(SGCArea, on_delete=models.CASCADE)
     type = models.CharField(max_length=100)
     sub_type = models.CharField(max_length=100)
     version = models.CharField(max_length=100, default="1.0")
@@ -39,7 +34,7 @@ class SGCFile(models.Model):
         upload_to="files/SGC/",
         validators=[
             FileExtensionValidator(["xlsx", "pdf", "docx", "doc", "pptx"]),
-            file_content_validator,
+            # file_content_validator,
         ],
     )
 

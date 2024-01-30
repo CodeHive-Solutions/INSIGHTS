@@ -1,6 +1,4 @@
-import 
-
-.waveWrapper{
+import .waveWrapper {
     position: relative;
     width: 100%;
     height: 50vh;
@@ -8,17 +6,17 @@ import
     overflow: hidden;
 }
 
-.wave{
+.wave {
     position: absolute;
     bottom: 50vh;
     left: 0;
     width: 100%;
     height: 100px;
-    background: url(./images/ethical-line/wave.png); 
-    background-size: 1000px 100px;   
+    background: url(./images/ethical-line/wave.png);
+    background-size: 1000px 100px;
 }
 
-.wave1{
+.wave1 {
     animation: animate 30s linear infinite;
     z-index: 1000;
     opacity: 1;
@@ -27,15 +25,16 @@ import
 }
 
 @keyframes animate {
-    0%{
+    0% {
         background-position-x: 0;
     }
-    100%{
+
+    100% {
         background-position-x: 1000px;
     }
 }
 
-.wave2{
+.wave2 {
     animation: animate2 15s linear infinite;
     z-index: 999;
     opacity: 0.5;
@@ -44,15 +43,16 @@ import
 }
 
 @keyframes animate2 {
-    0%{
+    0% {
         background-position-x: 0;
     }
-    100%{
+
+    100% {
         background-position-x: -1000px;
     }
 }
 
-.wave3{
+.wave3 {
     animation: animate 30s linear infinite;
     z-index: 999;
     opacity: 0.2;
@@ -67,6 +67,7 @@ import
     animation-delay: -5s;
     bottom: 50vh;
 }
+
 .card-slider-container {
     display: flex;
     align-items: center;
