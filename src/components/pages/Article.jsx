@@ -22,14 +22,9 @@ import bancoSantander from "../../images/blog/banco-santander.png";
 import cooperativaMinutodeDios from "../../images/blog/cooperativa-minuto-de-dios.png";
 import nuBank from "../../images/blog/nubank.png";
 import carteraPropiaLogo from "../../images/blog/cartera-propia-logo.png";
-
-const homeImages = [
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image8.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image9.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image7.avif?raw=true" },
-    { image: "https://github.com/S-e-b-a-s/images/blob/main/image6.avif?raw=true" },
-];
-
+import ciberseguridad2 from "../../images/blog/ciberseguridad-2.jpg";
+import bienestar2 from "../../images/blog/bienestar-2.jpg";
+import bienestar3 from "../../images/blog/bienestar-3.jpg";
 const ArticlePage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -57,16 +52,16 @@ const ArticlePage = () => {
                         Estamos encantados de tener a bordo a El Libertador del grupo Seguros Bolívar, NuBank, Cooperativa Minuto de Dios, Banco Santander y nuestra
                         propia campaña interna.
                     </p>
+                    <b>Cartera propia:</b> Nuestra cartera propia interna es un testimonio de nuestro compromiso con la innovación y la mejora continua. Esta iniciativa
+                    nos permitirá explorar nuevas estrategias y enfoques para ofrecer un servicio excepcional a nuestros clientes.
+                    <div style={{ textAlign: "center", padding: "2rem" }}>
+                        <img style={{ borderRadius: "8px" }} width="300" src={carteraPropiaLogo} alt="" />
+                    </div>
                     <b>El Libertador:</b> Por parte del grupo Seguros Bolivar presentamos a la campaña el Libertador con una reputación sólida y una amplia gama de
                     servicios, siendo uno de los nombres de confianza en el sector de seguros. Estamos emocionados de trabajar con ellos y ofrecer servicios de BPO de
                     alta calidad para mejorar aún más su eficiencia operativa.
                     <div style={{ textAlign: "center", padding: "2rem" }}>
-                        <img style={{ borderRadius: "8px" }} width="500" src={elLibertador} alt="" />
-                    </div>
-                    <b>Cartera propia:</b> Nuestra cartera propia interna es un testimonio de nuestro compromiso con la innovación y la mejora continua. Esta iniciativa
-                    nos permitirá explorar nuevas estrategias y enfoques para ofrecer un servicio excepcional a nuestros clientes.
-                    <div style={{ textAlign: "center", padding: "2rem" }}>
-                        <img style={{ borderRadius: "8px" }} width="500" src={carteraPropiaLogo} alt="" />
+                        <img style={{ borderRadius: "8px" }} width="400" src={elLibertador} alt="" />
                     </div>
                     <b>NuBank:</b> Como uno de los bancos digitales más grandes y de más rápido crecimiento, NuBank está revolucionando el sector financiero. Estamos
                     ansiosos por apoyar su crecimiento y ayudarles a ofrecer una experiencia bancaria sin problemas a sus clientes.
@@ -115,6 +110,10 @@ const ArticlePage = () => {
                         preservar esta confianza. En un mundo cada vez más interconectado, las amenazas cibernéticas son una realidad constante. Desde intentos de acceso
                         no autorizado hasta la manipulación de datos, nos enfrentamos a desafíos que requieren una preparación y respuesta efectivas.
                     </p>
+
+                    <div style={{ textAlign: "center" }}>
+                        <img style={{ borderRadius: "8px" }} width="700" src={ciberseguridad2} alt="" />
+                    </div>
 
                     <h2>Compromiso de C&C Services con la Ciberseguridad</h2>
 
@@ -167,38 +166,17 @@ const ArticlePage = () => {
             img: bienestar,
             content: (
                 <article>
+                    <h1>C&C Services: Priorizando el Bienestar Integral de los Empleados</h1>
                     <p>
-                        En el mundo empresarial actual, el bienestar laboral se ha convertido en un pilar fundamental para garantizar la productividad, la satisfacción
-                        del empleado y un ambiente laboral saludable. En este contexto, emprelíderes como C&C Services han ido más allá de lo convencional, marcando pauta
-                        en la implementación de programas innovadores de bienestar que transforman la experiencia laboral de sus colaboradores.
+                        C&C Services se ha convertido en un referente en el ámbito empresarial al priorizar el bienestar integral de sus empleados. Han desarrollado una
+                        estrategia integral que abarca desde el bienestar físico, promoviendo la actividad física con membresías en gimnasios y clases de yoga, hasta el
+                        apoyo emocional, ofreciendo acceso a asesoramiento psicológico y sesiones de mindfulness.
                     </p>
-
                     <p>
-                        C&C Services ha desarrollado una estrategia integral para cuidar el bienestar de sus empleados. Esto se refleja en programas que abarcan desde el
-                        bienestar físico hasta el apoyo emocional. La empresa promueve activamente la actividad física mediante la provisión de membresías en gimnasios
-                        locales y la organización de clases de yoga semanales en sus instalaciones.
+                        La flexibilidad laboral es otro aspecto clave, permitiendo horarios flexibles y fomentando el trabajo remoto. Además, la empresa tiene una cultura
+                        de apoyo y reconocimiento, reflejada en los programas de premios por desempeño destacado y las oportunidades de desarrollo profesional.
                     </p>
-
-                    <p>
-                        Además, la salud mental es una prioridad en C&C Services. Han implementado políticas que ofrecen acceso a asesoramiento psicológico confidencial,
-                        así como sesiones regulares de mindfulness para ayudar a los empleados a manejar el estrés y mejorar su bienestar emocional.
-                    </p>
-
-                    <p>
-                        La flexibilidad laboral es otro pilar en la estrategia de bienestar de la empresa. Reconociendo la importancia del equilibrio entre el trabajo y
-                        la vida personal, se permiten horarios flexibles y se fomenta el trabajo remoto cuando sea posible.
-                    </p>
-
-                    <p>
-                        Esta cultura de apoyo y reconocimiento se refleja en los programas de premios por desempeño destacado, así como en las oportunidades de desarrollo
-                        profesional que se ofrecen a los empleados de C&C Services.
-                    </p>
-
-                    <p>
-                        En resumen, C&C Services se ha convertido en un referente en el ámbito empresarial al priorizar el bienestar integral de sus empleados. Su enfoque
-                        estratégico y proactivo hacia el bienestar físico, mental y emocional ha demostrado ser un motor clave para una fuerza laboral productiva y
-                        satisfecha.
-                    </p>
+                    <p>Este enfoque estratégico y proactivo hacia el bienestar ha demostrado ser un motor clave para una fuerza laboral productiva y satisfecha.</p>
                 </article>
             ),
         },
@@ -350,31 +328,32 @@ const ArticlePage = () => {
         },
         {
             id: 7,
-            title: "Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO",
+            title: "Cartera Propia en C&C: Innovación y Experiencia en Recuperación de Cartera",
             subtitle: "Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO",
             img: carteraPropia,
             content: (
                 <div>
-                    <h1>¿Por qué campaña propia?</h1>
+                    <h1></h1>
+
                     <p>
-                        C&amp;C a través del tiempo se ha caracterizado por ser una empresa de recuperación de cartera de grandes portafolios como CLARO, BANCO FALABELA,
-                        METLIFE, entre otros. Para el 2024, se inicia una aventura de la primera compra de cartera con el objetivo de ganar experiencia y abrir el mercado
-                        de portafolios propios.
+                        A lo largo del tiempo, C&C se ha destacado como una empresa especializada en la recuperación de cartera de grandes portafolios, tales como CLARO,
+                        BANCO FALABELLA, entre otros. En el año 2024, emprendemos una nueva fase al realizar nuestra primera compra de cartera, buscando sumar experiencia
+                        y ampliar Nuestros mercados.
                     </p>
+
                     <p>
-                        C&amp;C, al adquirir una campaña propia, logra posicionarse como uno de los call centers con más experiencia en el mercado, garantizando a
-                        nuestros clientes un aliado estratégico para los planes y metas de sus campañas. Esta campaña al interior de la compañía juega un rol importante
-                        para la parte financiera, tecnológica y de gestión humana, ya que se logra potencializar cada una de las áreas para ser un aliado más compacto
-                        para nuestros clientes.
+                        Esta campaña juega un papel crucial en los aspectos financiero, tecnológico y de gestión humana de la compañía. Potenciamos cada área interna para
+                        ser un aliado más sólido y eficiente para nuestros clientes.
                     </p>
+
                     <div style={{ textAlign: "center" }}>
                         <img style={{ borderRadius: "8px" }} width="700" src={carteraPropia2} />
                     </div>
-                    <h2>¿Qué es campaña propia?</h2>
+                    <h2>¿En qué consiste la cartera propia?</h2>
+
                     <p>
-                        La campaña propia es un conjunto de clientes que se encontraban en mora con sus respectivas entidades bancarias. Estos clientes presentan una edad
-                        de mora mayor a los 400 días de castigo y/o son clientes que son renuentes al pago y la deuda, motivo por el cual la entidad decide vender esta
-                        deuda a casas externas y recuperar una parte del valor adeudado.
+                        Se trata de un conjunto de clientes que han caído en mora alta con entidades bancarias y/o mostrando renuencia al pago. Estos casos llevan a las
+                        entidades a vender la deuda a terceros, permitiéndoles recuperar parte del valor adeudado.
                     </p>
                 </div>
             ),

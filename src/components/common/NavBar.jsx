@@ -1,28 +1,20 @@
 import { React, useState, useEffect } from "react";
 import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover, Dialog } from "@mui/material";
-import PersonAdd from "@mui/icons-material/PersonAdd";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import RequestPageIcon from "@mui/icons-material/RequestPage";
 import FeedIcon from "@mui/icons-material/Feed";
 import { useMediaQuery } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import HomeIcon from "@mui/icons-material/Home";
-import InfoIcon from "@mui/icons-material/Info";
-import ChecklistIcon from "@mui/icons-material/Checklist";
-import ArticleIcon from "@mui/icons-material/Article";
-import FolderZipIcon from "@mui/icons-material/FolderZip";
 import { useNavigate, useMatch } from "react-router-dom";
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
 import SnackbarAlert from "./SnackBarAlert";
 import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import FeedbackIcon from "@mui/icons-material/Feedback";
 import Goals from "../shared/Goals";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import { getApiUrl } from "../../assets/getApi";
 import PolicyIcon from "@mui/icons-material/Policy";
-import Sidebar from "../common/Sidebar";
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -31,14 +23,14 @@ const Navbar = () => {
     const openMenu = Boolean(anchorElMenu);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
-    const [isSidebarOpen, setSidebarOpen] = useState(false);
     const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+    const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713;
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -78,7 +70,6 @@ const Navbar = () => {
 
     useEffect(() => {
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
-        console.log(permissions);
         // Check if the item has expired
         if (refreshTimer === null || refreshTimer.expiry < new Date().getTime()) {
             refreshToken(refreshTimer);
@@ -326,19 +317,12 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {/* <MenuItem onClick={handleClose}>
-                    <Avatar /> Perfil
-                </MenuItem>
-                <MenuItem onClick={handleClose}>
-                    <Avatar /> Mi cuenta
-                </MenuItem> */}
-                <MenuItem onClick={handleOpenDialog}>
+                {/* <MenuItem onClick={handleOpenDialog}>
                     <ListItemIcon>
                         <FlagIcon fontSize="small" />
                     </ListItemIcon>
                     Mi Meta
-                </MenuItem>
-                <Divider />
+                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -455,12 +439,14 @@ const Navbar = () => {
             >
                 <Box onMouseLeave={handleCloseUtils}>
                     {/* {permissions && permissions.includes()} */}
-                    <MenuItem onClick={() => navigate("/logged/goals-stats")}>
-                        <ListItemIcon>
-                            <FlagIcon fontSize="small" />
-                        </ListItemIcon>
-                        Análisis de Metas
-                    </MenuItem>
+                    {goalsStatsPermission ? (
+                        <MenuItem onClick={() => navigate("/logged/goals-stats")}>
+                            <ListItemIcon>
+                                <FlagIcon fontSize="small" />
+                            </ListItemIcon>
+                            Análisis de Metas
+                        </MenuItem>
+                    ) : null}
                     {permissions && permissions.includes("users.upload_robinson_list") ? (
                         <MenuItem onClick={() => navigate("/logged/upload-files")}>
                             <ListItemIcon>
@@ -485,9 +471,17 @@ const Navbar = () => {
                             Contratos y Pólizas Legales
                         </MenuItem>
                     ) : null}
+                    {permissions && permissions.includes("vacancy.view_reference") ? (
+                        <MenuItem onClick={() => navigate("/logged/vacancies-referred")}>
+                            <ListItemIcon>
+                                <ForwardToInboxIcon fontSize="small" />
+                            </ListItemIcon>
+                            Vacantes Referidas
+                        </MenuItem>
+                    ) : null}
                 </Box>
             </Menu>
-            <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} />
+            {/* <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} /> */}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

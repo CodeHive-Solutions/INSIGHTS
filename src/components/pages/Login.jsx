@@ -88,6 +88,7 @@ const Login = () => {
                     })
                 );
                 localStorage.setItem("permissions", JSON.stringify(data.permissions));
+                localStorage.setItem("cedula", JSON.stringify(data.cedula));
                 navigate("/logged/home");
             }
         } catch (error) {
@@ -139,9 +140,7 @@ const Login = () => {
                         height: "30%",
                         paddingRight: "15px",
                     }}
-                >
-                    <Typography variant="subtitle2">INSIGHTS</Typography>
-                </Box>
+                ></Box>
                 <Formik initialValues={{ username: "", password: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     <Form>
                         <Box

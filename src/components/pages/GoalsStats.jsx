@@ -45,7 +45,7 @@ const AnalisisMetas = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch(`https://insights-api-dev.cyc-bpo.com/goals/`, {
+            const response = await fetch(`${getApiUrl()}goals`, {
                 method: "GET",
             });
 
@@ -581,12 +581,9 @@ const AnalisisMetas = () => {
     const handleFilter = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch(
-                `https://insights-api-dev.cyc-bpo.com/goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`,
-                {
-                    method: "GET",
-                }
-            );
+            const response = await fetch(`${getApiUrl()}goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`, {
+                method: "GET",
+            });
 
             if (!response.ok) {
                 if (response.status === 500) {

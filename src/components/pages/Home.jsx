@@ -17,10 +17,13 @@ import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png
 import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import raac from "../../images/home-carousel/raac-1280-720.png";
+import noBirthday from "../../images/birthdays/no-birthdays.png";
+import noBirthday2 from "../../images/birthdays/no-birthdays-2.jpg";
+import cake from "../../images/birthdays/cake.png";
+import chiguiro from "../../images/home-carousel/chiguiro.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
-const homeImages = [{ image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }];
-
+const homeImages = [{ image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }, { image: chiguiro }];
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
@@ -198,28 +201,64 @@ const Home = () => {
                     Cumpleaños
                 </Typography>
                 <Typography sx={{ color: "gray", display: "flex", width: "50%", justifyContent: "center", padding: "1em", fontWeight: 500, fontSize: "16px" }}>
-                    ¡Feliz cumpleaños a nuestros brillantes compañeros que llenan nuestros días de alegría y éxito! 🎂🎈
+                    ¡Feliz cumpleaños a nuestros queridos colaboradores que nos llenan de alegría y éxito! 🎉🎂{" "}
                 </Typography>
             </Box>
             <Grow in={inView}>
                 <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {yesterdayBirthdays.length === 0 ? (
-                            noBirthdays("No hubo cumpleaños ayer")
+                            <>
+                                <img src={cake}></img>
+                                <Box
+                                    sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
+                                >
+                                    <Typography variant="h6" color="gray">
+                                        Ayer no hubo cumpleaños
+                                    </Typography>
+                                    <Typography variant="body" color="gray">
+                                        ¡Pero siempre hay espacio para una sonrisa!
+                                    </Typography>
+                                </Box>
+                            </>
                         ) : (
                             <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
                         )}
                     </Card>
-                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {todayBirthdays.length === 0 ? (
-                            noBirthdays("No hay cumpleaños hoy")
+                            <>
+                                <img src={cake}></img>
+                                <Box
+                                    sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
+                                >
+                                    <Typography variant="h6" color="gray">
+                                        Hoy no hay cumpleaños
+                                    </Typography>
+                                    <Typography variant="body" color="gray">
+                                        ¡Pero siempre hay espacio para una sonrisa!
+                                    </Typography>
+                                </Box>
+                            </>
                         ) : (
-                            <CarouselComponent items={todayBirthdays} description={"hola"} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
-                    <Card sx={{ maxWidth: 350, width: 350, height: 650 }}>
+                    <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {tomorrowBirthdays.length === 0 ? (
-                            noBirthdays("No hay cumpleaños mañana")
+                            <>
+                                <img src={cake}></img>
+                                <Box
+                                    sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
+                                >
+                                    <Typography variant="h6" color="gray">
+                                        Mañana no hay cumpleaños
+                                    </Typography>
+                                    <Typography variant="body" color="gray">
+                                        ¡Pero siempre hay espacio para una sonrisa!
+                                    </Typography>
+                                </Box>
+                            </>
                         ) : (
                             <CarouselComponent items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
                         )}

@@ -23,7 +23,6 @@ function Item(props) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log(props.item.image);
         if (props.item.image.includes("vacancies")) {
             setIsVacancy(true);
         } else if (props.item.image.includes("isos")) {
