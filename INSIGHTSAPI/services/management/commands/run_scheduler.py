@@ -24,8 +24,7 @@ class Command(BaseCommand):
             and options["production"]
             and options["production"][0] == "True"
         ):
-            # to_email = ["DIEGO.GONZALEZ@CYC-BPO.COM"]
-            to_email = ["heibert.mogollon1@cyc-bpo.com"]
+            to_email = ["DIEGO.GONZALEZ@CYC-BPO.COM", "MELIDA.SANDOVAL@CYC-BPO.COM"]
         else:
             to_email = ["heibert.mogollon@cyc-bpo.com"]
         target_date_30 = timezone.now() + timedelta(days=30)

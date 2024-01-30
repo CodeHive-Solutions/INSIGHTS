@@ -188,12 +188,15 @@ class TestSGC(BaseTestCase):
 
     def test_massive_update(self):
         """Test massive update"""
+        SGCArea.objects.first().delete()
         response = self.client.get(
             reverse("massive-update"),
             format="multipart",
             cookies=self.client.cookies,
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertGreater(SGCFile.objects.count(), 0)
+        self.assertEqual(response.data["message"], "Archivos creados")
 
     def tearDown(self):
         """Tear down for the test"""

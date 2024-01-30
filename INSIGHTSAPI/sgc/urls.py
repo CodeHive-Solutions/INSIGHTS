@@ -10,11 +10,11 @@ router.register("", SGCFileViewSet, basename="SGCFile")
 
 
 urlpatterns = [
-    path("", include(router.urls)),
+    # path("", include(router.urls)),
     path(
         "file-download/sgc/<int:pk>/",
         SGCFileDownloadViewSet.as_view({"get": "get"}),
         name="sgc_file_download",
     ),
-    # path("massive-update/", massive_update, name="massive-update"),
+    path("massive-update/", massive_update, name="massive-update"),
 ]

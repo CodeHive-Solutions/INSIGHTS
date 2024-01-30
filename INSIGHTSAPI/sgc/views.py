@@ -51,7 +51,7 @@ def massive_update(request):
         areas = cursor.fetchall()
         for area in areas:
             SGCArea.objects.get_or_create(
-                id=area["id_area_sgc"],
+                pk=area["id_area_sgc"],
                 short_name=area["nombre_area"],
                 name=area["nombrec_area"],
             )
@@ -68,27 +68,28 @@ def massive_update(request):
             11: "CR",
         }
         for row in rows:
-            # row["name"] = fix_text(row["name"])
-            row["name"] = slugify(row["name"])
+            fixed_text = fix_text(row["name"])
+            sluged_text = slugify(fixed_text)
+            # fixed_text = row["name"]
             row["type"] = types_dict.get(row["type"])
             if row["tipo_documento"] == 2:
-                name = row["name"] + ".xlsx"
+                name = sluged_text + ".xlsx"
             elif row["tipo_documento"] == 1:
-                name = row["name"] + ".pdf"
+                name = sluged_text + ".pdf"
             else:
-                name = row["name"]
+                name = sluged_text
             content_file = ContentFile(row["file"], name=name)
-            sgc_files_to_create.append(
-                SGCFile(
-                    name=row["name"],
-                    area=SGCArea.objects.get(id=row["area"]),
-                    type=row["type"],
-                    sub_type=row["sub_type"],
-                    version=row["version"],
-                    file=content_file,
-                )
+            print(fixed_text)
+            SGCFile.objects.create(
+                name=fixed_text,
+                area=SGCArea.objects.get(id=row["area"]),
+                type=row["type"],
+                sub_type=row["sub_type"],
+                version=row["version"],
+                file=content_file,
             )
-        SGCFile.objects.bulk_create(sgc_files_to_create)
+            # sgc_files_to_create.append(file)
+        # SGCFile.objects.bulk_create(sgc_files_to_create)
         return Response({"message": "Archivos creados"})
     except Exception as e:
         logger.critical(e, exc_info=True)
