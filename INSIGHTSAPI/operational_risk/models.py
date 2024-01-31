@@ -1,8 +1,8 @@
-from random import choices
+"""Models for operational risk app."""
 from django.db import models
 
 
-class events(models.Model):
+class Events(models.Model):
     """Model definition for operational events."""
 
     start_date = models.DateField()
@@ -66,5 +66,6 @@ class events(models.Model):
     learning = models.CharField(max_length=200)
 
     class Meta:
-        managed = False
+        """Meta definition for Events."""
+
         db_table = "events"

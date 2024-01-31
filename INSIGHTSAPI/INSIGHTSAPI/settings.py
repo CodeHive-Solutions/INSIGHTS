@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     "services",
     "blog",
     "vacancy",
+    "operational_risk",
 ]
 
 MIDDLEWARE = [
