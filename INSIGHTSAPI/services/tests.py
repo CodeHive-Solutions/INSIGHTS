@@ -44,7 +44,7 @@ class StaticFilesTest(TestCase):
 
     def test_nonexistent_static_file(self):
         """Test that a nonexistent static file returns a 404"""
-        url = f"https://{settings.ALLOWED_HOSTS[0]}/static/services/Logo_cyc1.png"
+        url = f"https://{settings.ALLOWED_HOSTS[0]}/static/services/non_exist_file.png"
         response = requests.get(url, timeout=5)
         self.assertEqual(response.status_code, 404)
 

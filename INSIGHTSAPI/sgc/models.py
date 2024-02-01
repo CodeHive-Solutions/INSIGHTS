@@ -41,3 +41,8 @@ class SGCFile(models.Model):
     def __str__(self):
         """String representation of the model."""
         return str(self.name)
+
+    def delete(self, *args, **kwargs):
+        """Delete the file when the object is deleted."""
+        self.file.delete()
+        super().delete(*args, **kwargs)

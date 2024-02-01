@@ -265,6 +265,9 @@ const Vacancies = () => {
                         Añadir
                     </Button>
                 )}
+                <Box>
+                    <Typography color="gray">Si deseas aplicar o referir a una de nuestras de vacantes disponibles selecciona una de ellas y sigue los pasos</Typography>
+                </Box>
                 <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
                     {vacancies.map((vacancy, index) => {
                         return (

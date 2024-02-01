@@ -19,7 +19,7 @@ const Footer = () => {
                 marginTop: "15px",
                 justifyContent: "space-evenly",
                 gap: "2rem",
-            flexWrap: "wrap",
+                flexWrap: "wrap",
             }}
         >
             <Box sx={{ display: "flex", flexDirection: "Column", gap: "15px" }}>
@@ -31,7 +31,7 @@ const Footer = () => {
                     © 2010 - {new Date().getFullYear()}
                 </Typography>
                 <Box sx={{ display: "flex", gap: "1rem" }}>
-                    <WebIcon onClick={() => window.open("https://www.cyc-bpo.com/", "_blank")} sx={{ cursor: "pointer", fontSize: 25, color: "white" }} />
+                    <WebIcon onClick={() => window.open("https://cyc-bpo.com/", "_blank")} sx={{ cursor: "pointer", fontSize: 25, color: "white" }} />
                     <FacebookOutlinedIcon
                         onClick={() => window.open("https://www.facebook.com/cycservicesbpo/", "_blank")}
                         sx={{ cursor: "pointer", fontSize: 25, color: "white" }}

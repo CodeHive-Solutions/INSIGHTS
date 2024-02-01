@@ -124,9 +124,9 @@ export const Sgc = () => {
         getFiles();
     }, []);
 
-    const handleDownloadFile = (id) => {
+    const handleDownloadFile = (file) => {
         // open the link in other tab
-        window.location.href = `${getApiUrl()}services/file-download/sgc/${id}`;
+        window.location.href = file;
     };
 
     const handleCloseDialog = () => {
@@ -212,7 +212,7 @@ export const Sgc = () => {
                 });
                 const data = await response.json();
                 if (!response.ok) {
-                    throw new Error(data.detail);
+                    throw new Error(data);
                 } else if (response.status === 200) {
                     getFiles();
                     showSnack("success", "El archivo ha sido actualizado correctamente.");
@@ -378,7 +378,13 @@ export const Sgc = () => {
                 if (isInEditMode) {
                     return [
                         <>
-                            <input type="file" ref={hiddenFileInput} onChange={(event) => handleFileChange(GridRowParams.id, event)} style={{ display: "none" }} />
+                            <input
+                                type="file"
+                                accept=".docx, .pdf, .xlsx, .pptx, .doc"
+                                ref={hiddenFileInput}
+                                onChange={(event) => handleFileChange(GridRowParams.id, event)}
+                                style={{ display: "none" }}
+                            />
                             <GridActionsCellItem
                                 icon={<UploadFileIcon />}
                                 label="upload"
@@ -396,7 +402,7 @@ export const Sgc = () => {
                         <GridActionsCellItem
                             icon={<FileDownloadIcon />}
                             label="download"
-                            onClick={() => handleDownloadFile(GridRowParams.row.id)}
+                            onClick={() => handleDownloadFile(GridRowParams.row.file)}
                             sx={{
                                 "&:hover": {
                                     color: "primary.main",

@@ -82,7 +82,8 @@ const managements = [
         name: "Pablo Castañeda",
         management: "Presidente",
         image: pablo,
-        description: "",
+        description:
+            "Soy el fundador de C&C, desde muy joven soñaba con crear una empresa que pudiera impulsar el crecimiento económico de nuestro país y al mismo tiempo crear empleos de calidad para la gente que compartiera esta visión. Mis amigos más cercanos me definen como una persona emprendedora y visionaria.",
     },
     {
         name: "Cesar Garzón",
