@@ -45,6 +45,8 @@ class SGCFileSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("El archivo no puede pesar mas de 10MB")
         mime = magic.Magic()
         file_type = mime.from_buffer(value.read())  # Read a small portion of the file
+        if "PDF document" in file_type:
+            file_type = "PDF document"
         value.seek(0)  # Reset the file pointer to the beginning for further use
 
         if not file_type in valid_types:

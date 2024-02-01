@@ -7,11 +7,13 @@ from rest_framework import status
 from users.models import User
 from django.contrib.auth.models import Permission
 from django.urls import reverse
+from django.test import override_settings
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from .models import SGCFile, SGCArea
 
 
+@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
 class TestSGC(BaseTestCase):
     """Test module for SGC"""
 
@@ -39,9 +41,11 @@ class TestSGC(BaseTestCase):
         permission_delete = Permission.objects.get(codename="delete_sgcfile")
         user.user_permissions.add(permission_delete)
         user.save()
-        temp_folder = tempfile.mkdtemp()
-        self.media_directory = temp_folder
-        settings.MEDIA_ROOT = self.media_directory
+        # temp_folder = tempfile.mkdtemp()
+        # print(settings.MEDIA_ROOT)
+        self.media_directory = settings.MEDIA_ROOT
+        # settings.MEDIA_ROOT = self.media_directory
+        # print(self.media_directory)
 
     def test_get_file(self):
         """Test getting a file"""
@@ -74,7 +78,7 @@ class TestSGC(BaseTestCase):
         self.assertEqual(len(response.data), 2)
         self.assertTrue(response.data["permissions"].get("add"))
 
-    def test_create_file(self):
+    def test_create_xlsx_file(self):
         """Test creating a file"""
         response = self.client.post(
             reverse("SGCFile-list"),
@@ -86,6 +90,24 @@ class TestSGC(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         file_exist = os.path.exists(
             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
+        )
+        self.assertTrue(file_exist, os.listdir(self.media_directory))
+
+    def test_create_pdf_file(self):
+        """Test creating a file"""
+        with open("static/test/bienestar.pdf", "rb") as file:
+            file_content = file.read()
+        self.file_data["file"] = SimpleUploadedFile("bienestar.pdf", file_content)
+        response = self.client.post(
+            reverse("SGCFile-list"),
+            self.file_data,
+            format="multipart",
+            cookies=self.client.cookies,
+        )
+        # Assert that the response status code is HTTP 201 Created
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        file_exist = os.path.exists(
+            os.path.join(self.media_directory, "files/SGC/bienestar.pdf")
         )
         self.assertTrue(file_exist, os.listdir(self.media_directory))
 
@@ -166,10 +188,9 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 204 No Content
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        file_exist = os.path.exists(
-            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
-        )
-        self.assertFalse(file_exist)
+        print(file.file)
+        file_exist = os.path.exists(os.path.join(self.media_directory, str(file.file)))
+        self.assertFalse(file_exist, os.listdir(self.media_directory + "/files/SGC"))
 
     def test_delete_file_without_permission(self):
         """Test deleting a file without permission"""
@@ -200,12 +221,12 @@ class TestSGC(BaseTestCase):
 
     def tearDown(self):
         """Tear down for the test"""
-        super().tearDown()
-        if self.media_directory.startswith("/tmp"):
-            shutil.rmtree(self.media_directory)
-            # pass
-        else:
-            print(f"Not removing {self.media_directory}")
+        # super().tearDown()
+        # if self.media_directory.startswith("/tmp"):
+        # shutil.rmtree(self.media_directory)
+        # pass
+        # else:
+        # print(f"Not removing {self.media_directory}")
 
 
 # class TestSGCUpdate(BaseTestCase):
