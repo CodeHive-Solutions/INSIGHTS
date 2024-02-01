@@ -18,6 +18,8 @@ from .emails import send_email
 class BaseTestCase(APITestCase):
     """Base test case for all test cases."""
 
+    databases = ["default", "staffnet"]
+
     def setUp(self):
         """Set up the test case."""
         self.client.post(

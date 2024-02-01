@@ -2,6 +2,24 @@
 from django.db import models
 
 
+class Process(models.Model):
+    """Model definition for operational processes a look up table."""
+
+    name = models.CharField(max_length=100)
+
+
+class EventClass(models.Model):
+    """Model definition for operational event classes a look up table."""
+
+    name = models.CharField(max_length=100)
+
+
+class Level(models.Model):
+    """Model definition for operational event classes a look up table."""
+
+    name = models.CharField(max_length=100)
+
+
 class Events(models.Model):
     """Model definition for operational events."""
 
@@ -14,61 +32,18 @@ class Events(models.Model):
     quantity = models.IntegerField()
     recovered_quantity = models.IntegerField()
     recovered_quantity_by_insurance = models.IntegerField()
-    event_class = models.CharField(
-        max_length=100,
-        # choices={
-        #     "FRAUDE INTERNO",
-        #     "FRAUDE EXTERNO",
-        #     "RELACIONES LABORALES",
-        #     "CLIENTES",
-        #     "DAÑOS ACTIVOS FÍSICOS",
-        #     "FALLAS TECNOLÓGICAS",
-        #     "EJECUCIÓN Y ADMINISTRACIÓN DE PROCESOS",
-        #     "AGENTES EXTERNOS",
-        # },
-    )
+    event_class = models.ForeignKey(EventClass, on_delete=models.CASCADE)
     reported_by = models.CharField(max_length=100)
-    classification = models.CharField(max_length=100)
-    # choices={"CRITICO", "NO CRITICO"}
-    level = models.CharField(max_length=100)
-    # , choices={"ALTO", "MEDIO", "BAJO"}
+    # Also called classification
+    critical = models.BooleanField()
+    level = models.ForeignKey(Level, on_delete=models.CASCADE)
     plan = models.CharField(max_length=100)
     event = models.CharField(max_length=100)
     public_accounts_affected = models.CharField(max_length=100)
-    process = models.CharField(
-        max_length=100,
-        # choices={
-        #     "AVANTEL",
-        #     "AZTECA",
-        #     "BANCO AGRARIO",
-        #     "BAYPORT",
-        #     "CLARO",
-        #     "CLARO VENTAS",
-        #     "CONGENTE",
-        #     "COOMEVA",
-        #     "FALABELLA",
-        #     "GERENCIA ADMINISTRATIVA",
-        #     "LEGAL Y RIESGO",
-        #     "METLIFE",
-        #     "NUEVA EPS",
-        #     "PAYU",
-        #     "QUALITY",
-        #     "RECURSOS FISICOS",
-        #     "RRHH",
-        #     "SCOTIABANK COLPATRIA",
-        #     "TECNOLOGIA",
-        #     "TODOS",
-        #     "YANBAL",
-        # },
-    )
+    process = models.ForeignKey(Process, on_delete=models.CASCADE)
     lost_type = models.CharField(max_length=100)
     description = models.CharField(max_length=100)
     product_line = models.CharField(max_length=100)
     status = models.CharField(max_length=100)
     date_of_closure = models.DateField()
     learning = models.CharField(max_length=200)
-
-    class Meta:
-        """Meta definition for Events."""
-
-        db_table = "events"
