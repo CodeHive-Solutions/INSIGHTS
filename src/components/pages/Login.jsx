@@ -156,9 +156,9 @@ const Login = () => {
                                 Intranet
                             </Typography>
 
-                            <FormikTextField type="text" name="username" label="Usuario" autoComplete="off" spellCheck={false} />
+                            <FormikTextField type="text" name="username" label="Usuario de Windows" autoComplete="off" spellCheck={false} />
 
-                            <FormikTextField name="password" label="Contraseña" type="password" autoComplete="off" spellCheck={false} />
+                            <FormikTextField name="password" label="Contraseña de Windows" type="password" autoComplete="off" spellCheck={false} />
 
                             <Box sx={{ width: "330px" }}>
                                 <Link onClick={handleClick} sx={{ cursor: "pointer" }}>
@@ -166,10 +166,8 @@ const Login = () => {
                                 </Link>
                                 <Collapse in={open}>
                                     <Alert severity="info">
-                                        En caso de olvido o perdida de la contraseña contacte con tecnología para el restablecimiento de la misma en:{" "}
-                                        <a href="https://helpdesk.cyc-bpo.com/" target="_blank" rel="noreferrer noopener">
-                                            GLPI
-                                        </a>
+                                        En caso de olvido o perdida de la contraseña contacta con tu jefe a cargo para que te ayude subiendo el ticket para el
+                                        restablecimiento de la contraseña.
                                     </Alert>
                                 </Collapse>
                             </Box>

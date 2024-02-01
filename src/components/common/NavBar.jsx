@@ -15,6 +15,7 @@ import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
 import { getApiUrl } from "../../assets/getApi";
 import PolicyIcon from "@mui/icons-material/Policy";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
+import FmdBadIcon from "@mui/icons-material/FmdBad";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -30,7 +31,14 @@ const Navbar = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const cedula = JSON.parse(localStorage.getItem("cedula"));
+    const [profilePicture, setProfilePicture] = useState();
     const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713;
+    const servicesPermission =
+        permissions.includes("users.upload_robinson_list") ||
+        goalsStatsPermission ||
+        permissions.includes("excels_processing.call_transfer") ||
+        permissions.includes("contracts.view_contract") ||
+        permissions.includes("vacancy.view_reference");
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -248,22 +256,23 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-                    <Typography
-                        onMouseEnter={handleUtilitariosMenuOpen}
-                        anchorel={anchorElUtils}
-                        sx={{
-                            minWidth: 100,
-                            textAlign: "center",
-                            cursor: "pointer",
-                            borderBottom: "2px solid transparent", // Add a transparent bottom border
-                            transition: "all 0.3s ease",
-                            padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
-                            borderBottomColor: "transparent",
-                        }}
-                    >
-                        Servicios
-                    </Typography>
-
+                    {servicesPermission ? (
+                        <Typography
+                            onMouseEnter={handleUtilitariosMenuOpen}
+                            anchorel={anchorElUtils}
+                            sx={{
+                                minWidth: 100,
+                                textAlign: "center",
+                                cursor: "pointer",
+                                borderBottom: "2px solid transparent", // Add a transparent bottom border
+                                transition: "all 0.3s ease",
+                                padding: "1.5rem 0", // Adjust padding to keep text aligned with the container
+                                borderBottomColor: "transparent",
+                            }}
+                        >
+                            Servicios
+                        </Typography>
+                    ) : null}
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <Tooltip title="Mi Cuenta">
                             <IconButton
@@ -479,6 +488,12 @@ const Navbar = () => {
                             Vacantes Referidas
                         </MenuItem>
                     ) : null}
+                    <MenuItem onClick={() => navigate("/logged/risk-events")}>
+                        <ListItemIcon>
+                            <FmdBadIcon fontSize="small" />
+                        </ListItemIcon>
+                        Eventos de Riesgo Operativo
+                    </MenuItem>
                 </Box>
             </Menu>
             {/* <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} /> */}

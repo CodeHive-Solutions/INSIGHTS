@@ -69,7 +69,7 @@ const validationSchema = Yup.object().shape({
     renovation_date: Yup.string().required("Campo requerido"),
 });
 
-export const Legal = () => {
+export const RiskEvent = () => {
     const [rows, setRows] = useState([]);
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
@@ -350,9 +350,19 @@ export const Legal = () => {
 
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
-        { field: "name", headerName: "Clientes", width: 750, editable: false },
-        { field: "duration", headerName: "Duración", width: 100, editable: false },
-        { field: "start_date", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "start_date", headerName: "Clientes", width: 750, editable: false },
+        { field: "end_date", headerName: "Duración", width: 100, editable: false },
+        { field: "event_type", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "proccess", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "loss_type", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "product", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "current_state", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "close_date", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "reported_by", headerName: "Fecha Inicio", width: 100, editable: false },
+        { field: "classification", headerName: "Clasificación", width: 100, editable: false },
+        { field: "level", headerName: "Nivel", width: 100, editable: false },
+        { field: "plan", headerName: "Plan", width: 100, editable: false },
+        { field: "learning", headerName: "Aprendizaje", width: 100, editable: false },
     ];
 
     columns.push({
@@ -397,7 +407,7 @@ export const Legal = () => {
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Contratos y Pólizas Legales
+                    Eventos de Riesgo Operativo
                 </Typography>
                 <DataGrid
                     sx={{ width: "100%" }}
@@ -554,4 +564,4 @@ export const Legal = () => {
     );
 };
 
-export default Legal;
+export default RiskEvent;

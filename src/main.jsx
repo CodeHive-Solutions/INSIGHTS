@@ -25,6 +25,8 @@ import Legal from "./components/pages/Legal";
 import Vacancies from "./components/pages/Vacancies";
 import CardSlider from "./components/pages/CardSlider";
 import VacanciesReferred from "./components/pages/VacanciesReferred";
+import RiskEvents from "./components/pages/RiskEvents";
+import Test from "./components/pages/Test";
 
 const theme = createTheme({
     typography: {
@@ -67,10 +69,6 @@ const router = createBrowserRouter([
     {
         path: "ethical-line",
         element: <EthicalLine />,
-    },
-    {
-        path: "test",
-        element: <CardSlider />,
     },
     {
         path: "goal-pdf",
@@ -124,6 +122,14 @@ const router = createBrowserRouter([
             {
                 path: "vacancies-referred",
                 element: <VacanciesReferred />,
+            },
+            {
+                path: "risk-events",
+                element: <RiskEvents />,
+            },
+            {
+                path: "test",
+                element: <Test />,
             },
         ],
     },
