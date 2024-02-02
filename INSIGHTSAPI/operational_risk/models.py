@@ -7,11 +7,19 @@ class Process(models.Model):
 
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        """Return the name of the process."""
+        return str(self.name)
+
 
 class EventClass(models.Model):
     """Model definition for operational event classes a look up table."""
 
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        """Return the name of the event class."""
+        return str(self.name)
 
 
 class Level(models.Model):
@@ -19,31 +27,57 @@ class Level(models.Model):
 
     name = models.CharField(max_length=100)
 
+    def __str__(self):
+        """Return the name of the level."""
+        return str(self.name)
+
+
+class LostType(models.Model):
+    """Model definition for operational event classes a look up table."""
+
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        """Return the name of the lost type."""
+        return str(self.name)
+
+
+class ProductLine(models.Model):
+    """Model definition for operational event classes a look up table."""
+
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        """Return the name of the product line."""
+        return str(self.name)
 
 class Events(models.Model):
     """Model definition for operational events."""
 
-    start_date = models.DateField()
-    end_date = models.DateField()
-    discovery_date = models.DateField()
-    accounting_date = models.DateField()
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+    discovery_date = models.DateTimeField()
+    accounting_date = models.DateTimeField(null=True)
     currency = models.CharField(max_length=100)
-    # choices={"USD", "COP"}
     quantity = models.IntegerField()
     recovered_quantity = models.IntegerField()
     recovered_quantity_by_insurance = models.IntegerField()
-    event_class = models.ForeignKey(EventClass, on_delete=models.CASCADE)
+    event_class = models.ForeignKey(EventClass, on_delete=models.DO_NOTHING)
     reported_by = models.CharField(max_length=100)
     # Also called classification
     critical = models.BooleanField()
-    level = models.ForeignKey(Level, on_delete=models.CASCADE)
-    plan = models.CharField(max_length=100)
-    event = models.CharField(max_length=100)
-    public_accounts_affected = models.CharField(max_length=100)
-    process = models.ForeignKey(Process, on_delete=models.CASCADE)
-    lost_type = models.CharField(max_length=100)
-    description = models.CharField(max_length=100)
-    product_line = models.CharField(max_length=100)
-    status = models.CharField(max_length=100)
-    date_of_closure = models.DateField()
-    learning = models.CharField(max_length=200)
+    level = models.ForeignKey(Level, on_delete=models.DO_NOTHING, null=True)
+    plan = models.CharField(max_length=250)
+    event_title = models.CharField(max_length=250)
+    public_accounts_affected = models.CharField(max_length=250)
+    process = models.ForeignKey(Process, on_delete=models.DO_NOTHING)
+    lost_type = models.ForeignKey(LostType, on_delete=models.DO_NOTHING)
+    description = models.CharField(max_length=750)
+    product = models.ForeignKey(ProductLine, on_delete=models.DO_NOTHING)
+    date_of_closure = models.DateTimeField()
+    learning = models.CharField(max_length=500)
+    status = models.BooleanField()
+
+    def __str__(self):
+        """Return the event title."""
+        return str(self.event_title)

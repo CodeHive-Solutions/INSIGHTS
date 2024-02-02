@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import Permission
 from services.tests import BaseTestCase
 from users.models import User
-from .models import Events
+from .models import Events, EventClass, Level, Process, LostType, ProductLine
 
 
 class EventsTest(BaseTestCase):
@@ -17,33 +17,44 @@ class EventsTest(BaseTestCase):
         self.user.user_permissions.add(Permission.objects.get(codename="add_events"))
         self.user.user_permissions.add(Permission.objects.get(codename="change_events"))
         self.user.user_permissions.add(Permission.objects.get(codename="delete_events"))
+        event_class = EventClass.objects.create(name="FRAUDE INTERNO")
+        level = Level.objects.create(name="ALTO")
+        process = Process.objects.create(name="Test")
+        lost_type = LostType.objects.create(name="Test")
+        product = ProductLine.objects.create(name="Test")
         self.data = {
-            "start_date": "2020-01-01",
-            "end_date": "2020-01-01",
-            "discovery_date": "2020-01-01",
-            "accounting_date": "2020-01-01",
+            "start_date": "2020-01-01 00:00:00",
+            "end_date": "2020-01-01 00:00:00",
+            "discovery_date": "2020-01-01 00:00:00",
+            "accounting_date": "2020-01-01 00:00:00",
             "currency": "USD",
             "quantity": 1,
             "recovered_quantity": 1,
             "recovered_quantity_by_insurance": 1,
-            "event_class": "FRAUDE INTERNO",
+            "event_class": event_class,
             "reported_by": "Test",
-            "classification": "CRITICO",
-            "level": "ALTO",
+            "critical": False,
+            "level": level,
             "plan": "Test",
-            "event": "Test",
+            "event_title": "Test",
             "public_accounts_affected": "Test",
-            "process": "Test",
-            "lost_type": "Test",
+            "process": process,
+            "lost_type": lost_type,
             "description": "Test",
-            "product_line": "Test",
+            "product": product,
             "date_of_closure": "2020-01-01",
             "learning": "Test",
-            "status": "CERRADO",
+            "status": 1,
         }
+        
 
     def test_create_event(self):
         """Test create event."""
+        self.data["event_class"] = self.data["event_class"].id
+        self.data["level"] = self.data["level"].id
+        self.data["process"] = self.data["process"].id
+        self.data["lost_type"] = self.data["lost_type"].id
+        self.data["product"] = self.data["product"].id
         response = self.client.post(reverse("events-list"), self.data)
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["description"], "Test")
@@ -68,6 +79,11 @@ class EventsTest(BaseTestCase):
     def test_update_event(self):
         """Test update event."""
         event = Events.objects.create(**self.data)
+        self.data["event_class"] = self.data["event_class"].id
+        self.data["level"] = self.data["level"].id
+        self.data["process"] = self.data["process"].id
+        self.data["lost_type"] = self.data["lost_type"].id
+        self.data["product"] = self.data["product"].id
         self.data["description"] = "Test 3"
         response = self.client.patch(
             reverse("events-detail", args=[event.id]), self.data

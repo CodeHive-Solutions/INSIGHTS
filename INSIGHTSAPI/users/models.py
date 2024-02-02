@@ -52,50 +52,21 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
-        db_config = {
-            "user": "root",
-            "password": os.environ["LEYES"],
-            "host": "172.16.0.6",
-            "port": "3306",
-            "database": "userscyc",
-        }
-        connection = None
-        # Remove the email field because RH does not have the company email
-        try:
-            # I have to connect to the intranet database to get the cedula because in StaffNet there is no windows user
-            connection = mysql.connector.connect(**db_config)
-            query = "SELECT id_user FROM users WHERE user_windows = %s"
-            cursor = connection.cursor()
-            cursor.execute(query, (self.username,))
-            result = cursor.fetchone()
-            if result:
-                self.cedula = result[0]
-            elif self.username == "Zeus":
-                self.cedula = 123456789
-            else:
-                raise ValidationError(
-                    "El usuario no tiene cedula en la base de datos de la intranet"
-                )
-        except Exception as error:
-            logger.exception(error)
-            raise error
-        finally:
-            if connection:
-                connection.close()
         with connections["staffnet"].cursor() as db_connection:
             db_connection.execute(
-                "SELECT cargo,campana_general FROM employment_information WHERE cedula = %s",
-                [self.cedula],
+                "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
+                [self.username],
             )
             result = db_connection.fetchone()
-            if self.cedula == 999999999 or self.cedula == 123456789:
-                result = ("Administrador", "Administrador")
+            if str(self.username).upper() in {"ZEUS","ADMIN","STAFFNET"}:
+                result = ("00000000","Administrador", "Administrador")
             elif not result:
                 raise ValidationError(
-                    "El usuario no tiene cargo en la base de datos de staffnet"
+                    "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
                 )
-            self.job_title = result[0]
-            area, _ = Area.objects.get_or_create(name=result[1])
+            self.cedula = result[0]
+            self.job_title = result[1]
+            area, _ = Area.objects.get_or_create(name=result[2])
             self.area_id = area.id
             if not self.is_superuser:
                 self.set_unusable_password()
