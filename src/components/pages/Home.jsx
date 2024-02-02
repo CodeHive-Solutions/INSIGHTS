@@ -22,9 +22,10 @@ import noBirthday2 from "../../images/birthdays/no-birthdays-2.jpg";
 import cake from "../../images/birthdays/cake.png";
 import chiguiro from "../../images/home-carousel/chiguiro.png";
 import noCarro from "../../images/home-carousel/dia_no_carro.png";
+import cancerMama from "../../images/home-carousel/cancer-mama.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
-const homeImages = [{ image: noCarro }, { image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }, { image: chiguiro }];
+const homeImages = [{ image: cancerMama }, { image: noCarro }, { image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }];
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");

@@ -47,26 +47,20 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const validationSchema = Yup.object().shape({
-    name: Yup.string().required("Campo requerido"),
-    city: Yup.string().required("Campo requerido"),
-    description: Yup.string().required("Campo requerido"),
-    expected_start_date: Yup.string().required("Campo requerido"),
-    value: Yup.string()
-        .typeError("Valores incorrectos")
-        .required("Campo requerido")
-        .matches(/^\d{1,3}(\.\d{3})*(,\d{1,2})?$/, "Formato incorrecto. Ejemplo válido: 100.000.000,09"),
-    monthly_cost: Yup.string()
-        .typeError("Valores incorrectos")
-        .required("Campo requerido")
-        .matches(/^\d{1,3}(\.\d{3})*(,\d{1,2})?$/, "Formato incorrecto. Ejemplo válido: 100.000.000,09"),
-    duration: Yup.string().required("Campo requerido"),
-    contact: Yup.string().required("Campo requerido"),
-    contact_telephone: Yup.number().typeError("Numero de teléfono incorrecto").required("Campo requerido"),
+    id: Yup.string().required("Campo requerido"),
     start_date: Yup.string().required("Campo requerido"),
-    civil_responsibility_policy: Yup.string().required("Campo requerido"),
-    compliance_policy: Yup.string().required("Campo requerido"),
-    insurance_policy: Yup.string().required("Campo requerido"),
-    renovation_date: Yup.string().required("Campo requerido"),
+    end_date: Yup.string().required("Campo requerido"),
+    event_type: Yup.string().required("Campo requerido"),
+    process: Yup.string().required("Campo requerido"),
+    lost_type: Yup.string().required("Campo requerido"),
+    product_line: Yup.string().required("Campo requerido"),
+    current_state: Yup.string().required("Campo requerido"),
+    close_date: Yup.string().required("Campo requerido"),
+    reported_by: Yup.string().required("Campo requerido"),
+    classification: Yup.string().required("Campo requerido"),
+    level: Yup.string().required("Campo requerido"),
+    plan: Yup.string().required("Campo requerido"),
+    learning: Yup.string().required("Campo requerido"),
 });
 
 export const RiskEvent = () => {
@@ -91,7 +85,7 @@ export const RiskEvent = () => {
 
     const getPolicies = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}contracts/`, {
+            const response = await fetch(`${getApiUrl()}operational-risk/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -167,7 +161,7 @@ export const RiskEvent = () => {
 
     const handleDeleteClick = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}contracts/${id}`, {
+            const response = await fetch(`${getApiUrl()}operational-risk/${id}`, {
                 method: "delete",
                 credentials: "include",
             });
@@ -288,7 +282,17 @@ export const RiskEvent = () => {
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
         const [field, meta] = useField(props);
         const errorText = meta.error && meta.touched ? meta.error : "";
-        if (label === "Renovación del contrato") {
+        if (type === "select") {
+            return (
+                <TextField sx={{ width: "390px" }} select label={label} {...field} helperText={errorText} error={!!errorText}>
+                    {options.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                        </MenuItem>
+                    ))}
+                </TextField>
+            );
+        } else if (label === "Renovación del contrato") {
             return (
                 <TextField
                     sx={{ width: "800px" }}
@@ -303,7 +307,7 @@ export const RiskEvent = () => {
                     error={!!errorText}
                 />
             );
-        } else if (type === "date") {
+        } else if (type === "date" || type === "datetime-local") {
             return (
                 <TextField
                     InputLabelProps={{ shrink: true }}
@@ -349,20 +353,125 @@ export const RiskEvent = () => {
     };
 
     const columns = [
-        { field: "id", headerName: "ID", width: 70 },
-        { field: "start_date", headerName: "Clientes", width: 750, editable: false },
-        { field: "end_date", headerName: "Duración", width: 100, editable: false },
-        { field: "event_type", headerName: "Fecha Inicio", width: 100, editable: false },
-        { field: "proccess", headerName: "Fecha Inicio", width: 100, editable: false },
-        { field: "loss_type", headerName: "Fecha Inicio", width: 100, editable: false },
-        { field: "product", headerName: "Fecha Inicio", width: 100, editable: false },
-        { field: "current_state", headerName: "Fecha Inicio", width: 100, editable: false },
-        { field: "close_date", headerName: "Fecha Inicio", width: 100, editable: false },
-        { field: "reported_by", headerName: "Fecha Inicio", width: 100, editable: false },
-        { field: "classification", headerName: "Clasificación", width: 100, editable: false },
-        { field: "level", headerName: "Nivel", width: 100, editable: false },
-        { field: "plan", headerName: "Plan", width: 100, editable: false },
-        { field: "learning", headerName: "Aprendizaje", width: 100, editable: false },
+        { field: "id", type: "number", headerName: "ID", width: 70 },
+        { field: "start_date", type: "datetime-local", headerName: "Fecha de Inicio", width: 100, editable: false },
+        { field: "end_date", type: "datetime-local", headerName: "Fecha de Fin", width: 100, editable: false },
+        {
+            field: "event_type",
+            type: "select",
+            headerName: "Tipo de Evento",
+            width: 100,
+            editable: false,
+            options: [
+                { value: "FRAUDE INTERNO", label: "Fraude Interno" },
+                { value: "FRAUDE EXTERNO", label: "Fraude Externo" },
+                { value: "RELACIONES LABORALES", label: "Relaciones Laborales" },
+                { value: "CLIENTES", label: "Clientes" },
+                { value: "DAÑOS ACTIVOS FISICOS", label: "Daños Activos Físicos" },
+                { value: "FALLAS TECNOLOGICAS", label: "Fallas Tecnológicas" },
+                { value: "EJECUCION Y ADMINISTRACION DE PROCESOS", label: "Ejecución y Administración de Procesos" },
+                { value: "AGENTES EXTERNOS", label: "Agentes Externos" },
+            ],
+        },
+        {
+            field: "process",
+            type: "select",
+            headerName: "Proceso",
+            width: 100,
+            editable: false,
+            options: [
+                { value: "ADMINISTRATIVO, INVERSIONES Y TESORERIA", label: "Administrativo, Inversiones y Tesorería" },
+                { value: "BANCOS Y CUENTAS POR PAGAR", label: "Bancos y Cuentas por Pagar" },
+                { value: "CAMPAÑAS", label: "Campañas" },
+                { value: "CONTABILIDAD", label: "Contabilidad" },
+                { value: "IMPUESTOS", label: "Impuestos" },
+                { value: "PERSONAL Y NOMINA", label: "Personal y Nomina" },
+                { value: "PLANEACION Y ESTRATEGIA", label: "Plantación y Estrategica" },
+                { value: "SERVICIOS GENERALES", label: "Servicios Generales" },
+                { value: "SISTEMAS", label: "Sistemas" },
+                { value: "VISITADORES", label: "Visitadores" },
+            ],
+        },
+        {
+            field: "lost_type",
+            type: "select",
+            headerName: "Tipo de Perdida",
+            width: 100,
+            editable: false,
+            options: [
+                { value: "GENERAN PERDIDAS Y AFECTAN EL PYG", label: "Generan Perdidas y Afectan el PYG" },
+                { value: "GENERAN PERDIDAS Y NO AFECTAN EL PYG", label: "Generan Perdidas y no Afectan el PYG" },
+                { value: "NO GENERAN PERDIDA Y NO AFECTAN EL PYG", label: "No Generan Perdida y no Afectan el PYG" },
+            ],
+        },
+        {
+            field: "product",
+            type: "",
+            headerName: "Producto",
+            width: 100,
+            editable: false,
+            options: [
+                { value: "AVANTEL", label: "Avantel" },
+                { value: "AZTECA", label: "Azteca" },
+                { value: "BANCO AGRARIO", label: "Banco Agrario" },
+                { value: "BAYPORT", label: "BayPort" },
+                { value: "CLARO", label: "Claro" },
+                { value: "CLARO VENTAS", label: "Claro Ventas" },
+                { value: "CONGENTE", label: "Congente" },
+                { value: "COOMEVA", label: "Coomeva" },
+                { value: "FALABELLA", label: "Falabella" },
+                { value: "GERENCIA ADMINISTRATIVA", label: "Gerencia Administrativa" },
+                { value: "LEGAL Y RIESGO", label: "Legal y Riesgo" },
+                { value: "METLIFE", label: "Metlife" },
+                { value: "NUEVA EPS", label: "Nueva EPS" },
+                { value: "PAYU", label: "PayU" },
+                { value: "QUALITY", label: "Quality" },
+                { value: "RECURSOS FISICOS", label: "Recursos Fisicos" },
+                { value: "RRHH", label: "RRHH" },
+                { value: "SCOTIABANK COLPATRIA", label: "Scotiabank Colpatria" },
+                { value: "TECNOLOGIA", label: "Tecnologia" },
+                { value: "TODOS", label: "Todos" },
+                { value: "YANBAL", label: "Yanbal" },
+            ],
+        },
+        {
+            field: "status",
+            type: "",
+            headerName: "Estado Actual",
+            width: 100,
+            editable: false,
+            options: [
+                { value: "ABIERTO", label: "Abierto" },
+                { value: "CERRADO", label: "Cerrado" },
+            ],
+        },
+        { field: "close_date", type: "date", headerName: "Fecha de Cierre", width: 100, editable: false },
+        { field: "reported_by", type: "", headerName: "Reportado", width: 100, editable: false },
+        {
+            field: "classification",
+            type: "",
+            headerName: "Clasificación",
+            width: 100,
+            editable: false,
+            options: [
+                { value: "CRITICO", label: "Critico" },
+                { value: "NO CRITICO", label: "No Critico" },
+            ],
+        },
+        {
+            field: "level",
+            type: "",
+            headerName: "Nivel",
+            width: 100,
+            editable: false,
+            options: [
+                { value: "BAJO", label: "Bajo" },
+                { value: "MEDIO", label: "Medio" },
+                { value: "ALTO", label: "Alto" },
+            ],
+        },
+        { field: "plan", type: "", headerName: "Plan", width: 100, editable: false },
+        { field: "learning", type: "", headerName: "Aprendizaje", width: 100, editable: false },
     ];
 
     columns.push({
@@ -429,72 +538,44 @@ export const RiskEvent = () => {
             <Dialog maxWidth={"md"} open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Añadir un nuevo registro</DialogTitle>
                 <DialogContent>
-                    <Formik
-                        initialValues={{
-                            name: "",
-                            city: "",
-                            description: "",
-                            expected_start_date: "",
-                            value: "",
-                            monthly_cost: "",
-                            duration: "",
-                            contact: "",
-                            contact_telephone: "",
-                            start_date: "",
-                            civil_responsibility_policy: "",
-                            compliance_policy: "",
-                            insurance_policy: "",
-                            renovation_date: "",
-                        }}
-                        validationSchema={validationSchema}
-                        onSubmit={handleSubmit}
-                    >
+                    <Formik validationSchema={validationSchema} onSubmit={handleSubmit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact" label="Nombre del Contacto" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
-
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
-                                    <FormikTextField
-                                        type="text"
-                                        multiline={true}
-                                        rows={3}
-                                        name="civil_responsibility_policy"
-                                        label="Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                    <FormikTextField
-                                        multiline={true}
-                                        rows={3}
-                                        type="text"
-                                        name="compliance_policy"
-                                        label="Póliza de Cumplimiento"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                    <FormikTextField
-                                        type="text"
-                                        multiline={true}
-                                        rows={3}
-                                        name="insurance_policy"
-                                        label="Póliza Seguros de Responsabilidad Profesional por Perdida de Datos"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                </Box>
-                                <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
-                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                                    Guardar
-                                </Button>
+                                {columns.map((column) => {
+                                    if (column.field === "actions") {
+                                        return null;
+                                    } else if (column.field === "id") {
+                                        return null;
+                                    } else if (column.field === "start_date" || column.field === "end_date") {
+                                        return <FormikTextField type="datetime-local" name={column.field} label={column.headerName} />;
+                                    } else if (column.field === "close_date") {
+                                        return <FormikTextField type="date" name={column.field} label={column.headerName} />;
+                                    } else if (column.field === "renovation_date") {
+                                        return <FormikTextField type="date" name={column.field} label={column.headerName} />;
+                                    } else if (
+                                        column.field === "event_type" ||
+                                        column.field === "process" ||
+                                        column.field === "lost_type" ||
+                                        column.field === "product" ||
+                                        column.field === "status" ||
+                                        column.field === "level" ||
+                                        column.field === "classification"
+                                    ) {
+                                        return (
+                                            <FormikTextField
+                                                type="select"
+                                                name={column.field}
+                                                label={column.headerName}
+                                                select
+                                                autoComplete="off"
+                                                spellCheck={false}
+                                                options={column.options}
+                                            ></FormikTextField>
+                                        );
+                                    } else {
+                                        return <FormikTextField type="text" name={column.field} label={column.headerName} autoComplete="off" spellCheck={false} />;
+                                    }
+                                })}
                             </Box>
                         </Form>
                     </Formik>
@@ -512,7 +593,7 @@ export const RiskEvent = () => {
                     <Formik initialValues={details} validationSchema={validationSchema} onSubmit={handleSubmitEdit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
+                                <FormikTextField type="datetime" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />

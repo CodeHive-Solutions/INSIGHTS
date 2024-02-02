@@ -74,7 +74,7 @@ class Events(models.Model):
     lost_type = models.ForeignKey(LostType, on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=750)
     product = models.ForeignKey(ProductLine, on_delete=models.DO_NOTHING)
-    date_of_closure = models.DateTimeField()
+    close_date = models.DateTimeField()
     learning = models.CharField(max_length=500)
     status = models.BooleanField()
 
