@@ -15,7 +15,7 @@ from pathlib import Path
 import os
 import ssl
 import ldap  # type: ignore
-from django_auth_ldap.config import LDAPSearch  # type: ignore
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion  # type: ignore
 from dotenv import load_dotenv
 import sys
 
@@ -314,10 +314,28 @@ AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
 AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGÍA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
 AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
 
-AUTH_LDAP_USER_SEARCH = LDAPSearch(
-    "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
-    ldap.SCOPE_SUBTREE,  # Search scope
-    "(sAMAccountName=%(user)s)",  # Search filter
+# AUTH_LDAP_USER_SEARCH = LDAPSearch(
+#     "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+#     ldap.SCOPE_SUBTREE,  # Search scope
+#     "(&(objectClass=user)(sAMAccountName=%(user)s))",  # Search filter
+# )
+
+AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
+    LDAPSearch(
+        "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+        ldap.SCOPE_SUBTREE,  # Search scope
+        "(&(objectClass=user)(sAMAccountName=%(user)s))",  # Search filter
+    ),
+    LDAPSearch(
+        "OU=MEDELLIN,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+        ldap.SCOPE_SUBTREE,  # Search scope
+        "(&(objectClass=user)(sAMAccountName=%(user)s))",  # Search filter
+    ),
+    LDAPSearch(
+        "OU=BUCARAMANGA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+        ldap.SCOPE_SUBTREE,  # Search scope
+        "(&(objectClass=user)(sAMAccountName=%(user)s))",  # Search filter
+    ),
 )
 
 AUTH_LDAP_USER_ATTR_MAP = {

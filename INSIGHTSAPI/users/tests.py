@@ -72,7 +72,7 @@ class LDAPAuthenticationTest(TestCase):
                 "password": password,
             }
             response = self.client.post(reverse("obtain-token"), data)
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 200, response.data)
             token = self.client.cookies.get("access-token")
             refresh = self.client.cookies.get("refresh-token")
             self.assertIsNotNone(token, "No authentication token found in the response")
