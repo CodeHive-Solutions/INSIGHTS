@@ -123,14 +123,8 @@ class SGCFileViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create a new object"""
-        return {"detail": str(request.data)}, 500
-        # return super().create(request, *args, **kwargs)
-
-    def update(self, request, *args, **kwargs):
-        """Update an object"""
-        print(request.data["file"])
-        # return JsonResponse({"detail": str(request.data["file"])}, status=403)
-        return super().update(request, *args, **kwargs)
+        # return {"detail": str(request.data)}, 500
+        return super().create(request, *args, **kwargs)
 
 
 class SGCFileDownloadViewSet(FileDownloadMixin, viewsets.ReadOnlyModelViewSet):

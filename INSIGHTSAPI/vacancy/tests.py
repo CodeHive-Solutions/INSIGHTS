@@ -78,7 +78,7 @@ class ReferenceTest(BaseTestCase):
             {
                 "name": "Juan Test",
                 "phone_number": "1234567890",
-                "vacancy": 1,
+                "vacancy": vacancy.id,
             },
         )
         self.assertEqual(response.status_code, 201, response.data)

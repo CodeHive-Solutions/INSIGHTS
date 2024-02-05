@@ -44,7 +44,7 @@ class EventsTest(BaseTestCase):
             "product": product,
             "close_date": "2020-01-01",
             "learning": "Test",
-            "status": 1,
+            "status": 0,
         }
 
     def test_create_event(self):
@@ -56,7 +56,7 @@ class EventsTest(BaseTestCase):
         self.data["product"] = self.data["product"].name
         response = self.client.post(reverse("events-list"), self.data)
         self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(response.data["description"], "Test")
+        self.assertEqual(response.data["description"], "TEST")
 
     def test_get_events(self):
         """Test get events."""
@@ -66,14 +66,20 @@ class EventsTest(BaseTestCase):
         response = self.client.get(reverse("events-list"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[1]["description"], "Test 2")
+        self.assertEqual(response.data[1]["description"], "TEST 2")
 
     def test_get_event(self):
         """Test get event."""
         event = Events.objects.create(**self.data)
         response = self.client.get(reverse("events-detail", args=[event.id]))
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.data["description"], "Test", response.data)
+        self.assertEqual(response.data["description"], "TEST", response.data)
+        self.assertEqual(response.data["event_class"], "FRAUDE INTERNO")
+        self.assertEqual(response.data["level"], "ALTO")
+        self.assertEqual(response.data["process"], "TEST")
+        self.assertEqual(response.data["lost_type"], "TEST")
+        self.assertEqual(response.data["product"], "TEST")
+        self.assertEqual(response.data["status"], False)
 
     def test_update_event(self):
         """Test update event."""
@@ -88,7 +94,7 @@ class EventsTest(BaseTestCase):
             reverse("events-detail", args=[event.id]), self.data
         )
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.data["description"], "Test 3")
+        self.assertEqual(response.data["description"], "TEST 3")
 
     def test_delete_event(self):
         """Test delete event."""

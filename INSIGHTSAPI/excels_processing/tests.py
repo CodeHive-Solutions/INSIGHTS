@@ -41,7 +41,7 @@ class RobinsonTestCase(APITestCase):
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()
-        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinson.xlsx"
+        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinsón.xlsx"
         with open(file_path, "rb") as file_obj:
             response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies)  # type: ignore
             self.assertEqual(response.status_code, 201, response.data)
