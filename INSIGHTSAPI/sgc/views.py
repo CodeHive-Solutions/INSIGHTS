@@ -2,6 +2,7 @@
 import base64
 import os
 import logging
+from django.http import JsonResponse
 import mysql.connector
 from ftfy import fix_text
 from django.utils.text import slugify
@@ -122,8 +123,14 @@ class SGCFileViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create a new object"""
-        # print(request.data)
-        return super().create(request, *args, **kwargs)
+        return {"detail": str(request.data)}, 500
+        # return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """Update an object"""
+        print(request.data["file"])
+        # return JsonResponse({"detail": str(request.data["file"])}, status=403)
+        return super().update(request, *args, **kwargs)
 
 
 class SGCFileDownloadViewSet(FileDownloadMixin, viewsets.ReadOnlyModelViewSet):

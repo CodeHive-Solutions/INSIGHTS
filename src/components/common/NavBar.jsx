@@ -29,17 +29,17 @@ const Navbar = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
-    const permissions = JSON.parse(localStorage.getItem("permissions"));
     const cedula = JSON.parse(localStorage.getItem("cedula"));
     const [profilePicture, setProfilePicture] = useState();
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
     const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713;
     const servicesPermission =
-        permissions.includes("users.upload_robinson_list") ||
-        goalsStatsPermission ||
-        permissions.includes("excels_processing.call_transfer") ||
-        permissions.includes("contracts.view_contract") ||
-        permissions.includes("vacancy.view_reference");
-
+        permissions &&
+        (permissions.includes("users.upload_robinson_list") ||
+            goalsStatsPermission ||
+            permissions.includes("excels_processing.call_transfer") ||
+            permissions.includes("contracts.view_contract") ||
+            permissions.includes("vacancy.view_reference"));
     const refreshToken = async (refreshTimer) => {
         try {
             const response = await fetch(`${getApiUrl()}token/refresh/`, {

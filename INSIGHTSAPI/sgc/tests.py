@@ -22,16 +22,16 @@ class TestSGC(BaseTestCase):
     def setUp(self):
         """Set up for the test"""
         super().setUp()
-        with open("utils/excels/Lista_Robinson.xlsx", "rb") as file:
+        with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
             file_content = file.read()
         area = SGCArea.objects.create(short_name="SGC", name="SistemaGC")
         self.file_data = {
-            "name": "Test File",
+            "name": "Test Filé",
             "area": area.name,
             "type": "Document",
             "sub_type": "xlsx",
             "version": "1.0",
-            "file": SimpleUploadedFile("Test_SGC_Robinson.xlsx", file_content),
+            "file": SimpleUploadedFile("Test_SGC_Robinsón.xlsx", file_content),
         }
         user = User.objects.get(username="StaffNet")
         permission_add = Permission.objects.get(codename="add_sgcfile")
@@ -57,7 +57,7 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data.get("name"), "Test File")
+        self.assertEqual(response.data.get("name"), "Test Filé")
         self.assertEqual(response.data.get("area"), "SistemaGC")
         self.assertEqual(response.data.get("type"), "Document")
         self.assertEqual(response.data.get("sub_type"), "xlsx")
@@ -74,7 +74,7 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data["objects"][0].get("name"), "Test File")
+        self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
         self.assertEqual(len(response.data), 2)
         self.assertTrue(response.data["permissions"].get("add"))
 
@@ -89,7 +89,7 @@ class TestSGC(BaseTestCase):
         # Assert that the response status code is HTTP 201 Created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         file_exist = os.path.exists(
-            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
+            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón.xlsx")
         )
         self.assertTrue(file_exist, os.listdir(self.media_directory))
 
@@ -116,7 +116,7 @@ class TestSGC(BaseTestCase):
         with open("static/services/Logo_cyc.png", "rb") as file:
             file_content = file.read()
         self.file_data["file"] = SimpleUploadedFile(
-            "Test_SGC_Robinson.xlsx", file_content
+            "Test_SGC_Robinsón.xlsx", file_content
         )
         response = self.client.post(
             reverse("SGCFile-list"),
@@ -131,7 +131,7 @@ class TestSGC(BaseTestCase):
 
     def test_create_file_with_invalid_file(self):
         """Test creating a file with invalid file extension"""
-        self.file_data["file"] = SimpleUploadedFile("Test_SGC_Robinson.xlsx", b"12")
+        self.file_data["file"] = SimpleUploadedFile("Test_SGC_Robinsón.xlsx", b"12")
         response = self.client.post(
             reverse("SGCFile-list"),
             self.file_data,
@@ -143,12 +143,12 @@ class TestSGC(BaseTestCase):
 
     def test_create_large_file(self):
         """Test creating a large file"""
-        self.file_data["file"].name = "Test_SGC_Robinson_large.xlsx"
+        self.file_data["file"].name = "Test_SGC_Robinsón_large.xlsx"
         with tempfile.NamedTemporaryFile() as temp_file:
             temp_file.write(b"0" * 10000001)
             temp_file.seek(0)
             self.file_data["file"] = SimpleUploadedFile(
-                "Test_SGC_Robinson_large.xlsx", temp_file.read()
+                "Test_SGC_Robinsón_large.xlsx", temp_file.read()
             )
             response = self.client.post(
                 reverse("SGCFile-list"),
@@ -188,7 +188,6 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 204 No Content
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        print(file.file)
         file_exist = os.path.exists(os.path.join(self.media_directory, str(file.file)))
         self.assertFalse(file_exist, os.listdir(self.media_directory + "/files/SGC"))
 
@@ -237,7 +236,7 @@ class TestSGC(BaseTestCase):
 #     def setUp(self):
 #         """Set up for the test"""
 #         super().setUp()
-#         with open("utils/excels/Lista_Robinson.xlsx", "rb") as file:
+#         with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
 #             file_content = file.read()
 #         self.file_data = {
 #             "name": "Test File",
@@ -245,7 +244,7 @@ class TestSGC(BaseTestCase):
 #             "type": "Document",
 #             "sub_type": "xlsx",
 #             "version": "1.0",
-#             "file": SimpleUploadedFile("Test_SGC_Robinson.xlsx", file_content),
+#             "file": SimpleUploadedFile("Test_SGC_Robinsón.xlsx", file_content),
 #         }
 #         user = User.objects.get(username="StaffNet")
 #         permission_add = Permission.objects.get(codename="add_sgcfile")
@@ -267,7 +266,7 @@ class TestSGC(BaseTestCase):
 #             "type": "Document1",
 #             "sub_type": "xlsx1",
 #             "version": "1.01",
-#             "file": SimpleUploadedFile("Test_SGC_Robinson1.xlsx", file_content),
+#             "file": SimpleUploadedFile("Test_SGC_Robinsón1.xlsx", file_content),
 #         }
 #         response = self.client.post(
 #             reverse("SGCFile-list"),
@@ -281,13 +280,13 @@ class TestSGC(BaseTestCase):
 #         path = os.path.join(settings.MEDIA_ROOT, str(SGCFile.objects.first().file))
 #         print(os.listdir(settings.MEDIA_ROOT))
 #         file_exist = os.path.exists(
-#             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
+#             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón.xlsx")
 #         )
 #         self.assertTrue(file_exist, os.listdir(self.media_directory))
-#         with open("utils/excels/Lista_Robinson.xlsx", "rb") as file:
+#         with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
 #             file_content = file.read()
 #         self.file_data["file"] = SimpleUploadedFile(
-#             "Test_SGC_Robinson.xlsx", file_content
+#             "Test_SGC_Robinsón.xlsx", file_content
 #         )
 #         response = self.client.put(
 #             reverse("SGCFile-detail", kwargs={"pk": SGCFile.objects.first().id}),
@@ -298,6 +297,6 @@ class TestSGC(BaseTestCase):
 #         # Assert that the response status code is HTTP 200 OK
 #         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
 #         file_exist = os.path.exists(
-#             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinson.xlsx")
+#             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón.xlsx")
 #         )
 #         self.assertTrue(file_exist)

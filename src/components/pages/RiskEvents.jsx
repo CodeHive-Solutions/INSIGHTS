@@ -445,7 +445,7 @@ export const RiskEvent = () => {
                 { value: "CERRADO", label: "Cerrado" },
             ],
         },
-        { field: "close_date", type: "date", headerName: "Fecha de Cierre", width: 100, editable: false },
+        { field: "close_date", type: "", headerName: "Fecha de Cierre", width: 100, editable: false },
         { field: "reported_by", type: "", headerName: "Reportado", width: 100, editable: false },
         {
             field: "classification",
@@ -473,6 +473,19 @@ export const RiskEvent = () => {
         { field: "plan", type: "", headerName: "Plan", width: 100, editable: false },
         { field: "learning", type: "", headerName: "Aprendizaje", width: 100, editable: false },
     ];
+
+    const initialValues = columns.reduce((acc, column) => {
+        // Define initial values based on field type
+        if (column.type === "datetime-local") {
+            acc[column.field] = ""; // Set initial datetime-local value
+        } else if (column.type === "select") {
+            acc[column.field] = column.options[0].value; // Set initial select value
+        } else {
+            acc[column.field] = ""; // Set initial text value
+        }
+
+        return acc;
+    }, {});
 
     columns.push({
         field: "actions",
@@ -538,7 +551,7 @@ export const RiskEvent = () => {
             <Dialog maxWidth={"md"} open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Añadir un nuevo registro</DialogTitle>
                 <DialogContent>
-                    <Formik validationSchema={validationSchema} onSubmit={handleSubmit}>
+                    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
                                 {columns.map((column) => {

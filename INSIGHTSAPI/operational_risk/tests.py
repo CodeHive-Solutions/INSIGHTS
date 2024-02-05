@@ -42,19 +42,18 @@ class EventsTest(BaseTestCase):
             "lost_type": lost_type,
             "description": "Test",
             "product": product,
-            "date_of_closure": "2020-01-01",
+            "close_date": "2020-01-01",
             "learning": "Test",
             "status": 1,
         }
-        
 
     def test_create_event(self):
         """Test create event."""
-        self.data["event_class"] = self.data["event_class"].id
-        self.data["level"] = self.data["level"].id
-        self.data["process"] = self.data["process"].id
-        self.data["lost_type"] = self.data["lost_type"].id
-        self.data["product"] = self.data["product"].id
+        self.data["event_class"] = self.data["event_class"].name
+        self.data["level"] = self.data["level"].name
+        self.data["process"] = self.data["process"].name
+        self.data["lost_type"] = self.data["lost_type"].name
+        self.data["product"] = self.data["product"].name
         response = self.client.post(reverse("events-list"), self.data)
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["description"], "Test")
@@ -79,11 +78,11 @@ class EventsTest(BaseTestCase):
     def test_update_event(self):
         """Test update event."""
         event = Events.objects.create(**self.data)
-        self.data["event_class"] = self.data["event_class"].id
-        self.data["level"] = self.data["level"].id
-        self.data["process"] = self.data["process"].id
-        self.data["lost_type"] = self.data["lost_type"].id
-        self.data["product"] = self.data["product"].id
+        self.data["event_class"] = self.data["event_class"].name
+        self.data["level"] = self.data["level"].name
+        self.data["process"] = self.data["process"].name
+        self.data["lost_type"] = self.data["lost_type"].name
+        self.data["product"] = self.data["product"].name
         self.data["description"] = "Test 3"
         response = self.client.patch(
             reverse("events-detail", args=[event.id]), self.data

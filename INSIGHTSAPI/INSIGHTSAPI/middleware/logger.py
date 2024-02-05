@@ -53,7 +53,7 @@ class LoggingMiddleware:
         }
 
         if request_file:
-            log_info["File"] = request_file.name
+            log_info["File"] = str(request_file.name).encode("utf-8")
 
         request_data_mapping = {
             "POST": request.POST,
