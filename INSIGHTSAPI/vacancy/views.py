@@ -51,6 +51,8 @@ class ReferenceViewSet(viewsets.ModelViewSet):
                         """
             if settings.DEBUG or "test" in sys.argv:
                 to_emails = ["heibert.mogollon@cyc-bpo.com"]
+            else:
+                to_emails = ["contrataciones@cyc-bpo.com"]
             errors = send_email(
                 subject=subject,
                 message=message,

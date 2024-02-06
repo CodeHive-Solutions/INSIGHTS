@@ -81,6 +81,15 @@ class EventsTest(BaseTestCase):
         self.assertEqual(response.data["product"], "TEST")
         self.assertEqual(response.data["status"], False)
 
+    def test_get_event_with_out_permissions(self):
+        """Test get event with out permissions."""
+        self.user.user_permissions.remove(
+            Permission.objects.get(codename="view_events")
+        )
+        event = Events.objects.create(**self.data)
+        response = self.client.get(reverse("events-detail", args=[event.id]))
+        self.assertEqual(response.status_code, 403)
+
     def test_update_event(self):
         """Test update event."""
         event = Events.objects.create(**self.data)
@@ -96,9 +105,30 @@ class EventsTest(BaseTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["description"], "TEST 3")
 
+    def test_update_event_with_out_permissions(self):
+        """Test update event with out permissions."""
+        self.user.user_permissions.remove(
+            Permission.objects.get(codename="change_events")
+        )
+        event = Events.objects.create(**self.data)
+        self.data["description"] = "Test 3"
+        response = self.client.patch(
+            reverse("events-detail", args=[event.id]), self.data
+        )
+        self.assertEqual(response.status_code, 403)
+
     def test_delete_event(self):
         """Test delete event."""
         event = Events.objects.create(**self.data)
         response = self.client.delete(reverse("events-detail", args=[event.id]))
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Events.objects.count(), 0)
+
+    def test_delete_event_with_out_permissions(self):
+        """Test delete event with out permissions."""
+        self.user.user_permissions.remove(
+            Permission.objects.get(codename="delete_events")
+        )
+        event = Events.objects.create(**self.data)
+        response = self.client.delete(reverse("events-detail", args=[event.id]))
+        self.assertEqual(response.status_code, 403)
