@@ -39,6 +39,7 @@ const Navbar = () => {
             goalsStatsPermission ||
             permissions.includes("excels_processing.call_transfer") ||
             permissions.includes("contracts.view_contract") ||
+            permissions.includes("operational_risk.view_events") ||
             permissions.includes("vacancy.view_reference"));
     const refreshToken = async (refreshTimer) => {
         try {
@@ -326,12 +327,12 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {/* <MenuItem onClick={handleOpenDialog}>
+                <MenuItem onClick={handleOpenDialog}>
                     <ListItemIcon>
                         <FlagIcon fontSize="small" />
                     </ListItemIcon>
                     Mi Meta
-                </MenuItem> */}
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -488,15 +489,17 @@ const Navbar = () => {
                             Vacantes Referidas
                         </MenuItem>
                     ) : null}
-                    <MenuItem onClick={() => navigate("/logged/risk-events")}>
-                        <ListItemIcon>
-                            <FmdBadIcon fontSize="small" />
-                        </ListItemIcon>
-                        Eventos de Riesgo Operativo
-                    </MenuItem>
+                    {permissions && permissions.includes("operational_risk.view_events") ? (
+                        <MenuItem onClick={() => navigate("/logged/risk-events")}>
+                            <ListItemIcon>
+                                <FmdBadIcon fontSize="small" />
+                            </ListItemIcon>
+                            Eventos de Riesgo Operativo
+                        </MenuItem>
+                    ) : null}
                 </Box>
             </Menu>
-            {/* <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} /> */}
+            <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

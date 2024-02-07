@@ -27,6 +27,8 @@ import CardSlider from "./components/pages/CardSlider";
 import VacanciesReferred from "./components/pages/VacanciesReferred";
 import RiskEvents from "./components/pages/RiskEvents";
 import Test from "./components/pages/Test";
+import Valentin from "./components/pages/Valentin";
+import AutoEvaluation from "./components/pages/AutoEvaluation";
 
 const theme = createTheme({
     typography: {
@@ -130,6 +132,14 @@ const router = createBrowserRouter([
             {
                 path: "test",
                 element: <Test />,
+            },
+            {
+                path: "valentin",
+                element: <Valentin />,
+            },
+            {
+                path: "autoevaluacion",
+                element: <AutoEvaluation />,
             },
         ],
     },

@@ -47,3 +47,4 @@ test.pdf
 *.mp4
 src/videos/futbol.mp4
 *.zip
+*.mjs

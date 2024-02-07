@@ -124,10 +124,10 @@ export const VacanciesReferred = () => {
 
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
-        { field: "made_by", headerName: "Persona que refirió", width: 250, editable: false },
+        { field: "created_by", headerName: "Persona que refirió", width: 250, editable: false },
         { field: "name", headerName: "Nombre del Referido", width: 250, editable: false },
-        { field: "phone_number", headerName: "Numero del Referido", width: 250, editable: false },
-        { field: "vacancy", headerName: "Vacante", width: 150, editable: false },
+        { field: "phone_number", headerName: "Numero del Referido", width: 170, editable: false },
+        { field: "vacancy", headerName: "Vacante", width: 300, editable: false },
     ];
 
     columns.push({
