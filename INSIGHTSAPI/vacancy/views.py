@@ -1,21 +1,18 @@
 """Views for the vacancy app."""
 import sys
 import base64
-from io import BytesIO
-from PIL import Image
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+from services.emails import send_email
 from services.permissions import (
     DjangoModelViewPermissionsNotDelete,
     DjangoModelViewPermissionsAllowAllCreate,
 )
 from django.db import connections
-from django.utils import safestring
 from django.conf import settings
 from users.models import User
-from services.emails import send_email
 from .serializers import VacancySerializer, ReferenceSerializer
 from .models import Vacancy, Reference
 
@@ -29,14 +26,14 @@ class VacancyViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         """List all the active vacancies."""
-        queryset = Vacancy.objects.filter(active=True)
+        queryset = Vacancy.objects.filter(is_active=True)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
     # Deny any other update than active
     def update(self, request, *args, **kwargs):
         """Update a vacancy."""
-        if len(request.data) == 1 and "active" in request.data:
+        if len(request.data) == 1 and "is_active" in request.data:
             return super().update(request, *args, **kwargs)
         return Response(
             {"error": "No se puede modificar la vacante"}, status=400

@@ -11,7 +11,7 @@ class Vacancy(models.Model):
 
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="vacancy_images/")
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         """This method returns a string representation of the vacancy."""
