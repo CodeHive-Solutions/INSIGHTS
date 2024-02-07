@@ -177,23 +177,54 @@ class GoalAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 28)  # type: ignore
         self.assertIn("ENERO-2022", response.data.get("execution_date"))  # type: ignore
 
-    def test_update_goal(self):
+    def test_patch_goal(self):
         """Test the update-goal view."""
-        self.test_claro_upload()
         # Get the first goal from the database
         goal = Goals.objects.create(
             cedula="1000065648",
             name="Heibert",
             campaign_goal="Base Test Goal",
-            result="100",
-            evaluation="100",
-            quality="100",
-            clean_desk="100",
-            total="100",
+            result="50",
+            evaluation="50",
+            quality="50",
+            clean_desk="50",
+            total="50",
             job_title_goal="Developer",
             last_update=timezone.now(),
-            criteria_goal="100",
-            quantity_goal="100",
+            criteria_goal="50",
+            quantity_goal="50",
+            goal_date="ENERO-2022",
+            execution_date="FEBRERO-2022",
+        )
+        # Prepare the request data
+        payload = {
+            "accepted": True,
+        }
+        # Send a PATCH request to the update-goal view
+        response = self.client.patch(
+            reverse("goal-detail", args=[goal.cedula]), data=payload
+        )
+        # Assert the response status code and content
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        # Assert that the goal was updated with the new data
+        self.assertEqual(response.data["message"], "La meta fue aceptada.", response.data)
+
+    def test_patch_goal_deny(self):
+        """Test the update-goal view."""
+        # Get the first goal from the database
+        goal = Goals.objects.create(
+            cedula="1000065648",
+            name="Heibert",
+            campaign_goal="Base Test Goal",
+            result="50",
+            evaluation="50",
+            quality="50",
+            clean_desk="50",
+            total="50",
+            job_title_goal="Developer",
+            last_update=timezone.now(),
+            criteria_goal="50",
+            quantity_goal="50",
             goal_date="ENERO-2022",
             execution_date="FEBRERO-2022",
         )
@@ -214,9 +245,9 @@ class GoalAPITestCase(APITestCase):
             reverse("goal-detail", args=[goal.cedula]), data=payload
         )
         # Assert the response status code and content
-        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         # Assert that the goal was updated with the new data
-        self.assertEqual(response.data["message"], "La meta fue aceptada.", response.data)
+        self.assertEqual(response.data["message"], "Patch request no válida.", response.data)
 
     # def test_accept_goal(self):
     #     """Test the accept-goal view."""

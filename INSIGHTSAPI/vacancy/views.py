@@ -27,6 +27,20 @@ class VacancyViewSet(viewsets.ModelViewSet):
     serializer_class = VacancySerializer
     permission_classes = [IsAuthenticated, DjangoModelViewPermissionsNotDelete]
 
+    def list(self, request, *args, **kwargs):
+        """List all the active vacancies."""
+        queryset = Vacancy.objects.filter(active=True)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    # Deny any other update than active
+    def update(self, request, *args, **kwargs):
+        """Update a vacancy."""
+        if len(request.data) == 1 and "active" in request.data:
+            return super().update(request, *args, **kwargs)
+        return Response(
+            {"error": "No se puede modificar la vacante"}, status=400
+        )
 
 class ReferenceViewSet(viewsets.ModelViewSet):
     """ViewSet for the Reference model"""
@@ -40,7 +54,7 @@ class ReferenceViewSet(viewsets.ModelViewSet):
         response = super().create(request, *args, **kwargs)
         if response.status_code == 201:
             reference = Reference.objects.get(id=response.data["id"])
-            vacancy = reference.vacancy.vacancy_name
+            vacancy = reference.vacancy.name
             image = reference.vacancy.image
             image_data = base64.b64encode(image.read()).decode("utf-8")
             name = request.user.get_full_name().title()

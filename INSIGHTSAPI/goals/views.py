@@ -32,56 +32,55 @@ class GoalsViewSet(viewsets.ModelViewSet):
     queryset = Goals.objects.all()
     serializer_class = GoalSerializer
 
-    def update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs):
         """If the user accept her goal then send him a email with the PDF file attached."""
-        if request.method == "PATCH":
-            instance = self.get_object()
-            if request.data.get("accepted") is not None:
-                if instance.accepted:
-                    return Response(
-                        {"message": "La meta ya fue aceptada."},
-                        status=framework_status.HTTP_400_BAD_REQUEST,
-                    )
-                else:
-                    month = instance.goal_date.replace("-", " ").lower()
-                    instance.accepted_at = timezone.now()
-                    instance.accepted = True
-                    instance.save()
-                    send_email(
-                        f"Meta {month}",
-                        "La meta de este mes fue aceptada exitosamente.",
-                        ["heibert.mogollon@cyc-bpo.com"],
-                        email_owner="Entrega de metas"
-                        )
-                    return Response(
-                        {"message": "La meta fue aceptada."},
-                        status=framework_status.HTTP_200_OK,
-                    )
-            elif request.data.get("accepted_execution") is not None:
-                if instance.accepted_execution:
-                    return Response(
-                        {"message": "La ejecución ya fue aceptada."},
-                        status=framework_status.HTTP_400_BAD_REQUEST,
-                    )
-                else:
-                    month = instance.execution_date.replace("-", " ").lower()
-                    instance.accepted_execution_at = timezone.now()
-                    instance.accepted_execution = True
-                    instance.save()
-                    send_email(
-                        instance,
-                        "La ejecución de la meta fue aceptada exitosamente.",
-                        ["heibert.mogollon@cyc-bpo.com"],
-                        email_owner="Ejecución de metas"
-                        )
-                    return Response(
-                        {"message": "La ejecución fue aceptada."},
-                        status=framework_status.HTTP_200_OK,
-                    )
+        instance = self.get_object()
+        if request.data.get("accepted") is not None and len(request.data) == 1:
+            if instance.accepted:
+                return Response(
+                    {"message": "La meta ya fue aceptada."},
+                    status=framework_status.HTTP_400_BAD_REQUEST,
+                )
             else:
-                return super().update(request, *args, **kwargs)
+                month = instance.goal_date.replace("-", " ").lower()
+                instance.accepted_at = timezone.now()
+                instance.accepted = True
+                instance.save()
+                send_email(
+                    f"Meta {month}",
+                    "La meta de este mes fue aceptada exitosamente.",
+                    ["heibert.mogollon@cyc-bpo.com"],
+                    email_owner="Entrega de metas"
+                    )
+                return Response(
+                    {"message": "La meta fue aceptada."},
+                    status=framework_status.HTTP_200_OK,
+                )
+        elif request.data.get("accepted_execution") is not None and len(request.data) == 1:
+            if instance.accepted_execution:
+                return Response(
+                    {"message": "La ejecución ya fue aceptada."},
+                    status=framework_status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                month = instance.execution_date.replace("-", " ").lower()
+                instance.accepted_execution_at = timezone.now()
+                instance.accepted_execution = True
+                instance.save()
+                send_email(
+                    instance,
+                    "La ejecución de la meta fue aceptada exitosamente.",
+                    ["heibert.mogollon@cyc-bpo.com"],
+                    email_owner="Ejecución de metas"
+                    )
+                return Response(
+                    {"message": "La ejecución fue aceptada."},
+                    status=framework_status.HTTP_200_OK,
+                )
         else:
-            return super().update(request, *args, **kwargs)
+            return Response(
+                {"message": "Patch request no válida."}, status=framework_status.HTTP_400_BAD_REQUEST
+            )
 
     def retrieve(self, request, *args, **kwargs):
         cedula = self.kwargs.get("pk")
