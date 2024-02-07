@@ -14,7 +14,7 @@ configobj==5.0.6
 constantly==15.1.0
 cryptography==3.4.8
 dbus-python==1.2.18
-Django==4.2.3
+Django==4.2.10
 django-cors-headers==4.1.0
 django-simple-history==3.3.0
 djangorestframework==3.14.0
