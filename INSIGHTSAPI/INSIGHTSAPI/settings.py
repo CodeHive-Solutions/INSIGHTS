@@ -336,6 +336,11 @@ AUTH_LDAP_USER_SEARCH = LDAPSearchUnion(
         ldap.SCOPE_SUBTREE,  # Search scope
         "(&(objectClass=user)(sAMAccountName=%(user)s))",  # Search filter
     ),
+    LDAPSearch(
+        "OU=VILLAVICENCIO,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
+        ldap.SCOPE_SUBTREE,  # Search scope
+        "(&(objectClass=user)(sAMAccountName=%(user)s))",  # Search filter
+    ),
 )
 
 AUTH_LDAP_USER_ATTR_MAP = {

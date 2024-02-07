@@ -41,7 +41,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 samesite=samesite,
                 path=path,
             )
-            user = User.objects.get(username=request.data["username"])
+            username = str(request.data["username"]).upper().strip()
+            user = User.objects.get(username=username)
             response.data["permissions"] = user.get_all_permissions()
             response.data["cedula"] = user.cedula
         return response

@@ -15,6 +15,7 @@ from rest_framework import status as framework_status
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from services.emails import send_email
 
 
 from .models import Goals, TableInfo, HistoricalGoals
@@ -30,6 +31,56 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
     queryset = Goals.objects.all()
     serializer_class = GoalSerializer
+
+    def partial_update(self, request, *args, **kwargs):
+        """If the user accept her goal then send him a email with the PDF file attached."""
+        instance = self.get_object()
+        if request.data.get("accepted") is not None and len(request.data) == 1:
+            if instance.accepted:
+                return Response(
+                    {"message": "La meta ya fue aceptada."},
+                    status=framework_status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                month = instance.goal_date.replace("-", " ").lower()
+                instance.accepted_at = timezone.now()
+                instance.accepted = True
+                instance.save()
+                send_email(
+                    f"Meta {month}",
+                    "La meta de este mes fue aceptada exitosamente.",
+                    ["heibert.mogollon@cyc-bpo.com"],
+                    email_owner="Entrega de metas"
+                    )
+                return Response(
+                    {"message": "La meta fue aceptada."},
+                    status=framework_status.HTTP_200_OK,
+                )
+        elif request.data.get("accepted_execution") is not None and len(request.data) == 1:
+            if instance.accepted_execution:
+                return Response(
+                    {"message": "La ejecución ya fue aceptada."},
+                    status=framework_status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                month = instance.execution_date.replace("-", " ").lower()
+                instance.accepted_execution_at = timezone.now()
+                instance.accepted_execution = True
+                instance.save()
+                send_email(
+                    instance,
+                    "La ejecución de la meta fue aceptada exitosamente.",
+                    ["heibert.mogollon@cyc-bpo.com"],
+                    email_owner="Ejecución de metas"
+                    )
+                return Response(
+                    {"message": "La ejecución fue aceptada."},
+                    status=framework_status.HTTP_200_OK,
+                )
+        else:
+            return Response(
+                {"message": "Patch request no válida."}, status=framework_status.HTTP_400_BAD_REQUEST
+            )
 
     def retrieve(self, request, *args, **kwargs):
         cedula = self.kwargs.get("pk")
@@ -91,101 +142,101 @@ class GoalsViewSet(viewsets.ModelViewSet):
             # With out the .all() method, the queryset will be evaluated lazily
             return self.queryset.all()
 
-    @action(detail=False, methods=["post"])
-    def send_email(self, request):
-        """This action send an email with the PDF file attached."""
-        pdf_64 = request.POST.get("pdf")
-        cedula = request.POST.get("cedula")
-        delivery_type = request.POST.get("delivery_type")
-        if pdf_64 and cedula and delivery_type:
-            try:
-                with connections["staffnet"].cursor() as db_connection:
-                    instance = Goals.objects.filter(cedula=cedula).first()
-                    db_connection.execute(
-                        "SELECT correo,nombre FROM personal_information WHERE cedula = %s",
-                        [cedula],
-                    )
-                    result = db_connection.fetchone()
-                    if result is not None and instance is not None:
-                        try:
-                            correo = result[0]
-                            nombre = str(result[1])
-                            decoded_pdf_data = base64.b64decode(pdf_64)
-                            email = EmailMessage(
-                                f"{delivery_type}",
-                                "<html><body>"
-                                "<div>"
-                                f"<p>Estimado/a {nombre}:</p>"
-                                f"<p>Se ha procesado su {delivery_type}.<br>"
-                                f"Por favor, no responda ni reenvíe este correo. "
-                                f"Contiene información confidencial.<br>"
-                                '<div style="color: black;">Cordialmente,<br>'
-                                "M.I.S. Management Information System C&C Services</div></p>"
-                                "</div>"
-                                "</body></html>",
-                                f"{delivery_type} <{settings.DEFAULT_FROM_EMAIL}>",
-                                [str(correo)],
-                            )
-                            email.content_subtype = "html"
-                            email.attach(
-                                f"{delivery_type}.pdf",
-                                decoded_pdf_data,
-                                "application/pdf",
-                            )
-                            # Get the underlying EmailMessage object
-                            email_msg = email.message()
-                            # Create an SMTP connection
-                            connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
-                            connection.ehlo()
-                            # Wrap the socket with the SSL context
-                            context = ssl.create_default_context()
-                            context.check_hostname = False
-                            context.verify_mode = ssl.CERT_NONE
-                            connection.starttls(context=context)
-                            # Authenticate with the SMTP server
-                            connection.login(
-                                settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD
-                            )
-                            # Send the email
-                            connection.send_message(email_msg)
-                            # Close the connection
-                            connection.quit()
-                            if delivery_type == "Ejecución de metas":
-                                instance.accepted_execution_at = timezone.now()
-                                instance.accepted_execution = True
-                            else:
-                                instance.accepted_at = timezone.now()
-                                instance.accepted = True
-                            instance.save()
-                            return Response(
-                                {"email": correo}, status=framework_status.HTTP_200_OK
-                            )
-                            # pylint: disable=broad-except
-                        except Exception as error:
-                            logger.setLevel(logging.ERROR)
-                            logger.exception("Error: %s", str(error))
-                            print("Error: %s", str(error))
-                            return Response(
-                                status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR
-                            )
-                    else:
-                        return Response(
-                            {"Error": "Email not found"},
-                            status=framework_status.HTTP_404_NOT_FOUND,
-                        )
-            # pylint: disable=broad-except
-            except Exception as error:
-                logger.setLevel(logging.ERROR)
-                logger.exception("Error: %s", str(error))
-                print("Error: %s", str(error))
-                return Response(status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            return Response(
-                {
-                    "Error": f'{"PDF" if not pdf_64 else "Cedula"} not found in the request.'
-                },
-                status=framework_status.HTTP_400_BAD_REQUEST,
-            )
+    # @action(detail=False, methods=["post"])
+    # def send_email(self, request):
+    #     """This action send an email with the PDF file attached."""
+    #     # pdf_64 = request.POST.get("pdf")
+    #     cedula = request.POST.get("cedula")
+    #     # delivery_type = request.POST.get("delivery_type")
+    #     if pdf_64 and cedula and delivery_type:
+    #         try:
+    #             with connections["staffnet"].cursor() as db_connection:
+    #                 instance = Goals.objects.filter(cedula=cedula).first()
+    #                 db_connection.execute(
+    #                     "SELECT correo,nombre FROM personal_information WHERE cedula = %s",
+    #                     [cedula],
+    #                 )
+    #                 result = db_connection.fetchone()
+    #                 if result is not None and instance is not None:
+    #                     try:
+    #                         correo = result[0]
+    #                         nombre = str(result[1])
+    #                         decoded_pdf_data = base64.b64decode(pdf_64)
+    #                         email = EmailMessage(
+    #                             f"{delivery_type}",
+    #                             "<html><body>"
+    #                             "<div>"
+    #                             f"<p>Estimado/a {nombre}:</p>"
+    #                             f"<p>Se ha procesado su {delivery_type}.<br>"
+    #                             f"Por favor, no responda ni reenvíe este correo. "
+    #                             f"Contiene información confidencial.<br>"
+    #                             '<div style="color: black;">Cordialmente,<br>'
+    #                             "M.I.S. Management Information System C&C Services</div></p>"
+    #                             "</div>"
+    #                             "</body></html>",
+    #                             f"{delivery_type} <{settings.DEFAULT_FROM_EMAIL}>",
+    #                             [str(correo)],
+    #                         )
+    #                         email.content_subtype = "html"
+    #                         email.attach(
+    #                             f"{delivery_type}.pdf",
+    #                             decoded_pdf_data,
+    #                             "application/pdf",
+    #                         )
+    #                         # Get the underlying EmailMessage object
+    #                         email_msg = email.message()
+    #                         # Create an SMTP connection
+    #                         connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
+    #                         connection.ehlo()
+    #                         # Wrap the socket with the SSL context
+    #                         context = ssl.create_default_context()
+    #                         context.check_hostname = False
+    #                         context.verify_mode = ssl.CERT_NONE
+    #                         connection.starttls(context=context)
+    #                         # Authenticate with the SMTP server
+    #                         connection.login(
+    #                             settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD
+    #                         )
+    #                         # Send the email
+    #                         connection.send_message(email_msg)
+    #                         # Close the connection
+    #                         connection.quit()
+    #                         if delivery_type == "Ejecución de metas":
+    #                             instance.accepted_execution_at = timezone.now()
+    #                             instance.accepted_execution = True
+    #                         else:
+    #                             instance.accepted_at = timezone.now()
+    #                             instance.accepted = True
+    #                         instance.save()
+    #                         return Response(
+    #                             {"email": correo}, status=framework_status.HTTP_200_OK
+    #                         )
+    #                         # pylint: disable=broad-except
+    #                     except Exception as error:
+    #                         logger.setLevel(logging.ERROR)
+    #                         logger.exception("Error: %s", str(error))
+    #                         print("Error: %s", str(error))
+    #                         return Response(
+    #                             status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR
+    #                         )
+    #                 else:
+    #                     return Response(
+    #                         {"Error": "Email not found"},
+    #                         status=framework_status.HTTP_404_NOT_FOUND,
+    #                     )
+    #         # pylint: disable=broad-except
+    #         except Exception as error:
+    #             logger.setLevel(logging.ERROR)
+    #             logger.exception("Error: %s", str(error))
+    #             print("Error: %s", str(error))
+    #             return Response(status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
+    #     else:
+    #         return Response(
+    #             {
+    #                 "Error": f'{"PDF" if not pdf_64 else "Cedula"} not found in the request.'
+    #             },
+    #             status=framework_status.HTTP_400_BAD_REQUEST,
+    #         )
 
     def create(self, request, *args, **kwargs):
         # Get the file from the request

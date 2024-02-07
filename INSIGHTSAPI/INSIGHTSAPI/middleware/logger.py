@@ -20,7 +20,7 @@ class LoggingMiddleware:
     def log_request_info(self, request, response, log_info):
         """Log the request info"""
         if response.status_code >= 400:
-            if "data" in response:
+            if hasattr(response,"data"):
                 log_info["Response Content"] = response.data
         if response.status_code >= 500:
             logger.error(

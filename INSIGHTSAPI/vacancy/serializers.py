@@ -2,6 +2,7 @@
 import logging
 from io import BytesIO
 from PIL import Image
+from numpy import source
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
 from .models import Vacancy, Reference
@@ -49,6 +50,13 @@ class ReferenceSerializer(serializers.ModelSerializer):
     """Serializer for the Reference model"""
 
     made_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    #Show who create it
+    created_by = serializers.SerializerMethodField()
+    vacancy = serializers.SlugRelatedField(slug_field="name", queryset=Vacancy.objects.all())
+
+    def get_created_by(self, obj):
+        """Get the user who created the reference"""
+        return obj.made_by.get_full_name().title()
 
     class Meta:
         """Meta class for the ReferenceSerializer"""

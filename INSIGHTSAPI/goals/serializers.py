@@ -1,26 +1,30 @@
+"""Serializers for the goals app."""
 from rest_framework import serializers
 from simple_history.models import HistoricalRecords
 from .models import Goals, TableInfo
 
 
 class TableInfoSerializer(serializers.ModelSerializer):
+    """Serializer for the TableInfo model."""
     class Meta:
+        """Meta class for the TableInfoSerializer."""
         model = TableInfo
         fields = "__all__"
 
 
 class GoalSerializer(serializers.ModelSerializer):
-    # table_goal_id = serializers.PrimaryKeyRelatedField(source='table_goal', queryset=TableInfo.objects.all())
-    # table_name = TableNameSerializer(read_only=True)
+    """Serializer for the Goal model."""
+    # Put the read_only in the meta class don't work for history_date and last_update
     history_date = serializers.DateTimeField(read_only=True)
     additional_info = serializers.SerializerMethodField()
-    accepted = serializers.BooleanField(read_only=True)
-    accepted_at = serializers.DateTimeField(read_only=True)
-    accepted_execution = serializers.BooleanField(read_only=True)
-    accepted_execution_at = serializers.DateTimeField(read_only=True)
+    accepted = serializers.BooleanField()
+    accepted_at = serializers.DateTimeField()
+    accepted_execution = serializers.BooleanField()
+    accepted_execution_at = serializers.DateTimeField()
     last_update = serializers.DateTimeField(read_only=True)
 
     class Meta:
+        """Meta class for the GoalSerializer."""
         model = Goals
         fields = [
             "cedula",
@@ -53,11 +57,16 @@ class GoalSerializer(serializers.ModelSerializer):
             "history_date",
             "additional_info",
         ]
-        # fields = '__all__'
+        read_only_fields = [
+            # "last_update",
+            "accepted_at",
+            "accepted_execution_at",
+            # "history_date",
+            "additional_info",
+        ]
 
     def get_additional_info(self, obj):
-        # Retrieve all TableInfo instances with the same name as obj.table_goal
-        # table_info_instances = TableInfo.objects.filter(name=obj.table_goal)
+        """Return the TableInfo of the goal."""
         table_info_instances = TableInfo.objects.filter(name=obj.table_goal)
 
         # Serialize the TableInfo instances to a list of dictionaries

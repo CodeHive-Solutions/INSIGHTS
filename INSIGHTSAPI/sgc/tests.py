@@ -178,6 +178,30 @@ class TestSGC(BaseTestCase):
         # Assert that the response status code is HTTP 403 Forbidden
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_update_file(self):
+        """Test updating a file"""
+        self.file_data["area"] = SGCArea.objects.first()
+        file = SGCFile.objects.create(**self.file_data)
+        with open("utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx", "rb") as file_data:
+            file_content = file_data.read()
+        self.file_data["file"] = SimpleUploadedFile(
+            "Test_SGC_Robinsón_updated.xlsx", file_content
+        )
+        self.file_data["name"] = "Test File Updated"
+        response = self.client.put(
+            reverse("SGCFile-detail", kwargs={"pk": file.id}),
+            self.file_data,
+            format="multipart",
+            cookies=self.client.cookies,
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data.get("name"), "Test File Updated")
+        file_exist = os.path.exists(
+            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón_updated.xlsx")
+        )
+        self.assertTrue(file_exist, os.listdir(self.media_directory))
+
     def test_delete_file(self):
         """Test deleting a file"""
         self.file_data["area"] = SGCArea.objects.first()
@@ -193,7 +217,6 @@ class TestSGC(BaseTestCase):
 
     def test_delete_file_without_permission(self):
         """Test deleting a file without permission"""
-        print("Test for update file still not working")
         user = User.objects.get(username="StaffNet")
         user.user_permissions.clear()
         user.save()
@@ -218,85 +241,12 @@ class TestSGC(BaseTestCase):
     #     self.assertGreater(SGCFile.objects.count(), 0)
     #     self.assertEqual(response.data["message"], "Archivos creados")
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         """Tear down for the test"""
-        # super().tearDown()
-        # if self.media_directory.startswith("/tmp"):
-        # shutil.rmtree(self.media_directory)
-        # pass
-        # else:
-        # print(f"Not removing {self.media_directory}")
-
-
-# class TestSGCUpdate(BaseTestCase):
-#     """Test module for SGC Created to avoid the file not being created in the media directory if do it in the same request that create"""
-
-#     databases = ["default", "staffnet"]
-
-#     def setUp(self):
-#         """Set up for the test"""
-#         super().setUp()
-#         with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
-#             file_content = file.read()
-#         self.file_data = {
-#             "name": "Test File",
-#             "area": "SGC",
-#             "type": "Document",
-#             "sub_type": "xlsx",
-#             "version": "1.0",
-#             "file": SimpleUploadedFile("Test_SGC_Robinsón.xlsx", file_content),
-#         }
-#         user = User.objects.get(username="StaffNet")
-#         permission_add = Permission.objects.get(codename="add_sgcfile")
-#         user.user_permissions.add(permission_add)
-#         permission_change = Permission.objects.get(codename="change_sgcfile")
-#         user.user_permissions.add(permission_change)
-#         user.save()
-#         temp_folder = tempfile.mkdtemp()
-#         self.media_directory = temp_folder
-#         settings.MEDIA_ROOT = self.media_directory
-
-#     def test_update_file(self):
-#         """Test updating a file"""
-#         with open("utils/excels/Ejecución de metas-enerO-2022.xlsx", "rb") as file:
-#             file_content = file.read()
-#         self.file_data = {
-#             "name": "Test File1",
-#             "area": "SGC1",
-#             "type": "Document1",
-#             "sub_type": "xlsx1",
-#             "version": "1.01",
-#             "file": SimpleUploadedFile("Test_SGC_Robinsón1.xlsx", file_content),
-#         }
-#         response = self.client.post(
-#             reverse("SGCFile-list"),
-#             self.file_data,
-#             format="multipart",
-#             cookies=self.client.cookies,
-#         )
-#         # Assert that the response status code is HTTP 201 Created
-#         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-#         print(SGCFile.objects.first().file)
-#         path = os.path.join(settings.MEDIA_ROOT, str(SGCFile.objects.first().file))
-#         print(os.listdir(settings.MEDIA_ROOT))
-#         file_exist = os.path.exists(
-#             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón.xlsx")
-#         )
-#         self.assertTrue(file_exist, os.listdir(self.media_directory))
-#         with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
-#             file_content = file.read()
-#         self.file_data["file"] = SimpleUploadedFile(
-#             "Test_SGC_Robinsón.xlsx", file_content
-#         )
-#         response = self.client.put(
-#             reverse("SGCFile-detail", kwargs={"pk": SGCFile.objects.first().id}),
-#             self.file_data,
-#             format="multipart",
-#             cookies=self.client.cookies,
-#         )
-#         # Assert that the response status code is HTTP 200 OK
-#         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-#         file_exist = os.path.exists(
-#             os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón.xlsx")
-#         )
-#         self.assertTrue(file_exist)
+        if str(settings.MEDIA_ROOT).startswith("/tmp"):
+            shutil.rmtree(settings.MEDIA_ROOT)
+            # pass
+        else:
+            print(f"Not removing {settings.MEDIA_ROOT}")
+        super().tearDownClass()
