@@ -301,7 +301,7 @@ LOGGING = {
         },
         "django_auth_ldap": {
             "handlers": ["console", "response_file", "exception_file"],
-            "level": "INFO",
+            "level": "DEBUG",
             "propagate": True,
         },
     },
@@ -347,6 +347,8 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
     "last_name": "sn",
 }
+
+AUTH_LDAP_ALWAYS_UPDATE_USER = False
 
 # This works faster in ldap but i don't know how implement it with the sAMAcountName
 # AUTH_LDAP_USER_DN_TEMPLATE = 'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'

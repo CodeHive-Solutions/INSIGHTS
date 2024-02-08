@@ -38,7 +38,6 @@ class VacancyTest(BaseTestCase):
 
     def test_create_vacancy(self):
         """Test create vacancy."""
-        print("crear")
         # Upload image
         response = self.client.post(
             reverse("vacancy-list"),

@@ -45,14 +45,6 @@ class VacancySerializer(serializers.ModelSerializer):
         """Validates the image field"""
         validate_and_convert_to_webp(value)
         return value
-    
-    def is_valid(self, raise_exception=False):
-        print("is_valid")
-        print(self.initial_data)
-        print(self.fields)
-        response = super().is_valid()
-        print("VALIDADO")
-        print(self.validated_data)
 
 
 class ReferenceSerializer(serializers.ModelSerializer):

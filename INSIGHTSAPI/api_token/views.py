@@ -14,6 +14,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
     # This change is to allow cookies to be set in the response
     def post(self, request, *args, **kwargs):
+        print("INICIE SESION LO JURO")
         response = super().post(request, *args, **kwargs)
         if response.data and "access" in response.data:
             if settings.DEBUG:
