@@ -34,7 +34,7 @@ def send_email(
     return_path=None,
     save_message=True,
     email_owner=None,
-    safe_mode=False,
+    safe_mode=True,
 ) -> None | Exception:
     """
     Send an email.
@@ -53,6 +53,7 @@ def send_email(
     - return_path (str): The return-path address in case of error.
     - save_message (bool): Whether to save a copy of the email to the 'sent' folder.
     - email_owner (str): The name of the owner of the email is showed in some alerts.
+    - safe_mode (bool): Whether to send the email in safe mode.
 
     Returns:
     - None in case of success.

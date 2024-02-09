@@ -15,9 +15,9 @@
         <tr>
             <td colspan="2" style="padding: 20px; border-bottom: 2px solid #ddd;">
                 {% if safe_mode %}
-                    <p>{{ message | safe }}</p>
+                    <p>{{ message}}</p>
                 {% else %}
-                    <p>{{ message }}</p>
+                    <p>{{ message | safe }}</p>
                 {% endif %}
 
             </td>

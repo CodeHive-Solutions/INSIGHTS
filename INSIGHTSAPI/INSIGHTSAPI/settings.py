@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'drf_spectacular',
     "corsheaders",
     "django_auth_ldap",
     "simple_history",
@@ -74,7 +75,7 @@ INSTALLED_APPS = [
     "contracts",
     "users",
     "excels_processing",
-    "pqrs",
+    # "pqrs",
     "django_sendfile",
     "services",
     "blog",
@@ -100,6 +101,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_JWT.CookieJWTAuthentication",),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
@@ -301,7 +303,7 @@ LOGGING = {
         },
         "django_auth_ldap": {
             "handlers": ["console", "response_file", "exception_file"],
-            "level": "DEBUG",
+            "level": "INFO",
             "propagate": True,
         },
     },

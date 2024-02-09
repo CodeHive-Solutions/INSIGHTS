@@ -70,7 +70,7 @@ class ReferenceViewSet(viewsets.ModelViewSet):
                 to_emails=to_emails,
                 save_message=True,
                 email_owner="Vacantes",
-                safe_mode=True,
+                safe_mode=False,
             )
             if errors:
                 return Response(
@@ -129,7 +129,7 @@ def send_vacancy_apply(request):
         to_emails=to_emails,
         save_message=True,
         email_owner="Vacantes",
-        safe_mode=True,
+        safe_mode=False,
     )
     if errors:
         return Response({"error": "Hubo un error en el envió del correo"}, status=500)

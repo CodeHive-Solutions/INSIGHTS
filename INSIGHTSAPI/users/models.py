@@ -55,7 +55,6 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
-        print("CREANDO USUARIO")
         with connections["staffnet"].cursor() as db_connection:
             db_connection.execute(
                 "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
@@ -65,16 +64,24 @@ class User(AbstractUser):
             if str(self.username).upper() in {"ZEUS","ADMIN","STAFFNET"}:
                 result = ("00000000","Administrador", "Administrador")
             elif not result:
-                # raise ValidationError(
-                #     "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
-                # )
-                super(User, self).save(*args, **kwargs)
+                raise ValidationError(
+                    "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
+                )
+                # super(User, self).save(*args, **kwargs)
             self.cedula = result[0]
             self.job_title = result[1]
             area, _ = Area.objects.get_or_create(name=result[2])
             self.area_id = area.id
             if not self.is_superuser:
                 self.set_unusable_password()
+            db_connection.execute(
+                "SELECT correo,correo_corporativo FROM personal_information WHERE cedula = %s",
+                [self.cedula],
+            )
+            mails = db_connection.fetchone()
+            if mails:
+                self.email = mails[1] if mails[1] else mails[0]
+                print(self.email)
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField
