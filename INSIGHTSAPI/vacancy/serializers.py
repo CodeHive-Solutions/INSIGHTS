@@ -33,6 +33,7 @@ def validate_and_convert_to_webp(value):
 
 class VacancySerializer(serializers.ModelSerializer):
     """Serializer for the Vacancy model"""
+    is_active = serializers.BooleanField(default=True)
 
     class Meta:
         """Meta class for the VacancySerializer"""

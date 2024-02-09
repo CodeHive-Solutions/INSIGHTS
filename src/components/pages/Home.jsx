@@ -22,10 +22,20 @@ import noBirthday2 from "../../images/birthdays/no-birthdays-2.jpg";
 import cake from "../../images/birthdays/cake.png";
 import chiguiro from "../../images/home-carousel/chiguiro.png";
 import noCarro from "../../images/home-carousel/dia_no_carro.png";
-import cancerMama from "../../images/home-carousel/cancer-mama.png";
-
+import vacancie from "../../images/home-carousel/vacancies-2.png";
+import valentin from "../../images/home-carousel/valentin.png";
+import ceroDescriminacion from "../../images/home-carousel/cero-discriminacion.png";
+import inclusion from "../../images/home-carousel/inclusion.png";
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
-const homeImages = [{ image: cancerMama }, { image: noCarro }, { image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }];
+const homeImages = [
+    { image: inclusion },
+    { image: valentin },
+    { image: ceroDescriminacion },
+    { image: raac },
+    { image: campaigns },
+    { image: isos },
+    { image: vacanciesCarousel },
+];
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
@@ -161,6 +171,7 @@ const Home = () => {
             <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} contain={true} height={matches ? "648px" : "480px"} width={matches ? "1152px" : "854px"} />
             </Box>
+
             <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"

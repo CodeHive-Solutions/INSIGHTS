@@ -48,11 +48,14 @@ class VacancyTest(BaseTestCase):
         )
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(Vacancy.objects.count(), 1)
+        vacancy = Vacancy.objects.first()
+        self.assertEqual(vacancy.name, "Auxiliar de servicios generales TEST")
+        self.assertTrue(vacancy.is_active)
 
     def test_get_vacancies(self):
         """Test get vacancies."""
         Vacancy.objects.create(**self.data)
-        self.data["active"] = False
+        self.data["is_active"] = False
         Vacancy.objects.create(**self.data)
         response = self.client.get(reverse("vacancy-list"))
         self.assertEqual(response.status_code, 200, response.data)
@@ -81,10 +84,10 @@ class VacancyTest(BaseTestCase):
         """Test update vacancy."""
         vacancy = Vacancy.objects.create(**self.data)
         response = self.client.patch(
-            reverse("vacancy-detail", args=[vacancy.id]), {"active": False}
+            reverse("vacancy-detail", args=[vacancy.id]), {"is_active": False}
         )
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.data["active"], False)
+        self.assertEqual(response.data["is_active"], False)
 
     def test_update_vacancy_without_permission(self):
         """Test update vacancy without permission."""
@@ -104,7 +107,7 @@ class VacancyTest(BaseTestCase):
         self.assertEqual(response.status_code, 400, response.data)
         # Now try with a put request
         response = self.client.put(
-            reverse("vacancy-detail", args=[vacancy.id]), {"name": "Auxiliar de servicios generales", "image": self.data["image"], "active": False}
+            reverse("vacancy-detail", args=[vacancy.id]), {"name": "Auxiliar de servicios generales", "image": self.data["image"], "is_active": False}
         )
         self.assertEqual(response.status_code, 400, response.data)
         self.assertEqual(response.data, {"error": "No se puede modificar la vacante"})

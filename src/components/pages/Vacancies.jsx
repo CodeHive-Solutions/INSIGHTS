@@ -20,8 +20,11 @@ import TextField from "@mui/material/TextField";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { styled } from "@mui/material/styles";
 import AddIcon from "@mui/icons-material/Add";
+import IconButton from "@mui/material/IconButton";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-const MediaCard = ({ img, handleOpenVacancy }) => {
+const MediaCard = ({ img, handleOpenVacancy, id, setInactivateId, setOpenDialogInactivate, inactivatePermission }) => {
+    setInactivateId(id);
     return (
         <Card
             sx={{
@@ -36,6 +39,11 @@ const MediaCard = ({ img, handleOpenVacancy }) => {
             }}
             onClick={() => handleOpenVacancy(img)}
         >
+            {inactivatePermission && (
+                <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }} onClick={() => setOpenDialogInactivate(true)} aria-label="delete">
+                    <DeleteForeverIcon fontSize="inherit" />
+                </IconButton>
+            )}
             <CardMedia sx={{ height: 500 }} image={img} />
         </Card>
     );
@@ -56,11 +64,14 @@ const Vacancies = () => {
     const [fileImage, setFileImage] = useState();
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const addPermission = permissions.includes("vacancy.add_vacancy");
+    const inactivatePermission = permissions.includes("vacancy.edit_vacancy");
     const [vacancies, setVacancies] = useState([{}]);
     const [imageName, setImageName] = useState("Subir Imagen");
     const [vacancyDescription, setVacancyDescription] = useState(
         "Si desea aplicar a esta vacante, de click en el botón de confirmar, tus datos serán enviados automáticamente al area de selección para presentar tu postulación."
     );
+    const [openDialogInactivate, setInactivateDialog] = useState(false);
+    const [inactivateId, setInactivateId] = useState();
 
     const getVacancies = async () => {
         try {
@@ -88,6 +99,9 @@ const Vacancies = () => {
 
     useEffect(() => {
         getVacancies();
+    }, []);
+
+    useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
@@ -121,7 +135,7 @@ const Vacancies = () => {
                 throw new Error(data.error);
             }
 
-            if (response.status === 200) {
+            if (response.status === 201) {
                 showSnack("success", "La información de la vacante ha sido enviada correctamente.");
                 setOpenVacancy(false);
                 setOpenCollapse(false);
@@ -181,9 +195,11 @@ const Vacancies = () => {
         setImageName("Cargar Imagen");
     };
 
+    const handleCloseInactiveDialog = () => setInactivateDialog(false);
+
     const submitAddVacancy = async () => {
         const formData = new FormData();
-        formData.append("vacancy_name", nameAddVacancy.current.value);
+        formData.append("name", nameAddVacancy.current.value);
         formData.append("image", fileImage);
 
         try {
@@ -243,6 +259,33 @@ const Vacancies = () => {
         setFileImage(event.target.files[0]);
     };
 
+    const handleInactiveVacancy = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}vacancy/vacancy/${inactivateId}/`, {
+                method: "PATCH",
+                credentials: "include",
+                body: JSON.stringify({ is_active: false }),
+                headers: { "Content-Type": "application/json" },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error);
+            }
+
+            if (response.status === 200) {
+                getVacancies();
+                showSnack("success", "La vacante ha sido inactivada correctamente.");
+                setInactivateDialog(false);
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+            setInactivateDialog(false);
+        }
+    };
+
     return (
         <>
             <Container
@@ -275,6 +318,11 @@ const Vacancies = () => {
                                 key={index}
                                 handleOpenVacancy={() => handleOpenVacancy(vacancy.image, vacancy.vacancy_name, vacancy.id)}
                                 img={vacancy.image}
+                                id={vacancy.id}
+                                setInactivateId={setInactivateId}
+                                getVacancies={getVacancies}
+                                inactivatePermission={inactivatePermission}
+                                setOpenDialogInactivate={setInactivateDialog}
                             ></MediaCard>
                         );
                     })}
@@ -330,6 +378,19 @@ const Vacancies = () => {
                         <Button onClick={submitApplyVacancy}>Confirmar</Button>
                     </DialogActions>
                 </Collapse>
+            </Dialog>
+
+            <Dialog open={openDialogInactivate} onClose={handleCloseInactiveDialog} aria-labelledby="alert-dialog-title">
+                <DialogTitle id="alert-dialog-title">{"¿Desea inactivar esta vacante?"}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        La vacante será desactivada y ya no estará disponible, sin embargo, las referencias relacionadas con ella no se perderán.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseInactiveDialog}>Cancelar</Button>
+                    <Button onClick={handleInactiveVacancy}>Inactivar</Button>
+                </DialogActions>
             </Dialog>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>

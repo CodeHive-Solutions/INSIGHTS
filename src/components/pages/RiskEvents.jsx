@@ -47,20 +47,28 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const validationSchema = Yup.object().shape({
-    id: Yup.string().required("Campo requerido"),
-    start_date: Yup.string().required("Campo requerido"),
-    end_date: Yup.string().required("Campo requerido"),
-    event_type: Yup.string().required("Campo requerido"),
+    event_class: Yup.string().required("Campo requerido"),
+    level: Yup.string().required("Campo requerido"),
     process: Yup.string().required("Campo requerido"),
     lost_type: Yup.string().required("Campo requerido"),
-    product_line: Yup.string().required("Campo requerido"),
-    current_state: Yup.string().required("Campo requerido"),
-    close_date: Yup.string().required("Campo requerido"),
+    product: Yup.string().required("Campo requerido"),
+    start_date: Yup.string().required("Campo requerido"),
+    end_date: Yup.string().required("Campo requerido"),
+    discovery_date: Yup.string().required("Campo requerido"),
+    accounting_date: Yup.string().required("Campo requerido"),
+    currency: Yup.string().required("Campo requerido"),
+    quantity: Yup.string().required("Campo requerido"),
+    recovered_quantity: Yup.string().required("Campo requerido"),
+    recovered_quantity_by_insurance: Yup.string().required("Campo requerido"),
     reported_by: Yup.string().required("Campo requerido"),
-    classification: Yup.string().required("Campo requerido"),
-    level: Yup.string().required("Campo requerido"),
+    critical: Yup.string().required("Campo requerido"),
     plan: Yup.string().required("Campo requerido"),
+    event_title: Yup.string().required("Campo requerido"),
+    public_accounts_affected: Yup.string().required("Campo requerido"),
+    description: Yup.string().required("Campo requerido"),
+    close_date: Yup.string().required("Campo requerido"),
     learning: Yup.string().required("Campo requerido"),
+    status: Yup.string().required("Campo requerido"),
 });
 
 export const RiskEvent = () => {
@@ -78,12 +86,12 @@ export const RiskEvent = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions.includes("contracts.view_contract")) {
+        if (!permissions.includes("operational_risk.view_events")) {
             navigate("/logged/home");
         }
     }, []);
 
-    const getPolicies = async () => {
+    const getOperationalRisk = async () => {
         try {
             const response = await fetch(`${getApiUrl()}operational-risk/`, {
                 method: "GET",
@@ -105,9 +113,25 @@ export const RiskEvent = () => {
         }
     };
 
+    const cleanUpDetails = (details) => {
+        const cleanedDetails = { ...details };
+
+        // Replace null or undefined values with a default value (e.g., '')
+        Object.keys(cleanedDetails).forEach((key) => {
+            cleanedDetails[key] = cleanedDetails[key] ?? "";
+
+            if (key === "close_date" && cleanedDetails[key]) {
+                // Assuming cleanedDetails[key] is a valid date string
+                cleanedDetails[key] = new Date(cleanedDetails[key]).toISOString().split("T")[0];
+            }
+        });
+
+        setDetails(cleanedDetails);
+    };
+
     const getDetails = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}contracts/${id}`, {
+            const response = await fetch(`${getApiUrl()}operational-risk/${id}`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -116,11 +140,8 @@ export const RiskEvent = () => {
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                setDetails(data);
+                cleanUpDetails(data);
                 handleOpenDialogEdit();
-                // setAddPermission(data.permissions.add);
-                // setEditPermission(data.permissions.change);
-                // setDeletePermission(data.permissions.delete);
             }
         } catch (error) {
             console.error(error);
@@ -129,7 +150,7 @@ export const RiskEvent = () => {
     };
 
     useEffect(() => {
-        getPolicies();
+        getOperationalRisk();
     }, []);
 
     const handleCloseDialog = () => setOpenDialog(false);
@@ -205,24 +226,8 @@ export const RiskEvent = () => {
     };
 
     const handleSubmit = async (values) => {
-        const formatCOPValue = (value) => {
-            return value.replace(/\./g, "").replace(",", ".");
-        };
-
-        const formatCOPFields = (values) => {
-            const fieldsToFormat = ["value", "monthly_cost", "insurance_policy"];
-
-            fieldsToFormat.forEach((field) => {
-                if (values[field]) {
-                    values[field] = formatCOPValue(values[field]);
-                }
-            });
-        };
-
-        formatCOPFields(values);
-
         try {
-            const response = await fetch(`${getApiUrl()}contracts/`, {
+            const response = await fetch(`${getApiUrl()}operational-risk/`, {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify(values),
@@ -243,23 +248,8 @@ export const RiskEvent = () => {
     };
 
     const handleSubmitEdit = async (values) => {
-        const formatCOPValue = (value) => {
-            return value.replace(/\./g, "").replace(",", ".");
-        };
-
-        const formatCOPFields = (values) => {
-            const fieldsToFormat = ["value", "monthly_cost", "insurance_policy"];
-
-            fieldsToFormat.forEach((field) => {
-                if (values[field]) {
-                    values[field] = formatCOPValue(values[field]);
-                }
-            });
-        };
-
-        formatCOPFields(values);
         try {
-            const response = await fetch(`${getApiUrl()}contracts/${values.id}/`, {
+            const response = await fetch(`${getApiUrl()}operational-risk/${values.id}/`, {
                 method: "PATCH",
                 credentials: "include",
                 body: JSON.stringify(values),
@@ -354,15 +344,106 @@ export const RiskEvent = () => {
 
     const columns = [
         { field: "id", type: "number", headerName: "ID", width: 70 },
-        { field: "start_date", type: "datetime-local", headerName: "Fecha de Inicio", width: 100, editable: false },
-        { field: "end_date", type: "datetime-local", headerName: "Fecha de Fin", width: 100, editable: false },
         {
-            field: "event_type",
-            type: "select",
-            headerName: "Tipo de Evento",
+            field: "start_date",
+            type: "dateTime",
+            headerName: "Fecha de Inicio",
+            width: 200,
+            valueGetter: (params) => {
+                if (params.value) {
+                    const originalDate = new Date(params.value);
+                    const hour = originalDate.getHours();
+                    const minute = originalDate.getMinutes();
+                    const newDate = new Date();
+                    newDate.setHours(hour);
+                    newDate.setMinutes(minute);
+                    return newDate;
+                } else {
+                    return "";
+                }
+            },
+        },
+        {
+            field: "end_date",
+            type: "dateTime",
+            headerName: "Fecha de Fin",
+            width: 200,
+            editable: false,
+            valueGetter: (params) => {
+                if (params.value) {
+                    return new Date(params.value);
+                } else {
+                    return "";
+                }
+            },
+        },
+        {
+            field: "discovery_date",
+            type: "dateTime",
+            headerName: "Descubrimiento",
+            width: 200,
+            editable: false,
+            valueGetter: (params) => {
+                if (params.value) {
+                    return new Date(params.value);
+                } else {
+                    return "";
+                }
+            },
+        },
+        {
+            field: "accounting_date",
+            type: "date",
+            headerName: "Fecha de Atención",
+            width: 200,
+            editable: false,
+            valueGetter: (params) => {
+                if (params.value) {
+                    return new Date(params.value);
+                } else {
+                    return "";
+                }
+            },
+        },
+        {
+            field: "currency",
+            type: "singleSelect",
+            headerName: "Divisa",
             width: 100,
             editable: false,
-            options: [
+            valueOptions: [
+                { value: "COP", label: "COP" },
+                { value: "USD", label: "USD" },
+            ],
+        },
+        {
+            field: "quantity",
+            type: "number",
+            headerName: "Cuantía",
+            width: 100,
+            editable: false,
+        },
+        {
+            field: "recovered_quantity",
+            type: "number",
+            headerName: "Cuantía Total Recuperada",
+            width: 100,
+            editable: false,
+        },
+        {
+            field: "recovered_quantity_by_insurance",
+            type: "number",
+            headerName: "Cuantía Rec. x Seguros",
+            width: 100,
+            editable: false,
+        },
+        {
+            field: "event_class",
+            type: "singleSelect",
+            headerName: "Clase de Evento",
+            width: 100,
+            editable: false,
+            valueOptions: [
                 { value: "FRAUDE INTERNO", label: "Fraude Interno" },
                 { value: "FRAUDE EXTERNO", label: "Fraude Externo" },
                 { value: "RELACIONES LABORALES", label: "Relaciones Laborales" },
@@ -374,12 +455,19 @@ export const RiskEvent = () => {
             ],
         },
         {
+            field: "event_title",
+            type: "text",
+            headerName: "Evento",
+            width: 100,
+            editable: false,
+        },
+        {
             field: "process",
-            type: "select",
+            type: "singleSelect",
             headerName: "Proceso",
             width: 100,
             editable: false,
-            options: [
+            valueOptions: [
                 { value: "ADMINISTRATIVO, INVERSIONES Y TESORERIA", label: "Administrativo, Inversiones y Tesorería" },
                 { value: "BANCOS Y CUENTAS POR PAGAR", label: "Bancos y Cuentas por Pagar" },
                 { value: "CAMPAÑAS", label: "Campañas" },
@@ -394,23 +482,30 @@ export const RiskEvent = () => {
         },
         {
             field: "lost_type",
-            type: "select",
+            type: "singleSelect",
             headerName: "Tipo de Perdida",
             width: 100,
             editable: false,
-            options: [
+            valueOptions: [
                 { value: "GENERAN PERDIDAS Y AFECTAN EL PYG", label: "Generan Perdidas y Afectan el PYG" },
                 { value: "GENERAN PERDIDAS Y NO AFECTAN EL PYG", label: "Generan Perdidas y no Afectan el PYG" },
                 { value: "NO GENERAN PERDIDA Y NO AFECTAN EL PYG", label: "No Generan Perdida y no Afectan el PYG" },
             ],
         },
         {
+            field: "description",
+            type: "text",
+            headerName: "Descripción del Evento",
+            width: 100,
+            editable: false,
+        },
+        {
             field: "product",
-            type: "",
+            type: "singleSelect",
             headerName: "Producto",
             width: 100,
             editable: false,
-            options: [
+            valueOptions: [
                 { value: "AVANTEL", label: "Avantel" },
                 { value: "AZTECA", label: "Azteca" },
                 { value: "BANCO AGRARIO", label: "Banco Agrario" },
@@ -436,54 +531,84 @@ export const RiskEvent = () => {
         },
         {
             field: "status",
-            type: "",
+            type: "singleSelect",
             headerName: "Estado Actual",
             width: 100,
             editable: false,
-            options: [
-                { value: "ABIERTO", label: "Abierto" },
-                { value: "CERRADO", label: "Cerrado" },
+            valueFormatter: (params) => {
+                if (params.value == false) {
+                    return "CERRADO";
+                } else if (params.value == true) {
+                    return "ABIERTO";
+                } else {
+                    return "";
+                }
+            },
+            valueOptions: [
+                { value: true, label: "Abierto" },
+                { value: false, label: "Cerrado" },
             ],
         },
-        { field: "close_date", type: "", headerName: "Fecha de Cierre", width: 100, editable: false },
-        { field: "reported_by", type: "", headerName: "Reportado", width: 100, editable: false },
         {
-            field: "classification",
-            type: "",
-            headerName: "Clasificación",
+            field: "close_date",
+            type: "date",
+            headerName: "Fecha de Cierre",
             width: 100,
             editable: false,
-            options: [
-                { value: "CRITICO", label: "Critico" },
-                { value: "NO CRITICO", label: "No Critico" },
+            valueGetter: (params) => {
+                if (params.value) {
+                    return new Date(params.value);
+                } else {
+                    return "";
+                }
+            },
+        },
+        { field: "reported_by", type: "", headerName: "Reportado", width: 100, editable: false },
+        {
+            field: "critical",
+            type: "singleSelect",
+            headerName: "Clasificación",
+            width: 100,
+            valueFormatter: (params) => {
+                if (params.value == false) {
+                    return "NO CRITICO";
+                } else if (params.value == true) {
+                    return "CRITICO";
+                } else {
+                    return "";
+                }
+            },
+            editable: false,
+            valueOptions: [
+                { value: true, label: "Critico" },
+                { value: false, label: "No Critico" },
             ],
         },
         {
             field: "level",
-            type: "",
+            type: "singleSelect",
             headerName: "Nivel",
             width: 100,
             editable: false,
-            options: [
+            valueOptions: [
                 { value: "BAJO", label: "Bajo" },
                 { value: "MEDIO", label: "Medio" },
                 { value: "ALTO", label: "Alto" },
             ],
+        },
+        {
+            field: "public_accounts_affected",
+            type: "text",
+            headerName: "Cuentas PUC Afectadas",
+            width: 100,
+            editable: false,
         },
         { field: "plan", type: "", headerName: "Plan", width: 100, editable: false },
         { field: "learning", type: "", headerName: "Aprendizaje", width: 100, editable: false },
     ];
 
     const initialValues = columns.reduce((acc, column) => {
-        // Define initial values based on field type
-        if (column.type === "datetime-local") {
-            acc[column.field] = ""; // Set initial datetime-local value
-        } else if (column.type === "select") {
-            acc[column.field] = column.options[0].value; // Set initial select value
-        } else {
-            acc[column.field] = ""; // Set initial text value
-        }
-
+        acc[column.field] = ""; // Set initial text value
         return acc;
     }, {});
 
@@ -538,6 +663,11 @@ export const RiskEvent = () => {
                     slots={{
                         toolbar: CustomToolbar,
                     }}
+                    initialState={{
+                        sorting: {
+                            sortModel: [{ field: "id", sort: "desc" }],
+                        },
+                    }}
                 ></DataGrid>
             </Container>
             <motion.div
@@ -560,35 +690,51 @@ export const RiskEvent = () => {
                                     } else if (column.field === "id") {
                                         return null;
                                     } else if (column.field === "start_date" || column.field === "end_date") {
-                                        return <FormikTextField type="datetime-local" name={column.field} label={column.headerName} />;
-                                    } else if (column.field === "close_date") {
-                                        return <FormikTextField type="date" name={column.field} label={column.headerName} />;
+                                        return <FormikTextField type="datetime-local" key={column.field} name={column.field} label={column.headerName} />;
+                                    } else if (column.field === "close_date" || column.field === "accounting_date") {
+                                        return <FormikTextField type="date" key={column.field} name={column.field} label={column.headerName} />;
                                     } else if (column.field === "renovation_date") {
-                                        return <FormikTextField type="date" name={column.field} label={column.headerName} />;
+                                        return <FormikTextField type="date" key={column.field} name={column.field} label={column.headerName} />;
                                     } else if (
-                                        column.field === "event_type" ||
+                                        column.field === "event_class" ||
                                         column.field === "process" ||
+                                        column.field === "currency" ||
                                         column.field === "lost_type" ||
                                         column.field === "product" ||
                                         column.field === "status" ||
                                         column.field === "level" ||
-                                        column.field === "classification"
+                                        column.field === "critical"
                                     ) {
                                         return (
                                             <FormikTextField
                                                 type="select"
+                                                key={column.field}
                                                 name={column.field}
                                                 label={column.headerName}
                                                 select
                                                 autoComplete="off"
                                                 spellCheck={false}
-                                                options={column.options}
+                                                options={column.valueOptions}
                                             ></FormikTextField>
                                         );
                                     } else {
-                                        return <FormikTextField type="text" name={column.field} label={column.headerName} autoComplete="off" spellCheck={false} />;
+                                        return (
+                                            <FormikTextField
+                                                key={column.field}
+                                                type="text"
+                                                name={column.field}
+                                                label={column.headerName}
+                                                autoComplete="off"
+                                                spellCheck={false}
+                                            />
+                                        );
                                     }
                                 })}
+                            </Box>
+                            <Box sx={{ mt: "1rem" }}>
+                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>} variant="contained">
+                                    Guardar
+                                </Button>
                             </Box>
                         </Form>
                     </Formik>
@@ -606,48 +752,55 @@ export const RiskEvent = () => {
                     <Formik initialValues={details} validationSchema={validationSchema} onSubmit={handleSubmitEdit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="datetime" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact" label="Contacto" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
-                                    <FormikTextField
-                                        type="text"
-                                        multiline={true}
-                                        rows={3}
-                                        name="civil_responsibility_policy"
-                                        label="Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                    <FormikTextField
-                                        multiline={true}
-                                        rows={3}
-                                        type="text"
-                                        name="compliance_policy"
-                                        label="Póliza de Cumplimiento"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                    <FormikTextField
-                                        type="text"
-                                        multiline={true}
-                                        rows={3}
-                                        name="insurance_policy"
-                                        label="Póliza Seguros de Responsabilidad Profesional por Perdida de Datos"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                </Box>
-                                <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
-                                <Button disabled={disabled} type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                                    Guardar
+                                {columns.map((column) => {
+                                    if (column.field === "actions") {
+                                        return null;
+                                    } else if (column.field === "id") {
+                                        return null;
+                                    } else if (column.field === "start_date" || column.field === "end_date") {
+                                        return <FormikTextField type="datetime-local" key={column.field} name={column.field} label={column.headerName} />;
+                                    } else if (column.field === "close_date" || column.field === "accounting_date") {
+                                        return <FormikTextField type="date" key={column.field} name={column.field} label={column.headerName} />;
+                                    } else if (column.field === "renovation_date") {
+                                        return <FormikTextField type="date" key={column.field} name={column.field} label={column.headerName} />;
+                                    } else if (
+                                        column.field === "event_class" ||
+                                        column.field === "process" ||
+                                        column.field === "lost_type" ||
+                                        column.field === "product" ||
+                                        column.field === "status" ||
+                                        column.field === "level" ||
+                                        column.field === "critical"
+                                    ) {
+                                        return (
+                                            <FormikTextField
+                                                type="select"
+                                                key={column.field}
+                                                name={column.field}
+                                                label={column.headerName}
+                                                select
+                                                autoComplete="off"
+                                                spellCheck={false}
+                                                options={column.valueOptions}
+                                            ></FormikTextField>
+                                        );
+                                    } else {
+                                        return (
+                                            <FormikTextField
+                                                key={column.field}
+                                                type="text"
+                                                name={column.field}
+                                                label={column.headerName}
+                                                autoComplete="off"
+                                                spellCheck={false}
+                                            />
+                                        );
+                                    }
+                                })}
+                            </Box>
+                            <Box sx={{ mt: "1rem" }}>
+                                <Button disabled={disabled} type="submit" startIcon={<SaveIcon></SaveIcon>} variant="contained">
+                                    Guardar Edición
                                 </Button>
                             </Box>
                         </Form>

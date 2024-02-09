@@ -3,21 +3,29 @@ from django.db.models import Q
 from django.utils import timezone
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
-from rest_framework.test import APITestCase
+from django.contrib.auth.models import Permission
+from services.tests import BaseTestCase
 from rest_framework import status
-from rest_framework.test import APIClient
-from media.goals_templates.goals_delivery import get_template
+from users.models import User
+# from media.goals_templates.goals_delivery import get_template
 from .models import Goals, TableInfo
-from weasyprint import HTML
-from django.conf import settings
 
 
-class GoalAPITestCase(APITestCase):
+class GoalAPITestCase(BaseTestCase):
     """Test the Goal API."""
 
     def setUp(self):
-        """Set up the test client."""
-        self.client = APIClient()
+        """Set up the test client and the URL for the goal list view."""
+        super().setUp()
+        user = User.objects.get(username="staffnet")
+        # permission_view = Permission.objects.get(codename="view_goals")
+        # user.user_permissions.add(permission_view)
+        permission_add = Permission.objects.get(codename="add_goals")
+        user.user_permissions.add(permission_add)
+        # permission_change = Permission.objects.get(codename="change_goals")
+        # user.user_permissions.add(permission_change)
+        permission_view_history = Permission.objects.get(codename="view_historicalgoals")
+        user.user_permissions.add(permission_view_history)
 
     def test_serializer(self):
         """Test the Goal serializer."""
@@ -38,7 +46,7 @@ class GoalAPITestCase(APITestCase):
             content_type="application/vnd.ms-excel",
         )
         # Send the POST request to the upload-excel URL with the Excel file data
-        response = self.client.post(reverse("goal-list"), {"file": excel_file})
+        response = self.client.post(reverse("goal-list"), {"file": excel_file}, cookies=self.client.cookies)
         # Assert the response status code and perform additional assertions for the response data
         number_goals = Goals.objects.all().count()
         # print(response.data)
@@ -129,7 +137,7 @@ class GoalAPITestCase(APITestCase):
         self.test_execution_upload(called=True)
         # Check with a month that has no goals
         response = self.client.get("/goals/?date=DICIembre-2028&column=delivery")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.data)
         self.assertFalse(len(response.data) > 0)  # type: ignore
         # Check with a month that has goals
         response = self.client.get("/goals/?date=ENERO-2028&column=delivery")
@@ -164,7 +172,7 @@ class GoalAPITestCase(APITestCase):
         self.test_execution_upload(called=True)
         # Check with a month that has goals
         response = self.client.get("/goals/1016080155/?date=ENERO-2028&column=delivery")
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["cedula"], 1016080155)  # type: ignore
         self.assertIn("ENERO-2028", response.data.get("goal_date"))  # type: ignore
         self.assertEqual(len(response.data), 28)  # type: ignore
@@ -177,7 +185,7 @@ class GoalAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 28)  # type: ignore
         self.assertIn("ENERO-2022", response.data.get("execution_date"))  # type: ignore
 
-    def test_patch_goal(self):
+    def test_patch_goal_delivery(self):
         """Test the update-goal view."""
         # Get the first goal from the database
         goal = Goals.objects.create(
@@ -209,7 +217,92 @@ class GoalAPITestCase(APITestCase):
         # Assert that the goal was updated with the new data
         self.assertEqual(response.data["message"], "La meta fue aceptada.", response.data)
 
-    def test_patch_goal_deny(self):
+    def test_patch_goal_delivery_claro(self):
+        """Test the update-goal view."""
+        # Get the first goal from the database
+        table_info_data = [
+            {"name": "ANTIGUOS", "fringe": "CERO", "diary_goal": "70", "days": "24", "month_goal": "1680", "hours": "8", "collection_account": "75000"},
+            {"name": "ANTIGUOS", "fringe": "30", "diary_goal": "71", "days": "25", "month_goal": "1681", "hours": "9", "collection_account": "75001"},
+            {"name": "ANTIGUOS", "fringe": "60", "diary_goal": "72", "days": "26", "month_goal": "1682", "hours": "10", "collection_account": "75002"},
+            {"name": "ANTIGUOS", "fringe": "90", "diary_goal": "73", "days": "27", "month_goal": "1683", "hours": "11", "collection_account": "75003"},
+            {"name": "ANTIGUOS", "fringe": "120A180", "diary_goal": "74", "days": "28", "month_goal": "1684", "hours": "12", "collection_account": "75004"},
+            {"name": "ANTIGUOS", "fringe": "210", "diary_goal": "75", "days": "29", "month_goal": "1685", "hours": "13", "collection_account": "75005"},
+            {"name": "ANTIGUOS", "fringe": "PREPOTENCIAL", "diary_goal": "76", "days": "30", "month_goal": "1686", "hours": "14", "collection_account": "75006"},
+            {"name": "ANTIGUOS", "fringe": "PREPOTENCIAL_2", "diary_goal": "77", "days": "31", "month_goal": "1687", "hours": "15", "collection_account": "75007"},
+            {"name": "ANTIGUOS", "fringe": "PREPROVISION", "diary_goal": "78", "days": "32", "month_goal": "1688", "hours": "16", "collection_account": "75008"},
+            {"name": "ANTIGUOS", "fringe": "CHURN", "diary_goal": "79", "days": "33", "month_goal": "1689", "hours": "17", "collection_account": "75009"},
+            {"name": "ANTIGUOS", "fringe": "PRECHURN", "diary_goal": "80", "days": "34", "month_goal": "1690", "hours": "18", "collection_account": "75010"},
+            {"name": "ANTIGUOS", "fringe": "PROVISION", "diary_goal": "81", "days": "35", "month_goal": "1691", "hours": "19", "collection_account": "75011"},
+            {"name": "ANTIGUOS", "fringe": "POTENCIAL", "diary_goal": "82", "days": "36", "month_goal": "1692", "hours": "20", "collection_account": "75012"},
+        ]
+    # Create TableInfo objects using the data
+        for data in table_info_data:
+            TableInfo.objects.create(**data)
+        goal = Goals.objects.create(
+            cedula="1000065648",
+            name="Heibert",
+            campaign_goal="Base Test Goal",
+            result="50",
+            evaluation="50",
+            quality="50",
+            clean_desk="50",
+            total="50",
+            job_title_goal="Developer",
+            last_update=timezone.now(),
+            criteria_goal="50",
+            quantity_goal="50",
+            goal_date="ENERO-2022",
+            execution_date="FEBRERO-2022",
+            table_goal="ANTIGUOS",
+        )
+        # Prepare the request data
+        payload = {
+            "accepted": True,
+        }
+        # Send a PATCH request to the update-goal view
+        response = self.client.patch(
+            reverse("goal-detail", args=[goal.cedula]), data=payload
+        )
+        # Assert the response status code and content
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        # Assert that the goal was updated with the new data
+        self.assertEqual(response.data["message"], "La meta fue aceptada.", response.data)
+
+    def test_patch_goal_execution(self):
+        """Test the update-goal view."""
+        # Get the first goal from the database
+        goal = Goals.objects.create(
+            cedula="1000065648",
+            name="Heibert",
+            campaign_goal="Base Test Goal",
+            result="50",
+            evaluation="50",
+            quality="50",
+            clean_desk="50",
+            total="50",
+            job_title_goal="Developer",
+            last_update=timezone.now(),
+            criteria_goal="50",
+            quantity_goal="50",
+            goal_date="ENERO-2022",
+            execution_date="FEBRERO-2022",
+        )
+        # Prepare the request data
+        payload = {
+            "accepted_execution": True,
+        }
+        # Send a PATCH request to the update-goal view
+        response = self.client.patch(
+            reverse("goal-detail", args=[goal.cedula]), data=payload
+        )
+        # Assert the response status code and content
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        # Assert that the goal was updated with the new data
+        self.assertEqual(
+            response.data["message"], "La ejecución fue aceptada.", response.data
+        )
+
+    def test_patch_goal_denied(self):
         """Test the update-goal view."""
         # Get the first goal from the database
         goal = Goals.objects.create(
@@ -247,7 +340,7 @@ class GoalAPITestCase(APITestCase):
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         # Assert that the goal was updated with the new data
-        self.assertEqual(response.data["message"], "Patch request no válida.", response.data)
+        self.assertEqual(response.data["message"], "Patch request solo acepta el campo 'accepted' o 'accepted_execution'.", response.data)
 
     # def test_accept_goal(self):
     #     """Test the accept-goal view."""

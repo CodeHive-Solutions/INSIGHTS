@@ -31,6 +31,7 @@ const Navbar = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const cedula = JSON.parse(localStorage.getItem("cedula"));
     const [profilePicture, setProfilePicture] = useState();
+    const isAdvisor = JSON.parse(localStorage.getItem("cargo")).includes("ASESOR");
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713;
     const servicesPermission =
@@ -39,6 +40,7 @@ const Navbar = () => {
             goalsStatsPermission ||
             permissions.includes("excels_processing.call_transfer") ||
             permissions.includes("contracts.view_contract") ||
+            permissions.includes("operational_risk.view_events") ||
             permissions.includes("vacancy.view_reference"));
     const refreshToken = async (refreshTimer) => {
         try {
@@ -83,49 +85,6 @@ const Navbar = () => {
             refreshToken(refreshTimer);
         }
     }, []);
-
-    const getGoal = async () => {
-        try {
-            const response = await fetch(`${getApiUrl()}goals/15225716/`, {
-                method: "GET",
-                credentials: "include",
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail);
-            }
-
-            if (response.status === 200) {
-                setGoalCedula(data.cedula);
-                if (data.accepted) {
-                    setGoalAccepted(true);
-                } else if (data.declined) {
-                    setGoalDeclined(true);
-                } else if (data.additional_info.length > 0) {
-                    setGoalAdvisorClaro(data.additional_info);
-                } else if (data.quantity_goal && data.criteria_goal) {
-                    setGoalQuantity(data.quantity_goal);
-                    setGoalCriteria(data.criteria_goal);
-                }
-                if (data.executionAccepted) {
-                    setExecutionAcceptedGoal(true);
-                } else if (data.executionDeclined) {
-                    setExecutionDeclinedGoal(true);
-                } else if (data.total) {
-                    setExecutionTotalGoal(true);
-                    setResult(data.result);
-                    setEvaluation(data.evaluation);
-                    setQuality(data.quality);
-                    setCleanDesk(data.clean_desk);
-                    setTotal(data.total);
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     const handleOpenDialog = () => setOpenDialog(true);
 
@@ -326,12 +285,14 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {/* <MenuItem onClick={handleOpenDialog}>
-                    <ListItemIcon>
-                        <FlagIcon fontSize="small" />
-                    </ListItemIcon>
-                    Mi Meta
-                </MenuItem> */}
+                {!isAdvisor ? (
+                    <MenuItem onClick={handleOpenDialog}>
+                        <ListItemIcon>
+                            <FlagIcon fontSize="small" />
+                        </ListItemIcon>
+                        Mi Meta
+                    </MenuItem>
+                ) : null}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -488,16 +449,18 @@ const Navbar = () => {
                             Vacantes Referidas
                         </MenuItem>
                     ) : null}
-                    <MenuItem onClick={() => navigate("/logged/risk-events")}>
-                        <ListItemIcon>
-                            <FmdBadIcon fontSize="small" />
-                        </ListItemIcon>
-                        Eventos de Riesgo Operativo
-                    </MenuItem>
+                    {permissions && permissions.includes("operational_risk.view_events") ? (
+                        <MenuItem onClick={() => navigate("/logged/risk-events")}>
+                            <ListItemIcon>
+                                <FmdBadIcon fontSize="small" />
+                            </ListItemIcon>
+                            Eventos de Riesgo Operativo
+                        </MenuItem>
+                    ) : null}
                 </Box>
             </Menu>
-            {/* <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} /> */}
-            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+            {!isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} showSnack={showSnack} closeSnack={handleCloseSnack} />
         </>
     );
 };

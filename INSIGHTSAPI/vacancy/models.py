@@ -11,12 +11,19 @@ class Vacancy(models.Model):
 
     name = models.CharField(max_length=100)
     image = models.ImageField(upload_to="vacancy_images/")
-    active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         """This method returns a string representation of the vacancy."""
         return str(self.name)
 
+# class Status(models.Model):
+#     """This class represents a status."""
+
+#     name = models.CharField(max_length=100)
+#     def __str__(self):
+#         """This method returns a string representation of the status."""
+#         return str(self.name)
 
 class Reference(models.Model):
     """This class represents a reference."""
@@ -29,6 +36,11 @@ class Reference(models.Model):
     vacancy = models.ForeignKey(
         Vacancy, related_name="references", on_delete=models.DO_NOTHING
     )
+    # status = models.ForeignKey(
+        # Status, related_name="references", on_delete=models.DO_NOTHING, null=True
+    # )
+    # comments = models.CharField(max_length=400, null=True, blank=True)
+    # created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         """This method returns a string representation of the reference."""

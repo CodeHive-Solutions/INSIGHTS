@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'drf_spectacular',
     "corsheaders",
     "django_auth_ldap",
     "simple_history",
@@ -74,7 +75,7 @@ INSTALLED_APPS = [
     "contracts",
     "users",
     "excels_processing",
-    "pqrs",
+    # "pqrs",
     "django_sendfile",
     "services",
     "blog",
@@ -100,6 +101,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_JWT.CookieJWTAuthentication",),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
@@ -347,6 +349,8 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "first_name": "givenName",
     "last_name": "sn",
 }
+
+AUTH_LDAP_ALWAYS_UPDATE_USER = False
 
 # This works faster in ldap but i don't know how implement it with the sAMAcountName
 # AUTH_LDAP_USER_DN_TEMPLATE = 'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'

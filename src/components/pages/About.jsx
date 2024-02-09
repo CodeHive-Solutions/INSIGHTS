@@ -20,7 +20,7 @@ import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
 import hectorSotelo from "../../images/managers/hector-sotelo.png";
 import pablo from "../../images/managers/pablo.jpeg";
 import aboutUs from "../../images/about/img-about-2.jpg";
-import organigrama from "../../images/about/organigrama.jpg";
+import organigrama from "../../images/about/organigrama.png";
 
 //mission images
 import mission1 from "../../images/about/image-mission.jpg";
@@ -37,6 +37,9 @@ import managersJr3 from "../../images/managers-jr/1014205170.webp";
 import managersJr4 from "../../images/managers-jr/1016002011.webp";
 import managersJr5 from "../../images/managers-jr/1016033764.webp";
 import managersJr6 from "../../images/managers-jr/91498957.webp";
+import managersJr7 from "../../images/managers-jr/79509094.webp";
+import managersJr8 from "../../images/managers-jr/28553156.webp";
+import managersJr9 from "../../images/managers-jr/1010178143.webp";
 
 const managersJr = [
     {

@@ -16,8 +16,9 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import { getApiUrl } from "../../assets/getApi";
+import SnackbarAlert from "../common/SnackBarAlert";
 
-const Goals = ({ openDialog, setOpenDialog }) => {
+const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     const claroGoalsHeader = {
         franja: "Franja",
         metaDiaria: "Meta diaria",
@@ -32,21 +33,11 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         cantidad: "Cantidad",
     };
 
-    // const executionHeader = {
-    //     clean: "Clean",
-    //     desk: "Desk",
-    //     evaluacion: "Evaluation",
-    //     resultado: "Resultado",
-    //     calidad: "Calidad",
-    //     total: "Total"
-    // }
-
     const [goalAccepted, setGoalAccepted] = useState(false);
     const [goalDeclined, setGoalDeclined] = useState(false);
     const [goalAdvisorClaro, setGoalAdvisorClaro] = useState([]);
     const [goalQuantity, setGoalQuantity] = useState();
     const [goalCriteria, setGoalCriteria] = useState();
-    const [goalCedula, setGoalCedula] = useState();
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const [executionAcceptedGoal, setExecutionAcceptedGoal] = useState(false);
@@ -57,46 +48,17 @@ const Goals = ({ openDialog, setOpenDialog }) => {
     const [quality, setQuality] = useState();
     const [cleanDesk, setCleanDesk] = useState();
     const [total, setTotal] = useState();
+    const [textConfirmDialog, setTextConfirmDialog] = useState("");
+    const [status, setStatus] = useState(null);
+    const [goalType, setGoalType] = useState();
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+
     const handleCloseDialog = () => setOpenDialog(false);
     const handleOpenDialog = () => setOpenDialog(true);
 
-    const handleUndoDeclinedGoal = async (goalType) => {
-        const body = {
-            accepted: null,
-            accepted_at: null,
-        };
-
-        if (goalType === "delivery") {
-            body.accepted_execution = body.accepted;
-            body.accepted_execution_at = body.accepted_at;
-            delete body.accepted;
-            delete body.accepted_at;
-        }
-
-        try {
-            const response = await fetch(`${getApiUrl()}goals/${goalCedula}/`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                console.error(data);
-                throw new Error(response.statusText);
-            }
-
-            const updatedInstance = await response.json();
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
     const getGoal = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/5202927/`, {
+            const response = await fetch(`${getApiUrl()}goals/21018937/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -108,7 +70,6 @@ const Goals = ({ openDialog, setOpenDialog }) => {
             }
 
             if (response.status === 200) {
-                setGoalCedula(data.cedula);
                 if (data.accepted) {
                     setGoalAccepted(true);
                 } else if (data.declined) {
@@ -141,34 +102,58 @@ const Goals = ({ openDialog, setOpenDialog }) => {
         getGoal();
     }, []);
 
-    const handleGoalAction = async (status, goalType) => {
-        const body = {
-            accepted: status,
-            accepted_at: new Date().toISOString(),
-        };
+    const handleActionRequest = async () => {
+        const date = new Date();
+        date.setHours(date.getHours() - 5);
 
+        const body = {
+            [goalType]: status,
+            [`${goalType}_at`]: date,
+        };
         try {
-            const response = await fetch(`${getApiUrl()}goals/${goalCedula}/`, {
+            const response = await fetch(`${getApiUrl()}goals/21018937/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(body),
             });
-
             if (!response.ok) {
                 const data = await response.json();
                 console.error(data);
                 throw new Error(response.statusText);
             }
-
-            const updatedInstance = await response.json();
+            if (response.status === 200) {
+                getGoal();
+                setOpenConfirmDialog(false);
+                setOpenDialog(false);
+                showSnack("success", "La acción ha sido realizada con éxito");
+            }
         } catch (error) {
             console.error(error);
         }
     };
 
-    const handleCloseConfirmDialog = () => setOpenConfirmDialog(false);
+    const handleGoalAction = (status, goalType) => {
+        if (status === null) {
+            setTextConfirmDialog("¿Está seguro de deshacer la acción?");
+            setStatus(null);
+            setGoalType(goalType);
+        } else if (status === true) {
+            setTextConfirmDialog("¿Está seguro de aceptar la meta?");
+            setStatus(true);
+            setGoalType(goalType);
+        } else {
+            setTextConfirmDialog("¿Está seguro de rechazar la meta?");
+            setStatus(false);
+            setGoalType(goalType);
+        }
+        setOpenConfirmDialog(true);
+    };
+
+    const handleCloseConfirmDialog = () => {
+        setOpenConfirmDialog(false);
+    };
 
     return (
         <>
@@ -183,7 +168,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                                 Meta de Entrega Rechazada
                             </Typography>
                             <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained" onClick={handleGoalAction(null, "accepted")}>
+                                <Button variant="contained" onClick={() => handleGoalAction(null, "accepted")}>
                                     Deshacer el rechazo
                                 </Button>
                             </Box>
@@ -193,9 +178,6 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                             <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
                                 Meta de Entrega Aceptada
                             </Typography>
-                            <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained">detalles</Button>
-                            </Box>
                         </>
                     ) : goalAdvisorClaro.length == 0 && !goalQuantity ? (
                         <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
@@ -204,11 +186,10 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                     ) : (
                         <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                             <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                                <Button variant="contained" onClick={handleGoalAction(true, "accepted")}>
+                                <Button variant="contained" onClick={() => handleGoalAction(true, "accepted")}>
                                     Aceptar
                                 </Button>
-                                <Button variant="contained">Detalles</Button>
-                                <Button variant="contained" onClick={handleGoalAction(false, "accepted")}>
+                                <Button variant="contained" onClick={() => handleGoalAction(false, "accepted")}>
                                     Rechazar
                                 </Button>
                             </Box>
@@ -261,7 +242,7 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                                 Meta Rechazada
                             </Typography>
                             <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained" onClick={handleGoalAction(null, "accepted_execution")}>
+                                <Button variant="contained" onClick={() => handleGoalAction(null, "accepted_execution")}>
                                     Deshacer el rechazo
                                 </Button>
                             </Box>
@@ -271,18 +252,14 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                             <Typography variant={"subtitle1"} sx={{ textAlign: "center" }}>
                                 Meta Aceptada
                             </Typography>
-                            <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained">Detalles</Button>
-                            </Box>
                         </>
                     ) : executionTotalGoal ? (
                         <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                             <Box sx={{ display: "flex", gap: "2rem", width: "100%", alignItems: "center", justifyContent: "center" }}>
-                                <Button variant="contained" onClick={handleGoalAction(true, "accepted_execution")}>
+                                <Button variant="contained" onClick={() => handleGoalAction(true, "accepted_execution")}>
                                     Aceptar
                                 </Button>
-                                <Button variant="contained">Detalles</Button>
-                                <Button variant="contained" onClick={handleGoalAction(false, "accepted_execution")}>
+                                <Button variant="contained" onClick={() => handleGoalAction(false, "accepted_execution")}>
                                     Rechazar
                                 </Button>
                             </Box>
@@ -317,9 +294,12 @@ const Goals = ({ openDialog, setOpenDialog }) => {
                 </DialogContent>
             </Dialog>
             <Dialog open={openConfirmDialog} onClose={handleCloseConfirmDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-                <DialogTitle id="alert-dialog-title">{"¿Aceptar entrega de meta?"}</DialogTitle>
+                <DialogTitle id="alert-dialog-title">{textConfirmDialog}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">¿Está seguro de continuar con esta acción?</DialogContentText>
+                </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleCloseConfirmDialog}>Aceptar</Button>
+                    <Button onClick={handleActionRequest}>Aceptar</Button>
                 </DialogActions>
             </Dialog>
         </>

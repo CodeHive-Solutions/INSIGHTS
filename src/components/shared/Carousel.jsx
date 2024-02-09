@@ -27,12 +27,16 @@ function Item(props) {
             setIsVacancy(true);
         } else if (props.item.image.includes("isos")) {
             setIsVacancy(true);
+        } else if (props.item.image.includes("valentin")) {
+            setIsVacancy(true);
         }
     }, []);
 
     const handleClickOpen = () => {
         if (isVacancy && props.item.image.includes("isos")) {
             navigate("/logged/blog/article/6");
+        } else if (isVacancy && props.item.image.includes("valentin")) {
+            navigate("/logged/valentin");
         } else if (isVacancy) {
             navigate("/logged/vacancies/");
         }

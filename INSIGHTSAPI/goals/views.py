@@ -3,6 +3,7 @@ import base64
 import logging
 import re
 import ssl
+import locale
 from smtplib import SMTP
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -13,15 +14,17 @@ from django.utils import timezone
 from openpyxl import load_workbook
 from rest_framework import status as framework_status
 from rest_framework import viewsets
-from rest_framework.decorators import action
 from rest_framework.response import Response
 from services.emails import send_email
+from rest_framework.permissions import IsAuthenticated
+from services.permissions import DjangoModelViewPermissionsAllowAllCreateAndUpdate
 
 
 from .models import Goals, TableInfo, HistoricalGoals
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
+locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
 
 
 class GoalsViewSet(viewsets.ModelViewSet):
@@ -31,10 +34,12 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
     queryset = Goals.objects.all()
     serializer_class = GoalSerializer
+    # permission_classes = [IsAuthenticated, DjangoModelViewPermissionsAllowAllCreateAndUpdate]
 
     def partial_update(self, request, *args, **kwargs):
         """If the user accept her goal then send him a email with the PDF file attached."""
         instance = self.get_object()
+        user = request.user
         if request.data.get("accepted") is not None and len(request.data) == 1:
             if instance.accepted:
                 return Response(
@@ -44,19 +49,97 @@ class GoalsViewSet(viewsets.ModelViewSet):
             else:
                 month = instance.goal_date.replace("-", " ").lower()
                 instance.accepted_at = timezone.now()
-                instance.accepted = True
+                instance.accepted = request.data["accepted"]
                 instance.save()
-                send_email(
-                    f"Meta {month}",
-                    "La meta de este mes fue aceptada exitosamente.",
-                    ["heibert.mogollon@cyc-bpo.com"],
-                    email_owner="Entrega de metas"
+                table_info = TableInfo.objects.filter(name=instance.table_goal)
+                accepted_state = "aceptada" if request.data["accepted"] else "rechazada"
+                table_data = ""
+                for table in table_info:
+                    table_data += f"""
+                    <tr>
+                        <td>{table.fringe}</td>
+                        <td>{table.diary_goal}</td>
+                        <td>{table.days}</td>
+                        <td>{table.month_goal}</td>
+                        <td>{table.hours}</td>
+                        <td>{table.collection_account}</td>
+                    </tr>
+                    """
+                if instance.campaign_goal.upper().find("CLARO") == -1:
+                    send_email(
+                        f"Meta {month}",
+                        f"""
+                        La meta fue {accepted_state}.<br>
+                        
+                        Información de la meta:<br>
+                        <ul>
+                            <li>Cedula: {instance.cedula}</li>
+                            <li>Nombres: {instance.name}</li>
+                            <li>Campaña: {instance.campaign_goal}</li>
+                            <li>Cargo: {instance.job_title_goal}</li>
+                            <li>Coordinador: {instance.coordinator_goal}</li>
+                            <li>Mes: {instance.goal_date}</li>
+                        </ul>
+                        <table style="width:100%; text-align: center;">
+                            <tr>
+                                <th>Franja</th>
+                                <th>Meta Diaria</th>
+                                <th>Días</th>
+                                <th>Meta Mes con Pago</th>
+                                <th>Por Hora</th>
+                                <th>Recaudo por Cuenta</th>
+                            </tr>
+                            <tr>
+                                {table_data}
+                            </tr>
+                        </table>
+                        """,
+                        [user.email],
+                        email_owner="Entrega de metas",
+                        html_content=True,
+                        safe_mode=False,
                     )
-                return Response(
-                    {"message": "La meta fue aceptada."},
-                    status=framework_status.HTTP_200_OK,
-                )
+                    return Response(
+                        {"message": f"La meta fue {accepted_state}."},
+                        status=framework_status.HTTP_200_OK,
+                    )
+                else:
+                    send_email(
+                        f"Meta {month}",
+                        f"""
+                        La meta fue aceptada exitosamente.<br>
+
+                        Información de la meta:<br>
+                        <ul>
+                            <li>Cedula: {instance.cedula}</li>
+                            <li>Nombres: {instance.name}</li>
+                            <li>Campaña: {instance.campaign_goal}</li>
+                            <li>Cargo: {instance.job_title_goal}</li>
+                            <li>Coordinador: {instance.coordinator_goal}</li>
+                            <li>Mes: {instance.goal_date}</li>
+                        </ul>
+                        <table style="width:100%; text-align: center;">
+                            <tr>
+                                <th>Descripción de la Variable a medir</th>
+                                <th>Cantidad</th>
+                            </tr>
+                            <tr>
+                                <td>{instance.criteria_goal}</td>
+                                <td>{instance.quantity_goal}</td>
+                            </tr>
+                        </table>
+                        """,
+                        [user.email],
+                        email_owner="Entrega de metas",
+                        html_content=True,
+                        safe_mode=False,
+                        )
+                    return Response(
+                        {"message": "La meta fue aceptada."},
+                        status=framework_status.HTTP_200_OK,
+                    )
         elif request.data.get("accepted_execution") is not None and len(request.data) == 1:
+            accepted_state = "aceptada" if request.data["accepted_execution"] else "rechazada"
             if instance.accepted_execution:
                 return Response(
                     {"message": "La ejecución ya fue aceptada."},
@@ -65,21 +148,41 @@ class GoalsViewSet(viewsets.ModelViewSet):
             else:
                 month = instance.execution_date.replace("-", " ").lower()
                 instance.accepted_execution_at = timezone.now()
-                instance.accepted_execution = True
+                instance.accepted_execution = request.data["accepted_execution"]
                 instance.save()
                 send_email(
                     instance,
-                    "La ejecución de la meta fue aceptada exitosamente.",
-                    ["heibert.mogollon@cyc-bpo.com"],
-                    email_owner="Ejecución de metas"
+                    f"""
+                    La ejecución de la meta fue {accepted_state}.
+                    <table style="width:100%; border: 1px solid black; border-collapse: collapse; text-align: center;">
+                        <tr>
+                            <th>Clean Desk</th>
+                            <th>Evaluación</th>
+                            <th>Resultado</th>
+                            <th>Calidad</th>
+                            <th>Total</th>
+                        </tr>
+                        <tr>
+                            <td>{instance.clean_desk}</td>
+                            <td>{instance.evaluation}</td>
+                            <td>{instance.result}</td>
+                            <td>{instance.quality}</td>
+                            <td>{instance.total}</td>
+                        </tr>
+                    </table>
+                    """,
+                    [user.email],
+                    email_owner="Ejecución de metas",
+                    html_content=True,
+                    safe_mode=False,
                     )
                 return Response(
-                    {"message": "La ejecución fue aceptada."},
+                    {"message": f"La ejecución fue {accepted_state}."},
                     status=framework_status.HTTP_200_OK,
                 )
         else:
             return Response(
-                {"message": "Patch request no válida."}, status=framework_status.HTTP_400_BAD_REQUEST
+                {"message": "Patch request solo acepta el campo 'accepted' o 'accepted_execution'."}, status=framework_status.HTTP_400_BAD_REQUEST
             )
 
     def retrieve(self, request, *args, **kwargs):
