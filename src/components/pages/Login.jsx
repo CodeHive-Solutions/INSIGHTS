@@ -20,10 +20,10 @@ const validationSchema = Yup.object().shape({
     password: Yup.string().required("Campo requerido"),
 });
 
-const FormikTextField = ({ label, type, ...props }) => {
+const FormikTextField = ({ label, type, disabled, ...props }) => {
     const [field, meta] = useField(props);
     const errorText = meta.error && meta.touched ? meta.error : "";
-    return <TextField sx={{ width: "330px" }} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
+    return <TextField disabled={disabled} sx={{ width: "330px" }} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
 };
 
 const Login = () => {
@@ -34,6 +34,8 @@ const Login = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [loadingBar, setLoadingBar] = useState(false);
+    const [openCedula, setOpenCedula] = useState(false);
+    const [disabled, setDisabled] = useState(false);
 
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
@@ -76,7 +78,17 @@ const Login = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.detail);
+                // Check if the response contains the expected error structure
+                if (response.status === 400 && data && data.non_field_errors && data.non_field_errors.length > 0) {
+                    // If the error structure is as expected, throw the first error message
+                    setOpenCedula(true);
+                    throw new Error("Tu usuario esta siendo creado, por favor intenta mas tarde.");
+                } else if (response.status === 401 && data && data.detail && data.detail.length > 0) {
+                    showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
+                } else {
+                    // If the error structure is not as expected, throw a generic error
+                    throw new Error("Ha ocurrido un error. Por favor, inténtelo de nuevo.");
+                }
             }
 
             if (response.status === 200) {
@@ -89,16 +101,20 @@ const Login = () => {
                 );
                 localStorage.setItem("permissions", JSON.stringify(data.permissions));
                 localStorage.setItem("cedula", JSON.stringify(data.cedula));
+                localStorage.setItem("cargo", JSON.stringify(data.cargo));
                 navigate("/logged/home");
             }
         } catch (error) {
-            console.error(error);
-
-            if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
-                showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
+            if (error.message === "Tu usuario esta siendo creado, por favor intenta mas tarde.") {
+                showSnack("info", error.message);
             } else {
-                console.error(error.message);
-                showSnack("error", error.message);
+                console.error(error);
+                if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
+                    showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
+                } else {
+                    console.error(error.message);
+                    showSnack("error", error.message);
+                }
             }
             setIsSubmitting(false);
             setLoadingBar(false);
@@ -141,7 +157,7 @@ const Login = () => {
                         paddingRight: "15px",
                     }}
                 ></Box>
-                <Formik initialValues={{ username: "", password: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                <Formik initialValues={{ username: "", password: "", cedula: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     <Form>
                         <Box
                             sx={{
@@ -156,9 +172,9 @@ const Login = () => {
                                 Intranet
                             </Typography>
 
-                            <FormikTextField type="text" name="username" label="Usuario de Windows" autoComplete="off" spellCheck={false} />
+                            <FormikTextField disabled={disabled} type="text" name="username" label="Usuario de Windows" autoComplete="off" spellCheck={false} />
 
-                            <FormikTextField name="password" label="Contraseña de Windows" type="password" autoComplete="off" spellCheck={false} />
+                            <FormikTextField disabled={disabled} name="password" label="Contraseña de Windows" type="password" autoComplete="off" spellCheck={false} />
 
                             <Box sx={{ width: "330px" }}>
                                 <Link onClick={handleClick} sx={{ cursor: "pointer" }}>

@@ -20,8 +20,29 @@ import managersJr3 from "../../images/managers-jr/1014205170.webp";
 import managersJr4 from "../../images/managers-jr/1016002011.webp";
 import managersJr5 from "../../images/managers-jr/1016033764.webp";
 import managersJr6 from "../../images/managers-jr/91498957.webp";
+import managersJr7 from "../../images/managers-jr/79509094.webp";
+import managersJr8 from "../../images/managers-jr/28553156.webp";
+import managersJr9 from "../../images/managers-jr/1010178143.webp";
 
 const managersJr = [
+    {
+        name: "Rodrigo Lozano",
+        management: "GERENTE JR INFRAESTRUCTURA Y REDES",
+        image: managersJr7,
+        description: "",
+    },
+    {
+        name: "Marcela Osorio",
+        management: "GERENTE JR. DE MESA DE SERVICIO",
+        image: managersJr8,
+        description: "",
+    },
+    {
+        name: "Christian Moncaleano",
+        management: "GERENTE JR. DE APLICACIONES DE CONTACT CENTER",
+        image: managersJr9,
+        description: "",
+    },
     {
         name: "Adriana Barrera",
         management: "GERENTE DE CUENTAS",

@@ -24,9 +24,18 @@ import chiguiro from "../../images/home-carousel/chiguiro.png";
 import noCarro from "../../images/home-carousel/dia_no_carro.png";
 import vacancie from "../../images/home-carousel/vacancies-2.png";
 import valentin from "../../images/home-carousel/valentin.png";
-
+import ceroDescriminacion from "../../images/home-carousel/cero-discriminacion.png";
+import inclusion from "../../images/home-carousel/inclusion.png";
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
-const homeImages = [{ image: valentin }, { image: raac }, { image: campaigns }, { image: isos }, { image: vacanciesCarousel }];
+const homeImages = [
+    { image: inclusion },
+    { image: valentin },
+    { image: ceroDescriminacion },
+    { image: raac },
+    { image: campaigns },
+    { image: isos },
+    { image: vacanciesCarousel },
+];
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");

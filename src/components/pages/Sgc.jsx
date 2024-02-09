@@ -364,7 +364,7 @@ export const Sgc = () => {
 
         { field: "type", headerName: "Tipo", width: 70, type: "singleSelect", editable: editPermission, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
         { field: "sub_type", headerName: "Subtipo", width: 100, editable: editPermission },
-        { field: "name", headerName: "Nombre", width: 550, editable: editPermission },
+        { field: "name", headerName: "Nombre", width: editPermission ? 550 : 600, editable: editPermission },
         { field: "version", headerName: "Version", width: 70, editable: editPermission },
         {
             field: "file",
