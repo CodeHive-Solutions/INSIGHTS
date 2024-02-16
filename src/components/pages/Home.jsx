@@ -26,16 +26,23 @@ import vacancie from "../../images/home-carousel/vacancies-2.png";
 import valentin from "../../images/home-carousel/valentin.png";
 import ceroDescriminacion from "../../images/home-carousel/cero-discriminacion.png";
 import inclusion from "../../images/home-carousel/inclusion.png";
+import evaluacion from "../../images/home-carousel/evaluacion.png";
+import certificacionRacc from "../../images/home-carousel/certificacion-racc.png";
+import inclusionCuestionario from "../../images/home-carousel/inclusion-cuestionario.png";
+
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
+
 const homeImages = [
+    { image: inclusionCuestionario },
+    { image: certificacionRacc },
+    { image: evaluacion },
     { image: inclusion },
-    { image: valentin },
     { image: ceroDescriminacion },
-    { image: raac },
     { image: campaigns },
     { image: isos },
     { image: vacanciesCarousel },
 ];
+
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");

@@ -84,7 +84,7 @@ export const Legal = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions.includes("contracts.view_contract")) {
+        if (!permissions || !permissions.includes("contracts.view_contract")) {
             navigate("/logged/home");
         }
     }, []);

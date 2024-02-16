@@ -65,14 +65,14 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         <td>{table.collection_account}</td>
                     </tr>
                     """
-                if instance.campaign_goal.upper().find("CLARO") == -1:
+                if "CLARO" in instance.campaign_goal.upper():
                     send_email(
                         f"Meta {month}",
                         f"""
-                        La meta fue {accepted_state}.<br>
+                        La meta fue <b>{accepted_state}</b>.<br>
                         
                         Información de la meta:<br>
-                        <ul>
+                        <ul style="padding-bottom: 1rem">
                             <li>Cedula: {instance.cedula}</li>
                             <li>Nombres: {instance.name}</li>
                             <li>Campaña: {instance.campaign_goal}</li>
@@ -98,6 +98,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         email_owner="Entrega de metas",
                         html_content=True,
                         safe_mode=False,
+                        cc_emails=["carrenosebastian54@gmail.com"],
                     )
                     return Response(
                         {"message": f"La meta fue {accepted_state}."},
@@ -107,10 +108,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     send_email(
                         f"Meta {month}",
                         f"""
-                        La meta fue aceptada exitosamente.<br>
-
+                        La meta fue <b>{accepted_state}</b>.<br>
                         Información de la meta:<br>
-                        <ul>
+                        <ul style="padding-bottom: 1rem">
                             <li>Cedula: {instance.cedula}</li>
                             <li>Nombres: {instance.name}</li>
                             <li>Campaña: {instance.campaign_goal}</li>
@@ -151,10 +151,20 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 instance.accepted_execution = request.data["accepted_execution"]
                 instance.save()
                 send_email(
-                    instance,
+                    f"Ejecución de meta {month}",
                     f"""
-                    La ejecución de la meta fue {accepted_state}.
-                    <table style="width:100%; border: 1px solid black; border-collapse: collapse; text-align: center;">
+                    La ejecución de la meta fue <b>{accepted_state}</b>.<br>
+
+                    Información de la ejecución de la meta:<br>
+                    <ul style="padding-bottom: 1rem">
+                        <li>Cedula: {instance.cedula}</li>
+                        <li>Nombres: {instance.name}</li>
+                        <li>Campaña: {instance.campaign_execution}</li>
+                        <li>Cargo: {instance.job_title_execution}</li>
+                        <li>Coordinador: {instance.coordinator_execution}</li>
+                        <li>Mes: {instance.execution_date}</li>
+                    </ul>
+                    <table style="width:100%; border-collapse: collapse; text-align: center;">
                         <tr>
                             <th>Clean Desk</th>
                             <th>Evaluación</th>

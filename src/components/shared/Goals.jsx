@@ -58,7 +58,7 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
 
     const getGoal = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/21018937/`, {
+            const response = await fetch(`${getApiUrl()}goals/${cedula}/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -72,7 +72,7 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
             if (response.status === 200) {
                 if (data.accepted) {
                     setGoalAccepted(true);
-                } else if (data.declined) {
+                } else if (data.accepted === 0) {
                     setGoalDeclined(true);
                 } else if (data.additional_info.length > 0) {
                     setGoalAdvisorClaro(data.additional_info);
@@ -80,9 +80,9 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                     setGoalQuantity(data.quantity_goal);
                     setGoalCriteria(data.criteria_goal);
                 }
-                if (data.executionAccepted) {
+                if (data.accepted_execution) {
                     setExecutionAcceptedGoal(true);
-                } else if (data.executionDeclined) {
+                } else if (data.accepted_execution === false) {
                     setExecutionDeclinedGoal(true);
                 } else if (data.total) {
                     setExecutionTotalGoal(true);
@@ -103,20 +103,17 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     }, []);
 
     const handleActionRequest = async () => {
-        const date = new Date();
-        date.setHours(date.getHours() - 5);
-
         const body = {
             [goalType]: status,
-            [`${goalType}_at`]: date,
         };
         try {
-            const response = await fetch(`${getApiUrl()}goals/21018937/`, {
+            const response = await fetch(`${getApiUrl()}goals/${cedula}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(body),
+                credentials: "include",
             });
             if (!response.ok) {
                 const data = await response.json();
@@ -135,9 +132,9 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     };
 
     const handleGoalAction = (status, goalType) => {
-        if (status === null) {
-            setTextConfirmDialog("¿Está seguro de deshacer la acción?");
-            setStatus(null);
+        if (status === "undo") {
+            setTextConfirmDialog("¿Deshacer el rechazo y aceptar la meta?");
+            setStatus(true);
             setGoalType(goalType);
         } else if (status === true) {
             setTextConfirmDialog("¿Está seguro de aceptar la meta?");
@@ -168,8 +165,8 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                                 Meta de Entrega Rechazada
                             </Typography>
                             <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained" onClick={() => handleGoalAction(null, "accepted")}>
-                                    Deshacer el rechazo
+                                <Button variant="contained" onClick={() => handleGoalAction("undo", "accepted")}>
+                                    Reconsiderar y aceptar la meta
                                 </Button>
                             </Box>
                         </>
@@ -242,8 +239,8 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                                 Meta Rechazada
                             </Typography>
                             <Box sx={{ textAlign: "center" }}>
-                                <Button variant="contained" onClick={() => handleGoalAction(null, "accepted_execution")}>
-                                    Deshacer el rechazo
+                                <Button variant="contained" onClick={() => handleGoalAction("undo", "accepted_execution")}>
+                                    Reconsiderar y aceptar la meta
                                 </Button>
                             </Box>
                         </>

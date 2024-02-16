@@ -86,7 +86,7 @@ export const RiskEvent = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions.includes("operational_risk.view_events")) {
+        if (!permissions || !permissions.includes("operational_risk.view_events")) {
             navigate("/logged/home");
         }
     }, []);
