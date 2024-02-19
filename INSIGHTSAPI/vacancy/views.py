@@ -51,14 +51,15 @@ class ReferenceViewSet(viewsets.ModelViewSet):
         response = super().create(request, *args, **kwargs)
         if response.status_code == 201:
             reference = Reference.objects.get(id=response.data["id"])
-            vacancy = reference.vacancy.name
-            image = reference.vacancy.image
-            image_data = base64.b64encode(image.read()).decode("utf-8")
+            vacancy = Vacancy.objects.get(id=reference.vacancy.id)
             name = request.user.get_full_name().title()
+            with open(vacancy.image.path, "rb") as image_file:
+                encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
             subject = f"Se registro una referencia para {vacancy}"
             message = f"""
                         <h2>{name} ha recomendado a nuestro proximo {vacancy}</h2>
                         Por favor comunícate con {reference.name} al {reference.phone_number} para obtener mas información.
+                        <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
                         """
             if settings.DEBUG or "test" in sys.argv:
                 to_emails = ["heibert.mogollon@cyc-bpo.com"]
@@ -120,7 +121,7 @@ def send_vacancy_apply(request):
                 <p>Cédula: {user.cedula}</p>
                 <p>Correo: {email}</p>
                 <p>Celular: {celular}</p>
-                <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="100%"/>
+                <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
                 """
 
     errors = send_email(

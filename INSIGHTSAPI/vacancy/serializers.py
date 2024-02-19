@@ -53,7 +53,8 @@ class ReferenceSerializer(serializers.ModelSerializer):
     made_by = serializers.HiddenField(default=serializers.CurrentUserDefault())
     #Show who create it
     created_by = serializers.SerializerMethodField()
-    vacancy = serializers.SlugRelatedField(slug_field="name", queryset=Vacancy.objects.all())
+    # vacancy = serializers.SlugRelatedField(slug_field="name", queryset=Vacancy.objects.all())
+    vacancy = serializers.PrimaryKeyRelatedField(queryset=Vacancy.objects.all())
 
     def get_created_by(self, obj):
         """Get the user who created the reference"""
@@ -64,3 +65,10 @@ class ReferenceSerializer(serializers.ModelSerializer):
 
         model = Reference
         fields = "__all__"
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Reference.objects.all(),
+                fields=["made_by", "phone_number", "vacancy"],
+                message="Ya referenciaste a esta persona.",
+            )
+        ]

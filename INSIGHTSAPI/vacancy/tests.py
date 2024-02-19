@@ -147,7 +147,12 @@ class ReferenceTest(BaseTestCase):
             vacancy = Vacancy.objects.create(
                 name="Auxiliar de servicios generales TEST", image=image
             )
-        self.data = {
+        self.data_api = {
+            "name": "Juan Test",
+            "phone_number": "1234567890",
+            "vacancy": vacancy.pk,
+        }
+        self.data_model = {
             "made_by": self.user,
             "name": "Juan Test",
             "phone_number": "1234567890",
@@ -156,39 +161,49 @@ class ReferenceTest(BaseTestCase):
 
     def test_create_reference(self):
         """Test create reference."""
-        self.data.pop("made_by")
         response = self.client.post(
             reverse("reference-list"),
-            {
-                "name": "Juan Test",
-                "phone_number": "1234567890",
-                "vacancy": self.data["vacancy"],
-            },
+            self.data_api,
         )
         self.assertEqual(response.status_code, 201, response.data)
 
     def test_get_references(self):
         """Test get references."""
-        Reference.objects.create(**self.data)
+        Reference.objects.create(**self.data_model)
         response = self.client.get(reverse("reference-list"))
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(len(response.data), 1)
 
     def test_get_reference(self):
         """Test get reference."""
-        reference = Reference.objects.create(**self.data)
+        reference = Reference.objects.create(**self.data_model)
         response = self.client.get(reverse("reference-detail", args=[reference.id]))
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["name"], "Juan Test")
         self.assertEqual(response.data["phone_number"], "1234567890")
-        self.assertEqual(response.data["vacancy"], "Auxiliar de servicios generales TEST")
+        self.assertEqual(response.data["vacancy"], 2)
 
-    def test_get_reference_withouth_permission(self):
+    def test_get_reference_without_permission(self):
         """Test get reference without permission."""
         self.user.user_permissions.clear()
-        reference = Reference.objects.create(**self.data)
+        reference = Reference.objects.create(**self.data_model)
         response = self.client.get(reverse("reference-detail", args=[reference.id]))
         self.assertEqual(response.status_code, 403, response.data)
+
+    def test_re_apply_reference(self):
+        """Test re apply reference."""
+        Reference.objects.create(**self.data_model)
+        response = self.client.post(
+            reverse("reference-list"),
+            {
+                "name": "Juan Test",
+                "phone_number": "1234567890",
+                "vacancy": self.data_api["vacancy"],
+            },
+        )
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertIn('non_field_errors', response.data)
+        self.assertIn('Ya referenciaste a esta persona.', response.data['non_field_errors'])
 
 
 class VacancyApplyTest(BaseTestCase):
