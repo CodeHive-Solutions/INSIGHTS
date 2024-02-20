@@ -5,12 +5,12 @@ import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
 function CarouselComponent(props) {
-    const { items, height, width, day } = props;
+    const { items, height, width, contain, day } = props;
 
     return (
         <Carousel sx={{ width: width }}>
             {items.map((item, i) => (
-                <Item key={i} item={item} day={day} height={height} />
+                <Item contain={contain} key={i} item={item} day={day} height={height} />
             ))}
         </Carousel>
     );

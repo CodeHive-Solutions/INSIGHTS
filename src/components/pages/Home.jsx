@@ -242,7 +242,7 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
                         )}
                     </Card>
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -261,7 +261,7 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -280,7 +280,7 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
                 </Box>

@@ -125,8 +125,7 @@ const Vacancies = () => {
     const submitApplyVacancy = async () => {
         const formData = new FormData();
         formData.append("vacancy", vacancyId);
-        
-        try {asd
+        try {
             const response = await fetch(`${getApiUrl()}vacancy/apply/`, {
                 method: "POST",
                 body: formData,
