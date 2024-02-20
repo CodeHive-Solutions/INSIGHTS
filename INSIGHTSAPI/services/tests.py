@@ -1,17 +1,17 @@
 """Test for services. """
+
+import requests
+import os
 from datetime import timedelta
 from io import StringIO
-import os
 from rest_framework.test import APITestCase
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils import timezone
 from django.core.management import call_command
-from contracts.models import Contract
 from django.conf import settings
-import requests
-
-
+from contracts.models import Contract
+from .models import Payslip
 from .emails import send_email
 
 
@@ -163,3 +163,23 @@ class SchedulerTest(TestCase):
             f"Email sent for contract {contract_today.name} to ['heibert",
             stdout.getvalue(),
         )
+
+
+class PayslipTest(BaseTestCase):
+    """Test for payslip."""
+
+    def test_upload_payslip_file(self):
+        """Test upload payslip file."""
+        with open(
+            str(settings.BASE_DIR) + "/utils/excels/Nomina.csv",
+            "r",
+            encoding="utf-8-sig",
+        ) as file:
+            response = self.client.post(
+                "/services/upload-payslips/",
+                {"file": file},
+                format="multipart",
+            )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.data, {"message": "Payslips created"})
+        self.assertEqual(Payslip.objects.count(), 28)
