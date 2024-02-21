@@ -11,14 +11,14 @@ from django.utils import timezone
 from django.core.management import call_command
 from django.conf import settings
 from contracts.models import Contract
-from .models import Payslip
+from users.models import User
 from .emails import send_email
 
 
 class BaseTestCase(APITestCase):
     """Base test case for all test cases."""
 
-    databases = ["default", "staffnet"]
+    databases = set(["default", "staffnet"])
 
     def setUp(self):
         """Set up the test case."""
@@ -26,6 +26,8 @@ class BaseTestCase(APITestCase):
             reverse("obtain-token"),
             {"username": "staffnet", "password": os.environ["StaffNetLDAP"]},
         )
+        self.user = User.objects.get(username="staffnet")
+        self.user.save()
 
     def tearDown(self):
         """Tear down the test case."""
@@ -163,23 +165,3 @@ class SchedulerTest(TestCase):
             f"Email sent for contract {contract_today.name} to ['heibert",
             stdout.getvalue(),
         )
-
-
-class PayslipTest(BaseTestCase):
-    """Test for payslip."""
-
-    def test_upload_payslip_file(self):
-        """Test upload payslip file."""
-        with open(
-            str(settings.BASE_DIR) + "/utils/excels/Nomina.csv",
-            "r",
-            encoding="utf-8-sig",
-        ) as file:
-            response = self.client.post(
-                "/services/upload-payslips/",
-                {"file": file},
-                format="multipart",
-            )
-        self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(response.data, {"message": "Payslips created"})
-        self.assertEqual(Payslip.objects.count(), 28)

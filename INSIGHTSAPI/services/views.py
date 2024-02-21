@@ -2,15 +2,12 @@
 
 import logging
 import os
-from rest_framework.parsers import FileUploadParser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django_sendfile import sendfile
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from .models import Payslip
-from .serializers import PayslipSerializer
 from .emails import send_email
 
 
@@ -43,59 +40,6 @@ class FileDownloadMixin(APIView):
 #     def create(self, request):
 #         """Create a payslip."""
 #         pass
-
-
-class PayslipView(APIView):
-    """Views for the payslip."""
-
-    def post(self, request, *args, **kwargs):
-        """Create a payslip."""
-        if not "file" in request.data:
-            return Response({"error": "Debes subir un archivo"}, status=400)
-        file_obj = request.data["file"]
-        file_content = file_obj.read().decode("utf-8")
-        rows = file_content.split("\n")
-        payslips = []
-
-        for line in rows:
-            if line.startswith(";;") or line == "":
-                continue
-            data = line.split(";")
-            if len(data) < 18:
-                return Response(
-                    {"Error": "Insufficient columns in the line"}, status=400
-                )
-            payslip = PayslipSerializer(
-                data={
-                    "title": data[0],
-                    "identification": data[1],
-                    "name": data[2],
-                    "area": data[3],
-                    "job_title": data[4],
-                    "salary": data[5],
-                    "days": data[6],
-                    "biweekly_period": data[7],
-                    "transport_allowance": data[8],
-                    "bonus_paycheck": data[9],
-                    "gross_earnings": data[10],
-                    "healthcare_contribution": data[11],
-                    "pension_contribution": data[12],
-                    "tax_withholding": data[13],
-                    "additional_deductions": data[14],
-                    "apsalpen": data[15],
-                    "total_deductions": data[16],
-                    "net_pay": data[17],
-                }
-            )
-            # print(data[1])
-            if payslip.is_valid(raise_exception=False):
-                payslips.append(Payslip(**payslip.validated_data))
-            else:
-                return Response(
-                    {"Error": payslip.errors, "cedula": data[2]}, status=400
-                )
-        Payslip.objects.bulk_create(payslips)
-        return Response({"message": "Payslips created"}, status=201)
 
 
 @api_view(["POST"])
