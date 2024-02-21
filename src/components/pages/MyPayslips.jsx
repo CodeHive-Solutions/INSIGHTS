@@ -17,30 +17,31 @@ import {
     GridToolbarColumnsButton,
     GridToolbarDensitySelector,
     GridActionsCellItem,
+    GridToolbar,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 
-export const VacanciesReferred = () => {
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+
+export const MyPayslips = () => {
     const [rows, setRows] = useState([]);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [openDialogEdit, setOpenDialogEdit] = useState(false);
-    const [disabled, setDisabled] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem("permissions"));
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions || !permissions.includes("vacancy.view_reference")) {
-            navigate("/logged/home");
+        if (!permissions || !permissions.includes("vacancy.view_payslip")) {
+            console.log("no tiene permisos");
+            // navigate("/logged/home");
         }
     }, []);
 
     const getVacanciesReferred = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}/vacancy/reference/`, {
+            const response = await fetch(`${getApiUrl()}/payslip/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -61,8 +62,6 @@ export const VacanciesReferred = () => {
         getVacanciesReferred();
     }, []);
 
-    const handleOpenDialog = () => setOpenDialog(true);
-
     const showSnack = (severity, message, error) => {
         setSeverity(severity);
         setMessage(message);
@@ -74,37 +73,45 @@ export const VacanciesReferred = () => {
 
     const handleCloseSnack = () => setOpenSnack(false);
 
-    const CustomToolbar = () => {
-        return (
-            <GridToolbarContainer>
-                <GridToolbarColumnsButton />
-                <GridToolbarFilterButton />
-                <GridToolbarDensitySelector />
-                <GridToolbarExport
-                    csvOptions={{
-                        fileName: "vacantes-referidas",
-                        delimiter: ";",
-                        utf8WithBom: true,
-                    }}
-                />
-                {permissions && permissions.includes("contracts.add_contract") ? (
-                    <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
-                        AÑADIR
-                    </Button>
-                ) : null}
-                <Box sx={{ textAlign: "end", flex: "1" }}>
-                    <GridToolbarQuickFilter />
-                </Box>
-            </GridToolbarContainer>
-        );
-    };
-
     const columns = [
-        { field: "id", headerName: "ID", width: 70 },
-        { field: "created_by", headerName: "Persona que refirió", width: 250, editable: false },
-        { field: "name", headerName: "Nombre del Referido", width: 250, editable: false },
-        { field: "phone_number", headerName: "Numero del Referido", width: 170, editable: false },
-        { field: "vacancy", headerName: "Vacante", width: 400, editable: false },
+        { field: "test", headerName: "Desprendible", width: 500, editable: false },
+        {
+            field: "test2",
+            type: "date",
+            headerName: "Fecha de Envió",
+            width: 500,
+            editable: false,
+            valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+        },
+        {
+            field: "download",
+            headerName: "Descargar",
+            width: 100,
+            type: "actions",
+            cellClassName: "actions",
+            getActions: (GridRowParams) => {
+                return [
+                    <Tooltip title="Descargar" arrow>
+                        <GridActionsCellItem
+                            icon={<FileDownloadIcon />}
+                            label="download"
+                            sx={{
+                                color: "primary.main",
+                            }}
+                            onClick={() => handleClickFile(GridRowParams.id)}
+                        />
+                    </Tooltip>,
+                ];
+            },
+        },
+    ];
+
+    const exampleRows = [
+        { id: 1, test: "Desprendible 1", test2: "2021-10-10" },
+        { id: 2, test: "Desprendible 2", test2: "2021-10-10" },
+        { id: 3, test: "Desprendible 3", test2: "2021-10-10" },
+        { id: 4, test: "Desprendible 4", test2: "2021-10-10" },
+        { id: 5, test: "Desprendible 5", test2: "2021-10-10" },
     ];
 
     return (
@@ -121,16 +128,9 @@ export const VacanciesReferred = () => {
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Vacantes referidas
+                    Mis desprendibles de nomina
                 </Typography>
-                <DataGrid
-                    sx={{ width: "100%" }}
-                    columns={columns}
-                    rows={rows}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                ></DataGrid>
+                <DataGrid slots={{ toolbar: GridToolbar }} sx={{ width: "100%" }} columns={columns} toolbar rows={exampleRows}></DataGrid>
             </Container>
 
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
@@ -138,4 +138,4 @@ export const VacanciesReferred = () => {
     );
 };
 
-export default VacanciesReferred;
+export default MyPayslips;

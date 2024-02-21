@@ -276,7 +276,7 @@ export const Sgc = () => {
                 <GridToolbarDensitySelector />
                 <GridToolbarExport
                     csvOptions={{
-                        fileName: "Metas",
+                        fileName: "sgc",
                         delimiter: ";",
                         utf8WithBom: true,
                     }}
