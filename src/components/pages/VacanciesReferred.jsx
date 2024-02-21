@@ -36,7 +36,7 @@ export const VacanciesReferred = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions.includes("vacancy.view_reference")) {
+        if (!permissions || !permissions.includes("vacancy.view_reference")) {
             navigate("/logged/home");
         }
     }, []);
@@ -110,7 +110,7 @@ export const VacanciesReferred = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {permissions.includes("contracts.add_contract") ? (
+                {permissions && permissions.includes("contracts.add_contract") ? (
                     <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                         AÑADIR
                     </Button>
@@ -127,28 +127,8 @@ export const VacanciesReferred = () => {
         { field: "created_by", headerName: "Persona que refirió", width: 250, editable: false },
         { field: "name", headerName: "Nombre del Referido", width: 250, editable: false },
         { field: "phone_number", headerName: "Numero del Referido", width: 170, editable: false },
-        { field: "vacancy", headerName: "Vacante", width: 300, editable: false },
+        { field: "vacancy", headerName: "Vacante", width: 400, editable: false },
     ];
-
-    columns.push({
-        field: "actions",
-        headerName: "Acciones",
-        width: 100,
-        type: "actions",
-        cellClassName: "actions",
-        getActions: ({ id }) => {
-            return [
-                <Tooltip title="Eliminar Registro">
-                    <GridActionsCellItem
-                        sx={{ transition: ".3s ease", "&:hover": { color: "red" } }}
-                        icon={<DeleteIcon />}
-                        label="Eliminar"
-                        onClick={() => handleDeleteClick(id)}
-                    />
-                </Tooltip>,
-            ];
-        },
-    });
 
     return (
         <>

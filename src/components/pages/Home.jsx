@@ -26,16 +26,23 @@ import vacancie from "../../images/home-carousel/vacancies-2.png";
 import valentin from "../../images/home-carousel/valentin.png";
 import ceroDescriminacion from "../../images/home-carousel/cero-discriminacion.png";
 import inclusion from "../../images/home-carousel/inclusion.png";
+import evaluacion from "../../images/home-carousel/evaluacion.png";
+import certificacionRacc from "../../images/home-carousel/certificacion-racc.png";
+import inclusionCuestionario from "../../images/home-carousel/inclusion-cuestionario.png";
+
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
+
 const homeImages = [
+    { image: inclusionCuestionario },
+    { image: certificacionRacc },
+    { image: evaluacion },
     { image: inclusion },
-    { image: valentin },
     { image: ceroDescriminacion },
-    { image: raac },
     { image: campaigns },
     { image: isos },
     { image: vacanciesCarousel },
 ];
+
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
@@ -235,7 +242,7 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
                         )}
                     </Card>
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -254,7 +261,7 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -273,7 +280,7 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
                 </Box>

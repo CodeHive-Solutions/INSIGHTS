@@ -1,4 +1,5 @@
 """This module defines the URL patterns for the services app."""
+
 from django.urls import path
 from django.conf import settings
 from .views import send_report_ethical_line

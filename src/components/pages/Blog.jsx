@@ -16,12 +16,32 @@ import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
 import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
 import carteraPropia from "../../images/blog/cartera-propia.jpg";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import SendIcon from "@mui/icons-material/Send";
+import DraftsIcon from "@mui/icons-material/Drafts";
+import InboxIcon from "@mui/icons-material/Inbox";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ListSubheader from "@mui/material/ListSubheader";
+import List from "@mui/material/List";
+import Collapse from "@mui/material/Collapse";
+import StarBorder from "@mui/icons-material/StarBorder";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+import { Grid } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import FolderIcon from "@mui/icons-material/Folder";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 
 const MediaCard = ({ title, subtitle, img, articleId }) => {
+    const [imageLoaded, setImageLoaded] = useState(false);
+
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
-    const [imageLoaded, setImageLoaded] = useState(false);
 
     const handleImageLoaded = () => {
         setImageLoaded(true);
@@ -64,70 +84,122 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
     );
 };
 
+const articles = [
+    {
+        title: "Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO",
+        subtitle: "Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO",
+        img: carteraPropia,
+        articleId: 7,
+        uploadDate: "01-2024",
+    },
+    {
+        title: "Elevando Nuestra Empresa: Certificaciones ISO 45001:2018 y 14001:2015",
+        subtitle:
+            "Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores",
+        img: sstGestion,
+        articleId: 6,
+        uploadDate: "01-2024",
+    },
+    {
+        title: "C&C Services SAS avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza",
+        subtitle: "Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RACC.",
+        img: article5,
+        articleId: 5,
+        uploadDate: "01-2024",
+    },
+    {
+        title: "Sumando Valor: Bienvenidos a las Nuevas Campañas en C&C Services S.A.S.",
+        subtitle: "Uniendo Fuerzas para Alcanzar Nuevos Horizontes de Éxito y Crecimiento",
+        img: article1,
+        articleId: 1,
+        uploadDate: "01-2024",
+    },
+    {
+        title: "Desarrollo Profesional en el Mundo del BPO",
+        subtitle: "C&C Services y la Ciberseguridad en la Era Actual",
+        img: cibersecurity,
+        articleId: 3,
+        uploadDate: "01-2024",
+    },
+    {
+        title: "C&C Services: Innovación en el Bienestar Laboral para Empleados Productivos",
+        subtitle: "Una Mirada Profunda a los Programas de Bienestar Integral y su Impacto en la Productividad y la Satisfacción Laboral",
+        img: bienestar,
+        articleId: 4,
+        uploadDate: "01-2024",
+    },
+];
+
 const Blog = () => {
+    const [openYear, setOpenYear] = useState(null);
+
+    // Extract unique years from uploadDate
+
+    const handleClick = (year) => {
+        setOpenYear(openYear === year ? null : year);
+    };
+
+    const years = [...new Set(articles.map((article) => article.uploadDate.slice(3)))].sort();
+
+    const getMonthsForYear = (year) => {
+        return [
+            ...new Set(
+                articles
+                    .filter((article) => article.uploadDate.includes(year))
+                    .map((article) => new Date(`${year}-${article.uploadDate.slice(0, 2)}-02`).toLocaleString("default", { month: "long" }))
+            ),
+        ].sort();
+    };
+
     return (
-        <Container
-            sx={{
-                height: "max-content",
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                marginTop: "6rem",
-            }}
-        >
+        <Box sx={{ mt: "5rem" }}>
             <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                 Blog
             </Typography>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
-                {/* <MediaCard
-                    title={"Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO"}
-                    subtitle={"Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO"}
-                    img={carteraPropia}
-                    articleId={7}
-                ></MediaCard> */}
-                <MediaCard
-                    title={"Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO"}
-                    subtitle={"Cartera Propia en C&C: Innovación y Experiencia en Recuperación de Cartera"}
-                    img={carteraPropia}
-                    articleId={7}
-                ></MediaCard>
-                <MediaCard
-                    title={"Elevando Nuestra Empresa: Certificaciones ISO 45001:2018 y 14001:2015"}
-                    subtitle={
-                        "Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores"
+            <Box sx={{ display: "flex", width: "100%", justifyContent: "start" }}>
+                <List
+                    sx={{ width: "100%", maxWidth: 200, bgcolor: "background.paper" }}
+                    component="nav"
+                    aria-labelledby="nested-list-subheader"
+                    subheader={
+                        <ListSubheader component="div" id="nested-list-subheader">
+                            Biblioteca de Artículos
+                        </ListSubheader>
                     }
-                    img={sstGestion}
-                    articleId={6}
-                ></MediaCard>
-                <MediaCard
-                    title={"C&C Services SAS avanza en proceso de certificación para elevar estándares de calidad en la industria de la cobranza"}
-                    subtitle={"Compromiso con la excelencia: Un vistazo al proceso de certificación C&C de RACC."}
-                    img={article5}
-                    articleId={5}
-                ></MediaCard>
-                <MediaCard
-                    title={"Sumando Valor: Bienvenidos a las Nuevas Campañas en C&C Services S.A.S."}
-                    subtitle={"Uniendo Fuerzas para Alcanzar Nuevos Horizontes de Éxito y Crecimiento"}
-                    img={article1}
-                    articleId={1}
-                ></MediaCard>
-
-                <MediaCard
-                    title={"Desarrollo Profesional en el Mundo del BPO"}
-                    subtitle={"C&C Services y la Ciberseguridad en la Era Actual"}
-                    img={cibersecurity}
-                    articleId={3}
-                ></MediaCard>
-                <MediaCard
-                    title={"C&C Services: Innovación en el Bienestar Laboral para Empleados Productivos"}
-                    subtitle={"Una Mirada Profunda a los Programas de Bienestar Integral y su Impacto en la Productividad y la Satisfacción Laboral"}
-                    img={bienestar}
-                    articleId={4}
-                ></MediaCard>
+                >
+                    {years.map((year) => (
+                        <React.Fragment key={year}>
+                            <ListItemButton sx={{ borderRadius: "1rem" }} onClick={() => handleClick(year)}>
+                                <ListItemIcon>
+                                    <Avatar>
+                                        <FolderIcon />
+                                    </Avatar>
+                                </ListItemIcon>
+                                <ListItemText primary={year} />
+                                {openYear === year ? <ExpandLess /> : <ExpandMore />}
+                            </ListItemButton>
+                            <Collapse in={openYear === year} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {getMonthsForYear(year).map((month) => (
+                                        <ListItemButton key={month} sx={{ pl: 4, borderRadius: "1rem" }}>
+                                            <ListItemIcon>
+                                                <CalendarMonthIcon />
+                                            </ListItemIcon>
+                                            <ListItemText primary={month} />
+                                        </ListItemButton>
+                                    ))}
+                                </List>
+                            </Collapse>
+                        </React.Fragment>
+                    ))}
+                </List>
+                <Box sx={{ width: "1500px", display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
+                    {articles.map((article, index) => {
+                        return <MediaCard title={article.title} subtitle={article.subtitle} img={article.img} articleId={article.articleId} key={index}></MediaCard>;
+                    }, [])}
+                </Box>
             </Box>
-        </Container>
+        </Box>
     );
 };
 

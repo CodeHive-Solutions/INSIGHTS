@@ -29,6 +29,7 @@ import RiskEvents from "./components/pages/RiskEvents";
 import Test from "./components/pages/Test";
 import Valentin from "./components/pages/Valentin";
 import AutoEvaluation from "./components/pages/AutoEvaluation";
+import Promotions from "./components/pages/Promotions";
 
 const theme = createTheme({
     typography: {
@@ -40,7 +41,7 @@ const theme = createTheme({
             "BlinkMacSystemFont",
             '"Segoe UI"',
             "Roboto",
-            '"Helvetica Neue"',
+            '"Helvetica Neue"', 
             "Arial",
             "sans-serif",
             '"Apple Color Emoji"',
@@ -140,6 +141,10 @@ const router = createBrowserRouter([
             {
                 path: "autoevaluacion",
                 element: <AutoEvaluation />,
+            },
+            {
+                path: "promotions",
+                element: <Promotions />,
             },
         ],
     },

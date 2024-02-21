@@ -1,19 +1,13 @@
 """Views for the services app."""
+
 import logging
 import os
-import base64
-from io import BytesIO
-from PIL import Image
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django_sendfile import sendfile
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from django.db import connections
-from django.utils import safestring
-from users.models import User
 from .emails import send_email
 
 
@@ -40,6 +34,12 @@ class FileDownloadMixin(APIView):
             attachment_filename=file_name,
         )
         return response
+
+
+# class PayslipViewset(viewsets.GenericViewSet):
+#     def create(self, request):
+#         """Create a payslip."""
+#         pass
 
 
 @api_view(["POST"])

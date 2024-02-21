@@ -31,9 +31,10 @@ const Navbar = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const cedula = JSON.parse(localStorage.getItem("cedula"));
     const [profilePicture, setProfilePicture] = useState();
-    const isAdvisor = JSON.parse(localStorage.getItem("cargo")).includes("ASESOR");
+    const cargoItem = localStorage.getItem("cargo");
+    const isAdvisor = cargoItem && JSON.parse(cargoItem).includes("ASESOR");
     const permissions = JSON.parse(localStorage.getItem("permissions"));
-    const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713;
+    const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713 || cedula === 1001185389;
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||
@@ -285,14 +286,14 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {!isAdvisor ? (
+                {/* {!isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
                         Mi Meta
                     </MenuItem>
-                ) : null}
+                ) : null} */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -459,8 +460,8 @@ const Navbar = () => {
                     ) : null}
                 </Box>
             </Menu>
-            {!isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} /> : null}
-            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} showSnack={showSnack} closeSnack={handleCloseSnack} />
+            {/* {!isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null} */}
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
 };

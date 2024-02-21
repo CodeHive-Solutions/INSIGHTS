@@ -1,24 +1,24 @@
 """Test for services. """
+
+import requests
+import os
 from datetime import timedelta
 from io import StringIO
-import os
 from rest_framework.test import APITestCase
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils import timezone
 from django.core.management import call_command
-from contracts.models import Contract
 from django.conf import settings
-import requests
-
-
+from contracts.models import Contract
+from users.models import User
 from .emails import send_email
 
 
 class BaseTestCase(APITestCase):
     """Base test case for all test cases."""
 
-    databases = ["default", "staffnet"]
+    databases = set(["default", "staffnet"])
 
     def setUp(self):
         """Set up the test case."""
@@ -26,6 +26,8 @@ class BaseTestCase(APITestCase):
             reverse("obtain-token"),
             {"username": "staffnet", "password": os.environ["StaffNetLDAP"]},
         )
+        self.user = User.objects.get(username="staffnet")
+        self.user.save()
 
     def tearDown(self):
         """Tear down the test case."""

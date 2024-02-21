@@ -56,11 +56,12 @@ const Quality = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [selectedCampaign, setSelectedCampaign] = useState(campaigns[0]); // Set default campaign
     const callType = useRef();
-    const permissions = JSON.parse(localStorage.getItem("permissions"));
     const navigate = useNavigate();
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
+
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions.includes("excels_processing.call_transfer")) {
+        if (!permissions || !permissions.includes("excels_processing.call_transfer")) {
             navigate("/logged/home");
         }
     }, []);

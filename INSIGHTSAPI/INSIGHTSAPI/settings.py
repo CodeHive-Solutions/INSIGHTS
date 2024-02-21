@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'drf_spectacular',
+    "drf_spectacular",
     "corsheaders",
     "django_auth_ldap",
     "simple_history",
@@ -81,6 +81,7 @@ INSTALLED_APPS = [
     "blog",
     "vacancy",
     "operational_risk",
+    "payslip",
 ]
 
 MIDDLEWARE = [
@@ -101,7 +102,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_JWT.CookieJWTAuthentication",),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],

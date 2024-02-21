@@ -24,7 +24,7 @@ const UploadFiles = () => {
     const navigate = useNavigate();
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions.includes("users.upload_robinson_list")) {
+        if (!permissions || !permissions.includes("users.upload_robinson_list")) {
             navigate("/logged/home");
         }
     }, []);

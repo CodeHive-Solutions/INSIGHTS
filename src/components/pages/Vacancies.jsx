@@ -23,32 +23,6 @@ import AddIcon from "@mui/icons-material/Add";
 import IconButton from "@mui/material/IconButton";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-const MediaCard = ({ img, handleOpenVacancy, id, setInactivateId, setOpenDialogInactivate, inactivatePermission }) => {
-    setInactivateId(id);
-    return (
-        <Card
-            sx={{
-                width: 500,
-                maxWidth: 500,
-                textAlign: "left",
-                cursor: "pointer",
-                transition: "transform 0.3s ease",
-                "&:hover": {
-                    transform: "scale(1.05)",
-                },
-            }}
-            onClick={() => handleOpenVacancy(img)}
-        >
-            {inactivatePermission && (
-                <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }} onClick={() => setOpenDialogInactivate(true)} aria-label="delete">
-                    <DeleteForeverIcon fontSize="inherit" />
-                </IconButton>
-            )}
-            <CardMedia sx={{ height: 500 }} image={img} />
-        </Card>
-    );
-};
-
 const Vacancies = () => {
     const [openVacancy, setOpenVacancy] = useState(false);
     const [openSnack, setOpenSnack] = useState(false);
@@ -64,7 +38,7 @@ const Vacancies = () => {
     const [fileImage, setFileImage] = useState();
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const addPermission = permissions.includes("vacancy.add_vacancy");
-    const inactivatePermission = permissions.includes("vacancy.edit_vacancy");
+    const inactivatePermission = permissions.includes("vacancy.change_vacancy");
     const [vacancies, setVacancies] = useState([{}]);
     const [imageName, setImageName] = useState("Subir Imagen");
     const [vacancyDescription, setVacancyDescription] = useState(
@@ -166,6 +140,7 @@ const Vacancies = () => {
 
             if (response.status === 200) {
                 showSnack("success", "Se ha enviado tu postulación correctamente.");
+                localStorage.setItem(`vacancy${vacancyId}`, vacancyId);
                 setOpenVacancy(false);
             }
         } catch (error) {
@@ -314,16 +289,35 @@ const Vacancies = () => {
                 <Box sx={{ width: "100%", display: "flex", justifyContent: "center", textAlign: "center", gap: "2rem", flexWrap: "wrap" }}>
                     {vacancies.map((vacancy, index) => {
                         return (
-                            <MediaCard
+                            <Card
                                 key={index}
-                                handleOpenVacancy={() => handleOpenVacancy(vacancy.image, vacancy.vacancy_name, vacancy.id)}
-                                img={vacancy.image}
-                                id={vacancy.id}
-                                setInactivateId={setInactivateId}
-                                getVacancies={getVacancies}
-                                inactivatePermission={inactivatePermission}
-                                setOpenDialogInactivate={setInactivateDialog}
-                            ></MediaCard>
+                                sx={{
+                                    width: 500,
+                                    maxWidth: 500,
+                                    textAlign: "left",
+                                    cursor: "pointer",
+                                    transition: "transform 0.3s ease",
+                                    "&:hover": {
+                                        transform: "scale(1.05)",
+                                    },
+                                }}
+                                onClick={() => handleOpenVacancy(vacancy.image, vacancy.vacancy_name, vacancy.id)}
+                            >
+                                {inactivatePermission && (
+                                    <IconButton
+                                        sx={{ position: "absolute", top: "10px", right: "10px" }}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Prevent event propagation
+                                            setInactivateDialog(true);
+                                            setInactivateId(vacancy.id);
+                                        }}
+                                        aria-label="delete"
+                                    >
+                                        <DeleteForeverIcon fontSize="inherit" />
+                                    </IconButton>
+                                )}
+                                {vacancy.image && <CardMedia sx={{ height: 500 }} image={vacancy.image} />}
+                            </Card>
                         );
                     })}
                 </Box>
@@ -375,7 +369,13 @@ const Vacancies = () => {
                     <DialogActions>
                         <Button onClick={handleCloseVacancy}>Cancelar</Button>
                         <Button onClick={handleOpenCollapse}>Referir a un conocido</Button>
-                        <Button onClick={submitApplyVacancy}>Confirmar</Button>
+                        {localStorage.getItem(`vacancy${vacancyId}`) == vacancyId ? (
+                            <Button disabled>Ya has aplicado a esta vacante</Button>
+                        ) : (
+                            <Button onClick={submitApplyVacancy}>Aplicar</Button>
+                        )}
+
+                        {/* <Button onClick={submitApplyVacancy}>Confirmar</Button> */}
                     </DialogActions>
                 </Collapse>
             </Dialog>

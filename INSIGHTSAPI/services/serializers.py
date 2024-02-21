@@ -1,4 +1,5 @@
 """Custom serializers used in the project. """
+
 from rest_framework import serializers
 from django.utils.formats import number_format
 
@@ -12,4 +13,7 @@ class CurrencyFormattedField(serializers.Field):
 
     def to_internal_value(self, data):
         # Convert the value back to a float
-        return float(data)
+        try:
+            return float(data)
+        except ValueError as e:
+            raise serializers.ValidationError("Invalid value for a float", data) from e

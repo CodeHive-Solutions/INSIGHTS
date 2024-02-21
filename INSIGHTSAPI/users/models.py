@@ -1,4 +1,5 @@
 """This file contains the custom user model for the users app."""
+
 import logging
 import os
 from django.contrib.auth.models import AbstractUser
@@ -14,18 +15,20 @@ from django_auth_ldap.backend import populate_user
 
 logger = logging.getLogger("exceptions")
 
+
 # Pending of squashing this migrations to delete the function
 def validate_file_extension(image):
     """Validates that the uploaded file is a .webp image."""
     # if not image.name.endswith(".webp"):
-        # raise ValidationError("Solo puedes subir imágenes .webp ")
+    # raise ValidationError("Solo puedes subir imágenes .webp ")
     # elif image.size > 5000000:
-        # raise ValidationError("El archivo no puede pesar mas de 5MB")
+    # raise ValidationError("El archivo no puede pesar mas de 5MB")
+
 
 class User(AbstractUser):
     """Custom user model."""
 
-    cedula = models.IntegerField(null=False, blank=False, unique=True)
+    cedula = models.CharField(max_length=20, null=False, blank=False, unique=True)
     # profile_picture = models.ImageField(
     #     upload_to="images/pictures/", validators=[validate_file_extension]
     # )
@@ -61,8 +64,8 @@ class User(AbstractUser):
                 [self.username],
             )
             result = db_connection.fetchone()
-            if str(self.username).upper() in {"ZEUS","ADMIN","STAFFNET"}:
-                result = ("00000000","Administrador", "Administrador")
+            if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
+                result = ("00000000", "Administrador", "Administrador")
             elif not result:
                 raise ValidationError(
                     "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
@@ -92,6 +95,7 @@ class User(AbstractUser):
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)
+
 
 # @receiver(pre_save, sender=User)
 # def pre_save_user(sender, instance, **kwargs):

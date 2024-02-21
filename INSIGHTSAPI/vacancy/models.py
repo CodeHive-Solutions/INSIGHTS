@@ -1,9 +1,6 @@
 """This file contains the models for the vacancy app."""
 
-from io import BytesIO
-from PIL import Image
 from django.db import models
-from django.core.exceptions import ValidationError
 
 
 class Vacancy(models.Model):

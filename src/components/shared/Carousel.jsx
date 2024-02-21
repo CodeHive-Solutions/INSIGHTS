@@ -5,12 +5,12 @@ import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
 
 function CarouselComponent(props) {
-    const { items, height, width, day } = props;
+    const { items, height, width, contain, day } = props;
 
     return (
         <Carousel sx={{ width: width }}>
             {items.map((item, i) => (
-                <Item key={i} item={item} day={day} height={height} />
+                <Item contain={contain} key={i} item={item} day={day} height={height} />
             ))}
         </Carousel>
     );
@@ -29,6 +29,10 @@ function Item(props) {
             setIsVacancy(true);
         } else if (props.item.image.includes("valentin")) {
             setIsVacancy(true);
+        } else if (props.item.image.includes("evaluacion")) {
+            setIsVacancy(true);
+        } else if (props.item.image.includes("cuestionario")) {
+            setIsVacancy(true);
         }
     }, []);
 
@@ -37,6 +41,10 @@ function Item(props) {
             navigate("/logged/blog/article/6");
         } else if (isVacancy && props.item.image.includes("valentin")) {
             navigate("/logged/valentin");
+        } else if (isVacancy && props.item.image.includes("evaluacion")) {
+            navigate("/logged/autoevaluacion");
+        } else if (isVacancy && props.item.image.includes("cuestionario")) {
+            window.open("https://forms.office.com/r/Lx5TKvZrqq?origin=lprLink");
         } else if (isVacancy) {
             navigate("/logged/vacancies/");
         }
