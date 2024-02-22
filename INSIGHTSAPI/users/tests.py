@@ -1,6 +1,7 @@
 """Tests for the users app."""
+
 import os
-import ldap # type: ignore
+import ldap  # type: ignore
 from users.models import User
 from django.contrib.auth.models import Permission
 from django.test import TestCase
@@ -65,8 +66,10 @@ class LDAPAuthenticationTest(TestCase):
     def test_login_django(self, called=False):
         """Tests that the login endpoint works as expected."""
         if called:
-            username = "staffnet"
-            password = os.environ["StaffNetLDAP"]
+            username = "david.alvarez"
+            # username = "staffnet"
+            # password = os.environ["StaffNetLDAP"]
+            password = "asdf123.+"
             data = {
                 "username": username,
                 "password": password,

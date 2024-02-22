@@ -7,8 +7,7 @@ import locale
 from smtplib import SMTP
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMessage
-from django.db import connections, transaction
+from django.db import transaction
 from django.db.models import Q, Subquery, Max
 from django.utils import timezone
 from openpyxl import load_workbook
@@ -16,8 +15,7 @@ from rest_framework import status as framework_status
 from rest_framework import viewsets
 from rest_framework.response import Response
 from services.emails import send_email
-from rest_framework.permissions import IsAuthenticated
-from services.permissions import DjangoModelViewPermissionsAllowAllCreateAndUpdate
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 
 
 from .models import Goals, TableInfo, HistoricalGoals
@@ -34,7 +32,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
     queryset = Goals.objects.all()
     serializer_class = GoalSerializer
-    # permission_classes = [IsAuthenticated, DjangoModelViewPermissionsAllowAllCreateAndUpdate]
+    # permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
     def partial_update(self, request, *args, **kwargs):
         """If the user accept her goal then send him a email with the PDF file attached."""
