@@ -77,9 +77,9 @@ class PayslipViewSet(viewsets.ModelViewSet):
 
     def list(self, request):
         """List payslips."""
-        if request.user.is_superuser:
-            queryset = Payslip.objects.all()
-            serializer = PayslipSerializer(queryset, many=True)
+        if request.user.has_perm("payslip.view_payslip"):
+            payslips = Payslip.objects.all()
+            serializer = PayslipSerializer(payslips, many=True)
             return Response(serializer.data)
         return Response(
             {"error": "No tienes permisos para ver esta información"}, status=403

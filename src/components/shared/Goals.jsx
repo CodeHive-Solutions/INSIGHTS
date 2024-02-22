@@ -76,7 +76,7 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                     setGoalDeclined(true);
                 } else if (data.additional_info.length > 0) {
                     setGoalAdvisorClaro(data.additional_info);
-                } else if (data.quantity_goal && data.criteria_goal) {
+                } else if (data.quantity_goal && data.criteria_goal) {  
                     setGoalQuantity(data.quantity_goal);
                     setGoalCriteria(data.criteria_goal);
                 }

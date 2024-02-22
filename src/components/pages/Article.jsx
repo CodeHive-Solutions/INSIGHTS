@@ -25,6 +25,7 @@ import carteraPropiaLogo from "../../images/blog/cartera-propia-logo.png";
 import ciberseguridad2 from "../../images/blog/ciberseguridad-2.jpg";
 import bienestar2 from "../../images/blog/bienestar-2.jpg";
 import bienestar3 from "../../images/blog/bienestar-3.jpg";
+
 const ArticlePage = () => {
     useEffect(() => {
         window.scrollTo(0, 0);

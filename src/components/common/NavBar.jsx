@@ -16,6 +16,8 @@ import { getApiUrl } from "../../assets/getApi";
 import PolicyIcon from "@mui/icons-material/Policy";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import FmdBadIcon from "@mui/icons-material/FmdBad";
+import ReceiptIcon from "@mui/icons-material/Receipt";
+import PaymentsIcon from "@mui/icons-material/Payments";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -286,14 +288,20 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {/* {!isAdvisor ? (
+                {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
                         Mi Meta
                     </MenuItem>
-                ) : null} */}
+                ) : null}
+                {/* <MenuItem onClick={() => navigate("/logged/my-payslips")}>
+                    <ListItemIcon>
+                        <ReceiptIcon fontSize="small" />
+                    </ListItemIcon>
+                    Mis desprendibles de nomina
+                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -458,9 +466,17 @@ const Navbar = () => {
                             Eventos de Riesgo Operativo
                         </MenuItem>
                     ) : null}
+                    {permissions && permissions.includes("pay_slips.view_pay_slips") ? (
+                        <MenuItem onClick={() => navigate("/logged/payslips")}>
+                            <ListItemIcon>
+                                <PaymentsIcon fontSize="small" />
+                            </ListItemIcon>
+                            Registros de desprendibles de nomina
+                        </MenuItem>
+                    ) : null}
                 </Box>
             </Menu>
-            {/* {!isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null} */}
+            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

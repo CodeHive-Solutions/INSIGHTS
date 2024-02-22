@@ -90,9 +90,10 @@ class User(AbstractUser):
             # Check if the field is a CharField or TextField
             if (
                 isinstance(field, (models.CharField, models.TextField))
-                and field.name != "password"
+                and field.name not in ["password", "cedula"]
                 and self.__dict__[field.name]
             ):
+                print(field.attname, getattr(self, field.attname))
                 setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)
 

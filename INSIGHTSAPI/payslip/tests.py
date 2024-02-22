@@ -3,7 +3,6 @@
 from services.tests import BaseTestCase
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from users.models import User
 from .models import Payslip
 
 
@@ -41,6 +40,8 @@ class PayslipTest(BaseTestCase):
     def test_get_payslips(self):
         """Test get payslips."""
         self.test_upload_payslip_file()
+        get = Permission.objects.get(codename="view_payslip")
+        self.user.user_permissions.add(get)
         response = self.client.get("/payslips/")
         self.assertEqual(
             response.status_code,
@@ -48,6 +49,15 @@ class PayslipTest(BaseTestCase):
             response.data,
         )
         self.assertEqual(len(response.data), 27)
+
+    def test_get_payslips_no_permission(self):
+        """Test get payslips without permission."""
+        response = self.client.get("/payslips/")
+        self.assertEqual(
+            response.status_code,
+            403,
+            response.data,
+        )
 
     def test_get_payslip(self):
         """Test get payslip."""

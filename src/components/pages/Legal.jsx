@@ -193,7 +193,7 @@ export const Legal = () => {
                 <GridToolbarDensitySelector />
                 <GridToolbarExport
                     csvOptions={{
-                        fileName: "Metas",
+                        fileName: "contratos-polizas-legales",
                         delimiter: ";",
                         utf8WithBom: true,
                     }}

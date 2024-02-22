@@ -208,7 +208,7 @@ export const RiskEvent = () => {
                 <GridToolbarDensitySelector />
                 <GridToolbarExport
                     csvOptions={{
-                        fileName: "Metas",
+                        fileName: "eventos-riesgo-operativo",
                         delimiter: ";",
                         utf8WithBom: true,
                     }}

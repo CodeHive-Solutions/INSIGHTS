@@ -30,6 +30,8 @@ import Test from "./components/pages/Test";
 import Valentin from "./components/pages/Valentin";
 import AutoEvaluation from "./components/pages/AutoEvaluation";
 import Promotions from "./components/pages/Promotions";
+import Payslips from "./components/pages/Payslips";
+import MyPayslips from "./components/pages/MyPayslips";
 
 const theme = createTheme({
     typography: {
@@ -41,7 +43,7 @@ const theme = createTheme({
             "BlinkMacSystemFont",
             '"Segoe UI"',
             "Roboto",
-            '"Helvetica Neue"', 
+            '"Helvetica Neue"',
             "Arial",
             "sans-serif",
             '"Apple Color Emoji"',
@@ -145,6 +147,14 @@ const router = createBrowserRouter([
             {
                 path: "promotions",
                 element: <Promotions />,
+            },
+            {
+                path: "my-payslips",
+                element: <MyPayslips />,
+            },
+            {
+                path: "payslips",
+                element: <Payslips />,
             },
         ],
     },
