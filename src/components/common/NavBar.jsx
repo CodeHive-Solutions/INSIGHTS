@@ -36,7 +36,7 @@ const Navbar = () => {
     const cargoItem = localStorage.getItem("cargo");
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes("ASESOR");
     const permissions = JSON.parse(localStorage.getItem("permissions"));
-    const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713 || cedula === 1001185389;
+    const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389";
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||

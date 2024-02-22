@@ -569,10 +569,11 @@ const AnalisisMetas = () => {
         const YearSelect = () => {
             const currentYear = new Date().getFullYear();
             const years = [];
-            for (let year = currentYear; year <= 2023; year++) {
+            for (let year = 2023; year <= currentYear; year++) {
                 years.push({ value: year, label: year });
             }
             setYearsArray(years);
+            console.log(years);
         };
 
         YearSelect();
