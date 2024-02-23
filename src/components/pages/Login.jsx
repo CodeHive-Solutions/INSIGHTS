@@ -20,10 +20,21 @@ const validationSchema = Yup.object().shape({
     password: Yup.string().required("Campo requerido"),
 });
 
-const FormikTextField = ({ label, type, disabled, ...props }) => {
+const FormikTextField = ({ label, type, disabled, autoComplete, ...props }) => {
     const [field, meta] = useField(props);
     const errorText = meta.error && meta.touched ? meta.error : "";
-    return <TextField disabled={disabled} sx={{ width: "330px" }} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />;
+    return (
+        <TextField
+            disabled={disabled}
+            sx={{ width: "330px" }}
+            type={type}
+            label={label}
+            {...field}
+            helperText={errorText}
+            autoComplete={autoComplete}
+            error={!!errorText}
+        />
+    );
 };
 
 const Login = () => {
@@ -172,7 +183,7 @@ const Login = () => {
                                 Intranet
                             </Typography>
 
-                            <FormikTextField disabled={disabled} type="text" name="username" label="Usuario de Windows" autoComplete="off" spellCheck={false} />
+                            <FormikTextField disabled={disabled} type="text" name="username" label="Usuario de Windows" autoComplete="on" spellCheck={false} />
 
                             <FormikTextField disabled={disabled} name="password" label="Contraseña de Windows" type="password" autoComplete="off" spellCheck={false} />
 

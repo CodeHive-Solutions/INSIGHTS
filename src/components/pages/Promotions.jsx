@@ -1,9 +1,30 @@
-import React, { s1q } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Card, Typography, Container } from "@mui/material";
 import CarouselComponent from "../shared/Carousel";
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
 
 const Promotions = () => {
-     
+    const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
+    const [todayBirthdays, setTodayBirthdays] = useState([]);
+    const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
+    const [openSnack, setOpenSnack] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("success");
+
+    const handleCloseSnack = () => {
+        setOpenSnack(false);
+    };
+
+    const showSnack = (severity, message, error) => {
+        setSeverity(severity);
+        setMessage(message);
+        setOpenSnack(true);
+        if (error) {
+            console.error("error:", message);
+        }
+    };
+
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
@@ -30,8 +51,9 @@ const Promotions = () => {
                     return {
                         image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
                         name: formattedName,
-                        subtitle: employee.campana_general,
-                        description: employee.descripcion,
+                        subtitle: "De asesor de negociación a team líder",
+                        description:
+                            "Estimados colegas, Quiero expresar mi más sincero agradecimiento por el honor de mi ascenso en la empresa. Es un privilegio asumir este nuevo desafío y estoy profundamente agradecido por la confianza que han depositado en mí.¡Estoy emocionado por contribuir aún más al éxito de nuestro equipo!",
                     };
                 }
 
@@ -94,9 +116,18 @@ const Promotions = () => {
             <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                 Plan Carrera
             </Typography>{" "}
-            <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
-                {/* <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} /> */}
-            </Card>
+            <Box sx={{ display: "flex", gap: "2rem", flexWrap: "wrap", p: "1rem" }}>
+                <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
+                    <CarouselComponent items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                </Card>
+                <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
+                    <CarouselComponent items={todayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                </Card>
+                <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
+                    <CarouselComponent items={tomorrowBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                </Card>
+                <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+            </Box>
         </Container>
     );
 };

@@ -24,10 +24,12 @@ import certificacionRacc from "../../images/home-carousel/certificacion-racc.png
 import inclusionCuestionario from "../../images/home-carousel/inclusion-cuestionario.png";
 import cycBirthday from "../../images/home-carousel/cycBirthday.png";
 import anniversary from "../../images/birthdays/anniversary.png";
+import finanzasJovenes from "../../images/blog/finanzas-jovenes.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: finanzasJovenes },
     { image: cycBirthday },
     { image: inclusionCuestionario },
     { image: certificacionRacc },
@@ -225,7 +227,7 @@ const Home = () => {
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {yesterdayBirthdays.length === 0 ? (
                             <>
-                                <img src={cake}></img>
+                                <img alt="imagen-pastel-cumpleaños" src={cake}></img>
                                 <Box
                                     sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
                                 >
@@ -263,7 +265,7 @@ const Home = () => {
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {tomorrowBirthdays.length === 0 ? (
                             <>
-                                <img src={cake}></img>
+                                <img alt="imagen-pastel-cumpleaños" src={cake}></img>
                                 <Box
                                     sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
                                 >

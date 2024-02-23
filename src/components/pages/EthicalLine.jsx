@@ -174,7 +174,7 @@ const EthicalLine = () => {
                     Linea Ética
                 </Typography> */}
                 <Box sx={{ textAlign: "center", justifyContent: "center", alignItems: "center", p: "2rem" }}>
-                    <img src={logoCYC} alt="" width={200} />
+                    <img src={logoCYC} alt="imagen-logo-cyc" width={200} />
                 </Box>
                 <Box sx={{ display: "flex", gap: "1rem", flexDirection: "column", height: "max-content", mb: "2rem", p: "0" }}>
                     <Typography variant="body1">
@@ -241,9 +241,11 @@ const EthicalLine = () => {
                                 />
 
                                 <FormControl>
-                                    <FormLabel id="radio">¿Desea proveer algún método de contacto para mantenerlo informado del caso?</FormLabel>
+                                    <FormLabel id="radio" for="radio">
+                                        ¿Desea proveer algún método de contacto para mantenerlo informado del caso?
+                                    </FormLabel>
                                     <RadioGroup row aria-labelledby="radio" name="radio">
-                                        <Field as={RadioGroup} name="radio" row aria-labelledby="radio">
+                                        <Field as={RadioGroup} name="radio" id="radio" row aria-labelledby="radio">
                                             <FormControlLabel
                                                 onClick={() => {
                                                     openCollapse();

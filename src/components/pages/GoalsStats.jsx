@@ -704,29 +704,36 @@ const AnalisisMetas = () => {
                     <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
                         <Box>
                             <TextField
-                                onChange={handleTypeGoalChange}
-                                required
-                                defaultValue="delivery"
-                                sx={{ width: "10rem" }}
-                                size="small"
-                                variant="filled"
-                                select
+                                InputLabelProps={{ children: "Tipo de meta" }}
+                                id="type-goal"
                                 label="Tipo de meta"
-                                inputRef={goalType}
+                                select
+                                defaultValue=""
+                                type="select"
+                                autoComplete="off"
+                                spellCheck={false}
+                                // name="type-goal"
+                                // onChange={handleTypeGoalChange}
+                                // required
+                                // defaultValue="delivery"
+                                // sx={{ width: "10rem" }}
+                                // size="small"
+                                // variant="filled"
+                                // inputRef={goalType}
                             >
-                                <MenuItem value={"delivery"}>Entrega</MenuItem>
+                                <MenuItem value={"delivery"}>Entregas</MenuItem>
                                 <MenuItem value={"execution"}>Ejecución</MenuItem>
                             </TextField>
                         </Box>
                         <Box component="form" sx={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }} onSubmit={handleFilter}>
-                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Mes" inputRef={monthRef}>
+                            <TextField id="month" label="Mes" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={monthRef}>
                                 {months.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}
                                     </MenuItem>
                                 ))}
                             </TextField>
-                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Año" inputRef={yearRef}>
+                            <TextField label="Año" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={yearRef}>
                                 {yearsArray.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}
