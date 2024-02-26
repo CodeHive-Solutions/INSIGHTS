@@ -1,6 +1,7 @@
 """This view allow to upload an Excel file with the goals of the staff and save them in the db."""
 
 import base64
+import email
 import logging
 import re
 import ssl
@@ -72,9 +73,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     send_email(
                         f"Meta {month}",
                         f"""
+                        <p style="text-align: start">
                         La meta fue <b>{accepted_state}</b>.<br>
                         
                         Información de la meta:<br>
+                        </p>
                         <ul style="padding-bottom: 1rem; text-align: start">
                             <li>Cedula: {instance.cedula}</li>
                             <li>Nombres: {instance.name}</li>
@@ -97,7 +100,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             </tr>
                         </table>
                         """,
-                        ["carrenosebastian54@gmail.com  "],
+                        [user.email],
                         email_owner="Entrega de metas",
                         html_content=True,
                         safe_mode=False,
@@ -110,9 +113,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     send_email(
                         f"Meta {month}",
                         f"""
-                        La meta fue <b>{accepted_state}</b>.<br>
+                        
+                        <p style="text-align: start">La meta fue <b>{accepted_state}</b>.<br>
                         Información de la meta:<br>
-                        <ul style="padding-bottom: 1rem; text-align: "start">
+                        </p>
+                        <ul style="padding-bottom: 1rem; text-align: start">
                             <li>Cedula: {instance.cedula}</li>
                             <li>Nombres: {instance.name}</li>
                             <li>Campaña: {instance.campaign_goal}</li>
@@ -131,7 +136,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             </tr>
                         </table>
                         """,
-                        ["carrenosebastian54@gmail.com"],
+                        [user.email],
                         email_owner="Entrega de metas",
                         html_content=True,
                         safe_mode=False,
@@ -160,9 +165,10 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 send_email(
                     f"Ejecución de meta {month}",
                     f"""
-                    La ejecución de la meta fue <b>{accepted_state}</b>.<br>
+                    <p style="text-align: start">La ejecución de la meta fue <b>{accepted_state}</b>.<br>
 
                     Información de la ejecución de la meta:<br>
+                     <p/>
                     <ul style="padding-bottom: 1rem; text-align: start">
                         <li>Cedula: {instance.cedula}</li>
                         <li>Nombres: {instance.name}</li>
@@ -188,7 +194,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         </tr>
                     </table>
                     """,
-                    ["carrenosebastian54@gmail.com"],
+                    [user.email],
                     email_owner="Ejecución de metas",
                     html_content=True,
                     safe_mode=False,

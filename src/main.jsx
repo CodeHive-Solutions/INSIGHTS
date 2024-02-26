@@ -144,18 +144,18 @@ const router = createBrowserRouter([
                 path: "autoevaluacion",
                 element: <AutoEvaluation />,
             },
-            // {
-            //     path: "promotions",
-            //     element: <Promotions />,
-            // },
-            // {
-            //     path: "my-payslips",
-            //     element: <MyPayslips />,
-            // },
-            // {
-            //     path: "payslips",
-            //     element: <Payslips />,
-            // },
+            {
+                path: "promotions",
+                element: <Promotions />,
+            },
+            {
+                path: "my-payslips",
+                element: <MyPayslips />,
+            },
+            {
+                path: "payslips",
+                element: <Payslips />,
+            },
         ],
     },
 ]);

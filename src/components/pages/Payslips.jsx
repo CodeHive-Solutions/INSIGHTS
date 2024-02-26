@@ -27,6 +27,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import SaveIcon from "@mui/icons-material/Save";
+import PayslipsPreview from "./PayslipsPreview.jsx";
+import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import * as XLSX from "xlsx";
 
 export const Payslips = () => {
     const [rows, setRows] = useState([]);
@@ -37,7 +40,8 @@ export const Payslips = () => {
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const [openDialog, setOpenDialog] = useState(false);
     const [fileName, setFileName] = useState("Subir archivo");
-    const [fileImage, setFileImage] = useState(null);
+    const [payslipFile, setPayslipFile] = useState(null);
+    const [previewRows, setPreviewRows] = useState([]);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -145,7 +149,8 @@ export const Payslips = () => {
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setFileName("Subir archivo");
-        setFileImage(null);
+        setPayslipFile(null);
+        setPreviewRows([]);
     };
 
     const CustomToolbar = () => {
@@ -210,15 +215,68 @@ export const Payslips = () => {
         },
     ];
 
+    function csvToJSON(csv) {
+        const lines = csv.split("\n");
+        const result = [];
+        const headers = [
+            "title",
+            "identification",
+            "name",
+            "area",
+            "job_title",
+            "salary",
+            "days",
+            "biweekly_period",
+            "transport_allowance",
+            "bonus_paycheck",
+            "gross_earnings",
+            "healthcare_contribution",
+            "pension_contribution",
+            "tax_withholding",
+            "apsalpen",
+            "additional_deductions",
+            "total_deductions",
+            "net_pay",
+        ];
+
+        for (let i = 0; i < lines.length; i++) {
+            const obj = { id: i + 1 }; // Add an id field
+            const row = lines[i].split(",");
+
+            for (let j = 0; j < headers.length; j++) {
+                obj[headers[j]] = row[j];
+            }
+
+            result.push(obj);
+        }
+
+        return result;
+    }
+
     const handleFileInputChange = (event) => {
         setFileName(event.target.files[0].name);
-        setFileImage(event.target.files[0]);
+        setPayslipFile(event.target.files[0]);
+
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (evt) => {
+            const bstr = evt.target.result;
+            const workbook = XLSX.read(bstr, { type: "binary" });
+            const worksheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[worksheetName];
+            const data = XLSX.utils.sheet_to_csv(worksheet, { header: 1 });
+            console.log(csvToJSON(data));
+            setPreviewRows(csvToJSON(data));
+        };
+
+        reader.readAsBinaryString(file);
     };
 
     const submitPayslipFile = async () => {
         try {
             const formData = new FormData();
-            formData.append("file", fileImage);
+            formData.append("file", payslipFile);
             const response = await fetch(`${getApiUrl()}payslips/`, {
                 method: "POST",
                 credentials: "include",
@@ -270,10 +328,10 @@ export const Payslips = () => {
                     rows={exampleRows}
                 ></DataGrid>
             </Container>
-            <Dialog fullWidth={true} maxWidth="xs" open={openDialog} onClose={handleCloseDialog}>
+            <Dialog fullWidth={true} maxWidth="xl" open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Cargar nuevo archivo</DialogTitle>
                 <DialogContent>
-                    <Button sx={{ width: "100%", overflow: "hidden" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
+                    <Button sx={{ width: "250px", overflow: "hidden", mb: "2rem" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
                         {fileName}
                         <VisuallyHiddenInput
                             id="file"
@@ -288,8 +346,9 @@ export const Payslips = () => {
                             }
                         />
                     </Button>
-                    <Button onClick={submitPayslipFile} type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                        Guardar
+                    <PayslipsPreview rows={previewRows} />
+                    <Button variant="contained" onClick={submitPayslipFile} type="submit" startIcon={<ArrowCircleUpIcon></ArrowCircleUpIcon>}>
+                        Subir
                     </Button>
                 </DialogContent>
             </Dialog>

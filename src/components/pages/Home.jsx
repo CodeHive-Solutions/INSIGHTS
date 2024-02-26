@@ -12,19 +12,18 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 // media
 import campaigns from "../../images/home-carousel/campaigns-1280-720.png";
-import isos from "../../images/home-carousel/isos-1280-720.png";
 import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
 import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDescriminacion from "../../images/home-carousel/cero-discriminacion.png";
 import inclusion from "../../images/home-carousel/inclusion.png";
-import evaluacion from "../../images/home-carousel/evaluacion.png";
 import certificacionRacc from "../../images/home-carousel/certificacion-racc.png";
 import inclusionCuestionario from "../../images/home-carousel/inclusion-cuestionario.png";
 import cycBirthday from "../../images/home-carousel/cycBirthday.png";
-import anniversary from "../../images/birthdays/anniversary.png";
 import finanzasJovenes from "../../images/blog/finanzas-jovenes.png";
+import testReal from "../../images/test/test-real.jpeg";
+import testReal2 from "../../images/test/test-real-2.jpeg";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
@@ -33,13 +32,13 @@ const homeImages = [
     { image: cycBirthday },
     { image: inclusionCuestionario },
     { image: certificacionRacc },
-    { image: evaluacion },
     { image: inclusion },
     { image: ceroDescriminacion },
     { image: campaigns },
-    { image: isos },
     { image: vacanciesCarousel },
 ];
+
+const test = [{ image: testReal }, { image: testReal2 }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
@@ -246,20 +245,20 @@ const Home = () => {
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {todayBirthdays.length === 0 ? (
                             <>
-                                <img src={anniversary}></img>
+                                <img src={cake}></img>
                                 <Box
                                     sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
                                 >
                                     <Typography variant="h6" color="gray">
-                                        Hoy celebramos el décimo noveno aniversario de C&C
+                                        Hoy no hay cumpleaños
                                     </Typography>
                                     <Typography variant="body" color="gray">
-                                        ¡Gracias a todos por su esfuerzo y dedicación!
+                                        ¡Pero siempre hay espacio para una sonrisa!
                                     </Typography>
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={test} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>

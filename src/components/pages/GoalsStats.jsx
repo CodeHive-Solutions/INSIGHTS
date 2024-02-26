@@ -21,12 +21,9 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { getApiUrl } from "../../assets/getApi";
+import { useNavigate } from "react-router-dom";
 
 const AnalisisMetas = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -42,6 +39,15 @@ const AnalisisMetas = () => {
     const monthRef = useRef();
     const yearRef = useRef();
     const goalType = useRef(null);
+    const navigate = useNavigate();
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        if (!cedula.includes("28172713") && !cedula.includes("1001185389") && !cedula.includes("1020780559") && !cedula.includes("25878771")) {
+            navigate("/logged/home");
+        }
+    }, []);
 
     const handleSave = async () => {
         try {
@@ -573,7 +579,6 @@ const AnalisisMetas = () => {
                 years.push({ value: year, label: year });
             }
             setYearsArray(years);
-            console.log(years);
         };
 
         YearSelect();
@@ -704,24 +709,17 @@ const AnalisisMetas = () => {
                     <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
                         <Box>
                             <TextField
-                                InputLabelProps={{ children: "Tipo de meta" }}
-                                id="type-goal"
-                                label="Tipo de meta"
+                                onChange={handleTypeGoalChange}
+                                required
+                                defaultValue="delivery"
+                                sx={{ width: "10rem" }}
+                                size="small"
+                                variant="filled"
                                 select
-                                defaultValue=""
-                                type="select"
-                                autoComplete="off"
-                                spellCheck={false}
-                                // name="type-goal"
-                                // onChange={handleTypeGoalChange}
-                                // required
-                                // defaultValue="delivery"
-                                // sx={{ width: "10rem" }}
-                                // size="small"
-                                // variant="filled"
-                                // inputRef={goalType}
+                                label="Tipo de meta"
+                                inputRef={goalType}
                             >
-                                <MenuItem value={"delivery"}>Entregas</MenuItem>
+                                <MenuItem value={"delivery"}>Entrega</MenuItem>
                                 <MenuItem value={"execution"}>Ejecución</MenuItem>
                             </TextField>
                         </Box>

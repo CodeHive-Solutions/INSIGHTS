@@ -19,6 +19,7 @@ import FmdBadIcon from "@mui/icons-material/FmdBad";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import { ListItemText } from "@mui/material";
+
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorElUtils, setAnchorElUtils] = useState(null);
@@ -36,7 +37,7 @@ const Navbar = () => {
     const cargoItem = localStorage.getItem("cargo");
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes("ASESOR");
     const permissions = JSON.parse(localStorage.getItem("permissions"));
-    const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389";
+    const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||
