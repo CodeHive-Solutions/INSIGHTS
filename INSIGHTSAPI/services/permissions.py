@@ -8,8 +8,8 @@ class CustomizableGetDjangoModelViewPermissions(permissions.DjangoModelPermissio
     Similar to DjangoModelPermissions, but also checks for 'view' permission.
     """
 
-    def __init__(self, perms_map=None, *args, **kwargs):
-        self.perms_map = perms_map or {}
+    def __init__(self, *args, **kwargs):
+        self.perms_map = self.perms_map or {}
         if "GET" not in self.perms_map:
             self.perms_map["GET"] = ["%(app_label)s.view_%(model_name)s"]
         if "OPTIONS" not in self.perms_map:

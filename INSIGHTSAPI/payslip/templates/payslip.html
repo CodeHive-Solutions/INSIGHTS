@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ payslip.title }}</title>
+    <style>
+        /* Define your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Desprendible de nomina</h2>
+            <p>{{ payslip.title }}</p>
+        </div>
+        <table class="table">
+            <tr>
+                <th>Información del empleado</th>
+                <th>Detalles</th>
+            </tr>
+            <tr>
+                <td>Nombre</td>
+                <td>{{ payslip.name }}</td>
+            </tr>
+            <tr>
+                <td>Identificación</td>
+                <td>{{ payslip.identification }}</td>
+            </tr>
+            <tr>
+                <td>Salario</td>
+                <td>{{ payslip.salary }}</td>
+            </tr>
+            <tr>
+                <td>Dias trabajados</td>
+                <td>{{ payslip.days }}</td>
+            </tr>
+            <!-- Add more rows for earnings and deductions -->
+            <tr>
+                <td>Ingresos brutos</td>
+                <td>{{ payslip.gross_earnings }}</td>
+            </tr>
+            <tr>
+                <td>Deducciones totales</td>
+                <td>{{ payslip.total_deductions }}</td>
+            </tr>
+            <tr>
+                <td>Pago neto</td>
+                <td>{{ payslip.net_pay }}</td>
+            </tr>
+        </table>
+        <div class="footer">
+            <p>Date: {{ payslip.created_at }}</p>
+        </div>
+    </div>
+</body>
+</html>

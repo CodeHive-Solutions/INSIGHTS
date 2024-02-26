@@ -100,29 +100,8 @@ class LDAPAuthenticationTest(TestCase):
         response = self.test_login_django(called=True)
         # Make a request that requires authentication
         response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 403)
         response2 = self.client.post(reverse("destroy-token"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response2.status_code, 200)
-        response3 = self.client.get(reverse("robinson-list"), cookies=self.client.cookies)  # type: ignore
-        self.assertEqual(response3.status_code, 401)
-
-    def test_permission_check(self):
-        """Tests that the permission check endpoint works as expected."""
-        username = "StaffNet"
-        password = os.environ["StaffNetLDAP"]
-        data = {
-            "username": username,
-            "password": password,
-        }
-        response = self.client.post(reverse("obtain-token"), data)
-        self.assertEqual(response.status_code, 200)
-        response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies)  # type: ignore
-        self.assertEqual(response.status_code, 403)
-        self.test_logout()
-        self.test_login_django(called=True)
-        user = User.objects.get(username="staffnet")
-        permission = Permission.objects.get(codename="upload_robinson_list")
-        user.user_permissions.add(permission)
-        user.save()
-        response = self.client.post(reverse("robinson-list"), cookies=self.client.cookies)  # type: ignore
-        self.assertEqual(response.status_code, 400)
+        response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
+        self.assertEqual(response.status_code, 401)

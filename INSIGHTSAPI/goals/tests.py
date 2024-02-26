@@ -20,20 +20,17 @@ class GoalAPITestCase(BaseTestCase):
         """Set up the test client and the URL for the goal list view."""
         super().setUp()
         user = User.objects.get(username="staffnet")
-        # permission_view = Permission.objects.get(codename="view_goals")
-        # user.user_permissions.add(permission_view)
-        # permission_view = Permission.objects.get(codename="view_goals")
+        permission_view = Permission.objects.get(codename="view_goals")
+        user.user_permissions.add(permission_view)
         permission_add = Permission.objects.get(codename="add_goals")
         # permission_update = Permission.objects.get(codename="change_goals")
         user.user_permissions.add(permission_add)
-        # user.user_permissions.add(permission_view)
+        user.user_permissions.add(permission_view)
         # user.user_permissions.add(permission_update)
-        # permission_change = Permission.objects.get(codename="change_goals")
-        # user.user_permissions.add(permission_change)
         permission_view_history = Permission.objects.get(
             codename="view_historicalgoals"
         )
-        # user.user_permissions.add(permission_view_history)
+        user.user_permissions.add(permission_view_history)
 
     def test_serializer(self):
         """Test the Goal serializer."""
@@ -65,9 +62,7 @@ class GoalAPITestCase(BaseTestCase):
 
     def test_metas_upload_without_permission(self):
         """Test the upload-excel view."""
-        user = User.objects.get(username="staffnet")
-        permission = Permission.objects.get(codename="add_goals")
-        user.user_permissions.remove(permission)
+        self.user.user_permissions.clear()
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()

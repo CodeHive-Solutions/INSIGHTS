@@ -130,5 +130,6 @@ def send_email(
                     return Exception("Error saving email to 'sent' folder")
         return None
     except Exception as e:
+        print(e)
         logger.exception("Error sending email: %s", e)
         return e
