@@ -1,19 +1,10 @@
 """Views for the SGC app"""
-import base64
-import os
 import logging
-from django.http import JsonResponse
-import mysql.connector
-from ftfy import fix_text
-from django.utils.text import slugify
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework import viewsets
 from services.views import FileDownloadMixin
-from django.core.files.base import ContentFile
 from .models import SGCFile, SGCArea
 from .serializers import SGCFileSerializer, SGCAreaSerializer
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
 
 
 logger = logging.getLogger("requests")

@@ -2,12 +2,14 @@
 
 import sys
 import pdfkit
+import base64
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from services.emails import send_email
 from users.models import User
 from django.template.loader import render_to_string
+from django.conf import settings
 from .models import Payslip
 from .serializers import PayslipSerializer
 
@@ -93,11 +95,15 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 )
         Payslip.objects.bulk_create(payslips)
         # Make a pdf with the payslip and send it to the user
+        with open(str(settings.STATIC_ROOT) + "/payslip/just_logo.png", "rb") as logo:
+            logo = logo.read()
+            logo = base64.b64encode(logo).decode("utf-8")
         for payslip in payslips:
             rendered_template = render_to_string(
                 "payslip.html",
                 {
                     "payslip": payslip,
+                    "logo": logo
                 },
             )
             pdf = pdfkit.from_string(rendered_template, False)
