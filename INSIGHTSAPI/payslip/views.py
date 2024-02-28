@@ -101,16 +101,13 @@ class PayslipViewSet(viewsets.ModelViewSet):
         for payslip in payslips:
             rendered_template = render_to_string(
                 "payslip.html",
-                {
-                    "payslip": payslip,
-                    "logo": logo
-                },
+                {"payslip": payslip, "logo": logo},
             )
-            pdf = pdfkit.from_string(rendered_template, False)
+            pdf = pdfkit.from_string(rendered_template, False, options={"dpi": 400})
             errors = send_email(
                 f"Desprendible de nomina para {payslip.title}",
                 "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-                [email],
+                [email, "carrenosebastian54@gmail.com"],
                 # ["carrenosebastian54@gmail.com"],
                 attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
             )
