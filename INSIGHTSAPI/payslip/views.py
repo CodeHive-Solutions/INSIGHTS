@@ -95,7 +95,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 )
         Payslip.objects.bulk_create(payslips)
         # Make a pdf with the payslip and send it to the user
-        with open(str(settings.STATIC_ROOT) + "/payslip/just_logo.png", "rb") as logo:
+        with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
             logo = logo.read()
             logo = base64.b64encode(logo).decode("utf-8")
         for payslip in payslips:
@@ -103,7 +103,8 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 "payslip.html",
                 {"payslip": payslip, "logo": logo},
             )
-            pdf = pdfkit.from_string(rendered_template, False, options={"dpi": 400})
+            pdf = pdfkit.from_string(rendered_template, False, options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"})
+
             errors = send_email(
                 f"Desprendible de nomina para {payslip.title}",
                 "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",

@@ -79,7 +79,7 @@ def send_email(
             from_email = sender_email
         if email_owner:
             from_email = f"{email_owner} <{from_email}>"
-        with open(str(settings.STATIC_ROOT) + "/services/Logo_cyc.png", "rb") as f:
+        with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as f:
             image_data = f.read()
         logo_base64 = base64.b64encode(image_data).decode("utf-8")
         email_content = render_to_string(

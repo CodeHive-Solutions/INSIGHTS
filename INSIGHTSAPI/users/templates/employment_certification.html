@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employment Certification</title>
+</head>
+<body>
+    <img src="data:image/png;base64,{{ logo }}" alt="Company logo" width="100" height="100">
+    <h1>C&C services S.A.S</h1>
+    <p>La presente certificación laboral se expide a solicitud del interesado, para los fines que estime conveniente.</p>
+    <p>El señor(a) <strong>{{user.get_full_name}}</strong> identificado(a) con cédula de ciudadanía No. <strong>{{user.identification}}</strong> laboró en nuestra empresa desde el <strong>{{employment.start_date}}</strong> hasta el <strong>{{employment.end_date}}</strong> desempeñando el cargo de <strong>{{employment.position}}</strong>.</p>
+</body>
+</html>

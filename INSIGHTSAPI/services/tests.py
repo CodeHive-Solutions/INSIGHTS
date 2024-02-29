@@ -20,6 +20,10 @@ class BaseTestCase(APITestCase):
 
     databases = set(["default", "staffnet"])
 
+    def logout(self):
+        """Logout the user."""
+        self.client.post(reverse("destroy-token"), {}, cookies=self.client.cookies)  # type: ignore
+
     def setUp(self):
         """Set up the test case."""
         self.client.post(
@@ -31,7 +35,7 @@ class BaseTestCase(APITestCase):
 
     def tearDown(self):
         """Tear down the test case."""
-        self.client.post(reverse("destroy-token"), {}, cookies=self.client.cookies)  # type: ignore
+        self.logout()
 
 
 class StaticFilesTest(TestCase):
