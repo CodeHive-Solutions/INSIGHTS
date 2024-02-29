@@ -87,11 +87,6 @@ export const VacanciesReferred = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {permissions && permissions.includes("contracts.add_contract") ? (
-                    <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
-                        AÑADIR
-                    </Button>
-                ) : null}
                 <Box sx={{ textAlign: "end", flex: "1" }}>
                     <GridToolbarQuickFilter />
                 </Box>

@@ -33,6 +33,8 @@ function Item(props) {
             setIsVacancy(true);
         } else if (props.item.image.includes("cuestionario")) {
             setIsVacancy(true);
+        } else if (props.item.image.includes("finanzas-jovenes")) {
+            setIsVacancy(true);
         }
     }, []);
 
@@ -45,6 +47,8 @@ function Item(props) {
             navigate("/logged/autoevaluacion");
         } else if (isVacancy && props.item.image.includes("cuestionario")) {
             window.open("https://forms.office.com/r/Lx5TKvZrqq?origin=lprLink");
+        } else if (isVacancy && props.item.image.includes("finanzas-jovenes")) {
+            navigate("/logged/blog/article/8");
         } else if (isVacancy) {
             navigate("/logged/vacancies/");
         }

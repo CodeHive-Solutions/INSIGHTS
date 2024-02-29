@@ -1,4 +1,5 @@
 """This module contains the tests for the goals app."""
+
 from django.db.models import Q
 from django.utils import timezone
 from django.urls import reverse
@@ -7,6 +8,7 @@ from django.contrib.auth.models import Permission
 from services.tests import BaseTestCase
 from rest_framework import status
 from users.models import User
+
 # from media.goals_templates.goals_delivery import get_template
 from .models import Goals, TableInfo
 
@@ -18,13 +20,16 @@ class GoalAPITestCase(BaseTestCase):
         """Set up the test client and the URL for the goal list view."""
         super().setUp()
         user = User.objects.get(username="staffnet")
-        # permission_view = Permission.objects.get(codename="view_goals")
-        # user.user_permissions.add(permission_view)
+        permission_view = Permission.objects.get(codename="view_goals")
+        user.user_permissions.add(permission_view)
         permission_add = Permission.objects.get(codename="add_goals")
+        # permission_update = Permission.objects.get(codename="change_goals")
         user.user_permissions.add(permission_add)
-        # permission_change = Permission.objects.get(codename="change_goals")
-        # user.user_permissions.add(permission_change)
-        permission_view_history = Permission.objects.get(codename="view_historicalgoals")
+        user.user_permissions.add(permission_view)
+        # user.user_permissions.add(permission_update)
+        permission_view_history = Permission.objects.get(
+            codename="view_historicalgoals"
+        )
         user.user_permissions.add(permission_view_history)
 
     def test_serializer(self):
@@ -46,12 +51,30 @@ class GoalAPITestCase(BaseTestCase):
             content_type="application/vnd.ms-excel",
         )
         # Send the POST request to the upload-excel URL with the Excel file data
-        response = self.client.post(reverse("goal-list"), {"file": excel_file}, cookies=self.client.cookies)
+        response = self.client.post(
+            reverse("goal-list"), {"file": excel_file}, cookies=self.client.cookies  # type: ignore
+        )
         # Assert the response status code and perform additional assertions for the response data
         number_goals = Goals.objects.all().count()
         # print(response.data)
         self.assertEqual(response.status_code, 201)
         self.assertTrue(number_goals > 0)
+
+    def test_metas_upload_without_permission(self):
+        """Test the upload-excel view."""
+        self.user.user_permissions.clear()
+        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
+        with open(file_path, "rb") as file_obj:
+            file_data = file_obj.read()
+        excel_file = SimpleUploadedFile(
+            "Entrega de metas-ENERO-2018.xlsx",
+            file_data,
+            content_type="application/vnd.ms-excel",
+        )
+        response = self.client.post(
+            reverse("goal-list"), {"file": excel_file}, cookies=self.client.cookies  # type: ignore
+        )
+        self.assertEqual(response.status_code, 403)
 
     def test_execution_upload(self, called=False):
         """Test the upload-excel view."""
@@ -72,9 +95,11 @@ class GoalAPITestCase(BaseTestCase):
             count = Goals.objects.exclude(total="").count()
             self.assertTrue(count > 0)
 
-    def test_borrado_accepted(self):
+    def test_borrado_accepted_with_another_upload(self):
         """Test the upload-excel view."""
-        # Sube registros que después los borra
+        delete = Permission.objects.get(codename="delete_goals")
+        self.user.user_permissions.add(delete)
+        # Sube registros que después borrara
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()
@@ -166,6 +191,12 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(len(response.data), 110)  # type: ignore
         self.assertIn("ENERO-2022", response.data[0].get("goal_date"))  # type: ignore
 
+    def test_get_history_without_permission(self):
+        """Test the get-history view."""
+        self.user.user_permissions.clear()
+        response = self.client.get("/goals/?date=ENERO-2022&column=delivery")
+        self.assertEqual(response.status_code, 403)
+
     def test_get_one_history(self):
         """Test the get-one-history view."""
         self.test_claro_upload()
@@ -187,6 +218,7 @@ class GoalAPITestCase(BaseTestCase):
 
     def test_patch_goal_delivery(self):
         """Test the update-goal view."""
+
         # Get the first goal from the database
         goal = Goals.objects.create(
             cedula="1000065648",
@@ -209,33 +241,137 @@ class GoalAPITestCase(BaseTestCase):
             "accepted": True,
         }
         # Send a PATCH request to the update-goal view
-        response = self.client.patch(
-            reverse("goal-detail", args=[goal.cedula]), data=payload
-        )
+        response = self.client.patch("/goals/1000065648/", data=payload)
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         # Assert that the goal was updated with the new data
-        self.assertEqual(response.data["message"], "La meta fue aceptada.", response.data)
+        self.assertEqual(
+            response.data["message"], "La meta fue aceptada.", response.data
+        )
 
     def test_patch_goal_delivery_claro(self):
         """Test the update-goal view."""
         # Get the first goal from the database
         table_info_data = [
-            {"name": "ANTIGUOS", "fringe": "CERO", "diary_goal": "70", "days": "24", "month_goal": "1680", "hours": "8", "collection_account": "75000"},
-            {"name": "ANTIGUOS", "fringe": "30", "diary_goal": "71", "days": "25", "month_goal": "1681", "hours": "9", "collection_account": "75001"},
-            {"name": "ANTIGUOS", "fringe": "60", "diary_goal": "72", "days": "26", "month_goal": "1682", "hours": "10", "collection_account": "75002"},
-            {"name": "ANTIGUOS", "fringe": "90", "diary_goal": "73", "days": "27", "month_goal": "1683", "hours": "11", "collection_account": "75003"},
-            {"name": "ANTIGUOS", "fringe": "120A180", "diary_goal": "74", "days": "28", "month_goal": "1684", "hours": "12", "collection_account": "75004"},
-            {"name": "ANTIGUOS", "fringe": "210", "diary_goal": "75", "days": "29", "month_goal": "1685", "hours": "13", "collection_account": "75005"},
-            {"name": "ANTIGUOS", "fringe": "PREPOTENCIAL", "diary_goal": "76", "days": "30", "month_goal": "1686", "hours": "14", "collection_account": "75006"},
-            {"name": "ANTIGUOS", "fringe": "PREPOTENCIAL_2", "diary_goal": "77", "days": "31", "month_goal": "1687", "hours": "15", "collection_account": "75007"},
-            {"name": "ANTIGUOS", "fringe": "PREPROVISION", "diary_goal": "78", "days": "32", "month_goal": "1688", "hours": "16", "collection_account": "75008"},
-            {"name": "ANTIGUOS", "fringe": "CHURN", "diary_goal": "79", "days": "33", "month_goal": "1689", "hours": "17", "collection_account": "75009"},
-            {"name": "ANTIGUOS", "fringe": "PRECHURN", "diary_goal": "80", "days": "34", "month_goal": "1690", "hours": "18", "collection_account": "75010"},
-            {"name": "ANTIGUOS", "fringe": "PROVISION", "diary_goal": "81", "days": "35", "month_goal": "1691", "hours": "19", "collection_account": "75011"},
-            {"name": "ANTIGUOS", "fringe": "POTENCIAL", "diary_goal": "82", "days": "36", "month_goal": "1692", "hours": "20", "collection_account": "75012"},
+            {
+                "name": "ANTIGUOS",
+                "fringe": "CERO",
+                "diary_goal": "70",
+                "days": "24",
+                "month_goal": "1680",
+                "hours": "8",
+                "collection_account": "75000",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "30",
+                "diary_goal": "71",
+                "days": "25",
+                "month_goal": "1681",
+                "hours": "9",
+                "collection_account": "75001",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "60",
+                "diary_goal": "72",
+                "days": "26",
+                "month_goal": "1682",
+                "hours": "10",
+                "collection_account": "75002",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "90",
+                "diary_goal": "73",
+                "days": "27",
+                "month_goal": "1683",
+                "hours": "11",
+                "collection_account": "75003",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "120A180",
+                "diary_goal": "74",
+                "days": "28",
+                "month_goal": "1684",
+                "hours": "12",
+                "collection_account": "75004",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "210",
+                "diary_goal": "75",
+                "days": "29",
+                "month_goal": "1685",
+                "hours": "13",
+                "collection_account": "75005",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "PREPOTENCIAL",
+                "diary_goal": "76",
+                "days": "30",
+                "month_goal": "1686",
+                "hours": "14",
+                "collection_account": "75006",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "PREPOTENCIAL_2",
+                "diary_goal": "77",
+                "days": "31",
+                "month_goal": "1687",
+                "hours": "15",
+                "collection_account": "75007",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "PREPROVISION",
+                "diary_goal": "78",
+                "days": "32",
+                "month_goal": "1688",
+                "hours": "16",
+                "collection_account": "75008",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "CHURN",
+                "diary_goal": "79",
+                "days": "33",
+                "month_goal": "1689",
+                "hours": "17",
+                "collection_account": "75009",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "PRECHURN",
+                "diary_goal": "80",
+                "days": "34",
+                "month_goal": "1690",
+                "hours": "18",
+                "collection_account": "75010",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "PROVISION",
+                "diary_goal": "81",
+                "days": "35",
+                "month_goal": "1691",
+                "hours": "19",
+                "collection_account": "75011",
+            },
+            {
+                "name": "ANTIGUOS",
+                "fringe": "POTENCIAL",
+                "diary_goal": "82",
+                "days": "36",
+                "month_goal": "1692",
+                "hours": "20",
+                "collection_account": "75012",
+            },
         ]
-    # Create TableInfo objects using the data
+        # Create TableInfo objects using the data
         for data in table_info_data:
             TableInfo.objects.create(**data)
         goal = Goals.objects.create(
@@ -266,7 +402,9 @@ class GoalAPITestCase(BaseTestCase):
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         # Assert that the goal was updated with the new data
-        self.assertEqual(response.data["message"], "La meta fue aceptada.", response.data)
+        self.assertEqual(
+            response.data["message"], "La meta fue aceptada.", response.data
+        )
 
     def test_patch_goal_execution(self):
         """Test the update-goal view."""
@@ -338,9 +476,15 @@ class GoalAPITestCase(BaseTestCase):
             reverse("goal-detail", args=[goal.cedula]), data=payload
         )
         # Assert the response status code and content
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
         # Assert that the goal was updated with the new data
-        self.assertEqual(response.data["message"], "Patch request solo acepta el campo 'accepted' o 'accepted_execution'.", response.data)
+        self.assertEqual(
+            response.data["message"],
+            "Patch request solo acepta el campo 'accepted' o 'accepted_execution'.",
+            response.data,
+        )
 
     # def test_accept_goal(self):
     #     """Test the accept-goal view."""
@@ -380,54 +524,54 @@ class GoalAPITestCase(BaseTestCase):
 #             quantity_goal="100",
 #         )
 
-    # def test_pdf_create(self):
-    #     """Test the pdf creation"""
-    #     template = get_template("Jorge", "1000065648", "Testing", "fala", 11, "10")
-    #     media = settings.MEDIA_ROOT
-    #     with open(media / "test.html", "wb") as f:
-    #         f.write(template.encode("utf-8"))
+# def test_pdf_create(self):
+#     """Test the pdf creation"""
+#     template = get_template("Jorge", "1000065648", "Testing", "fala", 11, "10")
+#     media = settings.MEDIA_ROOT
+#     with open(media / "test.html", "wb") as f:
+#         f.write(template.encode("utf-8"))
 
-    #     with open(media / "test.html", "rb") as html_file:
-    #         html_content = html_file.read().decode("utf-8")
+#     with open(media / "test.html", "rb") as html_file:
+#         html_content = html_file.read().decode("utf-8")
 
-    #     HTML(string=html_content).write_pdf(settings.MEDIA_ROOT / "test.pdf")
+#     HTML(string=html_content).write_pdf(settings.MEDIA_ROOT / "test.pdf")
 
-    # def test_send_email_success(self):
-    #     """Test the send-email view."""
-    #     # Prepare the necessary data for the request
-    #     payload = {
-    #         "cedula": "1000065648",
-    #     }
-    #     response = self.client.post(self.url, data=payload)
-    #     # Assert the response status code and content
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-    #     email = response.data["email"]
-    #     self.assertIsNotNone(email)
+# def test_send_email_success(self):
+#     """Test the send-email view."""
+#     # Prepare the necessary data for the request
+#     payload = {
+#         "cedula": "1000065648",
+#     }
+#     response = self.client.post(self.url, data=payload)
+#     # Assert the response status code and content
+#     self.assertEqual(response.status_code, status.HTTP_200_OK)
+#     email = response.data["email"]
+#     self.assertIsNotNone(email)
 
-    # def test_send_email_missing_data(self):
-    #     """Test the send-email view with missing data."""
-    #     # Prepare the request with missing data
-    #     payload = {
-    #         "pdf": "base64_encoded_pdf_data",
-    #         # Missing 'cedula' and 'delivery_type'
-    #     }
-    #     # Send a POST request to the view
-    #     response = self.client.post(self.url, data=payload)
-    #     # Assert the response status code and content
-    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    #     data = response.json()
-    #     self.assertIn("Error", data)
-    #     # Assert that the email was not sent and handle the specific error case
+# def test_send_email_missing_data(self):
+#     """Test the send-email view with missing data."""
+#     # Prepare the request with missing data
+#     payload = {
+#         "pdf": "base64_encoded_pdf_data",
+#         # Missing 'cedula' and 'delivery_type'
+#     }
+#     # Send a POST request to the view
+#     response = self.client.post(self.url, data=payload)
+#     # Assert the response status code and content
+#     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+#     data = response.json()
+#     self.assertIn("Error", data)
+#     # Assert that the email was not sent and handle the specific error case
 
-    # def test_send_email_invalid_cedula(self):
-    #     """Test the send-email view with an invalid cedula value."""
-    #     # Prepare the request with an invalid cedula value
-    #     payload = {
-    #         "pdf": "base64_encoded_pdf_data",
-    #         "cedula": "999999999999",  # Provide a non-existing cedula value
-    #         "delivery_type": "Some Delivery Type",
-    #     }
-    #     # Send a POST request to the view
-    #     response = self.client.post(self.url, data=payload)
-    #     # Assert the response status code and content
-    #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+# def test_send_email_invalid_cedula(self):
+#     """Test the send-email view with an invalid cedula value."""
+#     # Prepare the request with an invalid cedula value
+#     payload = {
+#         "pdf": "base64_encoded_pdf_data",
+#         "cedula": "999999999999",  # Provide a non-existing cedula value
+#         "delivery_type": "Some Delivery Type",
+#     }
+#     # Send a POST request to the view
+#     response = self.client.post(self.url, data=payload)
+#     # Assert the response status code and content
+#     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -1,14 +1,13 @@
 """This view allow to upload an Excel file with the goals of the staff and save them in the db."""
+
 import base64
+import email
 import logging
 import re
 import ssl
 import locale
-from smtplib import SMTP
-from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMessage
-from django.db import connections, transaction
+from django.db import transaction
 from django.db.models import Q, Subquery, Max
 from django.utils import timezone
 from openpyxl import load_workbook
@@ -16,15 +15,16 @@ from rest_framework import status as framework_status
 from rest_framework import viewsets
 from rest_framework.response import Response
 from services.emails import send_email
-from rest_framework.permissions import IsAuthenticated
-from services.permissions import DjangoModelViewPermissionsAllowAllCreateAndUpdate
+from rest_framework.exceptions import PermissionDenied
+
+from services.permissions import CustomizableGetDjangoModelViewPermissions
 
 
 from .models import Goals, TableInfo, HistoricalGoals
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
-locale.setlocale(locale.LC_TIME, 'es_ES.UTF-8')
+locale.setlocale(locale.LC_TIME, "es_ES.UTF-8")
 
 
 class GoalsViewSet(viewsets.ModelViewSet):
@@ -34,7 +34,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
     queryset = Goals.objects.all()
     serializer_class = GoalSerializer
-    # permission_classes = [IsAuthenticated, DjangoModelViewPermissionsAllowAllCreateAndUpdate]
+    CustomizableGetDjangoModelViewPermissions.perms_map = {
+        "GET": [],
+        "PATCH": [],
+    }
+    permission_classes = [CustomizableGetDjangoModelViewPermissions]
 
     def partial_update(self, request, *args, **kwargs):
         """If the user accept her goal then send him a email with the PDF file attached."""
@@ -69,10 +73,12 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     send_email(
                         f"Meta {month}",
                         f"""
+                        <p style="text-align: start">
                         La meta fue <b>{accepted_state}</b>.<br>
                         
                         Información de la meta:<br>
-                        <ul style="padding-bottom: 1rem">
+                        </p>
+                        <ul style="padding-bottom: 1rem; text-align: start">
                             <li>Cedula: {instance.cedula}</li>
                             <li>Nombres: {instance.name}</li>
                             <li>Campaña: {instance.campaign_goal}</li>
@@ -98,7 +104,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         email_owner="Entrega de metas",
                         html_content=True,
                         safe_mode=False,
-                        cc_emails=["carrenosebastian54@gmail.com"],
                     )
                     return Response(
                         {"message": f"La meta fue {accepted_state}."},
@@ -108,9 +113,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     send_email(
                         f"Meta {month}",
                         f"""
-                        La meta fue <b>{accepted_state}</b>.<br>
+                        
+                        <p style="text-align: start">La meta fue <b>{accepted_state}</b>.<br>
                         Información de la meta:<br>
-                        <ul style="padding-bottom: 1rem">
+                        </p>
+                        <ul style="padding-bottom: 1rem; text-align: start">
                             <li>Cedula: {instance.cedula}</li>
                             <li>Nombres: {instance.name}</li>
                             <li>Campaña: {instance.campaign_goal}</li>
@@ -133,13 +140,18 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         email_owner="Entrega de metas",
                         html_content=True,
                         safe_mode=False,
-                        )
+                    )
                     return Response(
                         {"message": "La meta fue aceptada."},
                         status=framework_status.HTTP_200_OK,
                     )
-        elif request.data.get("accepted_execution") is not None and len(request.data) == 1:
-            accepted_state = "aceptada" if request.data["accepted_execution"] else "rechazada"
+        elif (
+            request.data.get("accepted_execution") is not None
+            and len(request.data) == 1
+        ):
+            accepted_state = (
+                "aceptada" if request.data["accepted_execution"] else "rechazada"
+            )
             if instance.accepted_execution:
                 return Response(
                     {"message": "La ejecución ya fue aceptada."},
@@ -153,10 +165,11 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 send_email(
                     f"Ejecución de meta {month}",
                     f"""
-                    La ejecución de la meta fue <b>{accepted_state}</b>.<br>
+                    <p style="text-align: start">La ejecución de la meta fue <b>{accepted_state}</b>.<br>
 
                     Información de la ejecución de la meta:<br>
-                    <ul style="padding-bottom: 1rem">
+                     <p/>
+                    <ul style="padding-bottom: 1rem; text-align: start">
                         <li>Cedula: {instance.cedula}</li>
                         <li>Nombres: {instance.name}</li>
                         <li>Campaña: {instance.campaign_execution}</li>
@@ -185,22 +198,38 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     email_owner="Ejecución de metas",
                     html_content=True,
                     safe_mode=False,
-                    )
+                )
                 return Response(
                     {"message": f"La ejecución fue {accepted_state}."},
                     status=framework_status.HTTP_200_OK,
                 )
         else:
             return Response(
-                {"message": "Patch request solo acepta el campo 'accepted' o 'accepted_execution'."}, status=framework_status.HTTP_400_BAD_REQUEST
+                {
+                    "message": "Patch request solo acepta el campo 'accepted' o 'accepted_execution'."
+                },
+                status=framework_status.HTTP_400_BAD_REQUEST,
             )
+
+    def update(self, request, *args, **kwargs):
+        return Response(
+            {"message": "No se permite actualizar registros."},
+            status=framework_status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def retrieve(self, request, *args, **kwargs):
         cedula = self.kwargs.get("pk")
         date = self.request.GET.get("date", None)
         column = self.request.GET.get("column", None)
 
-        if date is not None and column is not None and cedula is not None:
+        if (
+            date is not None
+            and column is not None
+            and (
+                request.user.has_perm("goals.view_goals")
+                or request.user.has_perm("goals.view_historicalgoals")
+            )
+        ):
             if column == "delivery":
                 column_name = "goal_date"
             elif column == "execution":
@@ -219,10 +248,17 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 return Response(serializer.data)
             else:
                 return Response([])  # No matching record
-        else:
+        elif request.user.has_perm("goals.view_goals"):
             return super().retrieve(request, *args, **kwargs)
+        else:
+            return Response(
+                {"message": "No tiene permisos para realizar esta acción."},
+                status=framework_status.HTTP_403_FORBIDDEN,
+            )
 
     def get_queryset(self):
+        if not self.request.user.has_perm("goals.view_goals"):
+            raise PermissionDenied("You do not have permission to view this resource.")
         coordinator = self.request.GET.get("coordinator", None)
         date = self.request.GET.get("date", None)
         column = self.request.GET.get("column", None)

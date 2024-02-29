@@ -16,6 +16,7 @@ import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
 import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
 import carteraPropia from "../../images/blog/cartera-propia.jpg";
+import financialHealth1 from "../../images/blog/Salud_financiera_1.png";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
@@ -35,6 +36,7 @@ import { Grid } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import FolderIcon from "@mui/icons-material/Folder";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import FinanzasJovenes from "../../images/blog/finanzas-jovenes.jpg";
 
 const MediaCard = ({ title, subtitle, img, articleId }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -85,6 +87,13 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
 };
 
 const articles = [
+    {
+        title: "Bienvenido a Finanzas Jóvenes: Tu Guía hacia el Éxito Financiero",
+        subtitle: "¡Hola, lectores jóvenes y emprendedores de la comunidad C&C! Bienvenidos a Finanzas Jóvenes",
+        img: FinanzasJovenes,
+        articleId: 8,
+        uploadDate: "02-2024",
+    },
     {
         title: "Desde Adentro: Cómo Nuestra Cartera Propia Define Nuestra Trayectoria en el BPO",
         subtitle: "Una Mirada Interna a Cómo la Gestión de la Cartera Eleva Nuestro Desempeño en el BPO",
@@ -156,8 +165,8 @@ const Blog = () => {
             <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                 Blog
             </Typography>
-            <Box sx={{ display: "flex", width: "100%", justifyContent: "start" }}>
-                <List
+            <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
+                {/* <List
                     sx={{ width: "100%", maxWidth: 200, bgcolor: "background.paper" }}
                     component="nav"
                     aria-labelledby="nested-list-subheader"
@@ -192,7 +201,7 @@ const Blog = () => {
                             </Collapse>
                         </React.Fragment>
                     ))}
-                </List>
+                </List> */}
                 <Box sx={{ width: "1500px", display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
                     {articles.map((article, index) => {
                         return <MediaCard title={article.title} subtitle={article.subtitle} img={article.img} articleId={article.articleId} key={index}></MediaCard>;

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ payslip.title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url(data:image/png;base64,{{ logo }});
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: -1;
+            opacity: 0.2; /* Adjust the opacity of the background image */
+        }
+        .content {
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        .footer {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="background-image"></div>
+        <div class="content">
+            <div class="header">
+                <h2>Desprendible de nominaa</h2>
+                <p>{{ payslip.title }}</p>
+            </div>
+            <p>
+                Estimado(a) {{ payslip.name }} registrado con la identificación {{ payslip.identification }}, a continuación se detallan los valores correspondientes a su salario del mes de {{ payslip.month }}.
+            </p>
+            <table class="table">
+                <tr>
+                    <th>Información del empleado</th>
+                    <th>Detalles</th>
+                </tr>
+                <tr>
+                    <td>Nombre</td>
+                    <td>{{ payslip.name }}</td>
+                </tr>
+                <tr>
+                    <td>Identificación</td>
+                    <td>{{ payslip.identification }}</td>
+                </tr>
+                <tr>
+                    <td>Salario</td>
+                    <td>$ {{ payslip.salary }}</td>
+                </tr>
+                <tr>
+                    <td>Dias trabajados</td>
+                    <td>{{ payslip.days }}</td>
+                </tr>
+                <!-- Add more rows for earnings and deductions -->
+                <tr>
+                    <td>Ingresos brutos</td>
+                    <td>$ {{ payslip.gross_earnings }}</td>
+                </tr>
+                <tr>
+                    <td>Aporte a salud</td>
+                    <td>$ {{ payslip.health_contribution }}</td>
+                </tr>
+                <tr>
+                    <td>Aporte a pensión</td>
+                    <td>$ {{ payslip.pension_contribution }}</td>
+                </tr>
+                <tr>
+                    <td>Retención en la fuente</td>
+                    <td>$ {{ payslip.withholding_tax }}</td>
+                </tr>
+                <tr>
+                    <td>Subsidio de transporte</td>
+                    <td>$ {{ payslip.transport_allowance }}</td>
+                </tr>
+                <tr>
+                    <td>Ingresos totales</td>
+                    <td>$ {{ payslip.total_earnings }}</td>
+                </tr>
+                <tr>
+                    <td>Deducciones totales</td>
+                    <td>$ {{ payslip.total_deductions }}</td>
+                </tr>
+                <tr>
+                    <td>Pago neto</td>
+                    <td>$ {{ payslip.net_pay }}</td>
+                </tr>
+            </table>
+            <!-- <div class="footer">
+                <p>Date: {{ payslip.created_at }}</p>
+            </div> -->
+        </div>
+    </div>
+</body>
+</html>

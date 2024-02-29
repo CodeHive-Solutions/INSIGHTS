@@ -12,36 +12,33 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 
 // media
 import campaigns from "../../images/home-carousel/campaigns-1280-720.png";
-import isos from "../../images/home-carousel/isos-1280-720.png";
 import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
 import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
-import raac from "../../images/home-carousel/raac-1280-720.png";
-import noBirthday from "../../images/birthdays/no-birthdays.png";
-import noBirthday2 from "../../images/birthdays/no-birthdays-2.jpg";
 import cake from "../../images/birthdays/cake.png";
-import chiguiro from "../../images/home-carousel/chiguiro.png";
-import noCarro from "../../images/home-carousel/dia_no_carro.png";
-import vacancie from "../../images/home-carousel/vacancies-2.png";
-import valentin from "../../images/home-carousel/valentin.png";
 import ceroDescriminacion from "../../images/home-carousel/cero-discriminacion.png";
 import inclusion from "../../images/home-carousel/inclusion.png";
-import evaluacion from "../../images/home-carousel/evaluacion.png";
 import certificacionRacc from "../../images/home-carousel/certificacion-racc.png";
 import inclusionCuestionario from "../../images/home-carousel/inclusion-cuestionario.png";
+import cycBirthday from "../../images/home-carousel/cycBirthday.png";
+import finanzasJovenes from "../../images/blog/finanzas-jovenes.png";
+import testReal from "../../images/test/test-real.jpeg";
+import testReal2 from "../../images/test/test-real-2.jpeg";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: finanzasJovenes },
+    { image: cycBirthday },
     { image: inclusionCuestionario },
     { image: certificacionRacc },
-    { image: evaluacion },
     { image: inclusion },
     { image: ceroDescriminacion },
     { image: campaigns },
-    { image: isos },
     { image: vacanciesCarousel },
 ];
+
+const test = [{ image: testReal }, { image: testReal2 }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
@@ -229,7 +226,7 @@ const Home = () => {
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {yesterdayBirthdays.length === 0 ? (
                             <>
-                                <img src={cake}></img>
+                                <img alt="imagen-pastel-cumpleaños" src={cake}></img>
                                 <Box
                                     sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
                                 >
@@ -261,13 +258,13 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={test} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {tomorrowBirthdays.length === 0 ? (
                             <>
-                                <img src={cake}></img>
+                                <img alt="imagen-pastel-cumpleaños" src={cake}></img>
                                 <Box
                                     sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
                                 >

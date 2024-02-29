@@ -23,7 +23,7 @@ const Footer = () => {
             }}
         >
             <Box sx={{ display: "flex", flexDirection: "Column", gap: "15px" }}>
-                <img onClick={() => window.open("https://cyc-bpo.com/", "_blank")} src={logo_CYC} style={{ width: 200, cursor: "pointer" }} alt="logo_CYC" />
+                <img alt="logo-cyc" onClick={() => window.open("https://cyc-bpo.com/", "_blank")} src={logo_CYC} style={{ width: 200, cursor: "pointer" }} />
                 <Typography variant="body2" color="white">
                     Calle 19 No. 3 - 16 Piso 3CC Barichara - Bogotá D. C.
                 </Typography>

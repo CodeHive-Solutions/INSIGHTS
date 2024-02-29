@@ -16,6 +16,8 @@ import sstGestion3 from "../../images/blog/sst-gestion-ambiental-3.jpg";
 import carteraPropia from "../../images/blog/cartera-propia.jpg";
 import carteraPropia2 from "../../images/blog/cartera-propia-2.jpg";
 import racc from "../../images/blog/racc.jpg";
+import financialHealth1 from "../../images/blog/Salud_financiera_1.png";
+import financialHealth2 from "../../images/blog/Salud_financiera_2.png";
 import raccLogo from "../../images/blog/racc.png";
 import elLibertador from "../../images/blog/el-libertador.png";
 import bancoSantander from "../../images/blog/banco-santander.png";
@@ -358,6 +360,32 @@ const ArticlePage = () => {
                     </p>
                 </div>
             ),
+        },
+        {
+            id: 8,
+            title: "Tips de salud financiera",
+            subtitle:
+                "¡Hola, lectores jóvenes y emprendedores de la comunidad C&C! Bienvenidos a Finanzas Jóvenes, el espacio donde exploraremos juntos el fascinante mundo de las finanzas personales y las estrategias para construir un futuro financiero sólido. Soy Adriana Páez, y estoy emocionada de comenzar este viaje contigo.",
+            // img: article1,
+            imgAuthor: "",
+            nameAuthor: "Sebastian",
+            tags: ["Customer Experience", "Call Center", "BPO"],
+            content: (
+                <>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "1rem" }}>
+                        <img style={{ borderRadius: "8px" }} width="600" src={financialHealth1} alt="" />
+                        <img style={{ borderRadius: "8px" }} width="600" src={financialHealth2} alt="" />
+                    </div>
+                    <div style={{ textAlign: "center" }}></div>
+                    <h1 style={{ margin: 0 }}>Participa y Conecta</h1>
+                    <p>
+                        Únete a nuestra comunidad C&C financiera joven. ¿Tienes preguntas o sugerencias? ¡Déjanos un comentario! Queremos escucharte y construir una
+                        comunidad activa y solidaria.
+                    </p>
+                    <b>Prepárate para aprender, crecer y prosperar juntos en Finanzas Jóvenes. ¡Comencemos este emocionante viaje hacia el éxito financiero! </b>
+                </>
+            ),
+            date: "Hace un momento",
         },
         // Add more articles here...
     ];

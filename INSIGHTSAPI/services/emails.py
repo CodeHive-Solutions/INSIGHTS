@@ -1,10 +1,11 @@
 """Email service."""
 
 import logging
-from typing import List
-from smtplib import SMTP
 import ssl
 import os
+import base64
+from typing import List
+from smtplib import SMTP
 from imaplib import IMAP4_SSL
 from django.core.mail import EmailMessage
 from django.conf import settings
@@ -78,10 +79,17 @@ def send_email(
             from_email = sender_email
         if email_owner:
             from_email = f"{email_owner} <{from_email}>"
-
+        with open(str(settings.STATIC_ROOT) + "/services/Logo_cyc.png", "rb") as f:
+            image_data = f.read()
+        logo_base64 = base64.b64encode(image_data).decode("utf-8")
         email_content = render_to_string(
             "email_template.html",
-            {"message": message, "title": subject, "safe_mode": safe_mode},
+            {
+                "message": message,
+                "title": subject,
+                "safe_mode": safe_mode,
+                "logo_base64": logo_base64,
+            },
         )
         # print(email_content)
         email = EmailMessage(
@@ -130,5 +138,6 @@ def send_email(
                     return Exception("Error saving email to 'sent' folder")
         return None
     except Exception as e:
+        print(e)
         logger.exception("Error sending email: %s", e)
         return e

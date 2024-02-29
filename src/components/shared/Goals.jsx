@@ -38,11 +38,13 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     const [goalAdvisorClaro, setGoalAdvisorClaro] = useState([]);
     const [goalQuantity, setGoalQuantity] = useState();
     const [goalCriteria, setGoalCriteria] = useState();
+    const [goalDate, setGoalDate] = useState();
     const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
     const [executionAcceptedGoal, setExecutionAcceptedGoal] = useState(false);
     const [executionDeclinedGoal, setExecutionDeclinedGoal] = useState(false);
     const [executionTotalGoal, setExecutionTotalGoal] = useState();
+    const [executionDate, setExecutionDate] = useState();
     const [result, setResult] = useState();
     const [evaluation, setEvaluation] = useState();
     const [quality, setQuality] = useState();
@@ -55,6 +57,14 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
 
     const handleCloseDialog = () => setOpenDialog(false);
     const handleOpenDialog = () => setOpenDialog(true);
+
+    const capitalize = (string) => {
+        return string
+            .toLowerCase()
+            .split(" ")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+    };
 
     const getGoal = async () => {
         try {
@@ -76,15 +86,21 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                     setGoalDeclined(true);
                 } else if (data.additional_info.length > 0) {
                     setGoalAdvisorClaro(data.additional_info);
-                } else if (data.quantity_goal && data.criteria_goal) {  
+                    let goalDate = capitalize(data.goal_date);
+                    setGoalDate(goalDate);
+                } else if (data.quantity_goal && data.criteria_goal) {
                     setGoalQuantity(data.quantity_goal);
                     setGoalCriteria(data.criteria_goal);
+                    let goalDate = capitalize(data.goal_date);
+                    setGoalDate(goalDate);
                 }
                 if (data.accepted_execution) {
                     setExecutionAcceptedGoal(true);
                 } else if (data.accepted_execution === false) {
                     setExecutionDeclinedGoal(true);
                 } else if (data.total) {
+                    let executionDate = capitalize(data.execution_date);
+                    setExecutionDate(executionDate);
                     setExecutionTotalGoal(true);
                     setResult(data.result);
                     setEvaluation(data.evaluation);
@@ -157,7 +173,7 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
             <Dialog open={openDialog} fullWidth maxWidth={"lg"} onClose={handleCloseDialog}>
                 <DialogContent sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                     <Typography variant={"h5"} sx={{ textAlign: "center", pt: "15px", color: "primary.main" }}>
-                        Entrega de Meta
+                        Entrega de Meta {goalDate ? `${goalDate}` : ""}
                     </Typography>
                     {goalDeclined ? (
                         <>
@@ -231,7 +247,7 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                         </Box>
                     )}
                     <Typography variant={"h5"} sx={{ textAlign: "center", pt: "15px", color: "primary.main" }}>
-                        Ejecución de Meta
+                        Ejecución de Meta {executionDate ? `${executionDate}` : ""}
                     </Typography>
                     {executionDeclinedGoal ? (
                         <>

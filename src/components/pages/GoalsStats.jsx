@@ -21,12 +21,9 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import { getApiUrl } from "../../assets/getApi";
+import { useNavigate } from "react-router-dom";
 
 const AnalisisMetas = () => {
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [snackbarMessage, setSnackbarMessage] = useState("");
@@ -42,6 +39,15 @@ const AnalisisMetas = () => {
     const monthRef = useRef();
     const yearRef = useRef();
     const goalType = useRef(null);
+    const navigate = useNavigate();
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        if (!cedula.includes("28172713") && !cedula.includes("1001185389") && !cedula.includes("1020780559") && !cedula.includes("25878771")) {
+            navigate("/logged/home");
+        }
+    }, []);
 
     const handleSave = async () => {
         try {
@@ -569,7 +575,7 @@ const AnalisisMetas = () => {
         const YearSelect = () => {
             const currentYear = new Date().getFullYear();
             const years = [];
-            for (let year = currentYear; year <= 2023; year++) {
+            for (let year = 2023; year <= currentYear; year++) {
                 years.push({ value: year, label: year });
             }
             setYearsArray(years);
@@ -718,14 +724,14 @@ const AnalisisMetas = () => {
                             </TextField>
                         </Box>
                         <Box component="form" sx={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }} onSubmit={handleFilter}>
-                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Mes" inputRef={monthRef}>
+                            <TextField id="month" label="Mes" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={monthRef}>
                                 {months.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}
                                     </MenuItem>
                                 ))}
                             </TextField>
-                            <TextField required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select label="Año" inputRef={yearRef}>
+                            <TextField label="Año" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={yearRef}>
                                 {yearsArray.map((option) => (
                                     <MenuItem key={option.value} value={option.value}>
                                         {option.label}

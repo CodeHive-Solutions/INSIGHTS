@@ -1,4 +1,5 @@
 """This module contains the views for the excels_processing app."""
+
 import logging
 import os
 import shutil
@@ -89,6 +90,13 @@ def call_transfer_list(request):
     if "folder" not in request.POST:
         return Response({"error": "No folder found in the request"}, status=400)
     campaign = str(request.POST.get("campaign")).lower()
+    if campaign not in [
+        "falabella",
+        "banco_agrario",
+        "test_falabella",
+        "test_banco_agrario",
+    ]:
+        return Response({"error": "Campaña no encontrada."}, status=400)
     # check if the folder exists
     file = request.FILES["file"]
     data_f = file_to_data_frame(file)
@@ -126,7 +134,11 @@ def call_transfer_list(request):
             continue
 
         date = datetime.strptime(str(row.FECHA).split(" ", maxsplit=1)[0], "%d/%m/%Y")
-        number = str(row.NUMERO)
+        try:
+            number = int(row.NUMERO)  # type: ignore
+        except ValueError:
+            fails.append(row.NUMERO)
+            continue
         match = None
         if "banco_agrario" in campaign:
             pattern = re.compile(rf"{number}_")

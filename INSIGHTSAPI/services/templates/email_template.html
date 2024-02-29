@@ -1,14 +1,11 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
-<body
-    style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 1.6; padding: 0; margin: 0; border: 1px; margin: auto; text-align: center;">
+<body style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 1.6; padding: 0; margin: 0; border: 1px; margin: auto; text-align: center;">
     <table style="width: 80%; border-collapse: collapse;">
         <tr>
             <th colspan="2" style="padding: 10px;  text-align: center;">
@@ -16,42 +13,19 @@
             </th>
         </tr>
         <tr>
-            <td colspan="2" style="padding: 20px; border-bottom: 2px solid #ddd; text-align: start;">
+            <td colspan="2" style="padding: 20px; border-bottom: 2px solid #ddd;">
                 {% if safe_mode %}
-                La meta fue {accepted_state}.<br>
-
-                Información de la meta:<br>
-                <ul style="padding-bottom: 1rem">
-                    <li>Cedula: {instance.cedula}</li>
-                    <li>Nombres: {instance.name}</li>
-                    <li>Campaña: {instance.campaign_goal}</li>
-                    <li>Cargo: {instance.job_title_goal}</li>
-                    <li>Coordinador: {instance.coordinator_goal}</li>
-                    <li>Mes: {instance.goal_date}</li>
-                </ul>
-                <table style="width:100%; text-align: center;">
-                    <tr>
-                        <th>Franja</th>
-                        <th>Meta Diaria</th>
-                        <th>Días</th>
-                        <th>Meta Mes con Pago</th>
-                        <th>Por Hora</th>
-                        <th>Recaudo por Cuenta</th>
-                    </tr>
-                    <tr>
-                        {table_data}
-                    </tr>
-                </table>
+                    <p>{{ message}}</p>
                 {% else %}
-                <p>{{ message | safe }}</p>
+                    <p>{{ message | safe }}</p>
                 {% endif %}
 
             </td>
         </tr>
-        <tr id="contact-info" style="text-align: start;">
+        <tr id="contact-info">
             <td style="padding: 10px; width: 35%;">
-                <img src="https://raw.githubusercontent.com/CodeHive-Solutions/INSIGHTS/dev/src/images/Logo_cyc.png"
-                    width="100%">
+                <!-- <img src="{% static 'services/Logo_cyc.png'%}" width="100%"> -->
+                <img src="data:image/png;base64,{{ logo_base64 }}" width="100%">
             </td>
             <td style="padding: 20px;">
                 <strong>C&C Services S.A.S</strong> <br>
@@ -64,11 +38,7 @@
         <tr>
             <td colspan="2" style="padding: 10px; font-size: 12px;">
                 <strong>Aviso de confidencialidad:</strong><br>
-                Este correo electrónico y cualquier archivo adjunto son confidenciales y pueden contener información
-                privilegiada. Si usted no es el destinatario correcto, por favor notifique al remitente respondiendo
-                este mensaje y elimine inmediatamente este correo electrónico y cualquier archivo adjunto de su sistema.
-                Si está usted recibiendo este correo electrónico por error, no debe copiar este mensaje o divulgar su
-                contenido a ninguna persona.
+                Este correo electrónico y cualquier archivo adjunto son confidenciales y pueden contener información privilegiada. Si usted no es el destinatario correcto, por favor notifique al remitente respondiendo este mensaje y elimine inmediatamente este correo electrónico y cualquier archivo adjunto de su sistema. Si está usted recibiendo este correo electrónico por error, no debe copiar este mensaje o divulgar su contenido a ninguna persona.
             </td>
         </tr>
         <tr>
@@ -78,5 +48,4 @@
         </tr>
     </table>
 </body>
-
 </html>

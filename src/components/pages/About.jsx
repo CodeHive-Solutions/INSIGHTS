@@ -22,8 +22,7 @@ import pablo from "../../images/managers/pablo.jpeg";
 import aboutUs from "../../images/about/img-about-2.jpg";
 import organigrama from "../../images/about/organigrama.png";
 
-//mission images
-import mission1 from "../../images/about/image-mission.jpg";
+import imgVision from "../../images/about/image-vision.jpg";
 import mission2 from "../../images/about/image-mission-2.jpg";
 import mission3 from "../../images/about/image-mission-3.jpg";
 import mission4 from "../../images/about/image-mission-4.jpg";
@@ -114,9 +113,9 @@ const About = () => {
             <Box sx={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
                 <Box>
                     {isSmallScreen ? (
-                        <img width={300} style={{ borderRadius: "8px" }} src={aboutUs} alt="" />
+                        <img width={300} style={{ borderRadius: "8px" }} src={aboutUs} alt="imagen-sobre-nosotros" />
                     ) : (
-                        <img style={{ borderRadius: "8px" }} width={500} src={aboutUs} alt="" />
+                        <img style={{ borderRadius: "8px" }} width={500} src={aboutUs} alt="imagen-sobre-nosotros" />
                     )}
                 </Box>
                 <Box sx={{ width: "35rem" }}>
@@ -168,7 +167,7 @@ const About = () => {
                 }}
             >
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
-                    <img style={{ borderRadius: 5 }} src={mission2} height={300} alt="" />
+                    <img style={{ borderRadius: 5 }} src={mission2} height={300} alt="imagen-misión-cyc" />
                     <Box sx={{ width: "550px" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestra Misión
@@ -188,10 +187,10 @@ const About = () => {
                             digital y el mejor talento humano.
                         </Typography>
                     </Box>
-                    <img style={{ borderRadius: "8px" }} src={mission1} height={300} alt="" />
+                    <img style={{ borderRadius: "8px" }} src={imgVision} height={300} alt="imagen-vision-cyc" />
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
-                    <img style={{ borderRadius: "8px" }} src={value1} height={300} alt="" />
+                    <img style={{ borderRadius: "8px" }} src={value1} height={300} alt="imagen-valores-corporativos-cyc" />
                     <Box sx={{ width: "550px" }}>
                         <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
                             Nuestros Valores Corporativos
@@ -247,7 +246,7 @@ const About = () => {
                     </Container>
                 </Box>{" "}
                 <Box sx={{ textAlign: "center", mt: "2rem" }}>
-                    <img style={{ borderRadius: "2rem" }} height={600} src={pablo} alt="pablo" />
+                    <img style={{ borderRadius: "2rem" }} height={600} src={pablo} alt="imagen-presidente-pablo" />
                     <Typography sx={{ fontFamily: "Dancing Script", fontSize: "42px", textAlign: "center", justifyContent: "flex-end" }}>
                         Pablo Cesár Castañeda
                     </Typography>
@@ -257,7 +256,7 @@ const About = () => {
                 <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
                     Organigrama de la empresa
                 </Typography>
-                <img src={organigrama} alt="organigrama" width={"1400px"} />
+                <img src={organigrama} alt="imagen-organigrama" width={"1400px"} />
                 {/* <Box sx={{ borderRadius: "2rem", width: "100%", height: "40rem", border: "1px solid rgba(0, 0, 0, 0.12)" }}>
                     {isSmallScreen ? (
                         <Typography

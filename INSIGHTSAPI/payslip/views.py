@@ -1,8 +1,15 @@
 """Views for the payslip."""
 
+import sys
+import pdfkit
+import base64
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from services.emails import send_email
+from users.models import User
+from django.template.loader import render_to_string
+from django.conf import settings
 from .models import Payslip
 from .serializers import PayslipSerializer
 
@@ -34,11 +41,35 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     },
                     status=400,
                 )
+            user = User.objects.filter(cedula=data[1]).first()
+            if not user and "test" not in sys.argv:
+                return Response(
+                    {
+                        "Error": "No se encontró el usuario, asegúrate de que esta registrado en la intranet",
+                        "cedula": data[1],
+                    },
+                    status=400,
+                )
+            elif "test" in sys.argv:
+                identification = data[1]
+                email = "heibert.mogollon@cyc-bpo.com"
+                name = data[2]
+            elif user:
+                identification = user.cedula
+                email = user.email
+                name = user.get_full_name()
+            else:
+                return Response(
+                    {
+                        "Error": "No se encontró el usuario, asegúrate de que esta registrado en la intranet",
+                        "cedula": data[1],
+                    },
+                )
             payslip = PayslipSerializer(
                 data={
                     "title": data[0],
-                    "identification": data[1],
-                    "name": data[2],
+                    "identification": identification,
+                    "name": name,
                     "area": data[3],
                     "job_title": data[4],
                     "salary": data[5],
@@ -63,14 +94,38 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     {"Error": payslip.errors, "cedula": data[2]}, status=400
                 )
         Payslip.objects.bulk_create(payslips)
-        return Response({"message": "Payslips created"}, status=201)
+        # Make a pdf with the payslip and send it to the user
+        with open(str(settings.STATIC_ROOT) + "/payslip/just_logo.png", "rb") as logo:
+            logo = logo.read()
+            logo = base64.b64encode(logo).decode("utf-8")
+        for payslip in payslips:
+            rendered_template = render_to_string(
+                "payslip.html",
+                {"payslip": payslip, "logo": logo},
+            )
+            pdf = pdfkit.from_string(rendered_template, False, options={"dpi": 400})
+            errors = send_email(
+                f"Desprendible de nomina para {payslip.title}",
+                "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
+                [email, "carrenosebastian54@gmail.com"],
+                # ["carrenosebastian54@gmail.com"],
+                attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
+            )
+            if errors:
+                return Response({"error": "Error enviando el correo"}, status=500)
+        return Response({"message": "Desprendibles de nomina creados"}, status=201)
 
     def retrieve(self, request, pk=None):
         """Retrieve a payslip."""
         if pk == request.user.cedula:
-            payslip = Payslip.objects.get(identification=pk)
-            serializer = PayslipSerializer(payslip)
-            return Response(serializer.data)
+            try:
+                payslip = Payslip.objects.get(identification=pk)
+                serializer = PayslipSerializer(payslip)
+                return Response(serializer.data)
+            except Payslip.DoesNotExist:
+                return Response(
+                    {"error": "No se encontró el desprendible de nomina"}, status=404
+                )
         return Response(
             {"error": "No tienes permisos para ver esta información"}, status=403
         )

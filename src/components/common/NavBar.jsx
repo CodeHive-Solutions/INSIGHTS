@@ -18,6 +18,7 @@ import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import FmdBadIcon from "@mui/icons-material/FmdBad";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import { ListItemText } from "@mui/material";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -36,7 +37,7 @@ const Navbar = () => {
     const cargoItem = localStorage.getItem("cargo");
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes("ASESOR");
     const permissions = JSON.parse(localStorage.getItem("permissions"));
-    const goalsStatsPermission = cedula === 1020780559 || cedula === 28172713 || cedula === 1001185389;
+    const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||
@@ -207,7 +208,7 @@ const Navbar = () => {
                         backdropFilter: "blur(10px)",
                     }}
                 >
-                    <img style={{ cursor: "pointer" }} width={110} src={logotipo} alt="" onClick={() => navigate("/logged/home")} />
+                    <img alt="logo-cyc-navbar" style={{ cursor: "pointer" }} width={110} src={logotipo} onClick={() => navigate("/logged/home")} />
                     {/* {isMobile ? (
                         <IconButton onClick={handleClickMenu} size="small">
                             <MenuIcon />
@@ -293,20 +294,20 @@ const Navbar = () => {
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
                         </ListItemIcon>
-                        Mi Meta
+                        <ListItemText primary="Mis Metas" />
                     </MenuItem>
                 ) : null}
                 {/* <MenuItem onClick={() => navigate("/logged/my-payslips")}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="small" />
                     </ListItemIcon>
-                    Mis desprendibles de nomina
+                    <ListItemText primary="Mis desprendibles de nomina" />
                 </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
                     </ListItemIcon>
-                    Cerrar sesión
+                    <ListItemText primary="Cerrar sesión" />
                 </MenuItem>
             </Menu>
 
@@ -354,19 +355,19 @@ const Navbar = () => {
                     <ListItemIcon>
                         <RequestPageIcon />
                     </ListItemIcon>
-                    Formularios
+                    <ListItemText primary="Formularios" />
                 </MenuItem>
                 <MenuItem onClick={handleClose}>
                     <ListItemIcon>
                         <FeedIcon />
                     </ListItemIcon>
-                    Blog
+                    <ListItemText primary="Blog" />
                 </MenuItem>
                 <MenuItem onClick={handleClose}>
                     <ListItemIcon>
                         <Settings />
                     </ListItemIcon>
-                    Gestión Documental
+                    <ListItemText primary="Gestión Documental" />
                 </MenuItem>
                 <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                     <Tooltip title="Configuración de cuenta">
@@ -423,7 +424,7 @@ const Navbar = () => {
                             <ListItemIcon>
                                 <FlagIcon fontSize="small" />
                             </ListItemIcon>
-                            Análisis de Metas
+                            <ListItemText primary="Análisis de Metas" />
                         </MenuItem>
                     ) : null}
                     {permissions && permissions.includes("users.upload_robinson_list") ? (
@@ -431,7 +432,7 @@ const Navbar = () => {
                             <ListItemIcon>
                                 <UploadFileIcon fontSize="small" />
                             </ListItemIcon>
-                            Cargue de Archivos
+                            <ListItemText primary="Cargue de Archivos" />
                         </MenuItem>
                     ) : null}
                     {permissions && permissions.includes("excels_processing.call_transfer") ? (
@@ -439,7 +440,7 @@ const Navbar = () => {
                             <ListItemIcon>
                                 <DriveFileMoveIcon fontSize="small" />
                             </ListItemIcon>
-                            Trasladar Archivos
+                            <ListItemText primary="Trasladar Archivos" />
                         </MenuItem>
                     ) : null}
                     {permissions && permissions.includes("contracts.view_contract") ? (
@@ -447,7 +448,7 @@ const Navbar = () => {
                             <ListItemIcon>
                                 <PolicyIcon fontSize="small" />
                             </ListItemIcon>
-                            Contratos y Pólizas Legales
+                            <ListItemText primary="Contratos y Pólizas Legales" />
                         </MenuItem>
                     ) : null}
                     {permissions && permissions.includes("vacancy.view_reference") ? (
@@ -455,7 +456,7 @@ const Navbar = () => {
                             <ListItemIcon>
                                 <ForwardToInboxIcon fontSize="small" />
                             </ListItemIcon>
-                            Vacantes Referidas
+                            <ListItemText primary="Vacantes Referidas" />
                         </MenuItem>
                     ) : null}
                     {permissions && permissions.includes("operational_risk.view_events") ? (
@@ -463,7 +464,7 @@ const Navbar = () => {
                             <ListItemIcon>
                                 <FmdBadIcon fontSize="small" />
                             </ListItemIcon>
-                            Eventos de Riesgo Operativo
+                            <ListItemText primary="Eventos de Riesgo Operativo" />
                         </MenuItem>
                     ) : null}
                     {permissions && permissions.includes("pay_slips.view_pay_slips") ? (
@@ -471,7 +472,7 @@ const Navbar = () => {
                             <ListItemIcon>
                                 <PaymentsIcon fontSize="small" />
                             </ListItemIcon>
-                            Registros de desprendibles de nomina
+                            <ListItemText primary=" Registros de desprendibles de nomina" />
                         </MenuItem>
                     ) : null}
                 </Box>

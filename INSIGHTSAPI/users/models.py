@@ -6,12 +6,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import connections
 from django.db import models
 from django.core.exceptions import ValidationError
-import mysql.connector
 from hierarchy.models import Area
-from django.db.models.signals import pre_save
-from django.dispatch import receiver
-from django.contrib.auth.signals import user_logged_in
-from django_auth_ldap.backend import populate_user
 
 logger = logging.getLogger("exceptions")
 
@@ -84,16 +79,15 @@ class User(AbstractUser):
             mails = db_connection.fetchone()
             if mails:
                 self.email = mails[1] if mails[1] else mails[0]
-                print(self.email)
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField
             if (
                 isinstance(field, (models.CharField, models.TextField))
-                and field.name not in ["password", "cedula"]
+                and field.name != "password"
                 and self.__dict__[field.name]
+                and type(getattr(self, field.attname)) == str
             ):
-                print(field.attname, getattr(self, field.attname))
                 setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)
 

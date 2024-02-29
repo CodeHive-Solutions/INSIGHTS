@@ -48,7 +48,7 @@ class PayslipTest(BaseTestCase):
             200,
             response.data,
         )
-        self.assertEqual(len(response.data), 27)
+        self.assertEqual(len(response.data), 2)
 
     def test_get_payslips_no_permission(self):
         """Test get payslips without permission."""
@@ -62,7 +62,7 @@ class PayslipTest(BaseTestCase):
     def test_get_payslip(self):
         """Test get payslip."""
         self.test_upload_payslip_file()
-        response = self.client.get("/payslips/00000000/")
+        response = self.client.get("/payslips/1000065648/")
         self.assertEqual(
             response.status_code,
             200,
@@ -165,5 +165,5 @@ class PayslipTest(BaseTestCase):
             201,
             response.data,
         )
-        self.assertEqual(response.data, {"message": "Payslips created"})
-        self.assertEqual(Payslip.objects.count(), 27)
+        self.assertEqual(response.data, {"message": "Desprendibles de nomina creados"})
+        self.assertEqual(Payslip.objects.count(), 2)
