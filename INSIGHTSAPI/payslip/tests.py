@@ -27,6 +27,7 @@ class PayslipTest(BaseTestCase):
             "biweekly_period": 15,
             "transport_allowance": 150000,
             "bonus_paycheck": 150000,
+            "biannual_bonus": 150000,
             "gross_earnings": 1000000,
             "healthcare_contribution": 150000,
             "pension_contribution": 150000,
@@ -37,7 +38,7 @@ class PayslipTest(BaseTestCase):
             "net_pay": 150000,
         }
 
-    def test_get_payslips(self):
+    def test_get_all_payslips(self):
         """Test get payslips."""
         self.test_upload_payslip_file()
         get = Permission.objects.get(codename="view_payslip")
@@ -50,14 +51,16 @@ class PayslipTest(BaseTestCase):
         )
         self.assertEqual(len(response.data), 3)
 
-    def test_get_payslips_no_permission(self):
+    def test_get_only_my_payslips(self):
         """Test get payslips without permission."""
+        self.test_upload_payslip_file()
         response = self.client.get("/payslips/")
         self.assertEqual(
             response.status_code,
-            403,
+            200,
             response.data,
         )
+        self.assertEqual(len(response.data), 1)
 
     def test_get_payslip(self):
         """Test get payslip."""
@@ -78,6 +81,8 @@ class PayslipTest(BaseTestCase):
         self.assertEqual(response.data["biweekly_period"], "14113661.00")
         self.assertEqual(response.data["transport_allowance"], "0.00")
         self.assertEqual(response.data["bonus_paycheck"], "0.00")
+        self.assertEqual(response.data["biannual_bonus"], "100800.00")
+        self.assertEqual(response.data["severance"], "85325.00")
         self.assertEqual(response.data["gross_earnings"], "14113661.00")
         self.assertEqual(response.data["healthcare_contribution"], "395182.00")
         self.assertEqual(response.data["pension_contribution"], "493978.00")

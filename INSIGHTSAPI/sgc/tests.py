@@ -1,4 +1,5 @@
 """Test module for SGC"""
+
 import os
 import shutil
 import tempfile
@@ -113,7 +114,9 @@ class TestSGC(BaseTestCase):
 
     def test_create_file_with_invalid_file_extension(self):
         """Test creating a file with invalid file"""
-        with open("static/services/Logo_cyc.png", "rb") as file:
+        with open(
+            str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb"
+        ) as file:
             file_content = file.read()
         self.file_data["file"] = SimpleUploadedFile(
             "Test_SGC_Robinsón.xlsx", file_content
@@ -182,7 +185,9 @@ class TestSGC(BaseTestCase):
         """Test updating a file"""
         self.file_data["area"] = SGCArea.objects.first()
         file = SGCFile.objects.create(**self.file_data)
-        with open("utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx", "rb") as file_data:
+        with open(
+            "utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx", "rb"
+        ) as file_data:
             file_content = file_data.read()
         self.file_data["file"] = SimpleUploadedFile(
             "Test_SGC_Robinsón_updated.xlsx", file_content
@@ -198,7 +203,9 @@ class TestSGC(BaseTestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.data.get("name"), "Test File Updated")
         file_exist = os.path.exists(
-            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón_updated.xlsx")
+            os.path.join(
+                self.media_directory, "files/SGC/Test_SGC_Robinsón_updated.xlsx"
+            )
         )
         self.assertTrue(file_exist, os.listdir(self.media_directory))
 

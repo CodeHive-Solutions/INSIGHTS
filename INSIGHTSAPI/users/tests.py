@@ -110,7 +110,10 @@ class LDAPAuthenticationTest(TestCase):
 class EmploymentCertificationTest(BaseTestCase):
     """Tests the employment certification views."""
 
-    databases = "__all__"
+    def test_get_employment_certification(self):
+        """Tests that the user can get the employment certification."""
+        response = self.client.post(reverse("send-employment-certification"))
+        self.assertEqual(response.status_code, 200)
 
     def test_get_employment_certification_without_login(self):
         """Tests that the user cannot get the employment certification without logging in."""
