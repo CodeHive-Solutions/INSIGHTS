@@ -17,6 +17,8 @@ class Payslip(models.Model):
     biweekly_period = models.DecimalField(max_digits=12, decimal_places=2)
     transport_allowance = models.DecimalField(max_digits=12, decimal_places=2)
     bonus_paycheck = models.DecimalField(max_digits=12, decimal_places=2)
+    biannual_bonus = models.DecimalField(max_digits=12, decimal_places=2)
+    severance = models.DecimalField(max_digits=12, decimal_places=2)
     gross_earnings = models.DecimalField(max_digits=12, decimal_places=2)
     healthcare_contribution = models.DecimalField(max_digits=12, decimal_places=2)
     pension_contribution = models.DecimalField(max_digits=12, decimal_places=2)

@@ -1,8 +1,10 @@
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
-
-router = DefaultRouter()
+from django.urls import path
+from users.views import send_employment_certification
 
 urlpatterns = [
-    path('', include(router.urls))
+    path(
+        "send-employment-certification/",
+        send_employment_certification,
+        name="send-employment-certification",
+    )
 ]

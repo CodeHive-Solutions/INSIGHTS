@@ -49,7 +49,10 @@ class User(AbstractUser):
     class Meta:
         """Meta class just create the permission this don't automatically assign to any user."""
 
-        permissions = [("upload_robinson_list", "Can upload robinson list")]
+        permissions = [
+            ("upload_robinson_list", "Can upload robinson list"),
+            ("send_employment_certification", "Can send employment certification"),
+        ]
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""

@@ -21,13 +21,19 @@ class PayslipViewSet(viewsets.ModelViewSet):
     serializer_class = PayslipSerializer
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
+    def get_queryset(self):
+        """Get the queryset."""
+        if self.request.user.has_perm("payslip.view_payslip"):
+            return Payslip.objects.all()
+        return Payslip.objects.filter(identification=self.request.user.cedula)
+
     def create(self, request):
         """Create a payslip."""
         if not "file" in request.data:
             return Response({"error": "Debes subir un archivo"}, status=400)
         file_obj = request.data["file"]
         file_content = file_obj.read().decode("utf-8")
-        rows = file_content.split("\n")
+        rows = file_content.split("\n")[1:]
         payslips = []
 
         for line in rows:
@@ -77,14 +83,16 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "biweekly_period": data[7],
                     "transport_allowance": data[8],
                     "bonus_paycheck": data[9],
-                    "gross_earnings": data[10],
-                    "healthcare_contribution": data[11],
-                    "pension_contribution": data[12],
-                    "tax_withholding": data[13],
-                    "additional_deductions": data[14],
-                    "apsalpen": data[15],
-                    "total_deductions": data[16],
-                    "net_pay": data[17],
+                    "biannual_bonus": data[10],
+                    "severance": data[11],
+                    "gross_earnings": data[12],
+                    "healthcare_contribution": data[13],
+                    "pension_contribution": data[14],
+                    "tax_withholding": data[15],
+                    "additional_deductions": data[16],
+                    "apsalpen": data[17],
+                    "total_deductions": data[18],
+                    "net_pay": data[19],
                 }
             )
             if payslip.is_valid(raise_exception=False):
@@ -95,7 +103,9 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 )
         Payslip.objects.bulk_create(payslips)
         # Make a pdf with the payslip and send it to the user
-        with open(str(settings.STATIC_ROOT) + "/payslip/just_logo.png", "rb") as logo:
+        with open(
+            str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb"
+        ) as logo:
             logo = logo.read()
             logo = base64.b64encode(logo).decode("utf-8")
         for payslip in payslips:
@@ -103,7 +113,12 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 "payslip.html",
                 {"payslip": payslip, "logo": logo},
             )
-            pdf = pdfkit.from_string(rendered_template, False, options={"dpi": 400})
+            pdf = pdfkit.from_string(
+                rendered_template,
+                False,
+                options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
+            )
+
             errors = send_email(
                 f"Desprendible de nomina para {payslip.title}",
                 "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
@@ -130,12 +145,17 @@ class PayslipViewSet(viewsets.ModelViewSet):
             {"error": "No tienes permisos para ver esta información"}, status=403
         )
 
-    def list(self, request):
-        """List payslips."""
-        if request.user.has_perm("payslip.view_payslip"):
-            payslips = Payslip.objects.all()
-            serializer = PayslipSerializer(payslips, many=True)
-            return Response(serializer.data)
-        return Response(
-            {"error": "No tienes permisos para ver esta información"}, status=403
-        )
+    # def list(self, request):
+    #     """List payslips."""
+    #     identification = self.request.query_params.get("identification")
+    #     if request.user.has_perm("payslip.view_payslip"):
+    #         payslips = Payslip.objects.all()
+    #         serializer = PayslipSerializer(payslips, many=True)
+    #         return Response(serializer.data)
+    #     elif identification == request.user.cedula:
+    #         payslips = Payslip.objects.filter(identification=identification)
+    #         serializer = PayslipSerializer(payslips, many=True)
+    #         return Response(serializer.data)
+    #     return Response(
+    #         {"error": "No tienes permisos para ver esta información"}, status=403
+    #     )

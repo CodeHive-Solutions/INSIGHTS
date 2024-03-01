@@ -20,6 +20,10 @@ class BaseTestCase(APITestCase):
 
     databases = set(["default", "staffnet"])
 
+    def logout(self):
+        """Logout the user."""
+        self.client.post(reverse("destroy-token"), {}, cookies=self.client.cookies)  # type: ignore
+
     def setUp(self):
         """Set up the test case."""
         self.client.post(
@@ -31,7 +35,7 @@ class BaseTestCase(APITestCase):
 
     def tearDown(self):
         """Tear down the test case."""
-        self.client.post(reverse("destroy-token"), {}, cookies=self.client.cookies)  # type: ignore
+        self.logout()
 
 
 class StaticFilesTest(TestCase):
@@ -42,7 +46,7 @@ class StaticFilesTest(TestCase):
 
     def test_external_image_hosted(self):
         """Test that the external image is hosted."""
-        url = f"https://{settings.ALLOWED_HOSTS[0]}/static/services/Logo_cyc.png"
+        url = f"https://{settings.ALLOWED_HOSTS[0]}/static/images/Logo_cyc_text.png"
         response = requests.get(url, timeout=5)
         self.assertEqual(response.status_code, 200)
 
@@ -60,7 +64,9 @@ class EmailServiceTest(APITestCase):
         """Test send email."""
         subject = "Test email"
         message = "Test email"
-        with open("static/services/Logo_cyc.png", "rb") as image_file:
+        with open(
+            str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb"
+        ) as image_file:
             image_data = image_file.read()
             to_emails = [
                 "heibert.mogollon@cyc-bpo.com",

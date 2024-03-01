@@ -27,6 +27,7 @@ class PayslipTest(BaseTestCase):
             "biweekly_period": 15,
             "transport_allowance": 150000,
             "bonus_paycheck": 150000,
+            "biannual_bonus": 150000,
             "gross_earnings": 1000000,
             "healthcare_contribution": 150000,
             "pension_contribution": 150000,
@@ -37,7 +38,7 @@ class PayslipTest(BaseTestCase):
             "net_pay": 150000,
         }
 
-    def test_get_payslips(self):
+    def test_get_all_payslips(self):
         """Test get payslips."""
         self.test_upload_payslip_file()
         get = Permission.objects.get(codename="view_payslip")
@@ -48,21 +49,23 @@ class PayslipTest(BaseTestCase):
             200,
             response.data,
         )
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 3)
 
-    def test_get_payslips_no_permission(self):
+    def test_get_only_my_payslips(self):
         """Test get payslips without permission."""
+        self.test_upload_payslip_file()
         response = self.client.get("/payslips/")
         self.assertEqual(
             response.status_code,
-            403,
+            200,
             response.data,
         )
+        self.assertEqual(len(response.data), 1)
 
     def test_get_payslip(self):
         """Test get payslip."""
         self.test_upload_payslip_file()
-        response = self.client.get("/payslips/1000065648/")
+        response = self.client.get("/payslips/00000000/")
         self.assertEqual(
             response.status_code,
             200,
@@ -72,20 +75,22 @@ class PayslipTest(BaseTestCase):
         self.assertEqual(response.data["identification"], "00000000")
         self.assertEqual(response.data["name"], "HEIBERT STEVEN MOGOLLON MAHECHA")
         self.assertEqual(response.data["area"], "Ejecutivo")
-        self.assertEqual(response.data["job_title"], "Cargo #2")
-        self.assertEqual(response.data["salary"], "28.227.321,00")
+        self.assertEqual(response.data["job_title"], "Cargo #4")
+        self.assertEqual(response.data["salary"], "28227321.00")
         self.assertEqual(response.data["days"], 15)
-        self.assertEqual(response.data["biweekly_period"], "14.113.661,00")
-        self.assertEqual(response.data["transport_allowance"], "0,00")
-        self.assertEqual(response.data["bonus_paycheck"], "0,00")
-        self.assertEqual(response.data["gross_earnings"], "14.113.661,00")
-        self.assertEqual(response.data["healthcare_contribution"], "395.182,00")
-        self.assertEqual(response.data["pension_contribution"], "493.978,00")
-        self.assertEqual(response.data["tax_withholding"], "1.946.500,00")
-        self.assertEqual(response.data["additional_deductions"], "2.225.000,00")
-        self.assertEqual(response.data["apsalpen"], "0,00")
-        self.assertEqual(response.data["total_deductions"], "5.060.661,00")
-        self.assertEqual(response.data["net_pay"], "9.053.000,00")
+        self.assertEqual(response.data["biweekly_period"], "14113661.00")
+        self.assertEqual(response.data["transport_allowance"], "0.00")
+        self.assertEqual(response.data["bonus_paycheck"], "0.00")
+        self.assertEqual(response.data["biannual_bonus"], "100800.00")
+        self.assertEqual(response.data["severance"], "85325.00")
+        self.assertEqual(response.data["gross_earnings"], "14113661.00")
+        self.assertEqual(response.data["healthcare_contribution"], "395182.00")
+        self.assertEqual(response.data["pension_contribution"], "493978.00")
+        self.assertEqual(response.data["tax_withholding"], "1946500.00")
+        self.assertEqual(response.data["additional_deductions"], "2225000.00")
+        self.assertEqual(response.data["apsalpen"], "0.00")
+        self.assertEqual(response.data["total_deductions"], "5060661.00")
+        self.assertEqual(response.data["net_pay"], "9053000.00")
 
     def test_get_another_person(self):
         """Test get payslip of another person."""
@@ -166,4 +171,4 @@ class PayslipTest(BaseTestCase):
             response.data,
         )
         self.assertEqual(response.data, {"message": "Desprendibles de nomina creados"})
-        self.assertEqual(Payslip.objects.count(), 2)
+        self.assertEqual(Payslip.objects.count(), 3)

@@ -1,9 +1,9 @@
 """Tests for the users app."""
 
 import os
+from services.tests import BaseTestCase
 import ldap  # type: ignore
 from users.models import User
-from django.contrib.auth.models import Permission
 from django.test import TestCase
 from django.conf import settings
 from django.urls import reverse
@@ -104,4 +104,19 @@ class LDAPAuthenticationTest(TestCase):
         response2 = self.client.post(reverse("destroy-token"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response2.status_code, 200)
         response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
+        self.assertEqual(response.status_code, 401)
+
+
+class EmploymentCertificationTest(BaseTestCase):
+    """Tests the employment certification views."""
+
+    def test_get_employment_certification(self):
+        """Tests that the user can get the employment certification."""
+        response = self.client.post(reverse("send-employment-certification"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_employment_certification_without_login(self):
+        """Tests that the user cannot get the employment certification without logging in."""
+        super().logout()
+        response = self.client.post(reverse("send-employment-certification"))
         self.assertEqual(response.status_code, 401)

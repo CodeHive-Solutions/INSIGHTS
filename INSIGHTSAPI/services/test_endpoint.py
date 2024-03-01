@@ -35,6 +35,3 @@ def test_endpoint(request):
         "payslip.html",
         {"payslip": payslip, "logo": logo},
     )
-    response = HttpResponse(email_content)
-    response["X-Frame-Options"] = "DENY"  # Adjust the value as needed
-    return response
