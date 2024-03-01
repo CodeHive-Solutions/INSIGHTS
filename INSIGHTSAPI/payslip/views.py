@@ -93,6 +93,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "apsalpen": data[17],
                     "total_deductions": data[18],
                     "net_pay": data[19],
+                    "email": email,
                 }
             )
             if payslip.is_valid(raise_exception=False):
@@ -122,7 +123,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
             errors = send_email(
                 f"Desprendible de nomina para {payslip.title}",
                 "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-                [email, "carrenosebastian54@gmail.com"],
+                [payslip.email],
                 # ["carrenosebastian54@gmail.com"],
                 attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
             )

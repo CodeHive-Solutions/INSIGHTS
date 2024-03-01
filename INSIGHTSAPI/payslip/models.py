@@ -27,6 +27,7 @@ class Payslip(models.Model):
     apsalpen = models.DecimalField(max_digits=12, decimal_places=2)
     total_deductions = models.DecimalField(max_digits=12, decimal_places=2)
     net_pay = models.DecimalField(max_digits=12, decimal_places=2)
+    email = models.EmailField()
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

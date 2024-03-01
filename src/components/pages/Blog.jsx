@@ -166,7 +166,7 @@ const Blog = () => {
                 Blog
             </Typography>
             <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
-                {/* <List
+                <List
                     sx={{ width: "100%", maxWidth: 200, bgcolor: "background.paper" }}
                     component="nav"
                     aria-labelledby="nested-list-subheader"
@@ -201,7 +201,7 @@ const Blog = () => {
                             </Collapse>
                         </React.Fragment>
                     ))}
-                </List> */}
+                </List>
                 <Box sx={{ width: "1500px", display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
                     {articles.map((article, index) => {
                         return <MediaCard title={article.title} subtitle={article.subtitle} img={article.img} articleId={article.articleId} key={index}></MediaCard>;

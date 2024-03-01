@@ -467,7 +467,7 @@ const Navbar = () => {
                             <ListItemText primary="Eventos de Riesgo Operativo" />
                         </MenuItem>
                     ) : null}
-                    {permissions && permissions.includes("pay_slips.view_pay_slips") ? (
+                    {permissions && permissions.includes("payslip.add_payslip") ? (
                         <MenuItem onClick={() => navigate("/logged/payslips")}>
                             <ListItemIcon>
                                 <PaymentsIcon fontSize="small" />
