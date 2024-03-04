@@ -2,7 +2,7 @@ asgiref==3.7.2
 async-timeout==4.0.2
 attrs==21.2.0
 Automat==20.2.0
-Babel==2.8.0
+Babel==2.9.1
 bcrypt==3.2.0
 blinker==1.4
 cachelib==0.10.2
@@ -55,7 +55,7 @@ pyasn1-modules==0.2.1
 Pygments==2.11.2
 PyGObject==3.42.1
 PyHamcrest==2.0.2
-PyJWT==2.3.0
+PyJWT==2.4.0
 pyOpenSSL==21.0.0
 pyparsing==2.4.7
 pyrsistent==0.18.1
