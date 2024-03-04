@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, Divider, ListItemIcon, Button, TextField, Popover, Dialog } from "@mui/material";
+import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, ListItemIcon } from "@mui/material";
 import Settings from "@mui/icons-material/Settings";
 import Logout from "@mui/icons-material/Logout";
 import RequestPageIcon from "@mui/icons-material/RequestPage";
@@ -45,7 +45,9 @@ const Navbar = () => {
             permissions.includes("excels_processing.call_transfer") ||
             permissions.includes("contracts.view_contract") ||
             permissions.includes("operational_risk.view_events") ||
-            permissions.includes("vacancy.view_reference"));
+            permissions.includes("vacancy.view_reference") ||
+            permissions.includes("payslip.add_payslip"));
+
     const refreshToken = async (refreshTimer) => {
         try {
             const response = await fetch(`${getApiUrl()}token/refresh/`, {
@@ -297,12 +299,12 @@ const Navbar = () => {
                         <ListItemText primary="Mis Metas" />
                     </MenuItem>
                 ) : null}
-                {/* <MenuItem onClick={() => navigate("/logged/my-payslips")}>
+                <MenuItem onClick={() => navigate("/logged/my-payslips")}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Mis desprendibles de nomina" />
-                </MenuItem> */}
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -467,12 +469,12 @@ const Navbar = () => {
                             <ListItemText primary="Eventos de Riesgo Operativo" />
                         </MenuItem>
                     ) : null}
-                    {permissions && permissions.includes("pay_slips.view_pay_slips") ? (
+                    {permissions && permissions.includes("payslip.add_payslip") ? (
                         <MenuItem onClick={() => navigate("/logged/payslips")}>
                             <ListItemIcon>
                                 <PaymentsIcon fontSize="small" />
                             </ListItemIcon>
-                            <ListItemText primary=" Registros de desprendibles de nomina" />
+                            <ListItemText primary="Registros de Desprendibles de Nomina" />
                         </MenuItem>
                     ) : null}
                 </Box>

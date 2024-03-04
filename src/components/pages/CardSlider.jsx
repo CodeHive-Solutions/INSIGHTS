@@ -1,9 +1,14 @@
 import React, { Component } from "react";
+
+// Libraries
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { Box, CardMedia, Typography, CardContent } from "@mui/material";
-import Card from "@mui/material/Card";
+
+// Material-UI
+import { Box, CardMedia, Typography, CardContent, Card } from "@mui/material";
+
+// Media
 import pablo from "../../images/managers/pablo.jpeg";
 import cesarGarzon from "../../images/managers/cesar-garzon.jpg";
 import diegoGonzales from "../../images/managers/diego-gonzales.jpg";
@@ -13,7 +18,6 @@ import hectorSotelo from "../../images/managers/hector-sotelo.png";
 import yannethPinzon from "../../images/managers/yanneth-pinzon.webp";
 import marioGiron from "../../images/managers/mario-giron.jpg";
 import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
-
 import managersJr1 from "../../images/managers-jr/52716114.webp";
 import managersJr2 from "../../images/managers-jr/53069726.webp";
 import managersJr3 from "../../images/managers-jr/1014205170.webp";

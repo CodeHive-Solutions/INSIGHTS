@@ -3,15 +3,60 @@
 import sys
 import pdfkit
 import base64
+from faker import Faker
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework.decorators import api_view
 from services.emails import send_email
 from users.models import User
 from django.template.loader import render_to_string
 from django.conf import settings
 from .models import Payslip
 from .serializers import PayslipSerializer
+
+
+def send_payslip(payslips):
+    emails = []
+    with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
+        logo = logo.read()
+        logo = base64.b64encode(logo).decode("utf-8")
+    for payslip in payslips:
+        rendered_template = render_to_string(
+            "payslip.html",
+            {"payslip": payslip, "logo": logo},
+        )
+        pdf = pdfkit.from_string(
+            rendered_template,
+            False,
+            options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
+        )
+        # print("Sending mail to", payslip.email)
+        errors = send_email(
+            f"Desprendible de nomina para {payslip.title}",
+            "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
+            [payslip.email],
+            # ["carrenosebastian54@gmail.com"],
+            attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
+        )
+        if errors:
+            return Response({"error": "Error enviando el correo"}, status=500)
+        emails.append(payslip.email)
+    return Response(
+        {"message": "Desprendibles de nomina enviados", "emails": emails}, status=201
+    )
+
+
+@api_view(["POST"])
+def resend_payslip(request, pk):
+    payslip = Payslip.objects.filter(pk=pk).first()
+    if not payslip:
+        return Response(
+            {"error": "No se encontró el desprendible de nomina"}, status=404
+        )
+    if "email" in request.data:
+        payslip.email = request.data["email"]
+    return send_payslip([payslip])
 
 
 class PayslipViewSet(viewsets.ModelViewSet):
@@ -56,10 +101,19 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     },
                     status=400,
                 )
-            elif "test" in sys.argv:
+            elif "test" in sys.argv and not user:
+                usernames = ["heibert.mogollon", "juan.carreno"]
                 identification = data[1]
-                email = "heibert.mogollon@cyc-bpo.com"
-                name = data[2]
+                for i in range(2):
+                    User.objects.create(
+                        username=usernames[i],
+                        cedula=data[1],
+                        first_name=Faker().first_name(),
+                        last_name=Faker().last_name(),
+                    )
+                user = User.objects.get(cedula=data[1])
+                email = user.email
+                name = user.get_full_name()
             elif user:
                 identification = user.cedula
                 email = user.email
@@ -93,6 +147,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "apsalpen": data[17],
                     "total_deductions": data[18],
                     "net_pay": data[19],
+                    "email": email,
                 }
             )
             if payslip.is_valid(raise_exception=False):
@@ -103,32 +158,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 )
         Payslip.objects.bulk_create(payslips)
         # Make a pdf with the payslip and send it to the user
-        with open(
-            str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb"
-        ) as logo:
-            logo = logo.read()
-            logo = base64.b64encode(logo).decode("utf-8")
-        for payslip in payslips:
-            rendered_template = render_to_string(
-                "payslip.html",
-                {"payslip": payslip, "logo": logo},
-            )
-            pdf = pdfkit.from_string(
-                rendered_template,
-                False,
-                options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
-            )
-
-            errors = send_email(
-                f"Desprendible de nomina para {payslip.title}",
-                "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-                [email, "carrenosebastian54@gmail.com"],
-                # ["carrenosebastian54@gmail.com"],
-                attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
-            )
-            if errors:
-                return Response({"error": "Error enviando el correo"}, status=500)
-        return Response({"message": "Desprendibles de nomina creados"}, status=201)
+        return send_payslip(payslips)
 
     def retrieve(self, request, pk=None):
         """Retrieve a payslip."""

@@ -2,6 +2,7 @@
 
 import logging
 import os
+import sys
 from django.contrib.auth.models import AbstractUser
 from django.db import connections
 from django.db import models
@@ -64,6 +65,8 @@ class User(AbstractUser):
             result = db_connection.fetchone()
             if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
                 result = ("00000000", "Administrador", "Administrador")
+                self.email = "heibert.mogollon@cyc-bpo.com"
+                # self.email = "diegozxz@hotmail.com"
             elif not result:
                 raise ValidationError(
                     "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
@@ -80,8 +83,10 @@ class User(AbstractUser):
                 [self.cedula],
             )
             mails = db_connection.fetchone()
-            if mails:
-                self.email = mails[1] if mails[1] else mails[0]
+            if mails and "test" in sys.argv:
+                self.email = mails[1] or mails[0]
+            elif mails:
+                self.email = mails[0]
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField

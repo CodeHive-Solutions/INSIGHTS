@@ -1,18 +1,14 @@
-import { Box, Typography, Button, TextField, Link } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Button, TextField, Link, Alert, Collapse, LinearProgress } from "@mui/material";
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import Diversity3Icon from "@mui/icons-material/Diversity3";
 import login_image from "../../images/login/new-login-image.jpg";
-import Alert from "@mui/material/Alert";
-import Collapse from "@mui/material/Collapse";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import * as Yup from "yup";
-import { useState, useEffect } from "react";
 import SnackbarAlert from "../common/SnackBarAlert";
-import LinearProgress from "@mui/material/LinearProgress";
 import apiRequest from "../../assets/apiRequest";
 import { useCookies } from "react-cookie";
-import Diversity3Icon from "@mui/icons-material/Diversity3";
 import { getApiUrl } from "../../assets/getApi.js";
 
 const validationSchema = Yup.object().shape({

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -9,6 +9,8 @@ import { getApiUrl } from "../../assets/getApi";
 import { Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
+import LinearProgress from "@mui/material/LinearProgress";
+import Fade from "@mui/material/Fade";
 
 import {
     DataGrid,
@@ -20,13 +22,12 @@ import {
     GridToolbarContainer,
     GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import SendIcon from "@mui/icons-material/Send";
+
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import SaveIcon from "@mui/icons-material/Save";
 import PayslipsPreview from "./PayslipsPreview.jsx";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import * as XLSX from "xlsx";
@@ -42,16 +43,16 @@ export const Payslips = () => {
     const [fileName, setFileName] = useState("Subir archivo");
     const [payslipFile, setPayslipFile] = useState(null);
     const [previewRows, setPreviewRows] = useState([]);
+    const [loading, setLoading] = React.useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions || !permissions.includes("vacancy.view_payslip")) {
-            console.log("no tiene permisos");
-            // navigate("/logged/home");
+        if (!permissions || !permissions.includes("payslip.add_payslip")) {
+            navigate("/logged/home");
         }
     }, []);
 
-    const getVacanciesReferred = async () => {
+    const getPayslips = async () => {
         try {
             const response = await fetch(`${getApiUrl()}payslips/`, {
                 method: "GET",
@@ -71,7 +72,7 @@ export const Payslips = () => {
     };
 
     useEffect(() => {
-        getVacanciesReferred();
+        getPayslips();
     }, []);
 
     const showSnack = (severity, message, error) => {
@@ -97,28 +98,67 @@ export const Payslips = () => {
         width: 1,
     });
 
+    const handleResend = async (id) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${getApiUrl()}payslips/${id}/resend/`, {
+                method: "POST",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
+                } else if (response.status === 400) {
+                    throw new Error(data.Error);
+                }
+                throw new Error(data.detail);
+            } else if (response.status === 201) {
+                setLoading(false);
+                getPayslips();
+                showSnack("success", "Desprendible reenviado correctamente");
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
     const columns = [
         { field: "id", headerName: "ID", width: 50, editable: false },
         {
-            field: "identifier",
+            field: "identification",
             headerName: "Cedula",
             width: 110,
             editable: false,
         },
-        { field: "name", headerName: "Nombre", width: 250, editable: false },
+        { field: "name", headerName: "Nombre", width: 300, editable: false },
         {
             field: "area",
             headerName: "Area",
             width: 250,
             editable: false,
         },
-        { field: "fortnight", headerName: "Quincena", width: 300, editable: false },
-        { field: "send_to", headerName: "Enviado a", width: 270, editable: false },
         {
-            field: "date_sent",
+            field: "biweekly_period",
+            type: "number",
+            headerName: "Quincena",
+            width: 150,
+            editable: false,
+            valueGetter: (params) => params.row.biweekly_period * 1,
+            valueFormatter: (params) =>
+                new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                }).format(params.value),
+        },
+        {
+            field: "created_at",
             type: "date",
             headerName: "Fecha de envió",
-            width: 100,
+            width: 150,
             editable: false,
             valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
         },
@@ -132,12 +172,12 @@ export const Payslips = () => {
                 return [
                     <Tooltip title="Reenviar" arrow>
                         <GridActionsCellItem
-                            icon={<SendIcon />}
-                            label="download"
+                            icon={<ForwardToInboxIcon />}
+                            label="resend"
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => handleClickFile(GridRowParams.id)}
+                            onClick={() => handleResend(GridRowParams.id)}
                         />
                     </Tooltip>,
                 ];
@@ -175,45 +215,6 @@ export const Payslips = () => {
             </GridToolbarContainer>
         );
     };
-
-    const exampleRows = [
-        {
-            id: 1,
-            identifier: "1001185389",
-            name: "Juan Sebastian Carreño Daza",
-            area: "Gerencia de Tecnología",
-            fortnight: "SEGUNDA QUINCENA MES DE ENERO 2024",
-            send_to: "carrenosebastian54@gmail.com",
-            date_sent: "2021-10-10",
-        },
-        {
-            id: 2,
-            identifier: "1001185389",
-            name: "Juan Sebastian Carreño Daza",
-            area: "Gerencia de Tecnología",
-            fortnight: "SEGUNDA QUINCENA MES DE ENERO 2024",
-            send_to: "",
-            date_sent: "2021-10-10",
-        },
-        {
-            id: 3,
-            identifier: "1001185389",
-            name: "Juan Sebastian Carreño Daza",
-            area: "Gerencia de Tecnología",
-            fortnight: "SEGUNDA QUINCENA MES DE ENERO 2024",
-            send_to: "",
-            date_sent: "2021-10-10",
-        },
-        {
-            id: 4,
-            identifier: "1001185389",
-            name: "Juan Sebastian Carreño Daza",
-            area: "Gerencia de Tecnología",
-            fortnight: "SEGUNDA QUINCENA MES DE ENERO 2024",
-            send_to: "",
-            date_sent: "2021-10-10",
-        },
-    ];
 
     function csvToJSON(csv) {
         const lines = csv.split("\n");
@@ -274,6 +275,8 @@ export const Payslips = () => {
     };
 
     const submitPayslipFile = async () => {
+        setLoading(true);
+
         try {
             const formData = new FormData();
             formData.append("file", payslipFile);
@@ -285,13 +288,23 @@ export const Payslips = () => {
 
             const data = await response.json();
             if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
+                } else if (response.status === 400) {
+                    if (data.Error === "No se encontró el usuario, asegúrate de que esta registrado en la intranet") {
+                        throw new Error(data.Error + ". Cedula: " + data.cedula);
+                    }
+                    throw new Error(data.Error);
+                }
                 throw new Error(data.detail);
             } else if (response.status === 201) {
-                showSnack("success", "Archivo cargado correctamente");
-                setOpenDialog(false);
-                getVacanciesReferred();
+                handleCloseDialog();
+                setLoading(false);
+                getPayslips();
+                showSnack("success", "Desprendibles cargados y enviados correctamente");
             }
         } catch (error) {
+            setLoading(false);
             console.error(error);
             showSnack("error", error.message);
         }
@@ -316,7 +329,7 @@ export const Payslips = () => {
                 <DataGrid
                     initialState={{
                         sorting: {
-                            sortModel: [{ field: "date_sent", sort: "desc" }],
+                            sortModel: [{ field: "created_at", sort: "desc" }],
                         },
                     }}
                     slots={{
@@ -325,11 +338,20 @@ export const Payslips = () => {
                     sx={{ width: "100%" }}
                     columns={columns}
                     toolbar
-                    rows={exampleRows}
+                    rows={rows}
                 ></DataGrid>
             </Container>
             <Dialog fullWidth={true} maxWidth="xl" open={openDialog} onClose={handleCloseDialog}>
-                <DialogTitle>Cargar nuevo archivo</DialogTitle>
+                <Fade
+                    in={loading}
+                    style={{
+                        transitionDelay: loading ? "800ms" : "0ms",
+                    }}
+                    unmountOnExit
+                >
+                    <LinearProgress />
+                </Fade>
+                <DialogTitle>Cargar Desprendibles de Nomina</DialogTitle>
                 <DialogContent>
                     <Button sx={{ width: "250px", overflow: "hidden", mb: "2rem" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
                         {fileName}
@@ -347,7 +369,7 @@ export const Payslips = () => {
                         />
                     </Button>
                     <PayslipsPreview rows={previewRows} />
-                    <Button variant="contained" onClick={submitPayslipFile} type="submit" startIcon={<ArrowCircleUpIcon></ArrowCircleUpIcon>}>
+                    <Button sx={{ mt: "1rem" }} variant="contained" onClick={submitPayslipFile} type="submit" startIcon={<ArrowCircleUpIcon></ArrowCircleUpIcon>}>
                         Subir
                     </Button>
                 </DialogContent>

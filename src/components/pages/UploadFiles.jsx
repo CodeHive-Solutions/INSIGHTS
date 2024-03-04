@@ -75,8 +75,11 @@ const UploadFiles = () => {
                 path = `${getApiUrl()}goals/`;
             } else if (selectedFile.name.toUpperCase().includes("ROBINSON")) {
                 path = `${getApiUrl()}files/robinson-list/`;
+            } else if (selectedFile.name.toUpperCase().includes("BIRTHDAYS")) {
+                path = `${getApiUrl(true)}massive-update`;
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");
+                setLoading(false);
                 return;
             }
             try {

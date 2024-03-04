@@ -1,42 +1,24 @@
 import React, { useState, useEffect } from "react";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
+
+// Libraries
 import { useNavigate } from "react-router-dom";
-import Skeleton from "@mui/material/Skeleton";
+
+// Media
 import article1 from "../../images/articles/article1.jpg";
-import despedida from "../../images/blog/despedida.jpg";
-import cibersecurity from "../../images/blog/cibersecurity.jpg";
+import cybersecurity from "../../images/blog/cybersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
-import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
+import sstManagement from "../../images/blog/sst-environment-management.jpg";
 import carteraPropia from "../../images/blog/cartera-propia.jpg";
-import financialHealth1 from "../../images/blog/Salud_financiera_1.png";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import SendIcon from "@mui/icons-material/Send";
-import DraftsIcon from "@mui/icons-material/Drafts";
-import InboxIcon from "@mui/icons-material/Inbox";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import ListSubheader from "@mui/material/ListSubheader";
-import List from "@mui/material/List";
-import Collapse from "@mui/material/Collapse";
-import StarBorder from "@mui/icons-material/StarBorder";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
-import { Grid } from "@mui/material";
-import Avatar from "@mui/material/Avatar";
+import youthFinances from "../../images/blog/youth-finances.jpg";
+
+// Material-UI
+import { Typography, Card, CardContent, CardMedia, Box, ListItemButton, ListItemIcon, ListItemText, ListSubheader, List, Collapse, Avatar } from "@mui/material";
+
+// Icons
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import FolderIcon from "@mui/icons-material/Folder";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import FinanzasJovenes from "../../images/blog/finanzas-jovenes.jpg";
 
 const MediaCard = ({ title, subtitle, img, articleId }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
@@ -90,7 +72,7 @@ const articles = [
     {
         title: "Bienvenido a Finanzas Jóvenes: Tu Guía hacia el Éxito Financiero",
         subtitle: "¡Hola, lectores jóvenes y emprendedores de la comunidad C&C! Bienvenidos a Finanzas Jóvenes",
-        img: FinanzasJovenes,
+        img: youthFinances,
         articleId: 8,
         uploadDate: "02-2024",
     },
@@ -105,7 +87,7 @@ const articles = [
         title: "Elevando Nuestra Empresa: Certificaciones ISO 45001:2018 y 14001:2015",
         subtitle:
             "Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores",
-        img: sstGestion,
+        img: sstManagement,
         articleId: 6,
         uploadDate: "01-2024",
     },
@@ -126,7 +108,7 @@ const articles = [
     {
         title: "Desarrollo Profesional en el Mundo del BPO",
         subtitle: "C&C Services y la Ciberseguridad en la Era Actual",
-        img: cibersecurity,
+        img: cybersecurity,
         articleId: 3,
         uploadDate: "01-2024",
     },
@@ -166,7 +148,7 @@ const Blog = () => {
                 Blog
             </Typography>
             <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
-                {/* <List
+                <List
                     sx={{ width: "100%", maxWidth: 200, bgcolor: "background.paper" }}
                     component="nav"
                     aria-labelledby="nested-list-subheader"
@@ -201,7 +183,7 @@ const Blog = () => {
                             </Collapse>
                         </React.Fragment>
                     ))}
-                </List> */}
+                </List>
                 <Box sx={{ width: "1500px", display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
                     {articles.map((article, index) => {
                         return <MediaCard title={article.title} subtitle={article.subtitle} img={article.img} articleId={article.articleId} key={index}></MediaCard>;

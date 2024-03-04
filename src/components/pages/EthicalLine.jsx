@@ -1,21 +1,39 @@
 import React, { useState } from "react";
-import { Container, Box, Typography, TextField, MenuItem, Button, LinearProgress, Collapse } from "@mui/material";
-import { Formik, Form, useField, Field, ErrorMessage, useFormikContext } from "formik";
-import * as Yup from "yup";
-import SendIcon from "@mui/icons-material/Send";
-import SnackbarAlert from "../common/SnackBarAlert";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import { FormHelperText } from "@mui/material";
-import logoCYC from "../../images/cyc-logos/logo-navbar.webp";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+
+// Libraries
+import { Formik, Form, useField, Field } from "formik";
 import { useNavigate } from "react-router-dom";
-import ethicalLineBackground from "../../images/ethical-line/ethical-line-background.jpg";
-import wave from "../../images/ethical-line/wave-2.png";
+import * as Yup from "yup";
+
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+
+// Media
+import ethicalLineBackground from "../../images/ethical-line/ethical-line-background.jpg";
+import logoCYC from "../../images/cyc-logos/logo-navbar.webp";
+
+// Material-UI
+import {
+    Container,
+    Box,
+    Typography,
+    TextField,
+    MenuItem,
+    Button,
+    LinearProgress,
+    Collapse,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    FormControl,
+    FormLabel,
+    FormHelperText,
+} from "@mui/material";
+
+// Icons
+import SendIcon from "@mui/icons-material/Send";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 
 const complaintType = [
     { value: "Fraude y Engaño", label: "Fraude y Engaño" },
@@ -163,16 +181,12 @@ const EthicalLine = () => {
                 <Box className="wave wave3"></Box>
                 <Box className="wave wave4"></Box>
             </Box>
-            {/* <img src={ethicalLineBackground} alt="" /> */}
             <Container sx={{ height: "max-content", py: "5rem" }}>
                 <Box sx={{ color: "primary.main" }}>
                     <Button onClick={() => navigate("/")} startIcon={<ArrowBackIosNewIcon />}>
                         Volver
                     </Button>
                 </Box>
-                {/* <Typography variant={"h3"} sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "400" }}>
-                    Linea Ética
-                </Typography> */}
                 <Box sx={{ textAlign: "center", justifyContent: "center", alignItems: "center", p: "2rem" }}>
                     <img src={logoCYC} alt="imagen-logo-cyc" width={200} />
                 </Box>
@@ -185,7 +199,7 @@ const EthicalLine = () => {
                         Objetivo
                     </Typography>
                     <Typography variant="body1">
-                        El objetivo de la línea ética es promover un amente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
+                        El objetivo de la línea ética es promover un ambiente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
                         denunciar cualquier situación que pueda poner en riesgo la integridad de las personas, los recursos de la empresa o el cumplimiento de sus
                         obligaciones legales.
                     </Typography>
