@@ -5,6 +5,7 @@ import pdfkit
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.shortcuts import render
 from django.conf import settings
@@ -15,7 +16,7 @@ def create_employment_certification(request):
     """Create an employment certification."""
     identification = request.data.get("identification")
     if identification:
-        user = User.objects.filter(identification=identification).first()
+        user = User.objects.filter(cedula=identification).first()
         if not user:
             # Create the certification
             return Response({"error": "No se encontró el usuario"}, status=404)
@@ -29,8 +30,17 @@ def create_employment_certification(request):
         "employment_certification.html",
         {"user": user, "logo": logo},
     )
-    pdf = pdfkit.from_string(template, False)
-    return Response(pdf, content_type="application/pdf", status=200)
+    try:
+        pdf = pdfkit.from_string(template, False)
+    except Exception as e:
+        return Response(
+            {"error": "No se pudo crear el archivo PDF: " + str(e)}, status=500
+        )
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = (
+        f'attachment; filename="Certificado laboral {user.get_full_name()}.pdf"'
+    )
+    return response
     # return render(
     #     request,
     #     "employment_certification.html",
