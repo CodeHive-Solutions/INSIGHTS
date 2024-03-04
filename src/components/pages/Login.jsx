@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+
+// Libraries
+import { useNavigate } from "react-router-dom";
+import { Formik, Form, useField } from "formik";
+import * as Yup from "yup";
+
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi.js";
+
+// Material-UI
 import { Box, Typography, Button, TextField, Link, Alert, Collapse, LinearProgress } from "@mui/material";
+
+// Icons
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
 import login_image from "../../images/login/new-login-image.jpg";
-import { useNavigate } from "react-router-dom";
-import { Formik, Form, useField, useFormikContext } from "formik";
-import * as Yup from "yup";
-import SnackbarAlert from "../common/SnackBarAlert";
-import apiRequest from "../../assets/apiRequest";
-import { useCookies } from "react-cookie";
-import { getApiUrl } from "../../assets/getApi.js";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),

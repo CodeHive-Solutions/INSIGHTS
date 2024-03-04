@@ -1,16 +1,23 @@
-import React, { useState, useEffect, useRef } from "react";
-import { TextField, Container, Box, Typography, Button } from "@mui/material";
+import { useState, useEffect, useRef } from "react";
+
+// Libraries
+import { useNavigate } from "react-router-dom";
+
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { styled, TextField, Container, Box, Typography, Button, Collapse, MenuItem } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
+
+// Icons
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { styled } from "@mui/material/styles";
-import Collapse from "@mui/material/Collapse";
 import SaveIcon from "@mui/icons-material/Save";
+
+// Media
 import quality from "../../images/quality/files.jpg";
-import { LoadingButton } from "@mui/lab";
-import SnackbarAlert from "../common/SnackBarAlert";
-import MenuItem from "@mui/material/MenuItem";
-import { getApiUrl } from "../../assets/getApi";
-import { useNavigate } from "react-router-dom";
 
 const VisuallyHiddenInput = styled("input")({
     clip: "rect(0 0 0 0)",

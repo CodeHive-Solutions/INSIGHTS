@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { getApiUrl } from "../assets/getApi.js";
 
 function ImageUploader() {

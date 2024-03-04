@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
+// Libraries
 import { motion, useIsPresent } from "framer-motion";
-import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from "@mui/material";
-
-import SnackbarAlert from "../common/SnackBarAlert";
 import * as Yup from "yup";
 import { Formik, Form, useField } from "formik";
-
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-
-import { getApiUrl } from "../../assets/getApi";
 import { useNavigate } from "react-router-dom";
 
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from "@mui/material";
 import {
     DataGrid,
     GridToolbarContainer,
@@ -23,9 +19,15 @@ import {
     GridToolbarColumnsButton,
     GridToolbarDensitySelector,
     GridActionsCellItem,
-    GridRowEditStopReasons,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
+
+// Icons
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),

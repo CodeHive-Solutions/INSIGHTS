@@ -1,17 +1,11 @@
-import React, { useState, useEffect } from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import SnackbarAlert from "../common/SnackBarAlert";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import { getApiUrl } from "../../assets/getApi";
-import { Tooltip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { styled } from "@mui/material/styles";
-import LinearProgress from "@mui/material/LinearProgress";
-import Fade from "@mui/material/Fade";
+import { useState, useEffect } from "react";
 
+// Libraries
+import * as XLSX from "xlsx";
+import { useNavigate } from "react-router-dom";
+
+// Material-UI
+import { Container, Box, Button, Typography, styled, LinearProgress, Fade, Tooltip, Dialog, DialogTitle, DialogContent } from "@mui/material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -23,14 +17,16 @@ import {
     GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
 
-import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
 import PayslipsPreview from "./PayslipsPreview.jsx";
+import { getApiUrl } from "../../assets/getApi";
+
+// Icons
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
-import * as XLSX from "xlsx";
 
 export const Payslips = () => {
     const [rows, setRows] = useState([]);
@@ -43,7 +39,7 @@ export const Payslips = () => {
     const [fileName, setFileName] = useState("Subir archivo");
     const [payslipFile, setPayslipFile] = useState(null);
     const [previewRows, setPreviewRows] = useState([]);
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         window.scrollTo(0, 0);

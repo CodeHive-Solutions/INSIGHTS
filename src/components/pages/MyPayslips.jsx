@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Material-UI
 import Container from "@mui/material/Container";
@@ -23,7 +23,7 @@ export const MyPayslips = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const getVacanciesReferred = async () => {
+    const getPayslips = async () => {
         try {
             const response = await fetch(`${getApiUrl()}payslips/`, {
                 method: "GET",
@@ -43,7 +43,7 @@ export const MyPayslips = () => {
     };
 
     useEffect(() => {
-        getVacanciesReferred();
+        getPayslips();
     }, []);
 
     const showSnack = (severity, message, error) => {
@@ -56,6 +56,30 @@ export const MyPayslips = () => {
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
+
+    const handleResend = async (id) => {
+        try {
+            const response = await fetch(`${getApiUrl()}payslips/${id}/resend/`, {
+                method: "POST",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
+                } else if (response.status === 400) {
+                    throw new Error(data.Error);
+                }
+                throw new Error(data.detail);
+            } else if (response.status === 201) {
+                showSnack("success", "Desprendible reenviado correctamente");
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
 
     const columns = [
         { field: "id", headerName: "ID", width: 75, editable: false },
@@ -122,7 +146,7 @@ export const MyPayslips = () => {
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => handleClickFile(GridRowParams.id)}
+                            onClick={() => handleResend(GridRowParams.id)}
                         />
                     </Tooltip>,
                 ];

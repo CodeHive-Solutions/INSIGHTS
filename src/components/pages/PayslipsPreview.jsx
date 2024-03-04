@@ -1,4 +1,4 @@
-import React from "react";
+// Material-UI
 import { DataGrid } from "@mui/x-data-grid";
 
 const columns = [

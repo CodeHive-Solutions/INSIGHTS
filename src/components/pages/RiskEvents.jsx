@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+
 // Libraries
 import { motion, useIsPresent } from "framer-motion";
 import { useNavigate } from "react-router-dom";

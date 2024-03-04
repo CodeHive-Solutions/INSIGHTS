@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 // Libraries
 import { useNavigate } from "react-router-dom";
@@ -159,7 +159,7 @@ const Blog = () => {
                     }
                 >
                     {years.map((year) => (
-                        <React.Fragment key={year}>
+                        <Box key={year}>
                             <ListItemButton sx={{ borderRadius: "1rem" }} onClick={() => handleClick(year)}>
                                 <ListItemIcon>
                                     <Avatar>
@@ -181,7 +181,7 @@ const Blog = () => {
                                     ))}
                                 </List>
                             </Collapse>
-                        </React.Fragment>
+                        </Box>
                     ))}
                 </List>
                 <Box sx={{ width: "1500px", display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>

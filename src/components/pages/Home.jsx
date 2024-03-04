@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Libraries and Hooks
 import { useInView } from "react-intersection-observer";

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MenuItem, ListItemIcon, Dialog, Typography } from "@mui/material";
 import FlagIcon from "@mui/icons-material/Flag";
 import DialogContent from "@mui/material/DialogContent";

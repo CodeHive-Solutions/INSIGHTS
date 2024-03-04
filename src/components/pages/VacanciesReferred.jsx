@@ -1,14 +1,14 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import SnackbarAlert from "../common/SnackBarAlert";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import { getApiUrl } from "../../assets/getApi";
-import { Tooltip } from "@mui/material";
+import { useState, useEffect } from "react";
+
+// Libraries
 import { useNavigate } from "react-router-dom";
 
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { Container, Box, Typography } from "@mui/material";
 import {
     DataGrid,
     GridToolbarContainer,
@@ -16,7 +16,6 @@ import {
     GridToolbarQuickFilter,
     GridToolbarColumnsButton,
     GridToolbarDensitySelector,
-    GridActionsCellItem,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 

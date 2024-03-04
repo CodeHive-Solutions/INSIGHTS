@@ -33,9 +33,7 @@ def create_employment_certification(request):
     try:
         pdf = pdfkit.from_string(template, False)
     except Exception as e:
-        return Response(
-            {"error": "No se pudo crear el archivo PDF: " + str(e)}, status=500
-        )
+        return Response({"error": "No se pudo crear el archivo PDF"}, status=500)
     response = HttpResponse(pdf, content_type="application/pdf")
     response["Content-Disposition"] = (
         f'attachment; filename="Certificado laboral {user.get_full_name()}.pdf"'

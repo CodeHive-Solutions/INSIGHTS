@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+
+// Libraries
 import { useParams } from "react-router-dom";
 
 // Material-UI

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // Libraries
 import { Formik, Form, useField, Field } from "formik";

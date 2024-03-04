@@ -1,4 +1,4 @@
-import { React, useEffect } from "react";
+import { useEffect } from "react";
 
 // Material-UI
 import { Typography, useMediaQuery, Container, Card, CardContent, CardMedia, Box } from "@mui/material";

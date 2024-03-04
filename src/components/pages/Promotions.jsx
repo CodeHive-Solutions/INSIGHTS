@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+
+// Material-UI
 import { Box, Card, Typography, Container } from "@mui/material";
+
+// Custom Components
 import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";

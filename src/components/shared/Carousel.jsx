@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Carousel from "react-material-ui-carousel";
 import { Box } from "@mui/material";
 import Typography from "@mui/material/Typography";
