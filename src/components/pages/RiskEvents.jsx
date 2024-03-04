@@ -1,32 +1,27 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+// Libraries
 import { motion, useIsPresent } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Formik, Form, useField } from "formik";
+import * as Yup from "yup";
+
+// Custom components
+import { getApiUrl } from "../../assets/getApi";
+import SnackbarAlert from "../common/SnackBarAlert";
+
+// Material-UI
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
-import SnackbarAlert from "../common/SnackBarAlert";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
-import * as Yup from "yup";
-import { Formik, Form, useField, useFormikContext } from "formik";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import Save from "@mui/icons-material/Save";
-import { getApiUrl } from "../../assets/getApi";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { Tooltip } from "@mui/material";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { IconButton } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-
 import {
-    GridRowModes,
     DataGrid,
     GridToolbarContainer,
     GridToolbarExport,
@@ -34,17 +29,15 @@ import {
     GridToolbarColumnsButton,
     GridToolbarDensitySelector,
     GridActionsCellItem,
-    GridRowEditStopReasons,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 
-// icons
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import EditIcon from "@mui/icons-material/Edit";
+// Icons
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 const validationSchema = Yup.object().shape({
     event_class: Yup.string().required("Campo requerido"),

@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Container from "@mui/material/Container";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -22,13 +22,12 @@ import {
     GridToolbarContainer,
     GridToolbarQuickFilter,
 } from "@mui/x-data-grid";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import SendIcon from "@mui/icons-material/Send";
+
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import SaveIcon from "@mui/icons-material/Save";
 import PayslipsPreview from "./PayslipsPreview.jsx";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import * as XLSX from "xlsx";
@@ -99,6 +98,34 @@ export const Payslips = () => {
         width: 1,
     });
 
+    const handleResend = async (id) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`${getApiUrl()}payslips/${id}/resend/`, {
+                method: "POST",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
+                } else if (response.status === 400) {
+                    throw new Error(data.Error);
+                }
+                throw new Error(data.detail);
+            } else if (response.status === 201) {
+                setLoading(false);
+                getPayslips();
+                showSnack("success", "Desprendible reenviado correctamente");
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error(error);
+            showSnack("error", error.message);
+        }
+    };
+
     const columns = [
         { field: "id", headerName: "ID", width: 50, editable: false },
         {
@@ -107,7 +134,7 @@ export const Payslips = () => {
             width: 110,
             editable: false,
         },
-        { field: "name", headerName: "Nombre", width: 250, editable: false },
+        { field: "name", headerName: "Nombre", width: 300, editable: false },
         {
             field: "area",
             headerName: "Area",
@@ -118,7 +145,7 @@ export const Payslips = () => {
             field: "biweekly_period",
             type: "number",
             headerName: "Quincena",
-            width: 120,
+            width: 150,
             editable: false,
             valueGetter: (params) => params.row.biweekly_period * 1,
             valueFormatter: (params) =>
@@ -131,7 +158,7 @@ export const Payslips = () => {
             field: "created_at",
             type: "date",
             headerName: "Fecha de envió",
-            width: 200,
+            width: 150,
             editable: false,
             valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
         },
@@ -145,12 +172,12 @@ export const Payslips = () => {
                 return [
                     <Tooltip title="Reenviar" arrow>
                         <GridActionsCellItem
-                            icon={<SendIcon />}
-                            label="download"
+                            icon={<ForwardToInboxIcon />}
+                            label="resend"
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => handleClickFile(GridRowParams.id)}
+                            onClick={() => handleResend(GridRowParams.id)}
                         />
                     </Tooltip>,
                 ];
@@ -261,6 +288,14 @@ export const Payslips = () => {
 
             const data = await response.json();
             if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
+                } else if (response.status === 400) {
+                    if (data.Error === "No se encontró el usuario, asegúrate de que esta registrado en la intranet") {
+                        throw new Error(data.Error + ". Cedula: " + data.cedula);
+                    }
+                    throw new Error(data.Error);
+                }
                 throw new Error(data.detail);
             } else if (response.status === 201) {
                 handleCloseDialog();

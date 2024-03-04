@@ -1,47 +1,31 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+
+// Material-UI
 import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import SnackbarAlert from "../common/SnackBarAlert";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import { getApiUrl } from "../../assets/getApi";
 import { Tooltip } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 
-import {
-    DataGrid,
-    GridToolbarContainer,
-    GridToolbarExport,
-    GridToolbarQuickFilter,
-    GridToolbarColumnsButton,
-    GridToolbarDensitySelector,
-    GridActionsCellItem,
-    GridToolbar,
-    GridToolbarFilterButton,
-} from "@mui/x-data-grid";
+// Icons
+import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
 
 export const MyPayslips = () => {
     const [rows, setRows] = useState([]);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
-    const navigate = useNavigate();
-    const permissions = JSON.parse(localStorage.getItem("permissions"));
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions || !permissions.includes("vacancy.view_payslip")) {
-            console.log("no tiene permisos");
-            // navigate("/logged/home");
-        }
     }, []);
 
     const getVacanciesReferred = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}/payslip/`, {
+            const response = await fetch(`${getApiUrl()}payslips/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -74,27 +58,67 @@ export const MyPayslips = () => {
     const handleCloseSnack = () => setOpenSnack(false);
 
     const columns = [
-        { field: "test", headerName: "Desprendible", width: 500, editable: false },
+        { field: "id", headerName: "ID", width: 75, editable: false },
+        { field: "title", headerName: "Desprendible", width: 350, editable: false },
         {
-            field: "test2",
+            field: "created_at",
             type: "date",
             headerName: "Fecha de Envió",
-            width: 500,
+            width: 150,
             editable: false,
             valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
         },
         {
-            field: "download",
-            headerName: "Descargar",
+            field: "gross_earnings",
+            type: "number",
+            headerName: "Total Devengado",
+            width: 150,
+            editable: false,
+            valueGetter: (params) => params.row.gross_earnings * 1,
+            valueFormatter: (params) =>
+                new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                }).format(params.value),
+        },
+        {
+            field: "total_deductions",
+            type: "number",
+            headerName: "Total Deducciones",
+            width: 150,
+            editable: false,
+            valueGetter: (params) => params.row.total_deductions * 1,
+            valueFormatter: (params) =>
+                new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                }).format(params.value),
+        },
+        {
+            field: "net_pay",
+            type: "number",
+            headerName: "Pago Neto",
+            width: 150,
+            editable: false,
+            valueGetter: (params) => params.row.net_pay * 1,
+            valueFormatter: (params) =>
+                new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                }).format(params.value),
+        },
+        {
+            field: "reenviar",
+            headerName: "Reenviar",
             width: 100,
             type: "actions",
             cellClassName: "actions",
             getActions: (GridRowParams) => {
                 return [
-                    <Tooltip title="Descargar" arrow>
+                    <Tooltip title="Reenviar" arrow>
                         <GridActionsCellItem
-                            icon={<FileDownloadIcon />}
-                            label="download"
+                            icon={<ForwardToInboxIcon />}
+                            label="resend"
                             sx={{
                                 color: "primary.main",
                             }}
@@ -104,14 +128,6 @@ export const MyPayslips = () => {
                 ];
             },
         },
-    ];
-
-    const exampleRows = [
-        { id: 1, test: "Desprendible 1", test2: "2021-10-10" },
-        { id: 2, test: "Desprendible 2", test2: "2021-10-10" },
-        { id: 3, test: "Desprendible 3", test2: "2021-10-10" },
-        { id: 4, test: "Desprendible 4", test2: "2021-10-10" },
-        { id: 5, test: "Desprendible 5", test2: "2021-10-10" },
     ];
 
     return (
@@ -130,7 +146,23 @@ export const MyPayslips = () => {
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                     Mis desprendibles de nomina
                 </Typography>
-                <DataGrid slots={{ toolbar: GridToolbar }} sx={{ width: "100%" }} columns={columns} toolbar rows={exampleRows}></DataGrid>
+                <DataGrid
+                    initialState={{
+                        sorting: {
+                            sortModel: [{ field: "created_at", sort: "desc" }],
+                        },
+                    }}
+                    slots={{ toolbar: GridToolbar }}
+                    slotProps={{
+                        toolbar: {
+                            showQuickFilter: true,
+                        },
+                    }}
+                    sx={{ width: "100%" }}
+                    columns={columns}
+                    toolbar
+                    rows={rows}
+                ></DataGrid>
             </Container>
 
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />

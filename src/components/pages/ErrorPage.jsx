@@ -1,12 +1,18 @@
-import { useRouteError } from "react-router-dom";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import { useEffect } from "react";
+
+// Libraries
+import { useRouteError, useNavigate } from "react-router-dom";
+
+// Material-UI
+import { Typography, Box, Button } from "@mui/material";
+
+// Icons
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+
+// Custom Components
 import Navbar from "../common/NavBar";
 import Footer from "../common/Footer";
-import { useEffect } from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import Button from "@mui/material/Button";
-import { useNavigate } from "react-router-dom";
+
 function ErrorContent({ error }) {
     const navigate = useNavigate();
 

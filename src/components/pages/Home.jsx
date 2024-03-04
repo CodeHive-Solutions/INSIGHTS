@@ -1,44 +1,30 @@
 import React, { useEffect, useState } from "react";
-import CarouselComponent from "../shared/Carousel";
-import Card from "@mui/material/Card";
-import { Typography, Box } from "@mui/material";
-import { useInView } from "react-intersection-observer";
-import Grow from "@mui/material/Grow";
-import SnackbarAlert from "../common/SnackBarAlert";
-import { getApiUrl } from "../../assets/getApi.js";
-import Avatar from "../../images/home-carousel/avatar.jpg";
-import { Container } from "@mui/material";
-import useMediaQuery from "@mui/material/useMediaQuery";
 
-// media
-import campaigns from "../../images/home-carousel/campaigns-1280-720.png";
+// Libraries and Hooks
+import { useInView } from "react-intersection-observer";
+
+// Custom Components
+import { getApiUrl } from "../../assets/getApi.js";
+import CarouselComponent from "../shared/Carousel";
+import SnackbarAlert from "../common/SnackBarAlert";
+
+// Material-UI
+import { Typography, Box, Grow, Container, useMediaQuery, Card } from "@mui/material";
+
+// Media
 import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
 import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
-import ceroDescriminacion from "../../images/home-carousel/cero-discriminacion.png";
-import inclusion from "../../images/home-carousel/inclusion.png";
-import certificacionRacc from "../../images/home-carousel/certificacion-racc.png";
-import inclusionCuestionario from "../../images/home-carousel/inclusion-cuestionario.png";
+import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import cycBirthday from "../../images/home-carousel/cycBirthday.png";
-import finanzasJovenes from "../../images/blog/finanzas-jovenes.png";
-import testReal from "../../images/test/test-real.jpeg";
-import testReal2 from "../../images/test/test-real-2.jpeg";
+import youthFinances from "../../images/blog/youth-finances.jpg";
+import womenDay from "../../images/home-carousel/women-day.png";
+import Avatar from "../../images/home-carousel/avatar.jpg";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [
-    { image: finanzasJovenes },
-    { image: cycBirthday },
-    { image: inclusionCuestionario },
-    { image: certificacionRacc },
-    { image: inclusion },
-    { image: ceroDescriminacion },
-    { image: campaigns },
-    { image: vacanciesCarousel },
-];
-
-const test = [{ image: testReal }, { image: testReal2 }];
+const homeImages = [{ image: womenDay }, { image: youthFinances }, { image: cycBirthday }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
@@ -245,7 +231,7 @@ const Home = () => {
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                         {todayBirthdays.length === 0 ? (
                             <>
-                                <img src={cake}></img>
+                                <img alt="imagen-pastel-cumpleaños" src={cake}></img>
                                 <Box
                                     sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}
                                 >
@@ -258,7 +244,7 @@ const Home = () => {
                                 </Box>
                             </>
                         ) : (
-                            <CarouselComponent contain={true} items={test} day={"Hoy"} height={"280px"} width={"100%"} />
+                            <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
                         )}
                     </Card>{" "}
                     <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>

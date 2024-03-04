@@ -1,32 +1,28 @@
 import React, { useEffect } from "react";
-import Typography from "@mui/material/Typography";
 import { useParams } from "react-router-dom";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import imgAvatar from "../../images/birthdays/cristian-gonzales copy.jpeg";
+
+// Material-UI
+import { Typography, Container, Box } from "@mui/material";
+
+// Media
 import article1 from "../../images/articles/article1.jpg";
-import despedida from "../../images/blog/despedida.jpg";
-import cibersecurity from "../../images/blog/cibersecurity.jpg";
+import cybersecurity from "../../images/blog/cybersecurity.jpg";
 import bienestar from "../../images/blog/bienestar.jpg";
 import article5 from "../../images/blog/article5.jpg";
-import sstGestion from "../../images/blog/sst-gestion-ambiental.jpg";
-import sstGestion2 from "../../images/blog/sst-gestion-ambiental-2.jpg";
-import sstGestion3 from "../../images/blog/sst-gestion-ambiental-3.jpg";
+import sstManagement from "../../images/blog/sst-environment-management.jpg";
+import sstManagement2 from "../../images/blog/sst-environment-management-2.jpg";
+import sstManagement3 from "../../images/blog/sst-environment-management-3.jpg";
 import carteraPropia from "../../images/blog/cartera-propia.jpg";
 import carteraPropia2 from "../../images/blog/cartera-propia-2.jpg";
 import racc from "../../images/blog/racc.jpg";
 import financialHealth1 from "../../images/blog/Salud_financiera_1.png";
 import financialHealth2 from "../../images/blog/Salud_financiera_2.png";
-import raccLogo from "../../images/blog/racc.png";
 import elLibertador from "../../images/blog/el-libertador.png";
 import bancoSantander from "../../images/blog/banco-santander.png";
 import cooperativaMinutodeDios from "../../images/blog/cooperativa-minuto-de-dios.png";
 import nuBank from "../../images/blog/nubank.png";
 import carteraPropiaLogo from "../../images/blog/cartera-propia-logo.png";
 import ciberseguridad2 from "../../images/blog/ciberseguridad-2.jpg";
-import bienestar2 from "../../images/blog/bienestar-2.jpg";
-import bienestar3 from "../../images/blog/bienestar-3.jpg";
 
 const ArticlePage = () => {
     useEffect(() => {
@@ -97,7 +93,7 @@ const ArticlePage = () => {
             id: 3,
             title: "Protegiendo la Confianza Digital: C&C Services y la Ciberseguridad en la Era Actual",
             subtitle: "C&C Services y la Ciberseguridad en la Era Actual",
-            img: cibersecurity,
+            img: cybersecurity,
             content: (
                 <>
                     <p>
@@ -254,7 +250,7 @@ const ArticlePage = () => {
             title: "Certificaciones ISO 14001 y 45001: Compromiso con el Entorno y la Seguridad en C&C",
             subtitle:
                 "Alcanzando la Excelencia Empresarial: La Trascendencia de las Certificaciones ISO 45001:2018 y 14001:2015, el Impacto en Nuestra Organización y el Compromiso Fundamental de Nuestros Colaboradores",
-            img: sstGestion,
+            img: sstManagement,
             content: (
                 <>
                     <p>
@@ -277,7 +273,7 @@ const ArticlePage = () => {
                     </p>
 
                     <div style={{ textAlign: "center" }}>
-                        <img style={{ borderRadius: "8px" }} width="700" src={sstGestion3} alt="" />
+                        <img style={{ borderRadius: "8px" }} width="700" src={sstManagement3} alt="" />
                     </div>
 
                     <h2>Beneficios de Certificaciones ISO para C&C Services </h2>
@@ -297,7 +293,7 @@ const ArticlePage = () => {
                         <li>Retención de Talento: Muestra compromiso con la salud y seguridad, influyendo positivamente en la retención de talento.</li>
                     </ol>
                     <div style={{ textAlign: "center" }}>
-                        <img style={{ borderRadius: "8px" }} width="700" src={sstGestion2} alt="" />
+                        <img style={{ borderRadius: "8px" }} width="700" src={sstManagement2} alt="" />
                     </div>
                     <h2>Perspectivas Claves en C&C Services para Sostenibilidad y Seguridad</h2>
                     <h3>Perspectiva Operativa:</h3>

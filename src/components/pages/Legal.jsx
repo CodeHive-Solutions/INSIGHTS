@@ -1,32 +1,21 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, useIsPresent } from "framer-motion";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
+import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from "@mui/material";
+
 import SnackbarAlert from "../common/SnackBarAlert";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
-import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import * as Yup from "yup";
-import { Formik, Form, useField, useFormikContext } from "formik";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import Save from "@mui/icons-material/Save";
-import { getApiUrl } from "../../assets/getApi";
+import { Formik, Form, useField } from "formik";
+
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { Tooltip } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
+
+import { getApiUrl } from "../../assets/getApi";
 import { useNavigate } from "react-router-dom";
 
 import {
-    GridRowModes,
     DataGrid,
     GridToolbarContainer,
     GridToolbarExport,
@@ -37,14 +26,6 @@ import {
     GridRowEditStopReasons,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
-
-// icons
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),
@@ -193,7 +174,7 @@ export const Legal = () => {
                 <GridToolbarDensitySelector />
                 <GridToolbarExport
                     csvOptions={{
-                        fileName: "contratos-polizas-legales",
+                        fileName: "contratos-pólizas-legales",
                         delimiter: ";",
                         utf8WithBom: true,
                     }}

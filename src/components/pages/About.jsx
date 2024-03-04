@@ -1,16 +1,10 @@
 import { React, useEffect } from "react";
-import Box from "@mui/material/Box";
-import { Typography } from "@mui/material";
-import { useMediaQuery } from "@mui/material";
-import Container from "@mui/material/Container";
-import image1 from "../../images/about/image-vision.jpg";
-import image2 from "../../images/about/image-mision.png";
-import image3 from "../../images/about/image-values.jpg";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
+
+// Material-UI
+import { Typography, useMediaQuery, Container, Card, CardContent, CardMedia, Box } from "@mui/material";
+
+// Media
 import cesarGarzon from "../../images/managers/cesar-garzon.jpg";
-import javierTorres from "../../images/managers/javier-torres.jpeg";
 import yannethPinzon from "../../images/managers/yanneth-pinzon.webp";
 import angelaDuran from "../../images/managers/angela-duran.jpeg";
 import adrianaPaez from "../../images/managers/adriana-paez.jpg";
@@ -21,14 +15,11 @@ import hectorSotelo from "../../images/managers/hector-sotelo.png";
 import pablo from "../../images/managers/pablo.jpeg";
 import aboutUs from "../../images/about/img-about-2.jpg";
 import organigrama from "../../images/about/organigrama.png";
-
 import imgVision from "../../images/about/image-vision.jpg";
 import mission2 from "../../images/about/image-mission-2.jpg";
-import mission3 from "../../images/about/image-mission-3.jpg";
-import mission4 from "../../images/about/image-mission-4.jpg";
-
-//corporative values images
 import value1 from "../../images/about/corporative-values.jpg";
+
+// Custom components
 import CardSlider from "./CardSlider";
 
 const managements = [
@@ -256,30 +247,7 @@ const About = () => {
                 <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
                     Organigrama de la empresa
                 </Typography>
-                <img src={organigrama} alt="imagen-organigrama" width={"1400px"} />
-                {/* <Box sx={{ borderRadius: "2rem", width: "100%", height: "40rem", border: "1px solid rgba(0, 0, 0, 0.12)" }}>
-                    {isSmallScreen ? (
-                        <Typography
-                            sx={{
-                                fontSize: "1.5rem",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                height: "100%",
-                                color: "gray",
-                                fontFamily: "Poppins",
-                            }}
-                        >
-                            Imagen Organigrama
-                        </Typography>
-                    ) : (
-                        <Typography
-                            sx={{ fontSize: "4rem", display: "flex", justifyContent: "center", alignItems: "center", textAlign: "center", height: "100%", color: "gray" }}
-                        >
-                            Imagen Organigrama
-                        </Typography>
-                    )}
-                </Box> */}
+                <img src={organigrama} alt="imagen-organigrama" width={"100%"} />
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                 <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins", py: "2rem" }}>
