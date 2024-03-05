@@ -10,7 +10,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 // Material-UI
-import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, MenuItem, styled, Tooltip } from "@mui/material/Container";
+import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, MenuItem, styled, Tooltip } from "@mui/material";
 import {
     GridRowModes,
     DataGrid,

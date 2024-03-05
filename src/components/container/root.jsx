@@ -1,8 +1,10 @@
+// Libraries
 import { Outlet } from "react-router-dom";
+
+// Custom Components
 import NavBar from "../common/NavBar";
-import { Container } from "@mui/material";
 import Footer from "../common/Footer";
-import { useEffect } from "react";
+
 const Root = () => {
     return (
         <>

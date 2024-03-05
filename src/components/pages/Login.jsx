@@ -75,9 +75,6 @@ const Login = () => {
         setLoadingBar(true);
 
         try {
-            // Use the apiRequest function to make the API request
-            // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
-
             const response = await fetch(`${getApiUrl()}token/obtain/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -115,6 +112,7 @@ const Login = () => {
                 localStorage.setItem("permissions", JSON.stringify(data.permissions));
                 localStorage.setItem("cedula", JSON.stringify(data.cedula));
                 localStorage.setItem("cargo", JSON.stringify(data.cargo));
+                localStorage.setItem("email", JSON.stringify(data.email));
                 navigate("/logged/home");
             }
         } catch (error) {

@@ -68,7 +68,7 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
     );
 };
 
-const articles = [
+const baseArticles = [
     {
         title: "Bienvenido a Finanzas Jóvenes: Tu Guía hacia el Éxito Financiero",
         subtitle: "¡Hola, lectores jóvenes y emprendedores de la comunidad C&C! Bienvenidos a Finanzas Jóvenes",
@@ -123,27 +123,41 @@ const articles = [
 
 const Blog = () => {
     const [openYear, setOpenYear] = useState(null);
-
+    const [articles, setArticles] = useState(baseArticles);
     // Extract unique years from uploadDate
 
     const handleClick = (year) => {
         setOpenYear(openYear === year ? null : year);
     };
 
-    const years = [...new Set(articles.map((article) => article.uploadDate.slice(3)))].sort();
+    const years = [...new Set(baseArticles.map((article) => article.uploadDate.slice(3)))].sort();
 
     const getMonthsForYear = (year) => {
         return [
             ...new Set(
-                articles
+                baseArticles
                     .filter((article) => article.uploadDate.includes(year))
                     .map((article) => new Date(`${year}-${article.uploadDate.slice(0, 2)}-02`).toLocaleString("default", { month: "long" }))
             ),
         ].sort();
     };
 
+    const handleFilterMonth = (month) => {
+        // Filter articles by month
+        console.log(month);
+
+        // Logic to filter articles by month
+
+        const filteredArticles = baseArticles.filter((article) => {
+            const articleMonth = new Date(`${openYear}-${article.uploadDate.slice(0, 2)}-02`).toLocaleString("default", { month: "long" });
+            return articleMonth === month;
+        });
+
+        setArticles(filteredArticles);
+    };
+
     return (
-        <Box sx={{ mt: "5rem" }}>
+        <Box sx={{ height: "max-content", mt: "5rem" }}>
             <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
                 Blog
             </Typography>
@@ -172,7 +186,7 @@ const Blog = () => {
                             <Collapse in={openYear === year} timeout="auto" unmountOnExit>
                                 <List component="div" disablePadding>
                                     {getMonthsForYear(year).map((month) => (
-                                        <ListItemButton key={month} sx={{ pl: 4, borderRadius: "1rem" }}>
+                                        <ListItemButton onClick={() => handleFilterMonth(month)} key={month} sx={{ pl: 4, borderRadius: "1rem" }}>
                                             <ListItemIcon>
                                                 <CalendarMonthIcon />
                                             </ListItemIcon>

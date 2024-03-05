@@ -1,9 +1,14 @@
-import jsPDF from "jspdf";
-import cycLogo from "../../images/cyc-logos/logotipo-navbar.png";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 import { useState } from "react";
+
+// Libraries
+import jsPDF from "jspdf";
+import { useNavigate } from "react-router-dom";
+
+// Custom Components
 import { getApiUrl } from "../../assets/getApi";
+
+// Media
+import cycLogo from "../../images/cyc-logos/logotipo-navbar.png";
 
 const PDFcomponent = () => {
     const navigate = useNavigate();

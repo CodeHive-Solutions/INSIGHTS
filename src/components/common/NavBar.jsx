@@ -1,24 +1,31 @@
 import { useState, useEffect } from "react";
-import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, ListItemIcon } from "@mui/material";
-import Settings from "@mui/icons-material/Settings";
-import Logout from "@mui/icons-material/Logout";
+
+// Libraries
+import { useNavigate, useMatch } from "react-router-dom";
+
+// Custom Components
+import Goals from "../shared/Goals";
+import SnackbarAlert from "./SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { Box, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, ListItemIcon, useMediaQuery, ListItemText } from "@mui/material";
+
+// Icons
+import { Logout, Settings } from "@mui/icons-material";
 import RequestPageIcon from "@mui/icons-material/RequestPage";
 import FeedIcon from "@mui/icons-material/Feed";
-import { useMediaQuery } from "@mui/material";
-import { useNavigate, useMatch } from "react-router-dom";
-import logotipo from "../../images/cyc-logos/logo-navbar.webp";
-import SnackbarAlert from "./SnackBarAlert";
 import FlagIcon from "@mui/icons-material/Flag";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import Goals from "../shared/Goals";
 import DriveFileMoveIcon from "@mui/icons-material/DriveFileMove";
-import { getApiUrl } from "../../assets/getApi";
 import PolicyIcon from "@mui/icons-material/Policy";
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 import FmdBadIcon from "@mui/icons-material/FmdBad";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import PaymentsIcon from "@mui/icons-material/Payments";
-import { ListItemText } from "@mui/material";
+
+// Media
+import logotipo from "../../images/cyc-logos/logo-navbar.webp";
 
 const Navbar = () => {
     const [anchorEl, setAnchorEl] = useState(null);

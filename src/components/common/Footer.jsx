@@ -1,11 +1,17 @@
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import logo_CYC from "../../images/cyc-logos/logo-footer.webp";
-import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
+// Libraries
 import { useNavigate } from "react-router-dom";
+
+// Material-UI
+import { Typography, Box } from "@mui/material";
+
+// Icons
+import FacebookOutlinedIcon from "@mui/icons-material/FacebookOutlined";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import InstagramIcon from "@mui/icons-material/Instagram";
 import WebIcon from "@mui/icons-material/Web";
+
+// Media
+import logo_CYC from "../../images/cyc-logos/logo-footer.webp";
+
 const Footer = () => {
     const navigate = useNavigate();
     return (

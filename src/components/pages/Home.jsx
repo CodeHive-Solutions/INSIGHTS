@@ -18,7 +18,7 @@ import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import cycBirthday from "../../images/home-carousel/cycBirthday.png";
-import youthFinances from "../../images/blog/youth-finances.jpg";
+import youthFinances from "../../images/home-carousel/youth-finances.png";
 import womenDay from "../../images/home-carousel/women-day.png";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 

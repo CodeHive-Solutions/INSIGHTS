@@ -1,22 +1,26 @@
 import { useEffect, useState } from "react";
-import { MenuItem, ListItemIcon, Dialog, Typography } from "@mui/material";
-import FlagIcon from "@mui/icons-material/Flag";
-import DialogContent from "@mui/material/DialogContent";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 
-import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+// Libraries
 import { getApiUrl } from "../../assets/getApi";
-import SnackbarAlert from "../common/SnackBarAlert";
+
+// Material-UI
+import {
+    Dialog,
+    Typography,
+    DialogContent,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    Box,
+    Button,
+    DialogActions,
+    DialogContentText,
+    DialogTitle,
+} from "@mui/material";
 
 const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     const claroGoalsHeader = {
