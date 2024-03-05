@@ -31,7 +31,6 @@ class BaseTestCase(APITestCase):
             {"username": "staffnet", "password": os.environ["StaffNetLDAP"]},
         )
         self.user = User.objects.get(username="staffnet")
-        self.user.save()
 
     def tearDown(self):
         """Tear down the test case."""

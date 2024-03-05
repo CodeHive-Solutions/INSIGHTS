@@ -57,36 +57,37 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
-        with connections["staffnet"].cursor() as db_connection:
-            db_connection.execute(
-                "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
-                [self.username],
-            )
-            result = db_connection.fetchone()
-            if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
-                result = ("00000000", "Administrador", "Administrador")
-                self.email = "heibert.mogollon@cyc-bpo.com"
-                # self.email = "diegozxz@hotmail.com"
-            elif not result:
-                raise ValidationError(
-                    "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
+        if not self.pk:
+            with connections["staffnet"].cursor() as db_connection:
+                db_connection.execute(
+                    "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
+                    [self.username],
                 )
-                # super(User, self).save(*args, **kwargs)
-            self.cedula = result[0]
-            self.job_title = result[1]
-            area, _ = Area.objects.get_or_create(name=result[2])
-            self.area_id = area.id
-            if not self.is_superuser:
-                self.set_unusable_password()
-            db_connection.execute(
-                "SELECT correo,correo_corporativo FROM personal_information WHERE cedula = %s",
-                [self.cedula],
-            )
-            mails = db_connection.fetchone()
-            if mails and "test" in sys.argv:
-                self.email = mails[1] or mails[0]
-            elif mails:
-                self.email = mails[0]
+                result = db_connection.fetchone()
+                if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
+                    result = ("00000000", "Administrador", "Administrador")
+                    self.email = "heibert.mogollon@cyc-bpo.com"
+                    # self.email = "diegozxz@hotmail.com"
+                elif not result:
+                    raise ValidationError(
+                        "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
+                    )
+                    # super(User, self).save(*args, **kwargs)
+                self.cedula = result[0]
+                self.job_title = result[1]
+                area, _ = Area.objects.get_or_create(name=result[2])
+                self.area_id = area.id
+                if not self.is_superuser:
+                    self.set_unusable_password()
+                db_connection.execute(
+                    "SELECT correo,correo_corporativo FROM personal_information WHERE cedula = %s",
+                    [self.cedula],
+                )
+                mails = db_connection.fetchone()
+                if mails and "test" in sys.argv:
+                    self.email = mails[1] or mails[0]
+                elif mails:
+                    self.email = mails[0]
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField
