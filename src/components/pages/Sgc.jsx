@@ -492,7 +492,6 @@ export const Sgc = () => {
         <>
             <Container
                 sx={{
-                    height: "85vh",
                     width: "100%",
                     display: "flex",
                     justifyContent: "center",
@@ -501,11 +500,11 @@ export const Sgc = () => {
                     marginTop: "6rem",
                 }}
             >
-                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
+                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Gestión Documental
                 </Typography>
                 <DataGrid
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     rows={rows}
                     editMode="row"

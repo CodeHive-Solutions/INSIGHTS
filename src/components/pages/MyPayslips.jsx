@@ -193,7 +193,7 @@ export const MyPayslips = () => {
             <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Reenviar desprendible de nomina?"}</DialogTitle>
                 <DialogContent>
-                    <Typography variant="body1" color="text.secondary">
+                    <Typography color="text.secondary">
                         El desprendible de nomina sera reenviado al correo electrónico:{" "}
                         <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail.toLowerCase()}</span>
                     </Typography>
@@ -234,8 +234,6 @@ export const MyPayslips = () => {
 
             <Container
                 sx={{
-                    height: "85vh",
-                    width: "100%",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -258,7 +256,7 @@ export const MyPayslips = () => {
                             showQuickFilter: true,
                         },
                     }}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     toolbar
                     rows={rows}

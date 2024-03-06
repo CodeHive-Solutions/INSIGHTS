@@ -57,7 +57,7 @@ const MediaCard = ({ title, subtitle, img, articleId }) => {
                 onLoad={handleImageLoaded} // Call handleImageLoaded when the image is loaded
             />
             <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
+                <Typography gutterBottom variant="h5">
                     {title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -157,8 +157,8 @@ const Blog = () => {
     };
 
     return (
-        <Box sx={{ height: "max-content", mt: "5rem" }}>
-            <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
+        <Box sx={{ minHeight: "100vh", height: "100%", mt: "5rem" }}>
+            <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                 Blog
             </Typography>
             <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>

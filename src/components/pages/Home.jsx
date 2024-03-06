@@ -166,11 +166,12 @@ const Home = () => {
                 <Typography
                     color="primary"
                     id="section1"
-                    sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
+                    variant="h4"
+                    sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
                 >
                     ¡C&C Apoyando el deporte!
                 </Typography>
-                <Typography sx={{ color: "gray", textAlign: "center" }}>
+                <Typography variant="body1" sx={{ textAlign: "center" }}>
                     En C&C respaldamos con entusiasmo el deporte y en particular el fútbol femenino. A través de nuestro patrocinio, hemos contribuido al éxito de nuestro
                     equipo Future Soccer, que recientemente se destacó al ganar el torneo de la copa Nottingham. Este logro no solo refuerza nuestro compromiso con la
                     comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir respaldando y empoderando a
@@ -197,13 +198,14 @@ const Home = () => {
                 }}
             >
                 <Typography
+                    variant="h4"
                     color="primary"
                     id="section1"
-                    sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
+                    sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
                 >
                     Cumpleaños
                 </Typography>
-                <Typography sx={{ color: "gray", display: "flex", width: "50%", justifyContent: "center", padding: "1em", fontWeight: 500, fontSize: "16px" }}>
+                <Typography variant="subtitle1" sx={{ display: "flex", width: "50%", justifyContent: "center", padding: "1em" }}>
                     ¡Feliz cumpleaños a nuestros queridos colaboradores que nos llenan de alegría y éxito! 🎉🎂{" "}
                 </Typography>
             </Box>
@@ -271,9 +273,10 @@ const Home = () => {
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: "2rem", gap: "2rem", flexWrap: "wrap" }}>
                 <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
                     <Typography
+                        variant="h4"
                         color="primary"
                         id="section1"
-                        sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontWeight: 500, fontSize: "30px", fontFamily: "Poppins" }}
+                        sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
                     >
                         Beneficios
                     </Typography>

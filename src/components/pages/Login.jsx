@@ -179,7 +179,7 @@ const Login = () => {
                                 gap: "15px",
                             }}
                         >
-                            <Typography sx={{ fontFamily: "Montserrat", fontWeight: 600 }} variant="h4">
+                            <Typography sx={{ fontFamily: "Montserrat" }} variant="h3">
                                 Intranet
                             </Typography>
 

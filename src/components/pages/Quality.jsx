@@ -165,7 +165,7 @@ const Quality = () => {
                     padding: "20px",
                 }}
             >
-                <Typography variant={"h1"} sx={{ textAlign: "center", pb: "15px", color: "white", fontWeight: "400", pt: "6rem" }}>
+                <Typography variant={"h1"} sx={{ textAlign: "center", pb: "15px", color: "white", pt: "6rem" }}>
                     Trasladar Archivos
                 </Typography>
                 <Box className="wave wave1"></Box>
@@ -174,7 +174,7 @@ const Quality = () => {
                 <Box className="wave wave4"></Box>
             </Box>
 
-            <Container sx={{ display: "flex", justifyContent: "start", alignItems: "center", flexDirection: "column", height: "max-content" }}>
+            <Container sx={{ display: "flex", justifyContent: "start", alignItems: "center", flexDirection: "column", height: "100%", minHeight: "50vh" }}>
                 <Box sx={{ display: "flex", gap: "1rem", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: "2rem" }}>
                     <TextField sx={{ width: "600px" }} value={selectedCampaign.value} onChange={handleCampaignChange} label="Campaña" select>
                         {campaigns.map((option) => (

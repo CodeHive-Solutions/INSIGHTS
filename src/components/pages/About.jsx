@@ -98,7 +98,7 @@ const About = () => {
 
     return (
         <Box sx={{ display: "flex", gap: "5rem", flexDirection: "column", width: "100%", marginTop: "6rem" }}>
-            <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
+            <Typography variant="h3" color="primary" sx={{ textAlign: "center", fontFamily: "Poppins" }}>
                 Sobre Nosotros
             </Typography>
             <Box sx={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center", flexWrap: "wrap" }}>
@@ -160,7 +160,7 @@ const About = () => {
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <img style={{ borderRadius: 5 }} src={mission2} height={300} alt="imagen-misión-cyc" />
                     <Box sx={{ width: "550px" }}>
-                        <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
+                        <Typography color="primary" sx={{ fontFamily: "Poppins" }} variant="h3">
                             Nuestra Misión
                         </Typography>
                         <Typography variant="body2" sx={{ fontSize: "16px", color: "gray" }}>
@@ -170,7 +170,7 @@ const About = () => {
                 </Box>
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <Box sx={{ width: "550px", textAlign: "justify" }}>
-                        <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
+                        <Typography color="primary" sx={{ fontFamily: "Poppins" }} variant="h3">
                             Nuestra Visión
                         </Typography>
                         <Typography variant="body2" sx={{ fontSize: "16px", color: "gray" }}>
@@ -183,7 +183,7 @@ const About = () => {
                 <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                     <img style={{ borderRadius: "8px" }} src={value1} height={300} alt="imagen-valores-corporativos-cyc" />
                     <Box sx={{ width: "550px" }}>
-                        <Typography color="primary" sx={{ fontFamily: "Poppins", fontSize: "40px", fontWeight: "500" }} variant="h5" component="div">
+                        <Typography color="primary" sx={{ fontFamily: "Poppins" }} variant="h3">
                             Nuestros Valores Corporativos
                         </Typography>
 
@@ -201,7 +201,7 @@ const About = () => {
                 </Box>
             </Container>
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", px: "5rem" }}>
-                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
+                <Typography color="primary" variant="h2" sx={{ textAlign: "center", fontFamily: "Poppins" }}>
                     Historia
                 </Typography>
                 <Box sx={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center" }}>
@@ -244,13 +244,13 @@ const About = () => {
                 </Box>
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem", alignItems: "center", px: "8rem" }}>
-                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins" }}>
+                <Typography variant="h3" color="primary" sx={{ textAlign: "center", fontFamily: "Poppins" }}>
                     Organigrama de la empresa
                 </Typography>
                 <img src={organigrama} alt="imagen-organigrama" width={"100%"} />
             </Box>
             <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                <Typography color="primary" sx={{ textAlign: "center", fontWeight: 600, fontSize: "40px", fontFamily: "Poppins", py: "2rem" }}>
+                <Typography variant="h3" color="primary" sx={{ textAlign: "center", fontFamily: "Poppins", py: "2rem" }}>
                     Nuestras Gerencias
                 </Typography>
                 <Container sx={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>

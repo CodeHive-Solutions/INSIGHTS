@@ -698,7 +698,6 @@ const AnalisisMetas = () => {
             {isLoading ? (
                 <Container
                     sx={{
-                        height: "100%",
                         justifyContent: "center",
                         alignItems: "center",
                         flexDirection: "column",
@@ -706,7 +705,7 @@ const AnalisisMetas = () => {
                         pt: "5rem",
                     }}
                 >
-                    <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
+                    <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                         Análisis de Metas
                     </Typography>
                     <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
@@ -747,10 +746,10 @@ const AnalisisMetas = () => {
                         </Box>
                     </Box>
                     <DataGrid
+                        sx={{ width: "100%", minHeight: "75vh", maxHeight: "75vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                         rows={rows}
                         editMode="row"
                         columns={columns}
-                        sx={{ maxHeight: "600px", height: "500px" }}
                         csvOptions={{
                             fileName: "customerDataBase",
                             delimiter: ";",

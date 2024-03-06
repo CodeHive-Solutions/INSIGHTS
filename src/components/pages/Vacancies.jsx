@@ -270,18 +270,19 @@ const Vacancies = () => {
         <>
             <Container
                 sx={{
-                    height: "max-content",
+                    minHeight: "80vh",
+                    height: "100%",
                     width: "100%",
                     display: "flex",
                     gap: "1rem",
-                    justifyContent: "center",
+                    justifyContent: "start",
                     alignItems: "center",
                     flexDirection: "column",
                     marginY: "6rem",
                 }}
             >
-                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Vacantes disponibles
+                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h3"}>
+                    Vacantes Disponibles
                 </Typography>
                 {addPermission && (
                     <Button variant="contained" startIcon={<AddIcon></AddIcon>} onClick={handleOpenAddVacancy}>
