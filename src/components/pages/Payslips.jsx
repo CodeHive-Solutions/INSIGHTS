@@ -39,6 +39,7 @@ export const Payslips = () => {
     const [fileName, setFileName] = useState("Subir archivo");
     const [payslipFile, setPayslipFile] = useState(null);
     const [previewRows, setPreviewRows] = useState([]);
+    const [loadingPreview, setLoadingPreview] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -181,6 +182,15 @@ export const Payslips = () => {
         },
     ];
 
+    // remove items from an array
+    const removeItem = (array, item) => {
+        const index = array.indexOf(item);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+    };
+    
+    
     const handleOpenDialog = () => setOpenDialog(true);
     const handleCloseDialog = () => {
         setOpenDialog(false);
@@ -226,6 +236,8 @@ export const Payslips = () => {
             "biweekly_period",
             "transport_allowance",
             "bonus_paycheck",
+            "biannual_bonus",
+            "severance",
             "gross_earnings",
             "healthcare_contribution",
             "pension_contribution",
@@ -236,8 +248,8 @@ export const Payslips = () => {
             "net_pay",
         ];
 
-        for (let i = 0; i < lines.length; i++) {
-            const obj = { id: i + 1 }; // Add an id field
+        for (let i = 1; i < lines.length; i++) {
+            const obj = { id: i }; // Add an id field
             const row = lines[i].split(",");
 
             for (let j = 0; j < headers.length; j++) {
@@ -271,7 +283,7 @@ export const Payslips = () => {
     };
 
     const submitPayslipFile = async () => {
-        setLoading(true);
+        setLoadingPreview(true);
 
         try {
             const formData = new FormData();
@@ -295,12 +307,12 @@ export const Payslips = () => {
                 throw new Error(data.detail);
             } else if (response.status === 201) {
                 handleCloseDialog();
-                setLoading(false);
+                setLoadingPreview(false);
                 getPayslips();
                 showSnack("success", "Desprendibles cargados y enviados correctamente");
             }
         } catch (error) {
-            setLoading(false);
+            setLoadingPreview(false);
             console.error(error);
             showSnack("error", error.message);
         }
@@ -308,6 +320,9 @@ export const Payslips = () => {
 
     return (
         <>
+            <Fade in={loading} unmountOnExit>
+                <LinearProgress variant="query" sx={{ width: "100%", position: "absolute", top: 0, zIndex: "100000" }} />
+            </Fade>
             <Container
                 sx={{
                     display: "flex",
@@ -337,9 +352,9 @@ export const Payslips = () => {
             </Container>
             <Dialog fullWidth={true} maxWidth="xl" open={openDialog} onClose={handleCloseDialog}>
                 <Fade
-                    in={loading}
+                    in={loadingPreview}
                     style={{
-                        transitionDelay: loading ? "800ms" : "0ms",
+                        transitionDelay: loadingPreview ? "800ms" : "0ms",
                     }}
                     unmountOnExit
                 >
@@ -349,18 +364,7 @@ export const Payslips = () => {
                 <DialogContent>
                     <Button sx={{ width: "250px", overflow: "hidden", mb: "2rem" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
                         {fileName}
-                        <VisuallyHiddenInput
-                            id="file"
-                            name="file"
-                            type="file"
-                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                            onChange={
-                                handleFileInputChange
-                                // Formik doesn't automatically handle file inputs, so we need to manually
-                                // update the 'file' field when a file is selected
-                                // formik.setFieldValue("file", event.currentTarget.files[0]);
-                            }
-                        />
+                        <VisuallyHiddenInput id="file" name="file" type="file" accept=".csv" onChange={handleFileInputChange} />
                     </Button>
                     <PayslipsPreview rows={previewRows} />
                     <Button sx={{ mt: "1rem" }} variant="contained" onClick={submitPayslipFile} type="submit" startIcon={<ArrowCircleUpIcon></ArrowCircleUpIcon>}>
@@ -372,5 +376,7 @@ export const Payslips = () => {
         </>
     );
 };
-
+for (let index = 0; index < array.length; index++) {
+    const element = array[index];
+}
 export default Payslips;

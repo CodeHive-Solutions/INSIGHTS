@@ -135,7 +135,10 @@ const Quality = () => {
                     } else if (response.status === 401) {
                         showSnack("error", "No tiene permiso para realizar esta acción.");
                         throw new Error(response.statusText);
+                    } else {
+                        showSnack("error", "Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.");
                     }
+                    throw new Error(response.statusText);
                 }
                 if (response.status === 200) {
                     const data = await response.json();

@@ -58,6 +58,30 @@ const columns = [
             }).format(params.value),
     },
     {
+        field: "biannual_bonus",
+        headerName: "Prima",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => params.row.biannual_bonus * 1,
+        valueFormatter: (params) =>
+            new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+            }).format(params.value),
+    },
+    {
+        field: "severance",
+        headerName: "Cesantías",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => params.row.severance * 1,
+        valueFormatter: (params) =>
+            new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+            }).format(params.value),
+    },
+    {
         field: "gross_earnings",
         headerName: "Total Devengado",
         width: 130,
