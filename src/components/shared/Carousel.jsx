@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+
+// Libraries
 import Carousel from "react-material-ui-carousel";
-import { Box } from "@mui/material";
-import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
+
+// Material-UI
+import { Box, Typography } from "@mui/material";
 
 function CarouselComponent(props) {
     const { items, height, width, contain, day } = props;
@@ -33,7 +36,7 @@ function Item(props) {
             setIsVacancy(true);
         } else if (props.item.image.includes("cuestionario")) {
             setIsVacancy(true);
-        } else if (props.item.image.includes("finanzas-jovenes")) {
+        } else if (props.item.image.includes("youth-finances")) {
             setIsVacancy(true);
         }
     }, []);
@@ -47,7 +50,7 @@ function Item(props) {
             navigate("/logged/autoevaluacion");
         } else if (isVacancy && props.item.image.includes("cuestionario")) {
             window.open("https://forms.office.com/r/Lx5TKvZrqq?origin=lprLink");
-        } else if (isVacancy && props.item.image.includes("finanzas-jovenes")) {
+        } else if (isVacancy && props.item.image.includes("youth-finances")) {
             navigate("/logged/blog/article/8");
         } else if (isVacancy) {
             navigate("/logged/vacancies/");

@@ -3,52 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
     <title>Employment Certification</title>
 </head>
 <style>
     body {
         font-family: Montserrat, sans-serif;
-        margin: 0;
+        margin: 10%;
         padding: 0;
-        font-size: 26px;
+        font-size: 22px;
+        text-align: justify;
+    }
+    p {
+        margin-bottom: 4%;
     }
     h1 {
         text-align: center;
+        margin-top: 30%;
+        /* margin-bottom: 10%; */
+    }
+    h2{
+        margin-top: 0%;
+        margin-bottom: 10%;
+    }
+    h4, h5 {
+        text-align: center;
+        margin-top: 0%;
+        margin-bottom: 5%;
     }
     h6 {
+        margin-left: 15%;
         font-weight: normal;
+        color: rgba(0, 0, 0, 0.5);
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
     .background-image {
                 position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-image: url('data:image/png;base64,{{ logo }}');
+                top: 29%;
+                left: 4%;
+                width: 110%;
+                height: 110%;
+                background-image: url('data:image/png;base64,{{ logo_cyc }}');
+                /* background-image: url('./just_logo.png'); */
                 background-size: contain;
                 background-repeat: no-repeat;
                 background-position: center;
                 z-index: -1;
                 opacity: 0.2;
     }
-    .bold {
-        font-weight: bold;
+
+    /* .bold { */
+        /* font-weight: 600; */
+    /* } */
+    .center {
+        text-align: center;
+    }
+    .text {
+        color: lightgray;
+        border-left: 2px solid lightgray;
+        margin-left: 5%;
+        padding-left: 6px;
+    }
+    #mirrored-text {
+        /* opacity: 0.5; Adjust opacity as needed */
+        font-family: Arial, Helvetica, sans-serif;
+        color: red;
+    }
+    .text, #mirrored-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-size: 20px;
+    }
+    #logo_bpo {
+        /* display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        flex: 1;
+        position: absolute;
+        word-wrap: break-word;
+        top: 0;
+        font-size: 20px;
+        margin-right: 0; */
+        /* position: relative; */
+        /* left: 60%; */
+        /* width: 30%; */
     }
 </style>
 <body>
+    <div id="logo_bpo">
+        <img src="data:image/png;base64,{{ logo_bpo }}" alt="Logo" width="30%">
+        <p class="text">
+            www.cyc-bpo.com<br>
+            info@cyc-bpo.com<br>
+            PBX: (57 +601) 746 11 66<br>
+            Bogotá D.C.<br>
+            Medellín
+            <span id="mirrored-text">
+                www.cyc-bpo.com<br>
+                info@cyc-bpo.com<br>
+                PBX: (57 +601) 746 11 66<br>
+                Bogotá D.C.<br>
+                Medellín
+            </span>
+        </p>
+    </div>
     <div class="background-image"></div>
     <h1>C&C services S.A.S</h1>
-    <p><h2>C&C certifica que: </h2></p>
-    <p>El señor(a) <span class="bold">{{user.get_full_name}}</span> identificado(a) con cédula de ciudadanía No. <span class="bold">{{user.identification}}</span> labora en nuestra empresa desde el <span class="bold">{{employment.start_date}}</span> hasta la fecha actual</p>
-    <p>Sus condiciones laborales son las siguientes:</p>
-    <p>Cargo: <span class="bold">{{employment.position}}</span></p>
-    <p>Salario: <span class="bold">{{employment.salary}}</span></p>
-    <p>Horario: <span class="bold">{{employment.schedule}}</span></p>
-    <p>El presente certificado se expide a solicitud del interesado para los fines que considere conveniente.</p>
+    <h4>NIT 900008653-0</h4>
+    <p><h2 class="center">Certifica: </h2></p>
+    <p>Que el/la señor(a) <span class="bold">{{user.get_full_name}}</span> quien se identifica con cédula de ciudadanía No. <span class="bold">{{user.cedula}}</span> de {{user_data.expedition_city}} labora en esta compañía y sus condiciones son las siguientes:</p>
+    <p>TIPO DE CONTRATO: <span class="bold">{{user_data.contract_type}}</span></p>
+    <p>FECHA DE INGRESO: <span class="bold">{{user_data.start_date}}</span></p>
+    <p>CARGO: <span class="bold">{{user_data.position}}</span></p>
+    <p>SALARIO: <span class="bold"> {{user_data.salary_text}} (${{user_data.salary_number}}) mensuales.</span></p>
+    <p>Esta certificación se expide el día {{user_data.today}} a solicitud del interesado y con destino a quien interese.</p>
     <p>Atentamente,</p>
-    <img src="data:image/png;base64,{{ payroll_signature }}" alt="Signature" width="100" height="100">
+    <img src="data:image/png;base64,{{ payroll_signature }}" alt="Signature" width="25%" height="25%">
+    <!-- <img src="./payroll_signature.png" alt="Signature" width="20%"> -->
     <p class="bold">ANDRES LEONARDO CASTRO R.</p>
     <p class="bold">Director de Nomina y Administración de Personal</p>
-    <p><h6>Para verificar la autenticidad de este documento, por favor enviar un correo a: <span class="bold">certificaciones@cyc-bpo.com</span></h6></p>
+    <p><i><h6>*Para validar la información envía un correo a: <span class="bold">certificaciones@cyc-bpo.com</span></h6></i></p>
 </body>
 </html>

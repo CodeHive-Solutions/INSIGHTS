@@ -1,7 +1,5 @@
-import React, { useState, createContext } from "react";
-import { Snackbar } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import Button from "@mui/material/Button";
+// Material-UI
+import { Snackbar, Alert, Button } from "@mui/material";
 
 const SnackbarAlert = ({ message, severity, openSnack, closeSnack, action }) => {
     if (!action) {

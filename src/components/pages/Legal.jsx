@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+// Libraries
 import { motion, useIsPresent } from "framer-motion";
-import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from "@mui/material";
-
-import SnackbarAlert from "../common/SnackBarAlert";
 import * as Yup from "yup";
 import { Formik, Form, useField } from "formik";
-
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
-
-import { getApiUrl } from "../../assets/getApi";
 import { useNavigate } from "react-router-dom";
 
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from "@mui/material";
 import {
     DataGrid,
     GridToolbarContainer,
@@ -23,9 +19,15 @@ import {
     GridToolbarColumnsButton,
     GridToolbarDensitySelector,
     GridActionsCellItem,
-    GridRowEditStopReasons,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
+
+// Icons
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SaveIcon from "@mui/icons-material/Save";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),
@@ -368,8 +370,6 @@ export const Legal = () => {
         <>
             <Container
                 sx={{
-                    height: "85vh",
-                    width: "100%",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -377,11 +377,11 @@ export const Legal = () => {
                     marginTop: "6rem",
                 }}
             >
-                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
+                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Contratos y Pólizas Legales
                 </Typography>
                 <DataGrid
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     rows={rows}
                     slots={{

@@ -1,16 +1,20 @@
-import { useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
+
+// Libraries
 import { useDropzone } from "react-dropzone";
-import Box from "@mui/material/Box";
+import { useNavigate } from "react-router-dom";
+
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { Typography, Box, Collapse } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+
+// Icons
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { Typography } from "@mui/material";
-import Collapse from "@mui/material/Collapse";
-import { useState } from "react";
-import { useEffect } from "react";
-import LoadingButton from "@mui/lab/LoadingButton";
-import SnackbarAlert from "../common/SnackBarAlert";
-import { useNavigate } from "react-router-dom";
-import { getApiUrl } from "../../assets/getApi";
 
 const UploadFiles = () => {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -140,7 +144,7 @@ const UploadFiles = () => {
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-            <Typography variant="h6" sx={{ color: "primary.main", mb: "55px", fontSize: "30px" }}>
+            <Typography variant={"h3"} sx={{ color: "primary.main", mb: "55px" }}>
                 Cargue de Archivos
             </Typography>
             <Box

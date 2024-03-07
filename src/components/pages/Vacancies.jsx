@@ -1,27 +1,32 @@
-import React, { useState, useEffect, useRef } from "react";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Card from "@mui/material/Card";
-import CardMedia from "@mui/material/CardMedia";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import { Dialog } from "@mui/material";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContentText from "@mui/material/DialogContentText";
+import { useState, useEffect, useRef } from "react";
+
+// Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
-import asesorNegociacionVacante from "../../images/vacancies/asesor-negociacion-vacante.png";
-import asesorComercialVacante from "../../images/vacancies/asesor-comercial-vacante.png";
-import asesorNegociacionSinExperienciaVacante from "../../images/vacancies/asesor-negociacion-sin-experiencia.png";
-import { Collapse } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { styled } from "@mui/material/styles";
-import AddIcon from "@mui/icons-material/Add";
-import IconButton from "@mui/material/IconButton";
+
+// Material-UI
+import {
+    Container,
+    Dialog,
+    Collapse,
+    styled,
+    Typography,
+    Card,
+    CardMedia,
+    Button,
+    Box,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    DialogContentText,
+    TextField,
+    IconButton,
+} from "@mui/material";
+
+// Icons
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import AddIcon from "@mui/icons-material/Add";
 
 const Vacancies = () => {
     const [openVacancy, setOpenVacancy] = useState(false);
@@ -265,18 +270,19 @@ const Vacancies = () => {
         <>
             <Container
                 sx={{
-                    height: "max-content",
+                    minHeight: "80vh",
+                    height: "100%",
                     width: "100%",
                     display: "flex",
                     gap: "1rem",
-                    justifyContent: "center",
+                    justifyContent: "start",
                     alignItems: "center",
                     flexDirection: "column",
                     marginY: "6rem",
                 }}
             >
-                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
-                    Vacantes disponibles
+                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h3"}>
+                    Vacantes Disponibles
                 </Typography>
                 {addPermission && (
                     <Button variant="contained" startIcon={<AddIcon></AddIcon>} onClick={handleOpenAddVacancy}>

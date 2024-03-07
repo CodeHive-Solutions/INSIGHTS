@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+
+// Libraries
 import { useParams } from "react-router-dom";
 
 // Material-UI
@@ -399,10 +401,10 @@ const ArticlePage = () => {
     return (
         <Container sx={{ height: "max-content" }}>
             <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", px: "5rem", pt: "7rem", pb: "2rem", gap: "2rem" }}>
-                <Typography variant="h4" sx={{ textAlign: "center", fontWeight: "bolder", fontSize: "3em", fontFamily: "Poppins" }}>
+                <Typography variant="h2" sx={{ textAlign: "center", fontFamily: "Poppins" }}>
                     {article.title}
                 </Typography>
-                <Typography variant="h4" sx={{ textAlign: "center", fontWeight: "semi-bold", fontSize: "20px", fontFamily: "Poppins" }}>
+                <Typography variant="subtitle1" sx={{ textAlign: "center", fontFamily: "Poppins" }}>
                     {article.subtitle}
                 </Typography>
             </Box>

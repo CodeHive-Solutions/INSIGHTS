@@ -1,14 +1,14 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import SnackbarAlert from "../common/SnackBarAlert";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import { getApiUrl } from "../../assets/getApi";
-import { Tooltip } from "@mui/material";
+import { useState, useEffect } from "react";
+
+// Libraries
 import { useNavigate } from "react-router-dom";
 
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { Container, Box, Typography } from "@mui/material";
 import {
     DataGrid,
     GridToolbarContainer,
@@ -16,7 +16,6 @@ import {
     GridToolbarQuickFilter,
     GridToolbarColumnsButton,
     GridToolbarDensitySelector,
-    GridActionsCellItem,
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 
@@ -106,8 +105,6 @@ export const VacanciesReferred = () => {
         <>
             <Container
                 sx={{
-                    height: "85vh",
-                    width: "100%",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -115,11 +112,11 @@ export const VacanciesReferred = () => {
                     marginTop: "6rem",
                 }}
             >
-                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
+                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Vacantes referidas
                 </Typography>
                 <DataGrid
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     rows={rows}
                     slots={{

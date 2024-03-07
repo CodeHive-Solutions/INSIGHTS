@@ -1,23 +1,16 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
+
+// Libraries
 import { motion, useIsPresent } from "framer-motion";
-import Container from "@mui/material/Container";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import SnackbarAlert from "../common/SnackBarAlert";
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
-import MenuItem from "@mui/material/MenuItem";
-import { styled } from "@mui/material/styles";
 import * as Yup from "yup";
 import { Formik, Form, useField, useFormikContext } from "formik";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { getApiUrl } from "../../assets/getApi";
-import { Tooltip } from "@mui/material";
 
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi";
+
+// Material-UI
+import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, MenuItem, styled, Tooltip } from "@mui/material";
 import {
     GridRowModes,
     DataGrid,
@@ -31,7 +24,9 @@ import {
     GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 
-// icons
+// Icons
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -497,7 +492,6 @@ export const Sgc = () => {
         <>
             <Container
                 sx={{
-                    height: "85vh",
                     width: "100%",
                     display: "flex",
                     justifyContent: "center",
@@ -506,11 +500,11 @@ export const Sgc = () => {
                     marginTop: "6rem",
                 }}
             >
-                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
+                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Gestión Documental
                 </Typography>
                 <DataGrid
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     rows={rows}
                     editMode="row"

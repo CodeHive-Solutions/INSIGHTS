@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 // Libraries
 import { Formik, Form, useField, Field } from "formik";
@@ -173,7 +173,7 @@ const EthicalLine = () => {
                     padding: "20px",
                 }}
             >
-                <Typography variant={"h1"} sx={{ textAlign: "center", pb: "15px", color: "white", fontWeight: "400", pt: "6rem" }}>
+                <Typography variant={"h1"} sx={{ textAlign: "center", pb: "15px", color: "white", pt: "6rem" }}>
                     Linea Ética
                 </Typography>
                 <Box className="wave wave1"></Box>
@@ -195,17 +195,13 @@ const EthicalLine = () => {
                         La línea ética es un canal de comunicación confidencial que permite a los empleados reportar de manera anónima cualquier conducta que consideren
                         contraria a los valores y principios de la empresa.
                     </Typography>
-                    <Typography sx={{ fontWeight: "500" }} variant="h5">
-                        Objetivo
-                    </Typography>
+                    <Typography variant="h4">Objetivo</Typography>
                     <Typography variant="body1">
                         El objetivo de la línea ética es promover un ambiente de trabajo seguro y respetuoso, en el que todos los empleados se sientan cómodos para
                         denunciar cualquier situación que pueda poner en riesgo la integridad de las personas, los recursos de la empresa o el cumplimiento de sus
                         obligaciones legales.
                     </Typography>
-                    <Typography sx={{ fontWeight: "500" }} variant="h5">
-                        ¿Qué puedes reportar?
-                    </Typography>
+                    <Typography variant="h4">¿Qué puedes reportar?</Typography>
                     <ul>
                         <li>Fraude y Engaño</li>
                         <li>Acoso y Discriminación</li>
@@ -214,23 +210,17 @@ const EthicalLine = () => {
                         <li>Ignorar el Canal de Denuncia Ética</li>
                         <li>Falta de Transparencia</li>
                     </ul>
-                    <Typography sx={{ fontWeight: "500" }} variant="h5">
-                        ¿Cómo reportar?
-                    </Typography>
+                    <Typography variant="h4">¿Cómo reportar?</Typography>
                     <ul>
                         <li>Para realizar un reporte, le invitamos a completar el formulario disponible al final de esta página. Agradecemos su colaboración.</li>
                         {/* <li>Completando el formulario en línea en la página web de la empresa</li> */}
                     </ul>
-                    <Typography sx={{ fontWeight: "500" }} variant="h5">
-                        Confidencialidad
-                    </Typography>
+                    <Typography variant="h4">Confidencialidad</Typography>
                     <Typography variant="body1">
                         La empresa se compromete a garantizar la confidencialidad de las denuncias recibidas a través de la línea ética. Las denuncias se investigarán de
                         manera imparcial y objetiva, y se tomarán las medidas adecuadas para proteger a los denunciantes.
                     </Typography>
-                    <Typography sx={{ fontWeight: "500" }} variant="h5">
-                        ¿Qué ocurre si reporto una conducta?
-                    </Typography>
+                    <Typography variant="h4">¿Qué ocurre si reporto una conducta?</Typography>
                     <Typography variant="body1">
                         Si reportas una conducta a través de la línea ética, la empresa iniciará una investigación para determinar si la denuncia es fundada. Si la
                         denuncia es fundada, la empresa tomará las medidas adecuadas para corregir la situación y garantizar que no vuelva a ocurrir.

@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+
+// Libraries
+import { useNavigate } from "react-router-dom";
+import { Formik, Form, useField } from "formik";
+import * as Yup from "yup";
+
+// Custom Components
+import SnackbarAlert from "../common/SnackBarAlert";
+import { getApiUrl } from "../../assets/getApi.js";
+
+// Material-UI
 import { Box, Typography, Button, TextField, Link, Alert, Collapse, LinearProgress } from "@mui/material";
+
+// Icons
 import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
 import Diversity3Icon from "@mui/icons-material/Diversity3";
 import login_image from "../../images/login/new-login-image.jpg";
-import { useNavigate } from "react-router-dom";
-import { Formik, Form, useField, useFormikContext } from "formik";
-import * as Yup from "yup";
-import SnackbarAlert from "../common/SnackBarAlert";
-import apiRequest from "../../assets/apiRequest";
-import { useCookies } from "react-cookie";
-import { getApiUrl } from "../../assets/getApi.js";
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required("Campo requerido"),
@@ -69,9 +75,6 @@ const Login = () => {
         setLoadingBar(true);
 
         try {
-            // Use the apiRequest function to make the API request
-            // const response = await apiRequest("token/obtain/", "POST", JSON.stringify(values), "application/json");
-
             const response = await fetch(`${getApiUrl()}token/obtain/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -109,6 +112,7 @@ const Login = () => {
                 localStorage.setItem("permissions", JSON.stringify(data.permissions));
                 localStorage.setItem("cedula", JSON.stringify(data.cedula));
                 localStorage.setItem("cargo", JSON.stringify(data.cargo));
+                localStorage.setItem("email", JSON.stringify(data.email));
                 navigate("/logged/home");
             }
         } catch (error) {
@@ -175,7 +179,7 @@ const Login = () => {
                                 gap: "15px",
                             }}
                         >
-                            <Typography sx={{ fontFamily: "Montserrat", fontWeight: 600 }} variant="h4">
+                            <Typography sx={{ fontFamily: "Montserrat" }} variant="h3">
                                 Intranet
                             </Typography>
 

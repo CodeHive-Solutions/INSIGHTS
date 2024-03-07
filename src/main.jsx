@@ -1,34 +1,35 @@
 import "./index.css";
 import React from "react";
+
+// Libraries
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ReactDOM from "react-dom/client";
+import { AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { useOutlet } from "react-router-dom";
+
+// Material-UI
+import CssBaseline from "@mui/material/CssBaseline";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+// Custom Components
 import ErrorPage from "./components/pages/ErrorPage";
 import Login from "./components/pages/Login";
 import Home from "./components/pages/Home";
 import Blog from "./components/pages/Blog";
 import Article from "./components/pages/Article";
 import Root from "./components/container/root";
-import ReactDOM from "react-dom/client";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import CssBaseline from "@mui/material/CssBaseline";
 import About from "./components/pages/About";
 import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
-import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
-import { useOutlet } from "react-router-dom";
-import ImageUploader from "./components/Test";
 import UploadFiles from "./components/pages/UploadFiles";
 import EthicalLine from "./components/pages/EthicalLine";
 import BasicDocument from "./components/shared/GoalsPDF";
 import Quality from "./components/pages/Quality";
 import Legal from "./components/pages/Legal";
 import Vacancies from "./components/pages/Vacancies";
-import CardSlider from "./components/pages/CardSlider";
 import VacanciesReferred from "./components/pages/VacanciesReferred";
 import RiskEvents from "./components/pages/RiskEvents";
-import Test from "./components/pages/Test";
-import Valentin from "./components/pages/Valentin";
-import AutoEvaluation from "./components/pages/AutoEvaluation";
 import Promotions from "./components/pages/Promotions";
 import Payslips from "./components/pages/Payslips";
 import MyPayslips from "./components/pages/MyPayslips";
@@ -131,18 +132,6 @@ const router = createBrowserRouter([
             {
                 path: "risk-events",
                 element: <RiskEvents />,
-            },
-            {
-                path: "test",
-                element: <Test />,
-            },
-            {
-                path: "valentin",
-                element: <Valentin />,
-            },
-            {
-                path: "autoevaluacion",
-                element: <AutoEvaluation />,
             },
             {
                 path: "promotions",

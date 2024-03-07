@@ -31,12 +31,12 @@ def send_payslip(payslips):
             False,
             options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
         )
-        # print("Sending mail to", payslip.email)
+        # print("Sending mail to", payslip.email)asdas
         errors = send_email(
             f"Desprendible de nomina para {payslip.title}",
             "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-            [payslip.email],
-            # ["carrenosebastian54@gmail.com"],
+            # [payslip.email],
+            ["carrenosebastian54@gmail.com"],
             attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
         )
         if errors:
@@ -77,7 +77,17 @@ class PayslipViewSet(viewsets.ModelViewSet):
         if not "file" in request.data:
             return Response({"error": "Debes subir un archivo"}, status=400)
         file_obj = request.data["file"]
-        file_content = file_obj.read().decode("utf-8")
+        try:
+            file_content = file_obj.read().decode("utf-8")
+        except UnicodeDecodeError:
+            try:
+                file_content = file_obj.read().decode("latin-1")
+                print("Latin")
+            except UnicodeDecodeError:
+                return Response(
+                    {"error": "Asegúrate de guardar el archivo en formato CSV UTF-8"},
+                    status=400,
+                )
         rows = file_content.split("\n")[1:]
         payslips = []
 

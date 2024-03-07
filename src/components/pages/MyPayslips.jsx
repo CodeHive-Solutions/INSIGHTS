@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Material-UI
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import { Tooltip } from "@mui/material";
+import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 
 // Icons
@@ -18,12 +16,18 @@ export const MyPayslips = () => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
+    const [openDialog, setOpenDialog] = useState(false);
+    const [openCollapse, setOpenCollapse] = useState(false);
+    const [paySlipId, setPaySlipId] = useState(null);
+    const [disabled, setDisabled] = useState(false);
+    const currentEmail = JSON.parse(localStorage.getItem("email"));
+    const emailRef = useRef(null);
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
-    const getVacanciesReferred = async () => {
+    const getPayslips = async () => {
         try {
             const response = await fetch(`${getApiUrl()}payslips/`, {
                 method: "GET",
@@ -43,7 +47,7 @@ export const MyPayslips = () => {
     };
 
     useEffect(() => {
-        getVacanciesReferred();
+        getPayslips();
     }, []);
 
     const showSnack = (severity, message, error) => {
@@ -55,7 +59,60 @@ export const MyPayslips = () => {
         }
     };
 
+    const handleCollapse = () => {
+        setOpenCollapse(!openCollapse);
+        emailRef.current.value = "";
+    };
+
+    const handleOpenDialog = (id) => {
+        setPaySlipId(id);
+        setOpenDialog(true);
+    };
+
     const handleCloseSnack = () => setOpenSnack(false);
+
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setOpenCollapse(false);
+        setPaySlipId(null);
+    };
+
+    const handleResend = async () => {
+        setDisabled(true);
+        const formData = new FormData();
+
+        if (emailRef.current && emailRef.current.value) {
+            formData.append("email", emailRef.current.value);
+        }
+
+        try {
+            const response = await fetch(`${getApiUrl()}payslips/${paySlipId}/resend/`, {
+                method: "POST",
+                credentials: "include",
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
+                } else if (response.status === 400) {
+                    throw new Error(data.Error);
+                }
+                throw new Error(data.detail);
+            } else if (response.status === 201) {
+                showSnack("success", "Desprendible reenviado correctamente");
+                setPaySlipId(null);
+                setDisabled(false);
+                setOpenDialog(false);
+                setOpenCollapse(false);
+            }
+        } catch (error) {
+            console.error(error);
+            showSnack("error", error.message);
+            setDisabled(false);
+        }
+    };
 
     const columns = [
         { field: "id", headerName: "ID", width: 75, editable: false },
@@ -122,7 +179,7 @@ export const MyPayslips = () => {
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => handleClickFile(GridRowParams.id)}
+                            onClick={() => handleOpenDialog(GridRowParams.row.id)}
                         />
                     </Tooltip>,
                 ];
@@ -132,10 +189,51 @@ export const MyPayslips = () => {
 
     return (
         <>
+            {/* Dialog MUI component */}
+            <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                <DialogTitle id="alert-dialog-title">{"¿Reenviar desprendible de nomina?"}</DialogTitle>
+                <DialogContent>
+                    <Typography color="text.secondary">
+                        El desprendible de nomina sera reenviado al correo electrónico:{" "}
+                        <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail.toLowerCase()}</span>
+                    </Typography>
+                    <Collapse in={openCollapse}>
+                        <TextField
+                            sx={{ mt: "1rem" }}
+                            inputRef={emailRef}
+                            autoFocus
+                            margin="dense"
+                            id="email"
+                            label="Correo electrónico"
+                            type="email"
+                            fullWidth
+                            variant="standard"
+                        />
+                    </Collapse>
+                    <Box sx={{ display: "flex", justifyContent: "space-between", mt: "1rem" }}>
+                        <Box>
+                            <Collapse in={!openCollapse}>
+                                <Button variant="outlined" sx={{ mt: "1rem" }} onClick={handleCollapse}>
+                                    Ese no es mi correo
+                                </Button>
+                            </Collapse>
+                        </Box>
+                        <Box>
+                            <Button disabled={disabled} variant="contained" sx={{ mt: "1rem", mx: "1rem" }} onClick={handleCloseDialog} color="primary">
+                                Cancelar
+                            </Button>
+                            <Button disabled={disabled} variant="contained" sx={{ mt: "1rem" }} onClick={handleResend} color="primary">
+                                Enviar
+                            </Button>
+                        </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
+
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+
             <Container
                 sx={{
-                    height: "85vh",
-                    width: "100%",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
@@ -158,14 +256,12 @@ export const MyPayslips = () => {
                             showQuickFilter: true,
                         },
                     }}
-                    sx={{ width: "100%" }}
+                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     toolbar
                     rows={rows}
                 ></DataGrid>
             </Container>
-
-            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
 };
