@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 from services.emails import send_email
 from users.models import User
 from django.template.loader import render_to_string
+from django.db import connections
 from django.conf import settings
 from .models import Payslip
 from .serializers import PayslipSerializer
@@ -32,13 +33,14 @@ def send_payslip(payslips):
             options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
         )
         # print("Sending mail to", payslip.email)asdas
-        errors = send_email(
-            f"Desprendible de nomina para {payslip.title}",
-            "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-            # [payslip.email],
-            ["carrenosebastian54@gmail.com"],
-            attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
-        )
+        # errors = send_email(
+        #     f"Desprendible de nomina para {payslip.title}",
+        #     "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
+        #     # [payslip.email],
+        #     ["carrenosebastian54@gmail.com"],
+        #     attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
+        # )
+        errors = None
         if errors:
             return Response({"error": "Error enviando el correo"}, status=500)
         emails.append(payslip.email)
@@ -80,14 +82,10 @@ class PayslipViewSet(viewsets.ModelViewSet):
         try:
             file_content = file_obj.read().decode("utf-8")
         except UnicodeDecodeError:
-            try:
-                file_content = file_obj.read().decode("latin-1")
-                print("Latin")
-            except UnicodeDecodeError:
-                return Response(
-                    {"error": "Asegúrate de guardar el archivo en formato CSV UTF-8"},
-                    status=400,
-                )
+            return Response(
+                {"error": "Asegúrate de guardar el archivo en formato CSV UTF-8."},
+                status=400,
+            )
         rows = file_content.split("\n")[1:]
         payslips = []
 
@@ -129,6 +127,11 @@ class PayslipViewSet(viewsets.ModelViewSet):
                 email = user.email
                 name = user.get_full_name()
             else:
+                with connections["staffnet"].cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM staff WHERE cedula = %s", [data[1]],
+                    )
+                    user = cursor.fetchone()
                 return Response(
                     {
                         "Error": "No se encontró el usuario, asegúrate de que esta registrado en la intranet",

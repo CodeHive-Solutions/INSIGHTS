@@ -33,6 +33,7 @@ class User(AbstractUser):
     # email = None
     area = models.ForeignKey(
         "hierarchy.Area",
+
         on_delete=models.CASCADE,
         null=False,
         blank=False,
