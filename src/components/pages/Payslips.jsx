@@ -181,15 +181,6 @@ export const Payslips = () => {
             },
         },
     ];
-
-    // remove items from an array
-    const removeItem = (array, item) => {
-        const index = array.indexOf(item);
-        if (index > -1) {
-            array.splice(index, 1);
-        }
-    };
-    
     
     const handleOpenDialog = () => setOpenDialog(true);
     const handleCloseDialog = () => {
@@ -376,7 +367,6 @@ export const Payslips = () => {
         </>
     );
 };
-for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-}
+
+
 export default Payslips;
