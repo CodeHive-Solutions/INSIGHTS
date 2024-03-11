@@ -1,6 +1,8 @@
 """This file contains the custom user model for the users app."""
 
+from enum import unique
 import logging
+from math import e
 import os
 import sys
 from django.contrib.auth.models import AbstractUser
@@ -25,6 +27,8 @@ class User(AbstractUser):
     """Custom user model."""
 
     cedula = models.CharField(max_length=20, null=False, blank=False, unique=True)
+    username = models.CharField(max_length=150, null=True, blank=True, unique=True)
+    last_name = models.CharField(max_length=30, null=True, blank=True)
     # profile_picture = models.ImageField(
     #     upload_to="images/pictures/", validators=[validate_file_extension]
     # )
@@ -33,7 +37,6 @@ class User(AbstractUser):
     # email = None
     area = models.ForeignKey(
         "hierarchy.Area",
-
         on_delete=models.CASCADE,
         null=False,
         blank=False,
@@ -58,12 +61,21 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
-        if not self.pk:
+        if not self.pk or self.cedula:
+            print("CREANDO USER", self.username, self.cedula, self.pk)
             with connections["staffnet"].cursor() as db_connection:
-                db_connection.execute(
-                    "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
-                    [self.username],
-                )
+                if not self.cedula:
+                    db_connection.execute(
+                        "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
+                        [self.username],
+                    )
+                else:
+                    db_connection.execute(
+                        "SELECT cedula, cargo,campana_general FROM employment_information WHERE cedula = %s",
+                        [self.cedula],
+                    )
+                    self.pk = User.objects.filter(cedula=self.cedula).first()
+                    print("PK", self.pk)
                 result = db_connection.fetchone()
                 if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
                     result = ("00000000", "Administrador", "Administrador")
@@ -99,6 +111,9 @@ class User(AbstractUser):
                 and type(getattr(self, field.attname)) == str
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
+        print(User.objects.filter().first())
+        print(User.objects.filter(cedula=self.cedula).first())
+        print("GUARDANDO")
         super(User, self).save(*args, **kwargs)
 
 

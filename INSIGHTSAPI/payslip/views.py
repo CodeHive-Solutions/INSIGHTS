@@ -109,19 +109,19 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     },
                     status=400,
                 )
-            elif "test" in sys.argv and not user:
-                usernames = ["heibert.mogollon", "juan.carreno"]
-                identification = data[1]
-                for i in range(2):
-                    User.objects.create(
-                        username=usernames[i],
-                        cedula=data[1],
-                        first_name=Faker().first_name(),
-                        last_name=Faker().last_name(),
-                    )
-                user = User.objects.get(cedula=data[1])
-                email = user.email
-                name = user.get_full_name()
+            # elif "test" in sys.argv and not user:
+            #     usernames = ["diego.martinez.p", "juan.carreno"]
+            #     identification = data[1]
+            #     for i in range(2):
+            #         User.objects.create(
+            #             username=usernames[i],
+            #             cedula=data[1],
+            #             first_name=Faker().first_name(),
+            #             last_name=Faker().last_name(),
+            #         )
+            #     user = User.objects.get(cedula=data[1])
+            #     email = user.email
+            #     name = user.get_full_name()
             elif user:
                 identification = user.cedula
                 email = user.email
@@ -129,15 +129,33 @@ class PayslipViewSet(viewsets.ModelViewSet):
             else:
                 with connections["staffnet"].cursor() as cursor:
                     cursor.execute(
-                        "SELECT * FROM staff WHERE cedula = %s", [data[1]],
+                        "SELECT * FROM personal_information JOIN employment_information ON personal_information.cedula = employment_information.cedula WHERE personal_information.cedula = %s",
+                        [data[1]],
                     )
-                    user = cursor.fetchone()
-                return Response(
-                    {
-                        "Error": "No se encontró el usuario, asegúrate de que esta registrado en la intranet",
-                        "cedula": data[1],
-                    },
-                )
+                    row = cursor.fetchone()
+                    if cursor.description and row:
+                        columns = [col[0] for col in cursor.description]
+                        result_dict = dict(zip(columns, row))
+                        # print(result_dict)
+                        # print(type(result_dict["apellidos"]))
+                        User.objects.create(
+                            username=result_dict["usuario_windows"],
+                            cedula=result_dict["cedula"],
+                            first_name=result_dict["nombres"],
+                            last_name=result_dict["apellidos"],
+                            email=result_dict["correo"],
+                        )
+                        user = User.objects.get(cedula=data[1])
+                        email = user.email
+                        name = user.get_full_name()
+                        identification = user.cedula
+                    else:
+                        return Response(
+                            {
+                                "Error": "No se encontró el usuario, asegúrate de que esta registrado en StaffNet",
+                                "cedula": data[1],
+                            },
+                        )
             payslip = PayslipSerializer(
                 data={
                     "title": data[0],
@@ -175,7 +193,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk=None):
         """Retrieve a payslip."""
-        if pk == request.user.cedula:
+        if pk == request.user.cedula or request.user.has_perm("payslip.view_payslip"):
             try:
                 payslip = Payslip.objects.get(identification=pk)
                 serializer = PayslipSerializer(payslip)
