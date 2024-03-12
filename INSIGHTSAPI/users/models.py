@@ -59,6 +59,12 @@ class User(AbstractUser):
             ("send_employment_certification", "Can send employment certification"),
         ]
 
+    def get_full_name(self) -> str:
+        """Return the full name of the user."""
+        if self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.first_name
+
     def save(self, *args, **kwargs):
         """Create a user in the database."""
         if not self.pk or self.cedula:
