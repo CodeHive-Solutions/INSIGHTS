@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // Material-UI
-import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box } from "@mui/material";
+import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box, LinearProgress, Fade } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 
 // Icons
@@ -20,6 +20,7 @@ export const MyPayslips = () => {
     const [openCollapse, setOpenCollapse] = useState(false);
     const [paySlipId, setPaySlipId] = useState(null);
     const [disabled, setDisabled] = useState(false);
+    const [loading, setLoading] = useState(false);
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const emailRef = useRef(null);
 
@@ -79,6 +80,7 @@ export const MyPayslips = () => {
 
     const handleResend = async () => {
         setDisabled(true);
+        setLoading(true);
         const formData = new FormData();
 
         if (emailRef.current && emailRef.current.value) {
@@ -106,11 +108,13 @@ export const MyPayslips = () => {
                 setDisabled(false);
                 setOpenDialog(false);
                 setOpenCollapse(false);
+                setLoading(false);
             }
         } catch (error) {
             console.error(error);
             showSnack("error", error.message);
             setDisabled(false);
+            setLoading(false);
         }
     };
 
@@ -189,7 +193,9 @@ export const MyPayslips = () => {
 
     return (
         <>
-            {/* Dialog MUI component */}
+            <Fade in={loading} unmountOnExit>
+                <LinearProgress variant="query" sx={{ width: "100%", position: "absolute", top: 0, zIndex: "100000" }} />
+            </Fade>
             <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Reenviar desprendible de nomina?"}</DialogTitle>
                 <DialogContent>
@@ -241,7 +247,7 @@ export const MyPayslips = () => {
                     marginTop: "6rem",
                 }}
             >
-                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main", fontWeight: "500" }} variant={"h4"}>
+                <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Mis desprendibles de nomina
                 </Typography>
                 <DataGrid

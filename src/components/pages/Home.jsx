@@ -53,21 +53,21 @@ const Home = () => {
                     method: "GET",
                 });
 
-                const fullName = employee.nombre;
+                const firstNames = employee.nombres;
+                const lastNames = employee.apellidos;
 
-                // Split the full name into individual names and last names
-                const nameParts = fullName.split(" ");
+                const firstNamesParts = firstNames.split(" ");
+                const lastNamesParts = lastNames.split(" ");
 
-                // Extract the first name
-                const firstName = nameParts.length === 2 ? nameParts[1] : nameParts.length > 2 ? nameParts[2] : "";
+                const wholeName = `${firstNames} ${lastNames}`.trim();
 
-                // Extract the first last name (if exists)
-                const firstLastName = nameParts.length > 0 ? nameParts[0] : "";
+                let formattedName = "";
+                if (wholeName.split(" ").length === 4) {
+                    formattedName = `${firstNamesParts[1]} ${lastNamesParts[0]}`.trim();
+                } else {
+                    formattedName = `${firstNames} ${lastNames}`.trim();
+                }
 
-                // Create the formatted name
-                const formattedName = `${firstName} ${firstLastName}`.trim();
-
-                // Check if the image is found (status 200) and return the image URL
                 if (imageResponse.status === 200) {
                     return {
                         image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,

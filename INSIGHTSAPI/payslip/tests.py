@@ -54,6 +54,8 @@ class PayslipTest(BaseTestCase):
     def test_get_only_my_payslips(self):
         """Test get payslips without permission."""
         self.test_upload_payslip_file()
+        # self.user.cedula = "1000065648"
+        # self.user.save()
         response = self.client.get("/payslips/")
         self.assertEqual(
             response.status_code,
@@ -65,15 +67,17 @@ class PayslipTest(BaseTestCase):
     def test_get_payslip(self):
         """Test get payslip."""
         self.test_upload_payslip_file()
-        response = self.client.get("/payslips/00000000/")
+        get = Permission.objects.get(codename="view_payslip")
+        self.user.user_permissions.add(get)
+        response = self.client.get("/payslips/1000065648/")
         self.assertEqual(
             response.status_code,
             200,
             response.data,
         )
         self.assertEqual(response.data["title"], "SEGUNDA QUINCENA MES DE ENERO 2024")
-        self.assertEqual(response.data["identification"], "00000000")
-        self.assertEqual(response.data["name"], "STAFFNET LDAP")
+        self.assertEqual(response.data["identification"], "1000065648")
+        self.assertEqual(response.data["name"], "HEIBERT STEVEN MOGOLLON MAHECHA")
         self.assertEqual(response.data["area"], "Ejecutivo")
         self.assertEqual(response.data["job_title"], "Cargo #3")
         self.assertEqual(response.data["salary"], "28227321.00")
@@ -185,7 +189,7 @@ class PayslipTest(BaseTestCase):
     def test_resend_payslip(self):
         """Test resend payslip."""
         self.test_upload_payslip_file()
-        payslip = Payslip.objects.filter(identification="00000000").first()
+        payslip = Payslip.objects.filter(identification="1000065648").first()
         if not payslip:
             self.fail("Payslip not found")
         response = self.client.post(

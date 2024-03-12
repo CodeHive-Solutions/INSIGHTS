@@ -11,6 +11,7 @@ from rest_framework.decorators import api_view
 from services.emails import send_email
 from users.models import User
 from django.template.loader import render_to_string
+from django.db import connections
 from django.conf import settings
 from .models import Payslip
 from .serializers import PayslipSerializer
@@ -32,13 +33,14 @@ def send_payslip(payslips):
             options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
         )
         # print("Sending mail to", payslip.email)asdas
-        errors = send_email(
-            f"Desprendible de nomina para {payslip.title}",
-            "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-            # [payslip.email],
-            ["carrenosebastian54@gmail.com"],
-            attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
-        )
+        # errors = send_email(
+        #     f"Desprendible de nomina para {payslip.title}",
+        #     "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
+        #     # [payslip.email],
+        #     ["carrenosebastian54@gmail.com"],
+        #     attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
+        # )
+        errors = None
         if errors:
             return Response({"error": "Error enviando el correo"}, status=500)
         emails.append(payslip.email)
@@ -80,14 +82,10 @@ class PayslipViewSet(viewsets.ModelViewSet):
         try:
             file_content = file_obj.read().decode("utf-8")
         except UnicodeDecodeError:
-            try:
-                file_content = file_obj.read().decode("latin-1")
-                print("Latin")
-            except UnicodeDecodeError:
-                return Response(
-                    {"error": "Asegúrate de guardar el archivo en formato CSV UTF-8"},
-                    status=400,
-                )
+            return Response(
+                {"error": "Asegúrate de guardar el archivo en formato CSV UTF-8."},
+                status=400,
+            )
         rows = file_content.split("\n")[1:]
         payslips = []
 
@@ -103,38 +101,40 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     status=400,
                 )
             user = User.objects.filter(cedula=data[1]).first()
-            if not user and "test" not in sys.argv:
-                return Response(
-                    {
-                        "Error": "No se encontró el usuario, asegúrate de que esta registrado en la intranet",
-                        "cedula": data[1],
-                    },
-                    status=400,
-                )
-            elif "test" in sys.argv and not user:
-                usernames = ["heibert.mogollon", "juan.carreno"]
-                identification = data[1]
-                for i in range(2):
-                    User.objects.create(
-                        username=usernames[i],
-                        cedula=data[1],
-                        first_name=Faker().first_name(),
-                        last_name=Faker().last_name(),
-                    )
-                user = User.objects.get(cedula=data[1])
-                email = user.email
-                name = user.get_full_name()
-            elif user:
+            if user:
                 identification = user.cedula
                 email = user.email
                 name = user.get_full_name()
             else:
-                return Response(
-                    {
-                        "Error": "No se encontró el usuario, asegúrate de que esta registrado en la intranet",
-                        "cedula": data[1],
-                    },
-                )
+                with connections["staffnet"].cursor() as cursor:
+                    cursor.execute(
+                        "SELECT * FROM personal_information JOIN employment_information ON personal_information.cedula = employment_information.cedula WHERE personal_information.cedula = %s",
+                        [data[1]],
+                    )
+                    row = cursor.fetchone()
+                    if cursor.description and row:
+                        columns = [col[0] for col in cursor.description]
+                        result_dict = dict(zip(columns, row))
+                        # print(result_dict)
+                        # print(type(result_dict["apellidos"]))
+                        User.objects.create(
+                            username=result_dict["usuario_windows"],
+                            cedula=result_dict["cedula"],
+                            first_name=result_dict["nombres"],
+                            last_name=result_dict["apellidos"],
+                            email=result_dict["correo"],
+                        )
+                        user = User.objects.get(cedula=data[1])
+                        email = user.email
+                        name = user.get_full_name()
+                        identification = user.cedula
+                    else:
+                        return Response(
+                            {
+                                "Error": "No se encontró el usuario, asegúrate de que esta registrado en StaffNet",
+                                "cedula": data[1],
+                            },
+                        )
             payslip = PayslipSerializer(
                 data={
                     "title": data[0],
@@ -172,7 +172,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
 
     def retrieve(self, request, pk=None):
         """Retrieve a payslip."""
-        if pk == request.user.cedula:
+        if pk == request.user.cedula or request.user.has_perm("payslip.view_payslip"):
             try:
                 payslip = Payslip.objects.get(identification=pk)
                 serializer = PayslipSerializer(payslip)
