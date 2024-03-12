@@ -119,8 +119,7 @@ export const MyPayslips = () => {
     };
 
     const columns = [
-        { field: "id", headerName: "ID", width: 75, editable: false },
-        { field: "title", headerName: "Desprendible", width: 350, editable: false },
+        { field: "title", headerName: "Desprendible", width: 400, editable: false },
         {
             field: "created_at",
             type: "date",

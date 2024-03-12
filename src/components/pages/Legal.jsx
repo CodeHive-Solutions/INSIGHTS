@@ -28,6 +28,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
+import AddIcon from "@mui/icons-material/Add";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),
@@ -338,6 +339,23 @@ export const Legal = () => {
         { field: "start_date", headerName: "Fecha Inicio", width: 100, editable: false },
     ];
 
+    const inputs = [
+        { name: "name", label: "Clientes", type: "text" },
+        { name: "city", label: "Ciudad", type: "text" },
+        { name: "description", label: "Descripción", type: "text" },
+        { name: "expected_start_date", label: "Fecha de Inicio Estimada", type: "date" },
+        { name: "value", label: "Valor del Contrato", type: "text" },
+        { name: "monthly_cost", label: "Facturación Mensual", type: "text" },
+        { name: "duration", label: "Duración", type: "date" },
+        { name: "contact", label: "Nombre del Contacto", type: "text" },
+        { name: "contact_telephone", label: "Teléfono", type: "text" },
+        { name: "start_date", label: "Fecha de Inicio", type: "date" },
+        { name: "civil_responsibility_policy", label: "Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text" },
+        { name: "compliance_policy", label: "Póliza de Cumplimiento", type: "text" },
+        { name: "insurance_policy", label: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text" },
+        { name: "renovation_date", label: "Renovación del contrato", type: "date" },
+    ];
+
     columns.push({
         field: "actions",
         headerName: "Acciones",
@@ -432,8 +450,7 @@ export const Legal = () => {
                                 <FormikTextField type="text" name="contact" label="Nombre del Contacto" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
-
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
+                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
                                     <FormikTextField
                                         type="text"
                                         multiline={true}
@@ -443,6 +460,9 @@ export const Legal = () => {
                                         autoComplete="off"
                                         spellCheck={false}
                                     />
+                                    <Button startIcon={<AddIcon />} variant="contained">
+                                        Añadir
+                                    </Button>
                                     <FormikTextField
                                         multiline={true}
                                         rows={3}
@@ -452,6 +472,10 @@ export const Legal = () => {
                                         autoComplete="off"
                                         spellCheck={false}
                                     />
+                                    <Button startIcon={<AddIcon />} variant="contained">
+                                        Añadir
+                                    </Button>
+
                                     <FormikTextField
                                         type="text"
                                         multiline={true}
@@ -461,6 +485,9 @@ export const Legal = () => {
                                         autoComplete="off"
                                         spellCheck={false}
                                     />
+                                    <Button startIcon={<AddIcon />} variant="contained">
+                                        Añadir
+                                    </Button>
                                 </Box>
                                 <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
                                 <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>

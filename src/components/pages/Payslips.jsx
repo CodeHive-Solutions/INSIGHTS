@@ -181,7 +181,7 @@ export const Payslips = () => {
             },
         },
     ];
-    
+
     const handleOpenDialog = () => setOpenDialog(true);
     const handleCloseDialog = () => {
         setOpenDialog(false);
@@ -367,6 +367,5 @@ export const Payslips = () => {
         </>
     );
 };
-
 
 export default Payslips;
