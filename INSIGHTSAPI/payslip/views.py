@@ -101,28 +101,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     status=400,
                 )
             user = User.objects.filter(cedula=data[1]).first()
-            if not user and "test" not in sys.argv:
-                return Response(
-                    {
-                        "Error": "No se encontró el usuario, asegúrate de que esta registrado en la intranet",
-                        "cedula": data[1],
-                    },
-                    status=400,
-                )
-            # elif "test" in sys.argv and not user:
-            #     usernames = ["diego.martinez.p", "juan.carreno"]
-            #     identification = data[1]
-            #     for i in range(2):
-            #         User.objects.create(
-            #             username=usernames[i],
-            #             cedula=data[1],
-            #             first_name=Faker().first_name(),
-            #             last_name=Faker().last_name(),
-            #         )
-            #     user = User.objects.get(cedula=data[1])
-            #     email = user.email
-            #     name = user.get_full_name()
-            elif user:
+            if user:
                 identification = user.cedula
                 email = user.email
                 name = user.get_full_name()

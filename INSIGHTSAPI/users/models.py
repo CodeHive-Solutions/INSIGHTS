@@ -62,7 +62,6 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         """Create a user in the database."""
         if not self.pk or self.cedula:
-            print("CREANDO USER", self.username, self.cedula, self.pk)
             with connections["staffnet"].cursor() as db_connection:
                 if not self.cedula:
                     db_connection.execute(
@@ -74,19 +73,18 @@ class User(AbstractUser):
                         "SELECT cedula, cargo,campana_general FROM employment_information WHERE cedula = %s",
                         [self.cedula],
                     )
-                    self.pk = User.objects.filter(cedula=self.cedula).first()
-                    print("PK", self.pk)
                 result = db_connection.fetchone()
-                if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
+                if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"} or self.cedula == "00000000":
                     result = ("00000000", "Administrador", "Administrador")
                     self.email = "heibert.mogollon@cyc-bpo.com"
-                    # self.email = "diegozxz@hotmail.com"
                 elif not result:
                     raise ValidationError(
                         "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
                     )
                     # super(User, self).save(*args, **kwargs)
                 self.cedula = result[0]
+                user = User.objects.filter(cedula=self.cedula).first()
+                self.pk = user.pk if user else None
                 self.job_title = result[1]
                 area, _ = Area.objects.get_or_create(name=result[2])
                 self.area_id = area.id
@@ -111,9 +109,9 @@ class User(AbstractUser):
                 and type(getattr(self, field.attname)) == str
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
-        print(User.objects.filter().first())
-        print(User.objects.filter(cedula=self.cedula).first())
-        print("GUARDANDO")
+        # print(User.objects.filter().first())
+        # print(User.objects.filter(cedula=self.cedula).first())
+        # print("GUARDANDO")
         super(User, self).save(*args, **kwargs)
 
 

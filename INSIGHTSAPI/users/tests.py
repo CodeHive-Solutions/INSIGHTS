@@ -64,7 +64,7 @@ class LDAPAuthenticationTest(TestCase):
                 conn.unbind()
 
     def test_login_django(self, called=False):
-        """Tests that the login endpoint works as expected."""               
+        """Tests that the login endpoint works as expected."""
         if called:
             # username = "david.alvarez"
             # password = "asdf123.+"
@@ -82,23 +82,23 @@ class LDAPAuthenticationTest(TestCase):
             self.assertIsNotNone(refresh, "No refresh token found in the response")
             return response
 
-    def test_login_without_windows_user(self):
+    def test_login_update_user_without_windows_user(self):
         """Tests that the login endpoint fails when the user is not in the windows server."""
-        username = "heibert.mogollon"
-        password = "Password10"
+        username = "staffnet"
+        password = os.environ["StaffNetLDAP"]
         data = {
             "username": username,
             "password": password,
         }
         User.objects.create(
             username="",
-            cedula="1000065648",
-            first_name="Heibert",
+            cedula="00000000",
+            first_name="Administrador",
             last_name="",
         )
-        print(User.objects.first())
+        # print(User.objects.first())
         response = self.client.post(reverse("obtain-token"), data)
-        self.assertEqual(response.status_code, 401, response.data)
+        self.assertEqual(response.status_code, 200, response.data)
 
     def test_login_fail(self):
         """Tests that the login endpoint fails when the password is wrong."""
