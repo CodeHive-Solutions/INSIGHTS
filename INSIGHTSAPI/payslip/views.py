@@ -32,14 +32,12 @@ def send_payslip(payslips):
             False,
             options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
         )
-        # print("Sending mail to", payslip.email)asdas
-        # errors = send_email(
-        #     f"Desprendible de nomina para {payslip.title}",
-        #     "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-        #     # [payslip.email],
-        #     ["carrenosebastian54@gmail.com"],
-        #     attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
-        # )
+        errors = send_email(
+            f"Desprendible de nomina para {payslip.title}",
+            "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
+            [payslip.email],
+            attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
+        )
         errors = None
         if errors:
             return Response({"error": "Error enviando el correo"}, status=500)
