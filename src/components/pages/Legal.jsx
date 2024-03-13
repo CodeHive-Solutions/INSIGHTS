@@ -350,9 +350,9 @@ export const Legal = () => {
         { name: "contact", label: "Nombre del Contacto", type: "text" },
         { name: "contact_telephone", label: "Teléfono", type: "text" },
         { name: "start_date", label: "Fecha de Inicio", type: "date" },
-        { name: "civil_responsibility_policy", label: "Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text" },
-        { name: "compliance_policy", label: "Póliza de Cumplimiento", type: "text" },
-        { name: "insurance_policy", label: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text" },
+        { name: "civil_responsibility_policy", label: "Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text", multiline: true },
+        { name: "compliance_policy", label: "Póliza de Cumplimiento", type: "text", multiline: true },
+        { name: "insurance_policy", label: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text", multiline: true },
         { name: "renovation_date", label: "Renovación del contrato", type: "date" },
     ];
 
@@ -440,7 +440,35 @@ export const Legal = () => {
                     >
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
+                                {inputs.map((input, index) => {
+                                    input.name === "civil_responsibility_policy" ? (
+                                        <>
+                                            <FormikTextField
+                                                key={index}
+                                                type={input.type}
+                                                multiline={input.multiline}
+                                                rows={3}
+                                                name={input.name}
+                                                label={input.label}
+                                                autoComplete="off"
+                                                spellCheck={false}
+                                            />
+                                            <Button>Hola</Button>
+                                        </>
+                                    ) : (
+                                        <FormikTextField
+                                            key={index}
+                                            type={input.type}
+                                            multiline={input.multiline}
+                                            rows={3}
+                                            name={input.name}
+                                            label={input.label}
+                                            autoComplete="off"
+                                            spellCheck={false}
+                                        />
+                                    );
+                                }, [])}
+                                {/* <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
                                 <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
@@ -492,7 +520,7 @@ export const Legal = () => {
                                 <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
                                 <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
                                     Guardar
-                                </Button>
+                                </Button> */}
                             </Box>
                         </Form>
                     </Formik>
