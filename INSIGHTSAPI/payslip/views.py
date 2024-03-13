@@ -36,7 +36,7 @@ def send_payslip(payslips):
             f"Desprendible de nomina para {payslip.title}",
             "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
             [payslip.email],
-            attachments=[(f"payslip_{payslip.title}.pdf", pdf, "application/pdf")],
+            attachments=[(f"{payslip.title}.pdf", pdf, "application/pdf")],
         )
         errors = None
         if errors:

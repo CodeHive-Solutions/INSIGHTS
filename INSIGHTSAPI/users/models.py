@@ -83,6 +83,8 @@ class User(AbstractUser):
                 if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"} or self.cedula == "00000000":
                     result = ("00000000", "Administrador", "Administrador")
                     self.email = "heibert.mogollon@cyc-bpo.com"
+                    # self.email = "heibert.mogollon@gmail.com"
+                    self.email = "heibert203@hotmail.com"
                 elif not result:
                     raise ValidationError(
                         "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
