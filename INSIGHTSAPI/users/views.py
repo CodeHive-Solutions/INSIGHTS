@@ -15,6 +15,7 @@ from django.conf import settings
 from django.db import connections
 from django.utils.formats import number_format
 from django.utils import timezone
+from services.emails import send_email
 from users.models import User
 
 
@@ -43,7 +44,7 @@ def create_employment_certification(request):
                 {"error": "No se encontró el usuario en la intranet"}, status=404
             )
     else:
-        user = request.user
+        user = User.objects.get(pk=request.user.pk)
     logo = read_and_encode_image(
         os.path.join(settings.STATIC_ROOT, "images", "just_logo.png")
     )
@@ -67,7 +68,13 @@ def create_employment_certification(request):
         )
         employee = cursor.fetchone()
         if not employee:
-            return Response({"error": "No se encontró el empleado"}, status=404)
+            return Response(
+                {
+                    "error": "No se encontró el empleado en StaffNet",
+                    "cedula": user.cedula,
+                },
+                status=404,
+            )
         employee = {
             "start_date": employee[0].strftime("%d de %B de %Y"),
             "position": employee[1],
@@ -96,11 +103,18 @@ def create_employment_certification(request):
     except Exception as e:
         logger.critical(f"Error creating PDF: {e}")
         return Response({"error": "No se pudo crear el archivo PDF"}, status=500)
-    response = HttpResponse(pdf, content_type="application/pdf")
-    response["Content-Disposition"] = (
-        f'attachment; filename="Certificado laboral {user.get_full_name()}.pdf"'
+    # Send the certification
+    errors = send_email(
+        "Certificación laboral",
+        "Adjunto se encuentra la certificación laboral solicitada.",
+        [str(user.email)],
+        attachments=[("Certificación laboral.pdf", pdf, "application/pdf")],
     )
-    return response
+    if errors:
+        return Response({"error": "Error enviando el correo"}, status=500)
+    return Response(
+        {"message": "Certificación laboral enviada", "email": user.email}, status=200
+    )
     # return render(
     #     request,
     #     "employment_certification.html",
