@@ -122,7 +122,7 @@ const Navbar = () => {
                     cursor: "pointer",
                     borderBottom: "2px solid transparent", // Add a transparent bottom border
                     transition: "all 0.3s ease",
-                    padding: "1.5rem 1rem", // Adjust padding to keep text aligned with the container
+                    padding: "1.5rem 1rem    ", // Adjust padding to keep text aligned with the container
                     borderBottomColor: match ? "#0076A8" : "transparent",
                     color: match ? "#0076A8" : "inherit",
                     "&:hover": {

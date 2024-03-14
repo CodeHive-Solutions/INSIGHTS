@@ -272,9 +272,41 @@ export const Legal = () => {
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
         const [field, meta] = useField(props);
         const errorText = meta.error && meta.touched ? meta.error : "";
+        if (props.name in ["civil_responsibility_policy", "compliance_policy", "insurance_policy"]) {
+            return (
+                <TextField
+                    key={props.name}
+                    sx={{ width: "390px", mt: "2rem" }}
+                    InputLabelProps={{ shrink: true }}
+                    multiline={multiline}
+                    rows={rows}
+                    type={type}
+                    label={label}
+                    {...field}
+                    helperText={errorText}
+                    error={!!errorText}
+                />
+            );
+        } else if (props.name.includes("policy")) {
+            return (
+                <TextField
+                    key={props.name}
+                    sx={{ width: "390px" }}
+                    InputLabelProps={{ shrink: true }}
+                    multiline={multiline}
+                    rows={rows}
+                    type={type}
+                    label={label}
+                    {...field}
+                    helperText={errorText}
+                    error={!!errorText}
+                />
+            );
+        }
         if (label === "Renovación del contrato") {
             return (
                 <TextField
+                    key={props.name}
                     sx={{ width: "800px" }}
                     InputLabelProps={{ shrink: true }}
                     multiline={multiline}
@@ -290,6 +322,7 @@ export const Legal = () => {
         } else if (type === "date") {
             return (
                 <TextField
+                    key={props.name}
                     InputLabelProps={{ shrink: true }}
                     sx={{ width: "390px" }}
                     rows={rows}
@@ -304,6 +337,7 @@ export const Legal = () => {
         } else if (multiline) {
             return (
                 <TextField
+                    key={props.name}
                     sx={{ width: "800px" }}
                     disabled={disabled}
                     multiline={multiline}
@@ -318,6 +352,7 @@ export const Legal = () => {
         } else {
             return (
                 <TextField
+                    key={props.name}
                     sx={{ width: "390px" }}
                     disabled={disabled}
                     multiline={multiline}
@@ -351,8 +386,17 @@ export const Legal = () => {
         { name: "contact_telephone", label: "Teléfono", type: "text" },
         { name: "start_date", label: "Fecha de Inicio", type: "date" },
         { name: "civil_responsibility_policy", label: "Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text", multiline: true },
+        { name: "civil_responsibility_policy_number", label: "Numero Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text" },
+        { name: "civil_responsibility_policy_start_date", label: "Fecha Inicio Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "date" },
+        { name: "civil_responsibility_policy_end_date", label: "Fecha Fin Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "date" },
         { name: "compliance_policy", label: "Póliza de Cumplimiento", type: "text", multiline: true },
+        { name: "compliance_policy_number", label: "Numero Póliza de Cumplimiento", type: "text", multiline: true },
+        { name: "compliance_policy_start_date", label: "Fecha Inicio Póliza de Cumplimiento", type: "date", multiline: true },
+        { name: "compliance_policy_end_date", label: "Fecha Fin Póliza de Cumplimiento", type: "date", multiline: true },
         { name: "insurance_policy", label: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text", multiline: true },
+        { name: "insurance_policy_number", label: "Numero Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text", multiline: true },
+        { name: "insurance_policy_start_date", label: "Fecha Inicio Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "date", multiline: true },
+        { name: "insurance_policy_end_date", label: "Fecha Fin Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "date", multiline: true },
         { name: "renovation_date", label: "Renovación del contrato", type: "date" },
     ];
 
@@ -441,86 +485,35 @@ export const Legal = () => {
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
                                 {inputs.map((input, index) => {
-                                    input.name === "civil_responsibility_policy" ? (
-                                        <>
+                                    if (input.name.includes("policy")) {
+                                        return (
                                             <FormikTextField
-                                                key={index}
+                                                key={input.name}
                                                 type={input.type}
-                                                multiline={input.multiline}
-                                                rows={3}
                                                 name={input.name}
                                                 label={input.label}
                                                 autoComplete="off"
                                                 spellCheck={false}
                                             />
-                                            <Button>Hola</Button>
-                                        </>
-                                    ) : (
-                                        <FormikTextField
-                                            key={index}
-                                            type={input.type}
-                                            multiline={input.multiline}
-                                            rows={3}
-                                            name={input.name}
-                                            label={input.label}
-                                            autoComplete="off"
-                                            spellCheck={false}
-                                        />
-                                    );
-                                }, [])}
-                                {/* <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="city" label="Ciudad" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="description" label="Descripción" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="expected_start_date" label="Fecha de Inicio Estimada" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="value" label="Valor del Contrato" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="monthly_cost" label="Facturación Mensual" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="duration" label="Duración" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact" label="Nombre del Contacto" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="text" name="contact_telephone" label="Teléfono" autoComplete="off" spellCheck={false} />
-                                <FormikTextField type="date" name="start_date" label="Fecha de Inicio" autoComplete="off" spellCheck={false} />
-                                <Box sx={{ display: "flex", flexWrap: "wrap", gap: "1rem" }}>
-                                    <FormikTextField
-                                        type="text"
-                                        multiline={true}
-                                        rows={3}
-                                        name="civil_responsibility_policy"
-                                        label="Pólizas de Responsabilidad Civil Extracontractual Derivada de Cumplimiento"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                    <Button startIcon={<AddIcon />} variant="contained">
-                                        Añadir
-                                    </Button>
-                                    <FormikTextField
-                                        multiline={true}
-                                        rows={3}
-                                        type="text"
-                                        name="compliance_policy"
-                                        label="Póliza de Cumplimiento"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                    <Button startIcon={<AddIcon />} variant="contained">
-                                        Añadir
-                                    </Button>
-
-                                    <FormikTextField
-                                        type="text"
-                                        multiline={true}
-                                        rows={3}
-                                        name="insurance_policy"
-                                        label="Póliza Seguros de Responsabilidad Profesional por Perdida de Datos"
-                                        autoComplete="off"
-                                        spellCheck={false}
-                                    />
-                                    <Button startIcon={<AddIcon />} variant="contained">
-                                        Añadir
+                                        );
+                                    } else {
+                                        return (
+                                            <FormikTextField
+                                                key={input.name}
+                                                type={input.type}
+                                                name={input.name}
+                                                label={input.label}
+                                                autoComplete="off"
+                                                spellCheck={false}
+                                            />
+                                        );
+                                    }
+                                })}
+                                <Box sx={{ width: "100%", textAlign: "end" }}>
+                                    <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                        Guardar
                                     </Button>
                                 </Box>
-                                <FormikTextField type="date" name="renovation_date" label="Renovación del contrato" autoComplete="off" spellCheck={false} />
-                                <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
-                                    Guardar
-                                </Button> */}
                             </Box>
                         </Form>
                     </Formik>

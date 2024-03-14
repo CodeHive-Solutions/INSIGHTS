@@ -79,7 +79,7 @@ const managersJr = [
 const SwiperSlider = () => {
     return (
         <Swiper
-            style={{ width: "100%", height: "max-content", padding: "2rem" }}
+            style={{ width: "100%", height: "max-content", padding: "2rem", userSelect: "none" }}
             autoplay={{
                 delay: 2500,
                 disableOnInteraction: false,
@@ -110,8 +110,8 @@ const SwiperSlider = () => {
                             alt={manager.name}
                             style={{
                                 width: "100%",
-                                maxWidth: "400px",
-                                borderRadius: "50%",
+                                maxWidth: "350px",
+                                borderRadius: "5%",
                                 objectFit: "cover",
                             }}
                         />

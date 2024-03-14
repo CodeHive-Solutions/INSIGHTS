@@ -177,7 +177,8 @@ const Vacancies = () => {
 
     const handleCloseInactiveDialog = () => setInactivateDialog(false);
 
-    const submitAddVacancy = async () => {
+    const submitAddVacancy = async (event) => {
+        event.preventDefault();
         const formData = new FormData();
         formData.append("name", nameAddVacancy.current.value);
         formData.append("image", fileImage);
@@ -331,7 +332,7 @@ const Vacancies = () => {
             <Dialog open={openAddVacancy} onClose={handleCloseAddVacancy} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Desea añadir una nueva vacante?"}</DialogTitle>
 
-                <Box sx={{ flexDirection: "column", p: "1rem 1.5rem ", display: "flex", alignItems: "start" }}>
+                <Box component="form" onSubmit={submitAddVacancy} sx={{ flexDirection: "column", p: "1rem 1.5rem ", display: "flex", alignItems: "start" }}>
                     <TextField inputRef={nameAddVacancy} sx={{ width: "400px", mb: "1rem" }} label="Nombre de la Vacante"></TextField>
                     <Box sx={{ display: "flex", height: "56px", justifyContent: "center", width: "400px" }}>
                         <Button sx={{ width: "100%", overflow: "hidden" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
@@ -352,7 +353,7 @@ const Vacancies = () => {
                     </Box>
                     <Box sx={{ display: "flex", gap: "2rem" }}>
                         <Button onClick={handleCloseAddVacancy}>Cancelar</Button>
-                        <Button onClick={submitAddVacancy}>Guardar</Button>
+                        <Button type="submit">Guardar</Button>
                     </Box>
                 </Box>
             </Dialog>

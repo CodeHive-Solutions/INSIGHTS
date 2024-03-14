@@ -40,7 +40,7 @@
         position: absolute;
         top: 0%;
         left: 4%;
-        width: 110%;
+        width: 110%; 
         height: 110%;
         background-image: url('data:image/png;base64,{{ logo_cyc }}');
         background-size: contain;
@@ -82,19 +82,21 @@
     </div>
 
     <div class="background-image"></div>
-    <h1>C&C services S.A.S</h1>
-    <h4>NIT 900008653-0</h4>
-    <p><h2 class="center">Certifica: </h2></p>
-    <p>Que el/la señor(a) <span class="bold">{{user.get_full_name}}</span> quien se identifica con cédula de ciudadanía No. <span class="bold">{{user.cedula}}</span> de {{user_data.expedition_city}} labora en esta compañía y sus condiciones son las siguientes:</p>
-    <p>TIPO DE CONTRATO: <span class="bold">{{user_data.contract_type}}</span></p>
-    <p>FECHA DE INGRESO: <span class="bold">{{user_data.start_date}}</span></p>
-    <p>CARGO: <span class="bold">{{user_data.position}}</span></p>
-    <p>SALARIO: <span class="bold"> {{user_data.salary_text}} (${{user_data.salary_number}}) mensuales.</span></p>
-    <p>Esta certificación se expide el día {{user_data.today}} a solicitud del interesado y con destino a quien interese.</p>
-    <p>Atentamente,</p>
-    <img src="data:image/png;base64,{{ payroll_signature }}" alt="Signature" width="25%" height="25%">
-    <p class="bold">ANDRES LEONARDO CASTRO R.</p>
-    <p class="bold">Director de Nomina y Administración de Personal</p>
-    <p><i><h6>*Para validar la información envía un correo a: <span class="bold">certificaciones@cyc-bpo.com</span> pregunta por el certificado: <b>CTL-{{id}}</b></h6></i></p>
+    <div style="padding: 5rem">
+        <h1>C&C services S.A.S</h1>
+        <h4>NIT 900008653-0</h4>
+        <p><h2 class="center">Certifica: </h2></p>
+        <p>Que el/la señor(a) <span class="bold">{{user.get_full_name}}</span> quien se identifica con cédula de ciudadanía No. <span class="bold">{{user.cedula}}</span> de {{user_data.expedition_city}} labora en esta compañía y sus condiciones son las siguientes:</p>
+        <p>TIPO DE CONTRATO: <span class="bold">{{user_data.contract_type}}</span></p>
+        <p>FECHA DE INGRESO: <span class="bold">{{user_data.start_date}}</span></p>
+        <p>CARGO: <span class="bold">{{user_data.position}}</span></p>
+        <p>SALARIO: <span class="bold"> {{user_data.salary_text}} (${{user_data.salary_number}}) mensuales.</span></p>
+        <p>Esta certificación se expide el día {{user_data.today}} a solicitud del interesado y con destino a quien interese.</p>
+        <p>Atentamente,</p>
+        <img src="data:image/png;base64,{{ payroll_signature }}" alt="Signature" width="25%" height="25%">
+        <p class="bold">ANDRES LEONARDO CASTRO R.</p>
+        <p class="bold">Director de Nomina y Administración de Personal</p>
+        <p><i><h6>*Para validar la información envía un correo a: <span class="bold">certificaciones@cyc-bpo.com</span> pregunta por el certificado: <b>CTL-{{id}}</b></h6></i></p>
+        </div>
 </body>
 </html>
