@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     "vacancy",
     "operational_risk",
     "payslip",
+    "employment_management",
 ]
 
 MIDDLEWARE = [

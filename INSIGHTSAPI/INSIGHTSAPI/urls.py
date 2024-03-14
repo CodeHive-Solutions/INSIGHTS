@@ -38,5 +38,5 @@ urlpatterns = [
     path("vacancy/", include("vacancy.urls")),
     path("operational-risk/", include("operational_risk.urls")),
     path("payslips/", include("payslip.urls")),
-    path("users/", include("users.urls")),
+    path("employment-management/", include("employment_management.urls")),
 ]

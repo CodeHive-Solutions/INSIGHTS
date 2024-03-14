@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet"> -->
     <title>Employment Certification</title>
 </head>
 <style>
     body {
-        /* font-family: Montserrat, sans-serif; */
-        margin: 10%;
+        font-family: "Arial", sans-serif;
+        margin: 2%, 10%, 10%, 10%;
         padding: 0;
         font-size: 22px;
         text-align: justify;
@@ -19,8 +19,7 @@
     }
     h1 {
         text-align: center;
-        margin-top: 30%;
-        /* margin-bottom: 10%; */
+        margin-top: 10%;
     }
     h2{
         margin-top: 0%;
@@ -38,76 +37,50 @@
         text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
     }
     .background-image {
-                position: absolute;
-                top: 29%;
-                left: 4%;
-                width: 110%;
-                height: 110%;
-                background-image: url('data:image/png;base64,{{ logo_cyc }}');
-                /* background-image: url('./just_logo.png'); */
-                background-size: contain;
-                background-repeat: no-repeat;
-                background-position: center;
-                z-index: -1;
-                opacity: 0.2;
+        position: absolute;
+        top: 0%;
+        left: 4%;
+        width: 110%;
+        height: 110%;
+        background-image: url('data:image/png;base64,{{ logo_cyc }}');
+        background-size: contain;
+        /* background-size: cover; */
+        background-repeat: no-repeat;
+        background-position: center;
+        z-index: -1;
+        opacity: 0.2;
     }
-
-    /* .bold { */
-        /* font-weight: 600; */
-    /* } */
     .center {
         text-align: center;
     }
     .text {
-        color: lightgray;
-        border-left: 2px solid lightgray;
-        margin-left: 5%;
-        padding-left: 6px;
-    }
-    #mirrored-text {
-        /* opacity: 0.5; Adjust opacity as needed */
-        font-family: Arial, Helvetica, sans-serif;
-        color: red;
-    }
-    .text, #mirrored-text {
-        position: absolute;
-        top: 0;
-        left: 0;
-        font-size: 20px;
-    }
-    #logo_bpo {
-        /* display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        flex: 1;
-        position: absolute;
-        word-wrap: break-word;
-        top: 0;
-        font-size: 20px;
-        margin-right: 0; */
-        /* position: relative; */
-        /* left: 60%; */
-        /* width: 30%; */
-    }
-</style>
+            color: lightgray;
+            border-left: 2px solid lightgray;
+            margin-left: 0;
+            padding-left: 0;
+            top: 0;
+            left: 0;
+            font-size: 20px;
+            display: flex;
+            /* align-items: center; */
+            flex-direction: column; /* Text below the image */
+        }
+    </style>
+</head>
 <body>
-    <div id="logo_bpo">
-        <img src="data:image/png;base64,{{ logo_bpo }}" alt="Logo" width="30%">
-        <p class="text">
-            www.cyc-bpo.com<br>
-            info@cyc-bpo.com<br>
-            PBX: (57 +601) 746 11 66<br>
-            Bogotá D.C.<br>
-            Medellín
-            <span id="mirrored-text">
+    <div id="logo_bpo" style="width: 100%; text-align: end;">
+        <div class="logo-text-container">
+            <img src="data:image/png;base64,{{ logo_bpo }}" alt="Logo" width="20%">
+            <p class="text">
                 www.cyc-bpo.com<br>
                 info@cyc-bpo.com<br>
                 PBX: (57 +601) 746 11 66<br>
                 Bogotá D.C.<br>
                 Medellín
-            </span>
-        </p>
+            </p>
+        </div>
     </div>
+
     <div class="background-image"></div>
     <h1>C&C services S.A.S</h1>
     <h4>NIT 900008653-0</h4>
@@ -122,6 +95,6 @@
     <img src="data:image/png;base64,{{ payroll_signature }}" alt="Signature" width="25%" height="25%">
     <p class="bold">ANDRES LEONARDO CASTRO R.</p>
     <p class="bold">Director de Nomina y Administración de Personal</p>
-    <p><i><h6>*Para validar la información envía un correo a: <span class="bold">certificaciones@cyc-bpo.com</span></h6></i></p>
+    <p><i><h6>*Para validar la información envía un correo a: <span class="bold">certificaciones@cyc-bpo.com</span> pregunta por el certificado: <b>CTL-{{id}}</b></h6></i></p>
 </body>
 </html>

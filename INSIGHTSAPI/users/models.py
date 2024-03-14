@@ -88,6 +88,7 @@ class User(AbstractUser):
                     self.email = "heibert.mogollon@cyc-bpo.com"
                     # self.email = "heibert.mogollon@gmail.com"
                     # self.email = "heibert203@hotmail.com"
+                    # self.email = "juan.carreno@cyc-bpo.com"
                 elif not result:
                     raise ValidationError(
                         "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
