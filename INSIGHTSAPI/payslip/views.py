@@ -8,7 +8,9 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.decorators import api_view
-from services.emails import send_email
+
+# from services.emails import send_email
+from django.core.mail import send_mail, send_mass_mail
 from users.models import User
 from django.template.loader import render_to_string
 from django.db import connections
@@ -19,10 +21,12 @@ from .serializers import PayslipSerializer
 
 def send_payslip(payslips):
     emails = []
+    messages = []
     with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
         logo = logo.read()
         logo = base64.b64encode(logo).decode("utf-8")
     for payslip in payslips:
+        print("Generando pdf")
         rendered_template = render_to_string(
             "payslip.html",
             {"payslip": payslip, "logo": logo},
@@ -32,16 +36,38 @@ def send_payslip(payslips):
             False,
             options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
         )
-        errors = send_email(
-            f"Desprendible de nomina para {payslip.title}",
-            "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos.",
-            [payslip.email],
-            attachments=[(f"{payslip.title}.pdf", pdf, "application/pdf")],
+        subject = f"Desprendible de nomina para {payslip.title}"
+        message = "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos."
+        # send_mail(
+        #     subject,
+        #     message,
+        #     settings.EMAIL_HOST_USER,
+        #     [payslip.email],
+        #     html_message=rendered_template,
+        #     fail_silently=False,
+        # )
+        email_data = (
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [payslip.email, "heibert.mogollon@cyc-bpo.com"],
         )
-        errors = None
-        if errors:
-            return Response({"error": "Error enviando el correo"}, status=500)
+        messages.append(email_data)
         emails.append(payslip.email)
+        # print(send_mass_mail((email_data, email_data), fail_silently=False))
+        message1 = (
+            "Subject here",
+            "Here is the message",
+            settings.EMAIL_HOST_USER,
+            ["heibert.mogollon@gmail.com", "heibert.mogollon@cyc-bpo.com"],
+        )
+        message2 = (
+            "Another Subject",
+            "Here is another message",
+            settings.EMAIL_HOST_USER,
+            ["heibert.mogollon@gmail.com"],
+        )
+        send_mass_mail(messages, fail_silently=False)
     return Response(
         {"message": "Desprendibles de nomina enviados", "emails": emails}, status=201
     )

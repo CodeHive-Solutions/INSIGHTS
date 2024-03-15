@@ -50,10 +50,13 @@ def create_employment_certification(request):
     logo_bpo = read_and_encode_image(
         os.path.join(settings.STATIC_ROOT, "images", "ACDCC_logo.png")
     )
+    logo_vertical = read_and_encode_image(
+        os.path.join(settings.STATIC_ROOT, "images", "vertical_logo.png")
+    )
     payroll_signature = read_and_encode_image(
         os.path.join(settings.BASE_DIR, "secure", "images", "payroll_signature.png")
     )
-    if not logo or not logo_bpo or not payroll_signature:
+    if not logo or not logo_bpo or not payroll_signature or not logo_vertical:
         return Response(
             {
                 "error": "No se encontró una o más imágenes necesarias, por favor avisa a tecnología."
@@ -101,6 +104,7 @@ def create_employment_certification(request):
             "user_data": employee_info,
             "logo_cyc": logo,
             "logo_bpo": logo_bpo,
+            "logo_vertical": logo_vertical,
             "payroll_signature": payroll_signature,
         },
     )
