@@ -10,7 +10,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 // Material-UI
-import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip } from "@mui/material";
+import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip, Divider, Chip } from "@mui/material";
 import {
     DataGrid,
     GridToolbarContainer,
@@ -48,10 +48,46 @@ const validationSchema = Yup.object().shape({
     contact_telephone: Yup.number().typeError("Numero de teléfono incorrecto").required("Campo requerido"),
     start_date: Yup.string().required("Campo requerido"),
     civil_responsibility_policy: Yup.string().required("Campo requerido"),
+    civil_responsibility_policy_number: Yup.string().required("Campo requerido"),
+    civil_responsibility_policy_start_date: Yup.string().required("Campo requerido"),
+    civil_responsibility_policy_end_date: Yup.string().required("Campo requerido"),
     compliance_policy: Yup.string().required("Campo requerido"),
+    compliance_policy_number: Yup.string().required("Campo requerido"),
+    compliance_policy_start_date: Yup.string().required("Campo requerido"),
+    compliance_policy_end_date: Yup.string().required("Campo requerido"),
     insurance_policy: Yup.string().required("Campo requerido"),
+    insurance_policy_number: Yup.string().required("Campo requerido"),
+    insurance_policy_start_date: Yup.string().required("Campo requerido"),
+    insurance_policy_end_date: Yup.string().required("Campo requerido"),
     renovation_date: Yup.string().required("Campo requerido"),
 });
+
+const initialInputs = [
+    { name: "name", label: "Clientes", type: "text" },
+    { name: "city", label: "Ciudad", type: "text" },
+    { name: "description", label: "Descripción", type: "text" },
+    { name: "expected_start_date", label: "Fecha de Inicio Estimada", type: "date" },
+    { name: "value", label: "Valor del Contrato", type: "text" },
+    { name: "monthly_cost", label: "Facturación Mensual", type: "text" },
+    { name: "duration", label: "Duración", type: "date" },
+    { name: "contact", label: "Nombre del Contacto", type: "text" },
+    { name: "contact_telephone", label: "Teléfono", type: "text" },
+    { name: "start_date", label: "Fecha de Inicio", type: "date" },
+    { name: "civil_responsibility_policy", label: "Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text", multiline: true },
+    { name: "civil_responsibility_policy_number", label: "Numero Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text" },
+    { name: "civil_responsibility_policy_start_date", label: "Fecha Inicio Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "date" },
+    { name: "civil_responsibility_policy_end_date", label: "Fecha Fin Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "date" },
+    { name: "compliance_policy", label: "Póliza de Cumplimiento", type: "text", multiline: true },
+    { name: "compliance_policy_number", label: "Numero Póliza de Cumplimiento", type: "text", multiline: true },
+    { name: "compliance_policy_start_date", label: "Fecha Inicio Póliza de Cumplimiento", type: "date", multiline: true },
+    { name: "compliance_policy_end_date", label: "Fecha Fin Póliza de Cumplimiento", type: "date", multiline: true },
+    { name: "compliance_policy2", label: "Fecha Fin Póliza de Cumplimiento", type: "date", multiline: true },
+    { name: "insurance_policy", label: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text", multiline: true },
+    { name: "insurance_policy_number", label: "Numero Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text", multiline: true },
+    { name: "insurance_policy_start_date", label: "Fecha Inicio Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "date", multiline: true },
+    { name: "insurance_policy_end_date", label: "Fecha Fin Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "date", multiline: true },
+    { name: "renovation_date", label: "Renovación del contrato", type: "date" },
+];
 
 export const Legal = () => {
     const [rows, setRows] = useState([]);
@@ -63,6 +99,7 @@ export const Legal = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const [inputs, setInputs] = useState(initialInputs);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem("permissions"));
 
@@ -95,6 +132,10 @@ export const Legal = () => {
         }
     };
 
+    useEffect(() => {
+        getPolicies();
+    }, []);
+
     const getDetails = async (id) => {
         try {
             const response = await fetch(`${getApiUrl()}contracts/${id}`, {
@@ -118,11 +159,8 @@ export const Legal = () => {
         }
     };
 
-    useEffect(() => {
-        getPolicies();
-    }, []);
-
     const handleCloseDialog = () => setOpenDialog(false);
+
     const handleCloseDialogEdit = () => {
         setOpenDialogEdit(false);
         setDisabled(false);
@@ -269,55 +307,67 @@ export const Legal = () => {
         }
     };
 
+    const handleAddPolicies = (name) => {
+        name = name.replace("_end_date", "");
+        
+        const newInputs = [
+            { name: `${name}`, label: "Numero de Póliza", type: "text" },
+            { name: `${name}_start_date`, label: "Fecha de Inicio", type: "date" },
+            { name: `${name}_end_date`, label: "Fecha de Fin", type: "date" },
+        ];
+        setInputs((prev) => [...prev, ...newInputs]);
+    };
+
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
         const [field, meta] = useField(props);
         const errorText = meta.error && meta.touched ? meta.error : "";
-        if (props.name in ["civil_responsibility_policy", "compliance_policy", "insurance_policy"]) {
+        if (props.name === "civil_responsibility_policy" || props.name === "compliance_policy" || props.name === "insurance_policy") {
             return (
-                <TextField
-                    key={props.name}
-                    sx={{ width: "390px", mt: "2rem" }}
-                    InputLabelProps={{ shrink: true }}
-                    multiline={multiline}
-                    rows={rows}
-                    type={type}
-                    label={label}
-                    {...field}
-                    helperText={errorText}
-                    error={!!errorText}
-                />
+                <>
+                    <Divider sx={{ width: "100%", mt: "2rem" }}>
+                        <Chip label={label} size="small" />
+                    </Divider>
+                    <TextField key={props.name} sx={{ width: "390px" }} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />
+                </>
             );
-        } else if (props.name.includes("policy")) {
+        } else if (props.name.includes("end_date")) {
             return (
-                <TextField
-                    key={props.name}
-                    sx={{ width: "390px" }}
-                    InputLabelProps={{ shrink: true }}
-                    multiline={multiline}
-                    rows={rows}
-                    type={type}
-                    label={label}
-                    {...field}
-                    helperText={errorText}
-                    error={!!errorText}
-                />
+                <>
+                    <TextField
+                        key={props.name}
+                        sx={{ width: "390px" }}
+                        InputLabelProps={{ shrink: true }}
+                        multiline={multiline}
+                        rows={rows}
+                        type={type}
+                        label={label}
+                        {...field}
+                        helperText={errorText}
+                        error={!!errorText}
+                    />
+                    <Button onClick={() => handleAddPolicies(props.name)} startIcon={<AddIcon />} variant="outlined">
+                        Añadir
+                    </Button>
+                </>
             );
         }
         if (label === "Renovación del contrato") {
             return (
-                <TextField
-                    key={props.name}
-                    sx={{ width: "800px" }}
-                    InputLabelProps={{ shrink: true }}
-                    multiline={multiline}
-                    rows={rows}
-                    type={type}
-                    label={label}
-                    disabled={disabled}
-                    {...field}
-                    helperText={errorText}
-                    error={!!errorText}
-                />
+                <>
+                    <TextField
+                        key={props.name}
+                        sx={{ width: "800px" }}
+                        InputLabelProps={{ shrink: true }}
+                        multiline={multiline}
+                        rows={rows}
+                        type={type}
+                        label={label}
+                        disabled={disabled}
+                        {...field}
+                        helperText={errorText}
+                        error={!!errorText}
+                    />
+                </>
             );
         } else if (type === "date") {
             return (
@@ -329,21 +379,6 @@ export const Legal = () => {
                     type={type}
                     label={label}
                     disabled={disabled}
-                    {...field}
-                    helperText={errorText}
-                    error={!!errorText}
-                />
-            );
-        } else if (multiline) {
-            return (
-                <TextField
-                    key={props.name}
-                    sx={{ width: "800px" }}
-                    disabled={disabled}
-                    multiline={multiline}
-                    rows={rows}
-                    type={type}
-                    label={label}
                     {...field}
                     helperText={errorText}
                     error={!!errorText}
@@ -372,32 +407,6 @@ export const Legal = () => {
         { field: "name", headerName: "Clientes", width: 750, editable: false },
         { field: "duration", headerName: "Duración", width: 100, editable: false },
         { field: "start_date", headerName: "Fecha Inicio", width: 100, editable: false },
-    ];
-
-    const inputs = [
-        { name: "name", label: "Clientes", type: "text" },
-        { name: "city", label: "Ciudad", type: "text" },
-        { name: "description", label: "Descripción", type: "text" },
-        { name: "expected_start_date", label: "Fecha de Inicio Estimada", type: "date" },
-        { name: "value", label: "Valor del Contrato", type: "text" },
-        { name: "monthly_cost", label: "Facturación Mensual", type: "text" },
-        { name: "duration", label: "Duración", type: "date" },
-        { name: "contact", label: "Nombre del Contacto", type: "text" },
-        { name: "contact_telephone", label: "Teléfono", type: "text" },
-        { name: "start_date", label: "Fecha de Inicio", type: "date" },
-        { name: "civil_responsibility_policy", label: "Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text", multiline: true },
-        { name: "civil_responsibility_policy_number", label: "Numero Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "text" },
-        { name: "civil_responsibility_policy_start_date", label: "Fecha Inicio Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "date" },
-        { name: "civil_responsibility_policy_end_date", label: "Fecha Fin Póliza de Responsabilidad Civil Extracontractual Derivada de Cumplimiento", type: "date" },
-        { name: "compliance_policy", label: "Póliza de Cumplimiento", type: "text", multiline: true },
-        { name: "compliance_policy_number", label: "Numero Póliza de Cumplimiento", type: "text", multiline: true },
-        { name: "compliance_policy_start_date", label: "Fecha Inicio Póliza de Cumplimiento", type: "date", multiline: true },
-        { name: "compliance_policy_end_date", label: "Fecha Fin Póliza de Cumplimiento", type: "date", multiline: true },
-        { name: "insurance_policy", label: "Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text", multiline: true },
-        { name: "insurance_policy_number", label: "Numero Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "text", multiline: true },
-        { name: "insurance_policy_start_date", label: "Fecha Inicio Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "date", multiline: true },
-        { name: "insurance_policy_end_date", label: "Fecha Fin Póliza Seguros de Responsabilidad Profesional por Perdida de Datos", type: "date", multiline: true },
-        { name: "renovation_date", label: "Renovación del contrato", type: "date" },
     ];
 
     columns.push({
@@ -484,33 +493,13 @@ export const Legal = () => {
                     >
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
-                                {inputs.map((input, index) => {
-                                    if (input.name.includes("policy")) {
-                                        return (
-                                            <FormikTextField
-                                                key={input.name}
-                                                type={input.type}
-                                                name={input.name}
-                                                label={input.label}
-                                                autoComplete="off"
-                                                spellCheck={false}
-                                            />
-                                        );
-                                    } else {
-                                        return (
-                                            <FormikTextField
-                                                key={input.name}
-                                                type={input.type}
-                                                name={input.name}
-                                                label={input.label}
-                                                autoComplete="off"
-                                                spellCheck={false}
-                                            />
-                                        );
-                                    }
+                                {inputs.map((input) => {
+                                    return (
+                                        <FormikTextField key={input.name} type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
+                                    );
                                 })}
                                 <Box sx={{ width: "100%", textAlign: "end" }}>
-                                    <Button type="submit" startIcon={<SaveIcon></SaveIcon>}>
+                                    <Button variant="contained" type="submit" startIcon={<SaveIcon></SaveIcon>}>
                                         Guardar
                                     </Button>
                                 </Box>

@@ -103,7 +103,7 @@ const baseArticles = [
         subtitle: "Uniendo Fuerzas para Alcanzar Nuevos Horizontes de Éxito y Crecimiento",
         img: article1,
         articleId: 1,
-        uploadDate: "08-2025",
+        uploadDate: "01-2024",
     },
     {
         title: "Desarrollo Profesional en el Mundo del BPO",
