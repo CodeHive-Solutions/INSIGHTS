@@ -64,6 +64,12 @@ class User(AbstractUser):
         if self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.first_name
+    
+    def get_full_name_reversed(self) -> str:
+        """Return the full name of the user reversed."""
+        if self.last_name:
+            return f"{self.last_name} {self.first_name} "
+        return self.first_name
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""

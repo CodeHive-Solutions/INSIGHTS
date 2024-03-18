@@ -54,6 +54,8 @@ class PayslipTest(BaseTestCase):
 
     def test_get_only_my_payslips(self):
         """Test get payslips without permission."""
+        self.user.cedula = "1001185389"
+        self.user.save()
         self.test_upload_payslip_file()
         response = self.client.get("/payslips/")
         self.assertEqual(
@@ -66,9 +68,12 @@ class PayslipTest(BaseTestCase):
     def test_get_payslip(self):
         """Test get payslip."""
         self.test_upload_payslip_file()
+        payslip = Payslip.objects.filter(identification="1000065648").first()
+        if not payslip:
+            self.fail("Payslip not found")
         get = Permission.objects.get(codename="view_payslip")
         self.user.user_permissions.add(get)
-        response = self.client.get("/payslips/1000065648/")
+        response = self.client.get(f"/payslips/{payslip.pk}/")
         self.assertEqual(
             response.status_code,
             200,
@@ -98,7 +103,8 @@ class PayslipTest(BaseTestCase):
     def test_get_another_person(self):
         """Test get payslip of another person."""
         self.test_upload_payslip_file()
-        response = self.client.get("/payslips/0012343/")
+        payslip = Payslip.objects.filter(identification="1000065648").first()
+        response = self.client.get(f"/payslips/{payslip.pk}/")
         self.assertEqual(
             response.status_code,
             403,

@@ -79,7 +79,7 @@ def create_employment_certification(request):
             )
         employee_info = {
             "start_date": employee[0].strftime("%d de %B de %Y"),
-            "position": employee[1],
+            "position": employee[1].lower(),
             "salary_text": num2words(
                 employee[2], lang="es_CO", to="currency"
             ).capitalize(),

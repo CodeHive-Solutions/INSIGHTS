@@ -28,4 +28,4 @@ class EmploymentCertification(models.Model):
     )
 
     def __str__(self):
-        return f"Certificación laboral de {self.user.get_full_name()}"
+        return f"Certificación laboral de {self.user.get_full_name_reversed()}"
