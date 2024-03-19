@@ -82,13 +82,13 @@
 
     <div class="background-image"></div>
     <div style="padding: 0rem 5rem">
-        <h1>C&C services S.A.S</h1>
-        <h4>NIT 900008653-0</h4>
+        <h1 style="font-size: xx-large; font-weight: 600;">C&C services S.A.S</h1>
+        <h4 style="font-size: x-large; font-weight: 600;">NIT 900008653-0</h4>
         <p>
-        <h2 class="center">Certifica: </h2>
+        <h2 style="font-size: x-large; font-weight: 600;" class="center">Certifica: </h2>
         </p>
-        <p>Que el/la señor(a) <span class="bold">JUAN SEBASTIAN CARREÑO DAZA</span> quien se identifica con cédula de
-            ciudadanía No. <span class="bold">{{user.cedula}}</span> de {{user_data.expedition_city}} labora en esta
+        <p>Que el/la señor(a) <span class="bold">{{user.get_full_name_reversed}}</sp/an> quien se identifica con cédula de
+            ciudadanía No. <span class="bold">{{user.cedula}}</span> de <span>{{user_data.expedition_city}} </span> labora en esta
             compañía y sus condiciones son las siguientes:</p>
         <p>TIPO DE CONTRATO: <span class="bold">{{user_data.contract_type}}</span></p>
         <p>FECHA DE INGRESO: <span class="bold">{{user_data.start_date}}</span></p>
@@ -98,11 +98,11 @@
             interese.</p>
         <p>Atentamente,</p>
         <img src="data:image/png;base64,{{ payroll_signature }}" alt="Signature" width="25%" height="25%">
-        <p class="bold">ANDRES LEONARDO CASTRO R.</p>
-        <p class="bold">Director de Nomina y Administración de Personal</p>
+        <p style="margin-bottom: 0;" class="bold">ANDRES LEONARDO CASTRO R.</p>
+        <p style="margin-top: 0;" class="bold">Director de Nomina y Administración de Personal</p>
         <p><i>
                 <h6>*Para validar la información envía un correo a: <span
-                        class="bold">certificaciones@cyc-bpo.com</span> pregunta por el certificado: <b>CTL-{{id}}</b>
+                        class="bold">certificaciones@cyc-bpo.com</span>. Certificado: <b>CTL-{{id}}</b>
                 </h6>
             </i></p>
     </div>

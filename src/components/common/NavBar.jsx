@@ -9,7 +9,7 @@ import SnackbarAlert from "./SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 // Material-UI
-import { Box, Button, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, ListItemIcon, useMediaQuery, ListItemText } from "@mui/material";
+import { Box, Button, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, ListItemIcon, useMediaQuery, ListItemText, LinearProgress, Fade } from "@mui/material";
 
 // Icons
 import { Logout, Settings } from "@mui/icons-material";
@@ -25,11 +25,13 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import DescriptionIcon from "@mui/icons-material/Description";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
 
 const Navbar = () => {
+    const [openCollapse, setOpenCollapse] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorElUtils, setAnchorElUtils] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
@@ -193,6 +195,37 @@ const Navbar = () => {
         }
     };
 
+    const sendCertification = async () => {
+        setOpenCollapse(true);
+
+        try {
+            const response = await fetch(`${getApiUrl()}employment-management/send-employment-certification/`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ cedula }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 500) {
+                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
+                    throw new Error(data.detail);
+                }
+                showSnack("error", "Error en el servidor, por favor intente más tarde", true);
+            } else if (response.status === 200) {
+                showSnack("success", data.message + " correctamente al correo " + data.email.toLowerCase());
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setOpenCollapse(false);
+        }
+    };
+
     const isMobile = useMediaQuery("(max-width: 600px)");
 
     return (
@@ -209,6 +242,9 @@ const Navbar = () => {
                 }}
                 onMouseEnter={handleCloseUtils}
             >
+                <Fade in={openCollapse} sx={{ zIndex: 10020 }}>
+                    <LinearProgress variant="query" />
+                </Fade>
                 <Box
                     sx={{
                         display: "flex",
@@ -271,7 +307,6 @@ const Navbar = () => {
                     )} */}
                 </Box>
             </Box>
-
             <Menu
                 anchorEl={anchorEl}
                 id="account-menu"
@@ -321,6 +356,12 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Mis desprendibles de nomina" />
                 </MenuItem>
+                <MenuItem onClick={() => sendCertification()}>
+                    <ListItemIcon>
+                        <DescriptionIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Certificación Laboral" />
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -328,7 +369,6 @@ const Navbar = () => {
                     <ListItemText primary="Cerrar sesión" />
                 </MenuItem>
             </Menu>
-
             <Menu
                 anchorEl={anchorElUtils}
                 open={openUtils}
