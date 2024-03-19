@@ -25,22 +25,7 @@ def send_payslip(payslips):
     with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
         logo = logo.read()
         logo = base64.b64encode(logo).decode("utf-8")
-    for payslip in payslips:
-        rendered_template = render_to_string(
-            "payslip.html",
-            {"payslip": payslip, "logo": logo},
-        )
-        subject = f"Desprendible de nomina para {payslip.title}"
-        message = "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos."
-        send_email_with_attachment.delay(
-            payslip.title,
-            rendered_template,
-            subject,
-            message,
-            settings.EMAIL_HOST_USER,
-            payslip.email,
-        )
-        emails.append(payslip.email)
+    send_email_with_attachment.delay(payslips, logo, settings.EMAIL_HOST_USER)
     return Response(
         {"message": "Desprendibles de nomina enviados", "emails": emails}, status=201
     )

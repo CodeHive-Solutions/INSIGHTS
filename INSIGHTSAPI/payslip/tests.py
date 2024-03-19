@@ -165,7 +165,7 @@ class PayslipTest(BaseTestCase):
     def test_upload_payslip_file(self):
         """Test upload payslip file."""
         with open(
-            str(settings.BASE_DIR) + "/utils/excels/Nomina.csv",
+            str(settings.BASE_DIR) + "/utils/excels/Nomina_massive.csv",
             "r",
             encoding="utf-8-sig",
         ) as file:

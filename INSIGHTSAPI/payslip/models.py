@@ -32,3 +32,10 @@ class Payslip(models.Model):
 
     def __str__(self):
         return self.title + " - " + self.identification
+
+    def to_json(self):
+        return {
+            key: value
+            for key, value in self.__dict__.items()
+            if not key.startswith("_") and not callable(value)
+        }

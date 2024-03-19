@@ -31,6 +31,16 @@ def read_and_encode_image(file_path):
     else:
         return None
 
+def capitalize_phrase(text):
+    """Capitalize a phrase ignoring conjunctions and prepositions in uppercase and lowercase."""
+    ignore_words = ["de", "del", "la", "las", "los", "y", "a", "en", "con", "por", "para", "al", "el", "un", "una", "unos", "unas"]
+    words = text.split()
+    for i, word in enumerate(words):
+        if word.lower() not in ignore_words:
+            words[i] = word.capitalize()
+        else:
+            words[i] = word.lower()
+    return " ".join(words)
 
 def create_employment_certification(request):
     """Create an employment certification."""
@@ -79,13 +89,13 @@ def create_employment_certification(request):
             )
         employee_info = {
             "start_date": employee[0].strftime("%d de %B de %Y"),
-            "position": employee[1].lower(),
+            "position": capitalize_phrase(employee[1]),
             "salary_text": num2words(
                 employee[2], lang="es_CO", to="currency"
             ).capitalize(),
             "salary_number": number_format(employee[2]),
-            "contract_type": employee[3],
-            "expedition_city": employee[4],
+            "contract_type": capitalize_phrase(employee[3]),
+            "expedition_city": capitalize_phrase(employee[4]),
             "today": timezone.now().strftime("%d de %B de %Y"),
         }
     certification = EmploymentCertification.objects.create(
