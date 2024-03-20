@@ -22,10 +22,15 @@ from .serializers import PayslipSerializer
 def send_payslip(payslips):
     emails = []
     messages = []
+    payslip_data = []
     with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
         logo = logo.read()
         logo = base64.b64encode(logo).decode("utf-8")
-    send_email_with_attachment.delay(payslips, logo, settings.EMAIL_HOST_USER)
+
+    for payslip in payslips:
+        payslip_data.append(payslip.to_json())
+    print("Celery executed")
+    send_email_with_attachment.delay(payslip_data, logo, settings.EMAIL_HOST_USER)
     return Response(
         {"message": "Desprendibles de nomina enviados", "emails": emails}, status=201
     )

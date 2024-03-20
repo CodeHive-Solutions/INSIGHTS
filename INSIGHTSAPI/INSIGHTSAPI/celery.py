@@ -15,7 +15,3 @@ app.conf.broker_connection_retry_on_startup = True
 app.conf.timezone = "UTC"
 
 app.autodiscover_tasks(["INSIGHTSAPI"])
-
-@app.task(bind=True, ignore_result=True)
-def debug_task(self):
-    print(f'Request: {self.request!r}')

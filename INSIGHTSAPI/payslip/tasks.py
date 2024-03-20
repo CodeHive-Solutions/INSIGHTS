@@ -10,8 +10,10 @@ def send_email_with_attachment(
     logo,
     from_email,
 ):
+    i = 0
     for payslip in payslips:
-        print(payslip)
+        print(i)
+        i += 1
         rendered_template = render_to_string(
             "payslip.html",
             {"payslip": payslip, "logo": logo},
@@ -21,9 +23,9 @@ def send_email_with_attachment(
             False,
             options={"dpi": 600, "orientation": "Landscape", "page-size": "Letter"},
         )
-        subject = f"Desprendible de nomina para {payslip.title}"
+        subject = f"Desprendible de nomina para {payslip['title']}"
         message = "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos."
-        email = EmailMessage(subject, message, from_email, [payslip.email])
-        attachment = ((f"{payslip.title}.pdf", pdf, "application/pdf"),)
+        email = EmailMessage(subject, message, from_email, [payslip["email"]])
+        attachment = ((f"{payslip['title']}.pdf", pdf, "application/pdf"),)
         email.attachments = attachment
         email.send()
