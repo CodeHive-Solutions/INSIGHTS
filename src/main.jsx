@@ -34,6 +34,7 @@ import Promotions from "./components/pages/Promotions";
 import Payslips from "./components/pages/Payslips";
 import MyPayslips from "./components/pages/MyPayslips";
 import SwiperSlider from "./components/shared/SwiperSlider";
+import EmploymentCertification from "./components/pages/EmploymentCertification";
 
 const theme = createTheme({
     typography: {
@@ -149,6 +150,10 @@ const router = createBrowserRouter([
             {
                 path: "payslips",
                 element: <Payslips />,
+            },
+            {
+                path: "certifications",
+                element: <EmploymentCertification />,
             },
         ],
     },

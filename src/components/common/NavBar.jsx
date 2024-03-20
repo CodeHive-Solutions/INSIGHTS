@@ -26,6 +26,7 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DescriptionIcon from "@mui/icons-material/Description";
+import TopicIcon from "@mui/icons-material/Topic";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
@@ -230,6 +231,9 @@ const Navbar = () => {
 
     return (
         <>
+            <Fade in={openCollapse}>
+                <LinearProgress sx={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 1002 }} variant="query" />
+            </Fade>
             <Box
                 className="navbar"
                 sx={{
@@ -242,9 +246,6 @@ const Navbar = () => {
                 }}
                 onMouseEnter={handleCloseUtils}
             >
-                <Fade in={openCollapse} sx={{ zIndex: 10020 }}>
-                    <LinearProgress variant="query" />
-                </Fade>
                 <Box
                     sx={{
                         display: "flex",
@@ -356,12 +357,12 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Mis desprendibles de nomina" />
                 </MenuItem>
-                <MenuItem onClick={() => sendCertification()}>
+                {/* <MenuItem onClick={() => sendCertification()}>
                     <ListItemIcon>
                         <DescriptionIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -460,6 +461,14 @@ const Navbar = () => {
                             <PaymentsIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Registros de Desprendibles de Nomina" />
+                    </MenuItem>
+                ) : null}
+                {permissions && permissions.includes("employment_management.view_employmentcertification") ? (
+                    <MenuItem onClick={() => navigate("/logged/certifications")}>
+                        <ListItemIcon>
+                            <TopicIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
                 ) : null}
             </Menu>
