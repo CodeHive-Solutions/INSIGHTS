@@ -20,7 +20,7 @@ import mission2 from "../../images/about/image-mission-2.jpg";
 import value1 from "../../images/about/corporative-values.jpg";
 
 // Custom components
-import CardSlider from "./CardSlider";
+import SwiperSlider from "../shared/SwiperSlider";
 
 const managements = [
     {
@@ -285,7 +285,8 @@ const About = () => {
                         </Card>
                     ))}
                 </Container>
-                <CardSlider />
+                {/* <CardSlider /> */}
+                <SwiperSlider />
             </Box>
         </Box>
     );

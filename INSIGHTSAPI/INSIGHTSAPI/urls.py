@@ -19,6 +19,7 @@ from django.urls import include, path
 from django.contrib import admin
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+
 urlpatterns = [
     path("api/schema/download", SpectacularAPIView.as_view(), name="schema"),
     path(
@@ -38,5 +39,8 @@ urlpatterns = [
     path("vacancy/", include("vacancy.urls")),
     path("operational-risk/", include("operational_risk.urls")),
     path("payslips/", include("payslip.urls")),
-    path("users/", include("users.urls")),
+    path("employment-management/", include("employment_management.urls")),
 ]
+
+handler500 = "rest_framework.exceptions.server_error"
+handler400 = "rest_framework.exceptions.bad_request"

@@ -60,7 +60,6 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     const cedula = JSON.parse(localStorage.getItem("cedula"));
 
     const handleCloseDialog = () => setOpenDialog(false);
-    const handleOpenDialog = () => setOpenDialog(true);
 
     const capitalize = (string) => {
         return string
@@ -119,6 +118,7 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     };
 
     useEffect(() => {
+        console.log("working");
         getGoal();
     }, []);
 

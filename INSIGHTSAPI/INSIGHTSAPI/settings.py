@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     "vacancy",
     "operational_risk",
     "payslip",
+    "employment_management",
 ]
 
 MIDDLEWARE = [
@@ -147,10 +148,12 @@ TEMPLATES = [
     },
 ]
 
-EMAIL_BACKEND = "INSIGHTSAPI.custom.email_backend.CustomEmailBackend"
+EMAIL_BACKEND = "INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mail.cyc-services.com.co"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = True
 EMAIL_HOST_USER = "no-reply@cyc-services.com.co"
 EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
 

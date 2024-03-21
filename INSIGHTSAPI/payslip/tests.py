@@ -3,6 +3,7 @@
 from services.tests import BaseTestCase
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.core import mail
 from .models import Payslip
 
 
@@ -53,9 +54,9 @@ class PayslipTest(BaseTestCase):
 
     def test_get_only_my_payslips(self):
         """Test get payslips without permission."""
+        self.user.cedula = "1001185389"
+        self.user.save()
         self.test_upload_payslip_file()
-        # self.user.cedula = "1000065648"
-        # self.user.save()
         response = self.client.get("/payslips/")
         self.assertEqual(
             response.status_code,
@@ -67,9 +68,12 @@ class PayslipTest(BaseTestCase):
     def test_get_payslip(self):
         """Test get payslip."""
         self.test_upload_payslip_file()
+        payslip = Payslip.objects.filter(identification="1000065648").first()
+        if not payslip:
+            self.fail("Payslip not found")
         get = Permission.objects.get(codename="view_payslip")
         self.user.user_permissions.add(get)
-        response = self.client.get("/payslips/1000065648/")
+        response = self.client.get(f"/payslips/{payslip.pk}/")
         self.assertEqual(
             response.status_code,
             200,
@@ -99,7 +103,8 @@ class PayslipTest(BaseTestCase):
     def test_get_another_person(self):
         """Test get payslip of another person."""
         self.test_upload_payslip_file()
-        response = self.client.get("/payslips/0012343/")
+        payslip = Payslip.objects.filter(identification="1000065648").first()
+        response = self.client.get(f"/payslips/{payslip.pk}/")
         self.assertEqual(
             response.status_code,
             403,
@@ -175,16 +180,25 @@ class PayslipTest(BaseTestCase):
             response.data,
         )
         self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
+        self.assertEqual(Payslip.objects.count(), 3)
+
+    def test_upload_massive_file(self):
+        """Test upload payslip file."""
+        with open(
+            str(settings.BASE_DIR) + "/utils/excels/Nomina_massive.csv",
+            "r",
+            encoding="utf-8-sig",
+        ) as file:
+            response = self.client.post(
+                "/payslips/",
+                {"file": file},
+                format="multipart",
+            )
         self.assertEqual(
-            response.data["emails"],
-            [
-                "HEIBERT.MOGOLLON@CYC-BPO.COM",
-                "JUAN.CARRENO@CYC-BPO.COM",
-                "HEIBERT.MOGOLLON@CYC-BPO.COM",
-            ],
+            response.status_code,
+            201,
             response.data,
         )
-        self.assertEqual(Payslip.objects.count(), 3)
 
     def test_resend_payslip(self):
         """Test resend payslip."""
@@ -201,33 +215,3 @@ class PayslipTest(BaseTestCase):
             response.data,
         )
         self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
-        self.assertEqual(response.data["emails"], ["heibert.mogollon12@gmail.com"])
-
-    # def test_upload_payslip_file_latin_1(self):
-    #     """Test upload payslip file."""
-    #     with open(
-    #         str(settings.BASE_DIR) + "/utils/excels/Nomina_latin.csv",
-    #         "r",
-    #         encoding="latin-1",
-    #     ) as file:
-    #         response = self.client.post(
-    #             "/payslips/",
-    #             {"file": file},
-    #             format="multipart",
-    #         )
-    #     self.assertEqual(
-    #         response.status_code,
-    #         201,
-    #         response.data,
-    #     )
-    #     self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
-    #     self.assertEqual(
-    #         response.data["emails"],
-    #         [
-    #             "HEIBERT.MOGOLLON@CYC-BPO.COM",
-    #             "JUAN.CARRENO@CYC-BPO.COM",
-    #             "HEIBERT.MOGOLLON@CYC-BPO.COM",
-    #         ],
-    #         response.data,
-    #     )
-    #     self.assertEqual(Payslip.objects.count(), 3)

@@ -64,6 +64,12 @@ class User(AbstractUser):
         if self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.first_name
+    
+    def get_full_name_reversed(self) -> str:
+        """Return the full name of the user reversed."""
+        if self.last_name:
+            return f"{self.last_name} {self.first_name} "
+        return self.first_name
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
@@ -80,9 +86,15 @@ class User(AbstractUser):
                         [self.cedula],
                     )
                 result = db_connection.fetchone()
-                if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"} or self.cedula == "00000000":
+                if (
+                    str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}
+                    and not self.cedula
+                ) or self.cedula == "00000000":
                     result = ("00000000", "Administrador", "Administrador")
                     self.email = "heibert.mogollon@cyc-bpo.com"
+                    # self.email = "heibert.mogollon@gmail.com"
+                    # self.email = "heibert203@hotmail.com"
+                    # self.email = "juan.carreno@cyc-bpo.com"
                 elif not result:
                     raise ValidationError(
                         "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
@@ -90,7 +102,8 @@ class User(AbstractUser):
                     # super(User, self).save(*args, **kwargs)
                 self.cedula = result[0]
                 user = User.objects.filter(cedula=self.cedula).first()
-                self.pk = user.pk if user else None
+                if user:
+                    self.pk = user.pk
                 self.job_title = result[1]
                 area, _ = Area.objects.get_or_create(name=result[2])
                 self.area_id = area.id

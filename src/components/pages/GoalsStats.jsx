@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
@@ -9,36 +9,20 @@ import { useNavigate } from "react-router-dom";
 import { Container, Typography, Box, TextField, MenuItem, Button } from "@mui/material";
 import {
     DataGrid,
-    GridActionsCellItem,
     GridToolbarContainer,
     GridToolbarColumnsButton,
     GridToolbarFilterButton,
     GridToolbarExport,
     GridToolbarDensitySelector,
     GridToolbarQuickFilter,
-    GridRowModes,
-    GridRowEditStopReasons,
 } from "@mui/x-data-grid";
-
-// Icons
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
-import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const AnalisisMetas = () => {
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const [snackbarMessage, setSnackbarMessage] = useState("");
-    const [coordinator, setCoordinator] = useState("");
-    const [selectedOption, setSelectedOption] = useState("delivery");
     const [rows, setRows] = useState([]);
-    const [rowModesModel, setRowModesModel] = useState({});
-    const [isLoading, setIsLoading] = useState(true); // Add a loading state
-    const [yearsArray, setYearsArray] = useState([]); // Add a loading state
-    const [open, setOpen] = useState(false);
-    const [link, setLink] = useState();
-    const handleClose = () => setOpen(false);
+    const [yearsArray, setYearsArray] = useState([]);
     const monthRef = useRef();
     const yearRef = useRef();
     const goalType = useRef(null);
@@ -52,10 +36,49 @@ const AnalisisMetas = () => {
         }
     }, []);
 
-    const handleSave = async () => {
+    const modifyData = (data) => {
+        const modifiedData = data.map((row) => {
+            const date_update = row.last_update ? "last_update" : "history_date";
+            if (row.quantity_goal > 999) {
+                const formatter = new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0,
+                });
+                const value = row.quantity_goal;
+                const formattedValue = formatter.format(value);
+                row.quantity_goal = formattedValue;
+            } else if (row.quantity_goal < 1) {
+                row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
+            }
+            return {
+                ...row,
+                [date_update]: row[date_update].substring(0, 10),
+                accepted: row.accepted == 0 ? "Rechazada" : row.accepted == 1 ? "Aceptada" : "En espera",
+                clean_desk: row.clean_desk === "" ? "En Espera" : row.clean_desk,
+                quality: row.quality === "" ? "En Espera" : row.quality,
+                result: row.result === "" ? "En Espera" : row.result,
+                total: row.total === "" ? "En Espera" : row.total,
+                accepted_execution:
+                    row.total == "" && row.accepted_execution == null
+                        ? ""
+                        : row.accepted_execution == 0
+                        ? "Rechazada"
+                        : row.accepted_execution == 1
+                        ? "Aceptada"
+                        : "En espera",
+            };
+        });
+
+        setRows(modifiedData);
+    };
+
+    const getGoals = async () => {
         try {
             const response = await fetch(`${getApiUrl()}goals`, {
                 method: "GET",
+                credentials: "include",
             });
 
             if (!response.ok) {
@@ -84,39 +107,7 @@ const AnalisisMetas = () => {
 
             if (response.status === 200) {
                 const data = await response.json();
-                const modifiedData = data.map((row) => {
-                    if (row.quantity_goal > 999) {
-                        const formatter = new Intl.NumberFormat("es-CO", {
-                            style: "currency",
-                            currency: "COP",
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0,
-                        });
-                        const value = row.quantity_goal;
-                        const formattedValue = formatter.format(value);
-                        row.quantity_goal = formattedValue;
-                    } else if (row.quantity_goal < 1) {
-                        row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
-                    }
-                    return {
-                        ...row,
-                        last_update: row.last_update.substring(0, 10),
-                        accepted: row.accepted == 0 ? "Rechazada" : row.accepted == 1 ? "Aceptada" : "En espera",
-                        clean_desk: row.clean_desk === "" ? "En Espera" : row.clean_desk,
-                        quality: row.quality === "" ? "En Espera" : row.quality,
-                        result: row.result === "" ? "En Espera" : row.result,
-                        total: row.total === "" ? "En Espera" : row.total,
-                        accepted_execution:
-                            row.total == "" && row.accepted_execution == null
-                                ? ""
-                                : row.accepted_execution == 0
-                                ? "Rechazada"
-                                : row.accepted_execution == 1
-                                ? "Aceptada"
-                                : "En espera",
-                    };
-                });
-                setRows(modifiedData);
+                modifyData(data);
             }
         } catch (error) {
             console.error(error);
@@ -124,33 +115,8 @@ const AnalisisMetas = () => {
     };
 
     useEffect(() => {
-        handleSave();
-    }, [coordinator]); // Add cedula and coordinator as dependencies to useEffect
-
-    const handleDeleteClick = async (register_cedula) => {
-        try {
-            const response = await fetch(`${getApiUrl()}goals/${register_cedula}`, {
-                method: "DELETE",
-                body: JSON.stringify({ cedula: cedula }),
-            });
-            if (response.status === 204) {
-                setRows(rows.filter((row) => row.cedula !== register_cedula));
-                setOpenSnackbar(true);
-                setSnackbarSeverity("success");
-                setSnackbarMessage("Registro eliminado correctamente");
-                handleSave();
-            } else {
-                setOpenSnackbar(true);
-                setSnackbarSeverity("error");
-                setSnackbarMessage("Error al eliminar la meta: " + response.status + " " + response.statusText);
-            }
-        } catch (error) {
-            console.error(error);
-            setOpenSnackbar(true);
-            setSnackbarSeverity("error");
-            setSnackbarMessage("Error al eliminar la meta: " + error.message);
-        }
-    };
+        getGoals();
+    }, []);
 
     const goalsColumns = [
         { field: "cedula", headerName: "Cedula", width: 200 },
@@ -199,160 +165,7 @@ const AnalisisMetas = () => {
                 }
             },
         },
-        // {
-        //     field: "actions",
-        //     type: "actions",
-        //     headerName: "Acciones",
-        //     width: 100,
-        //     cellClassName: "actions",
-        //     getActions: ({ id }) => {
-        //         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-        //         if (isInEditMode) {
-        //             return [
-        //                 <GridActionsCellItem
-        //                     icon={<SaveOutlinedIcon />}
-        //                     label="Save"
-        //                     key={id}
-        //                     sx={{
-        //                         color: "primary.main",
-        //                     }}
-        //                     onClick={handleSaveClick(id)}
-        //                 />,
-        //                 <GridActionsCellItem key={id} icon={<CancelOutlinedIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} />,
-        //             ];
-        //         }
-
-        //         return [
-        //             <GridActionsCellItem key={id} icon={<EditOutlinedIcon />} label="Edit" onClick={handleEditClick(id)} />,
-        //             <GridActionsCellItem key={id} icon={<DeleteOutlineOutlinedIcon />} label="Delete" onClick={() => handleDeleteClick(id)} />,
-        //         ];
-        //     },
-        // },
     ];
-    // const initialColumns = [
-    //     { field: "cedula", headerName: "Cedula", width: 100 },
-    //     { field: "quantity", headerName: "Meta", width: 140, editable: true },
-    //     { field: "clean_desk", headerName: "Clean Desk", width: 80, editable: true },
-    //     { field: "quality", headerName: "Calidad", width: 80, editable: true },
-    //     { field: "result", headerName: "Resultado", width: 80, editable: true },
-    //     { field: "total", headerName: "Total", width: 80, editable: true },
-    //     { field: "last_update", headerName: "Fecha de modificación", width: 155 },
-    //     { field: "accepted", headerName: "Aprobación Meta", width: 125 },
-    //     { field: "accepted_execution", headerName: "Aprobación Ejecución", width: 150 },
-    //     {
-    //         field: "goal_date",
-    //         headerName: "Fecha de la meta",
-    //         width: 150,
-    //         sortComparator: (v1, v2) => {
-    //             // Extraer el mes y el año de los valores
-    //             const [mes1, año1] = v1.split("-");
-    //             const [mes2, año2] = v2.split("-");
-    //             // Crear un objeto con los nombres de los meses en español y sus números correspondientes
-    //             const meses = {
-    //                 ENERO: 1,
-    //                 FEBRERO: 2,
-    //                 MARZO: 3,
-    //                 ABRIL: 4,
-    //                 MAYO: 5,
-    //                 JUNIO: 6,
-    //                 JULIO: 7,
-    //                 AGOSTO: 8,
-    //                 SEPTIEMBRE: 9,
-    //                 OCTUBRE: 10,
-    //                 NOVIEMBRE: 11,
-    //                 DICIEMBRE: 12,
-    //             };
-    //             // Convertir los meses a números
-    //             const num1 = meses[mes1];
-    //             const num2 = meses[mes2];
-    //             // Comparar los años primero, y si son iguales, comparar los meses
-    //             if (año1 < año2) {
-    //                 return -1;
-    //             } else if (año1 > año2) {
-    //                 return 1;
-    //             } else {
-    //                 if (num1 < num2) {
-    //                     return -1;
-    //                 } else if (num1 > num2) {
-    //                     return 1;
-    //                 } else {
-    //                     return 0;
-    //                 }
-    //             }
-    //         },
-    //     },
-    //     {
-    //         field: "execution_date",
-    //         headerName: "Fecha de la ejecucion de la meta",
-    //         width: 150,
-    //         sortComparator: (v1, v2) => {
-    //             // Extraer el mes y el año de los valores
-    //             const [mes1, año1] = v1.split("-");
-    //             const [mes2, año2] = v2.split("-");
-    //             // Crear un objeto con los nombres de los meses en español y sus números correspondientes
-    //             const meses = {
-    //                 ENERO: 1,
-    //                 FEBRERO: 2,
-    //                 MARZO: 3,
-    //                 ABRIL: 4,
-    //                 MAYO: 5,
-    //                 JUNIO: 6,
-    //                 JULIO: 7,
-    //                 AGOSTO: 8,
-    //                 SEPTIEMBRE: 9,
-    //                 OCTUBRE: 10,
-    //                 NOVIEMBRE: 11,
-    //                 DICIEMBRE: 12,
-    //             };
-    //             // Convertir los meses a números
-    //             const num1 = meses[mes1];
-    //             const num2 = meses[mes2];
-    //             // Comparar los años primero, y si son iguales, comparar los meses
-    //             if (año1 < año2) {
-    //                 return -1;
-    //             } else if (año1 > año2) {
-    //                 return 1;
-    //             } else {
-    //                 if (num1 < num2) {
-    //                     return -1;
-    //                 } else if (num1 > num2) {
-    //                     return 1;
-    //                 } else {
-    //                     return 0;
-    //                 }
-    //             }
-    //         },
-    //     },
-    //     // {
-    //     //     field: "actions",
-    //     //     type: "actions",
-    //     //     headerName: "Acciones",
-    //     //     width: 100,
-    //     //     cellClassName: "actions",
-    //     //     getActions: ({ id }) => {
-    //     //         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-    //     //         if (isInEditMode) {
-    //     //             return [
-    //     //                 <GridActionsCellItem
-    //     //                     icon={<SaveOutlinedIcon />}
-    //     //                     label="Save"
-    //     //                     key={id}
-    //     //                     sx={{
-    //     //                         color: "primary.main",
-    //     //                     }}
-    //     //                     onClick={handleSaveClick(id)}
-    //     //                 />,
-    //     //                 <GridActionsCellItem key={id} icon={<CancelOutlinedIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} />,
-    //     //             ];
-    //     //         }
-
-    //     //         return [
-    //     //             <GridActionsCellItem key={id} icon={<EditOutlinedIcon />} label="Edit" onClick={handleEditClick(id)} />,
-    //     //             <GridActionsCellItem key={id} icon={<DeleteOutlineOutlinedIcon />} label="Delete" onClick={() => handleDeleteClick(id)} />,
-    //     //         ];
-    //     //     },
-    //     // },
-    // ];
 
     const executionColumns = [
         { field: "cedula", headerName: "Cedula", width: 100 },
@@ -405,35 +218,6 @@ const AnalisisMetas = () => {
                 }
             },
         },
-        // {
-        //     field: "actions",
-        //     type: "actions",
-        //     headerName: "Acciones",
-        //     width: 100,
-        //     cellClassName: "actions",
-        //     getActions: ({ id }) => {
-        //         const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-        //         if (isInEditMode) {
-        //             return [
-        //                 <GridActionsCellItem
-        //                     icon={<SaveOutlinedIcon />}
-        //                     label="Save"
-        //                     key={id}
-        //                     sx={{
-        //                         color: "primary.main",
-        //                     }}
-        //                     onClick={handleSaveClick(id)}
-        //                 />,
-        //                 <GridActionsCellItem key={id} icon={<CancelOutlinedIcon />} label="Cancel" className="textPrimary" onClick={handleCancelClick(id)} />,
-        //             ];
-        //         }
-
-        //         return [
-        //             <GridActionsCellItem key={id} icon={<EditOutlinedIcon />} label="Edit" onClick={handleEditClick(id)} />,
-        //             <GridActionsCellItem key={id} icon={<DeleteOutlineOutlinedIcon />} label="Delete" onClick={() => handleDeleteClick(id)} />,
-        //         ];
-        //     },
-        // },
     ];
 
     const [columns, setColumns] = useState(goalsColumns);
@@ -444,90 +228,6 @@ const AnalisisMetas = () => {
         }
         setOpenSnackbar(false);
     };
-
-    const handleSaveClick = (id) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-    };
-
-    const handleEditClick = (id) => () => {
-        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
-    };
-
-    const handleCancelClick = (id) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
-
-        const editedRow = rows.find((row) => row.id === id);
-        if (editedRow.isNew) {
-            setRows(rows.filter((row) => row.id !== id));
-        }
-    };
-
-    const handleProcessRowUpdateError = useCallback((error) => {
-        console.error(error);
-        setOpenSnackbar(true);
-        setSnackbarSeverity("error");
-        setSnackbarMessage(error.message);
-    }, []);
-
-    const processRowUpdate = useCallback(async (newRow) => {
-        if (newRow.quantity.includes("%")) {
-            newRow.quantity = parseFloat(newRow.quantity.replace("%", "")) / 100;
-        } else {
-            const formattedValue = newRow.quantity;
-            const value = parseInt(formattedValue.replace(/\D/g, ""), 10);
-            newRow.quantity = value;
-        }
-
-        // Format the date value
-        const fields = ["clean_desk", "quality", "result", "total"];
-        fields.forEach((field) => {
-            if (newRow[field] === "En Espera") {
-                newRow[field] = "";
-            }
-        });
-
-        // Format the accepted value
-        const mapValues = (value) => {
-            if (value === "Rechazada") return 0;
-            if (value === "Aceptada") return 1;
-            if (value === "En espera") return null;
-            return value;
-        };
-
-        newRow.accepted = mapValues(newRow.accepted);
-        newRow.accepted_execution = mapValues(newRow.accepted_execution);
-        newRow.result = mapValues(newRow.result);
-
-        // Make the HTTP request to save in the backend
-        const newRowWithCedula = { ...newRow, cedula: cedula };
-        try {
-            const response = await fetch(`${getApiUrl()}goals/${newRow.cedula}/`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(newRowWithCedula),
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                console.error(data);
-                throw new Error(response.statusText);
-            } else if (response.status === 200) {
-                const data = await response.json();
-                setOpenSnackbar(true);
-                setSnackbarSeverity("success");
-                setSnackbarMessage("Meta actualizada correctamente");
-                handleSave();
-                return data;
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }, []);
 
     function CustomToolbar() {
         return (
@@ -548,16 +248,6 @@ const AnalisisMetas = () => {
             </GridToolbarContainer>
         );
     }
-
-    const handleRowModesModelChange = (newRowModesModel) => {
-        setRowModesModel(newRowModesModel);
-    };
-
-    const handleRowEditStop = (params, event) => {
-        if (params.reason === GridRowEditStopReasons.rowFocusOut) {
-            event.defaultMuiPrevented = true;
-        }
-    };
 
     const months = [
         { value: "ENERO", label: "ENERO" },
@@ -592,6 +282,7 @@ const AnalisisMetas = () => {
         try {
             const response = await fetch(`${getApiUrl()}goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`, {
                 method: "GET",
+                credentials: "include",
             });
 
             if (!response.ok) {
@@ -620,39 +311,7 @@ const AnalisisMetas = () => {
 
             if (response.status === 200) {
                 const data = await response.json();
-                /* just wait he is going to sleep in the lunch time I think, after that he will be okay */
-                const modifiedData = data.map((row) => {
-                    if (row.quantity_goal > 999) {
-                        const formatter = new Intl.NumberFormat("es-CO", {
-                            style: "currency",
-                            currency: "COP",
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0,
-                        });
-                        const value = row.quantity_goal;
-                        const formattedValue = formatter.format(value);
-                        row.quantity_goal = formattedValue;
-                    } else if (row.quantity_goal < 1) {
-                        row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
-                    }
-                    return {
-                        ...row,
-                        history_date: row.history_date.substring(0, 10),
-                        accepted: row.accepted == 0 ? "Rechazada" : row.accepted == 1 ? "Aceptada" : "En espera",
-                        clean_desk: row.clean_desk === "" ? "En Espera" : row.clean_desk,
-                        quality: row.quality === "" ? "En Espera" : row.quality,
-                        result: row.result === "" ? "En Espera" : row.result,
-                        total: row.total === "" ? "En Espera" : row.total,
-                        accepted_execution:
-                            row.total == "" && row.accepted_execution == null
-                                ? ""
-                                : row.accepted_execution == 0
-                                ? "Rechazada"
-                                : row.accepted_execution == 1
-                                ? "Aceptada"
-                                : "En espera",
-                    };
-                });
+
                 // Create a new columns array based on the initial columns but with the field name changed
                 let currentColumns = [];
                 if (goalType.current.value === "delivery") {
@@ -675,7 +334,7 @@ const AnalisisMetas = () => {
 
                 // // Update the 'columns' state with the modified columns
                 setColumns(updatedColumns);
-                setRows(modifiedData);
+                modifyData(data);
             }
         } catch (error) {
             console.error(error);
@@ -684,7 +343,6 @@ const AnalisisMetas = () => {
 
     const handleTypeGoalChange = (event) => {
         const selectedValue = event.target.value;
-        setSelectedOption(selectedValue);
         // Perform actions based on the selected value
         if (selectedValue === "delivery" && monthRef.current.value === "" && yearRef.current.value === "") {
             setColumns(goalsColumns);
@@ -694,89 +352,71 @@ const AnalisisMetas = () => {
     };
 
     return (
-        <>
-            {isLoading ? (
-                <Container
-                    sx={{
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
-                        marginTop: "1rem",
-                        pt: "5rem",
-                    }}
-                >
-                    <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
-                        Análisis de Metas
-                    </Typography>
-                    <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
-                        <Box>
-                            <TextField
-                                onChange={handleTypeGoalChange}
-                                required
-                                defaultValue="delivery"
-                                sx={{ width: "10rem" }}
-                                size="small"
-                                variant="filled"
-                                select
-                                label="Tipo de meta"
-                                inputRef={goalType}
-                            >
-                                <MenuItem value={"delivery"}>Entrega</MenuItem>
-                                <MenuItem value={"execution"}>Ejecución</MenuItem>
-                            </TextField>
-                        </Box>
-                        <Box component="form" sx={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }} onSubmit={handleFilter}>
-                            <TextField id="month" label="Mes" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={monthRef}>
-                                {months.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                            <TextField label="Año" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={yearRef}>
-                                {yearsArray.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                            <Button variant="outlined" size="small" type="submit">
-                                Filtrar
-                            </Button>
-                        </Box>
-                    </Box>
-                    <DataGrid
-                        sx={{ width: "100%", minHeight: "75vh", maxHeight: "75vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                        rows={rows}
-                        editMode="row"
-                        columns={columns}
-                        csvOptions={{
-                            fileName: "customerDataBase",
-                            delimiter: ";",
-                            utf8WithBom: true,
-                        }}
-                        rowModesModel={rowModesModel}
-                        onRowEditStop={handleRowEditStop}
-                        processRowUpdate={processRowUpdate}
-                        onRowModesModelChange={handleRowModesModelChange}
-                        onProcessRowUpdateError={handleProcessRowUpdateError}
-                        slots={{
-                            toolbar: CustomToolbar,
-                        }}
-                        slotProps={{
-                            toolbar: {
-                                setRows,
-                                setRowModesModel,
-                            },
-                        }}
-                        getRowId={(row) => row.cedula}
-                    />
-                    <SnackbarAlert open={openSnackbar} onClose={handleCloseSnackbar} severity={snackbarSeverity} message={snackbarMessage} />
-                </Container>
-            ) : (
-                (window.location.href = "https://intranet.cyc-bpo.com/")
-            )}
-        </>
+        <Container
+            sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+                marginTop: "1rem",
+                pt: "5rem",
+            }}
+        >
+            <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
+                Análisis de Metas
+            </Typography>
+            <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
+                <Box>
+                    <TextField
+                        onChange={handleTypeGoalChange}
+                        required
+                        defaultValue="delivery"
+                        sx={{ width: "10rem" }}
+                        size="small"
+                        variant="filled"
+                        select
+                        label="Tipo de meta"
+                        inputRef={goalType}
+                    >
+                        <MenuItem value={"delivery"}>Entrega</MenuItem>
+                        <MenuItem value={"execution"}>Ejecución</MenuItem>
+                    </TextField>
+                </Box>
+                <Box component="form" sx={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }} onSubmit={handleFilter}>
+                    <TextField id="month" label="Mes" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={monthRef}>
+                        {months.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <TextField label="Año" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={yearRef}>
+                        {yearsArray.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                                {option.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                    <Button variant="outlined" size="small" type="submit">
+                        Filtrar
+                    </Button>
+                </Box>
+            </Box>
+            <DataGrid
+                sx={{ width: "100%", minHeight: "75vh", maxHeight: "75vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
+                rows={rows}
+                columns={columns}
+                csvOptions={{
+                    fileName: "Metas",
+                    delimiter: ";",
+                    utf8WithBom: true,
+                }}
+                slots={{
+                    toolbar: CustomToolbar,
+                }}
+                getRowId={(row) => row.cedula}
+            />
+            <SnackbarAlert open={openSnackbar} onClose={handleCloseSnackbar} severity={snackbarSeverity} message={snackbarMessage} />
+        </Container>
     );
 };
 export default AnalisisMetas;
