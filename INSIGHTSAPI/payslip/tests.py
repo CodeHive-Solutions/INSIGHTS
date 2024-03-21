@@ -165,7 +165,7 @@ class PayslipTest(BaseTestCase):
     def test_upload_payslip_file(self):
         """Test upload payslip file."""
         with open(
-            str(settings.BASE_DIR) + "/utils/excels/Nomina_massive.csv",
+            str(settings.BASE_DIR) + "/utils/excels/Nomina.csv",
             "r",
             encoding="utf-8-sig",
         ) as file:
@@ -180,16 +180,25 @@ class PayslipTest(BaseTestCase):
             response.data,
         )
         self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
+        self.assertEqual(Payslip.objects.count(), 3)
+
+    def test_upload_massive_file(self):
+        """Test upload payslip file."""
+        with open(
+            str(settings.BASE_DIR) + "/utils/excels/Nomina_massive.csv",
+            "r",
+            encoding="utf-8-sig",
+        ) as file:
+            response = self.client.post(
+                "/payslips/",
+                {"file": file},
+                format="multipart",
+            )
         self.assertEqual(
-            response.data["emails"],
-            [
-                "HEIBERT.MOGOLLON@CYC-BPO.COM",
-                "JUAN.CARRENO@CYC-BPO.COM",
-                "HEIBERT.MOGOLLON@CYC-BPO.COM",
-            ],
+            response.status_code,
+            201,
             response.data,
         )
-        self.assertEqual(Payslip.objects.count(), 3)
 
     def test_resend_payslip(self):
         """Test resend payslip."""
@@ -206,33 +215,3 @@ class PayslipTest(BaseTestCase):
             response.data,
         )
         self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
-        self.assertEqual(response.data["emails"], ["heibert.mogollon12@gmail.com"])
-
-    # def test_upload_payslip_file_latin_1(self):
-    #     """Test upload payslip file."""
-    #     with open(
-    #         str(settings.BASE_DIR) + "/utils/excels/Nomina_latin.csv",
-    #         "r",
-    #         encoding="latin-1",
-    #     ) as file:
-    #         response = self.client.post(
-    #             "/payslips/",
-    #             {"file": file},
-    #             format="multipart",
-    #         )
-    #     self.assertEqual(
-    #         response.status_code,
-    #         201,
-    #         response.data,
-    #     )
-    #     self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
-    #     self.assertEqual(
-    #         response.data["emails"],
-    #         [
-    #             "HEIBERT.MOGOLLON@CYC-BPO.COM",
-    #             "JUAN.CARRENO@CYC-BPO.COM",
-    #             "HEIBERT.MOGOLLON@CYC-BPO.COM",
-    #         ],
-    #         response.data,
-    #     )
-    #     self.assertEqual(Payslip.objects.count(), 3)

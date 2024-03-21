@@ -20,8 +20,6 @@ from .serializers import PayslipSerializer
 
 
 def send_payslip(payslips):
-    emails = []
-    messages = []
     payslip_data = []
     with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
         logo = logo.read()
@@ -29,11 +27,15 @@ def send_payslip(payslips):
 
     for payslip in payslips:
         payslip_data.append(payslip.to_json())
-    print("Celery executed")
-    send_email_with_attachment.delay(payslip_data, logo, settings.EMAIL_HOST_USER)
-    return Response(
-        {"message": "Desprendibles de nomina enviados", "emails": emails}, status=201
+    queued_task = send_email_with_attachment.delay(
+        payslip_data, logo, settings.EMAIL_HOST_USER
     )
+    if not queued_task.state == "PENDING":
+        return Response(
+            {"error": "Ocurrió un error al enviar los desprendibles de nomina"},
+            status=500,
+        )
+    return Response({"message": "Desprendibles de nomina enviados"}, status=201)
 
 
 @api_view(["POST"])

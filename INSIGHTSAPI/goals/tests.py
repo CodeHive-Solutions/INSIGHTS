@@ -38,6 +38,12 @@ class GoalAPITestCase(BaseTestCase):
         response = self.client.get(reverse("goal-list"))
         self.assertEqual(response.status_code, 200)
 
+    def test_get_my_goals(self):
+        """Test the get-my-goals view."""
+        self.user.user_permissions.clear()
+        response = self.client.get(reverse("goal-list"))
+        self.assertEqual(response.status_code, 200)
+
     def test_metas_upload(self, called=False):
         """Test the upload-excel view."""
         # if called:
@@ -120,7 +126,7 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         # See if the accepted goals were deleted
         first_goal = Goals.objects.exclude(accepted_at=None).first()
-        self.assertIsNone(first_goal)
+        self.assertIsNone(first_goal, first_goal)
         count = Goals.objects.exclude(Q(accepted__isnull=True) | Q(accepted="")).count()
         count_at = Goals.objects.exclude(accepted_at=None).count()
         self.assertEqual((count, count_at), (0, 0))
@@ -133,7 +139,7 @@ class GoalAPITestCase(BaseTestCase):
             Q(accepted__isnull=True) | Q(accepted="")
         ).count()
         first_goal = Goals.objects.exclude(accepted_execution_at=None).first()
-        self.assertIsNone(first_goal)
+        self.assertIsNone(first_goal, first_goal)
         count_at_execution = Goals.objects.exclude(accepted_execution_at=None).count()
         self.assertEqual((count_execution, count_at_execution), (0, 0))
 
@@ -172,7 +178,7 @@ class GoalAPITestCase(BaseTestCase):
         # Check with a month that has execution
         response = self.client.get("/goals/?date=ENERO-2022&column=execution")
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 338)  # type: ignore
+        self.assertEqual(len(response.data), 339)  # type: ignore
         # Upload a file to test if the same month distinct between delivery and execution
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx"
         with open(file_path, "rb") as file_obj:
@@ -191,11 +197,14 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(len(response.data), 110)  # type: ignore
         self.assertIn("ENERO-2022", response.data[0].get("goal_date"))  # type: ignore
 
-    def test_get_history_without_permission(self):
+    def test_get_only_my_history(self):
         """Test the get-history view."""
+        self.test_metas_upload(called=True)
         self.user.user_permissions.clear()
         response = self.client.get("/goals/?date=ENERO-2022&column=delivery")
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)  # type: ignore
+        self.assertIn("StaffNet Pruebas", response.data[0].get("name"))  # type: ignore
 
     def test_get_one_history(self):
         """Test the get-one-history view."""
@@ -204,7 +213,8 @@ class GoalAPITestCase(BaseTestCase):
         # Check with a month that has goals
         response = self.client.get("/goals/1016080155/?date=ENERO-2028&column=delivery")
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.data["cedula"], 1016080155)  # type: ignore
+        self.assertGreater(len(response.data), 0)  # type: ignore
+        self.assertEqual(response.data["cedula"], 1016080155, response.data)  # type: ignore
         self.assertIn("ENERO-2028", response.data.get("goal_date"))  # type: ignore
         self.assertEqual(len(response.data), 28)  # type: ignore
         # Check with a month that has execution

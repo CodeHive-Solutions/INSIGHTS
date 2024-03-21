@@ -221,7 +221,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
         cedula = self.kwargs.get("pk")
         date = self.request.GET.get("date", None)
         column = self.request.GET.get("column", None)
-
         if (
             date is not None
             and column is not None
@@ -258,7 +257,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if not self.request.user.has_perm("goals.view_goals"):
-            raise PermissionDenied("You do not have permission to view this resource.")
+            return self.queryset.filter(cedula=self.request.user.cedula)
         coordinator = self.request.GET.get("coordinator", None)
         date = self.request.GET.get("date", None)
         column = self.request.GET.get("column", None)
@@ -290,102 +289,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
         else:
             # With out the .all() method, the queryset will be evaluated lazily
             return self.queryset.all()
-
-    # @action(detail=False, methods=["post"])
-    # def send_email(self, request):
-    #     """This action send an email with the PDF file attached."""
-    #     # pdf_64 = request.POST.get("pdf")
-    #     cedula = request.POST.get("cedula")
-    #     # delivery_type = request.POST.get("delivery_type")
-    #     if pdf_64 and cedula and delivery_type:
-    #         try:
-    #             with connections["staffnet"].cursor() as db_connection:
-    #                 instance = Goals.objects.filter(cedula=cedula).first()
-    #                 db_connection.execute(
-    #                     "SELECT correo,nombre FROM personal_information WHERE cedula = %s",
-    #                     [cedula],
-    #                 )
-    #                 result = db_connection.fetchone()
-    #                 if result is not None and instance is not None:
-    #                     try:
-    #                         correo = result[0]
-    #                         nombre = str(result[1])
-    #                         decoded_pdf_data = base64.b64decode(pdf_64)
-    #                         email = EmailMessage(
-    #                             f"{delivery_type}",
-    #                             "<html><body>"
-    #                             "<div>"
-    #                             f"<p>Estimado/a {nombre}:</p>"
-    #                             f"<p>Se ha procesado su {delivery_type}.<br>"
-    #                             f"Por favor, no responda ni reenvíe este correo. "
-    #                             f"Contiene información confidencial.<br>"
-    #                             '<div style="color: black;">Cordialmente,<br>'
-    #                             "M.I.S. Management Information System C&C Services</div></p>"
-    #                             "</div>"
-    #                             "</body></html>",
-    #                             f"{delivery_type} <{settings.DEFAULT_FROM_EMAIL}>",
-    #                             [str(correo)],
-    #                         )
-    #                         email.content_subtype = "html"
-    #                         email.attach(
-    #                             f"{delivery_type}.pdf",
-    #                             decoded_pdf_data,
-    #                             "application/pdf",
-    #                         )
-    #                         # Get the underlying EmailMessage object
-    #                         email_msg = email.message()
-    #                         # Create an SMTP connection
-    #                         connection = SMTP(settings.EMAIL_HOST, settings.EMAIL_PORT)
-    #                         connection.ehlo()
-    #                         # Wrap the socket with the SSL context
-    #                         context = ssl.create_default_context()
-    #                         context.check_hostname = False
-    #                         context.verify_mode = ssl.CERT_NONE
-    #                         connection.starttls(context=context)
-    #                         # Authenticate with the SMTP server
-    #                         connection.login(
-    #                             settings.EMAIL_HOST_USER, settings.EMAIL_HOST_PASSWORD
-    #                         )
-    #                         # Send the email
-    #                         connection.send_message(email_msg)
-    #                         # Close the connection
-    #                         connection.quit()
-    #                         if delivery_type == "Ejecución de metas":
-    #                             instance.accepted_execution_at = timezone.now()
-    #                             instance.accepted_execution = True
-    #                         else:
-    #                             instance.accepted_at = timezone.now()
-    #                             instance.accepted = True
-    #                         instance.save()
-    #                         return Response(
-    #                             {"email": correo}, status=framework_status.HTTP_200_OK
-    #                         )
-    #                         # pylint: disable=broad-except
-    #                     except Exception as error:
-    #                         logger.setLevel(logging.ERROR)
-    #                         logger.exception("Error: %s", str(error))
-    #                         print("Error: %s", str(error))
-    #                         return Response(
-    #                             status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR
-    #                         )
-    #                 else:
-    #                     return Response(
-    #                         {"Error": "Email not found"},
-    #                         status=framework_status.HTTP_404_NOT_FOUND,
-    #                     )
-    #         # pylint: disable=broad-except
-    #         except Exception as error:
-    #             logger.setLevel(logging.ERROR)
-    #             logger.exception("Error: %s", str(error))
-    #             print("Error: %s", str(error))
-    #             return Response(status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR)
-    #     else:
-    #         return Response(
-    #             {
-    #                 "Error": f'{"PDF" if not pdf_64 else "Cedula"} not found in the request.'
-    #             },
-    #             status=framework_status.HTTP_400_BAD_REQUEST,
-    #         )
 
     def create(self, request, *args, **kwargs):
         # Get the file from the request

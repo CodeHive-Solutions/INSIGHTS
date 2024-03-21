@@ -29,3 +29,4 @@ def send_email_with_attachment(
         attachment = ((f"{payslip['title']}.pdf", pdf, "application/pdf"),)
         email.attachments = attachment
         email.send()
+    return True
