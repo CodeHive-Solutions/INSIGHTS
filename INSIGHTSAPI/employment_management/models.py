@@ -29,3 +29,10 @@ class EmploymentCertification(models.Model):
 
     def __str__(self):
         return f"Certificación laboral de {self.user.get_full_name_reversed()}"
+
+    # Disable the defaults django permissions
+    class Meta:
+        default_permissions = ()
+        permissions = [
+            ("get_employment_certification", "Can get employment certification"),
+        ]

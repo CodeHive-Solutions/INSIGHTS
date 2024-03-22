@@ -2,8 +2,10 @@
 
 import os
 import base64
+from turtle import title
 import pdfkit
 import logging
+import mysql.connector
 from num2words import num2words
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
@@ -13,8 +15,10 @@ from django.conf import settings
 from django.db import connections
 from django.utils.formats import number_format
 from django.utils import timezone
+from payslip.models import Payslip
 from services.emails import send_email
 from users.models import User
+from hierarchy.models import Area
 from .models import EmploymentCertification
 
 
@@ -31,9 +35,28 @@ def read_and_encode_image(file_path):
     else:
         return None
 
+
 def capitalize_phrase(text):
     """Capitalize a phrase ignoring conjunctions and prepositions in uppercase and lowercase."""
-    ignore_words = ["de", "del", "la", "las", "los", "y", "a", "en", "con", "por", "para", "al", "el", "un", "una", "unos", "unas"]
+    ignore_words = [
+        "de",
+        "del",
+        "la",
+        "las",
+        "los",
+        "y",
+        "a",
+        "en",
+        "con",
+        "por",
+        "para",
+        "al",
+        "el",
+        "un",
+        "una",
+        "unos",
+        "unas",
+    ]
     words = text.split()
     for i, word in enumerate(words):
         if word.lower() not in ignore_words:
@@ -42,9 +65,23 @@ def capitalize_phrase(text):
             words[i] = word.lower()
     return " ".join(words)
 
+
 def create_employment_certification(request):
     """Create an employment certification."""
     identification = request.data.get("identification")
+    months = int(request.data.get("months"))
+    if months:
+        # Get the last X bonus in the payslips
+        payslips = Payslip.objects.filter(
+            identification=identification, biannual_bonus__gt=0
+        ).order_by("-created_at")[:months]
+        if months > payslips.count():
+            return Response(
+                {"error": f"El usuario no tiene {months} desprendibles de nómina."},
+                status=404,
+            )
+        # Get the average of the last X bonus
+        bonus_amount = sum([p.biannual_bonus for p in payslips]) / len(payslips)
     if identification:
         user = User.objects.filter(cedula=identification).first()
         if not user:
@@ -106,18 +143,22 @@ def create_employment_certification(request):
         contract_type=employee_info["contract_type"],
         expedition_city=employee_info["expedition_city"],
     )
-    template = render_to_string(
-        "employment_certification.html",
-        {
-            "id": certification.id,
-            "user": user,
-            "user_data": employee_info,
-            "logo_cyc": logo,
-            "logo_bpo": logo_bpo,
-            "logo_vertical": logo_vertical,
-            "payroll_signature": payroll_signature,
-        },
-    )
+    template_data = {
+        "id": certification.id,
+        "user": user,
+        "user_data": employee_info,
+        "logo_cyc": logo,
+        "logo_bpo": logo_bpo,
+        "logo_vertical": logo_vertical,
+        "payroll_signature": payroll_signature,
+    }
+    if months:
+        template_data["bonus"] = months
+        template_data["bonus_amount"] = bonus_amount
+        template_data["bonus_text"] = num2words(
+            bonus_amount, lang="es_CO", to="currency"
+        ).capitalize()
+    template = render_to_string("employment_certification.html", template_data)
     options = {"page-size": "Letter", "dpi": 600}
     try:
         pdf = pdfkit.from_string(template, False, options=options)
@@ -149,3 +190,49 @@ def send_employment_certification(request):
                 {"error": "No tienes permisos para realizar esta acción"}, status=403
             )
     return create_employment_certification(request)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def upload_old_certifications(request):
+    """Upload old certifications."""
+    db_config = {
+        "user": "root",
+        "password": os.environ["LEYES"],
+        "host": "172.16.0.6",
+        "port": "3306",
+        "database": "userscyc",
+    }
+    mysql_connection = mysql.connector.connect(**db_config)
+    cursor = mysql_connection.cursor()
+    cursor.execute(
+        "SELECT * FROM userscyc.despre_nom_his where fecha_envio > '2023-09' and fecha_envio < '2024-02-27'"
+    )
+    i = 0
+    for row in cursor.fetchall():
+        i += 1
+        Payslip.objects.create(
+            title=row[1],
+            identification=row[2],
+            name=row[3],
+            area=row[4],
+            job_title=row[5],
+            salary=row[6],
+            days=row[7],
+            biweekly_period=row[8],
+            transport_allowance=row[9],
+            bonus_paycheck=row[10],
+            gross_earnings=row[11],
+            healthcare_contribution=row[12],
+            pension_contribution=row[13],
+            tax_withholding=row[14],
+            additional_deductions=row[15],
+            apsalpen=row[16],
+            total_deductions=row[17],
+            net_pay=row[18],
+            email=row[20],
+            created_at=row[21],
+            biannual_bonus=0,
+            severance=0,
+        )
+    return Response({"message": f"{i} registros creados"}, status=200)

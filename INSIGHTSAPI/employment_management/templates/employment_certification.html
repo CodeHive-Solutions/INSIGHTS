@@ -48,7 +48,6 @@
         height: 100%;
         background-image: url('data:image/png;base64,{{ logo_cyc }}');
         background-size: contain;
-        /* background-size: cover; */
         background-repeat: no-repeat;
         background-position: center;
         z-index: -1;
@@ -87,13 +86,16 @@
         <p>
         <h2 style="font-size: x-large; font-weight: 600;" class="center">Certifica: </h2>
         </p>
-        <p>Que el/la señor(a) <span class="bold">{{user.get_full_name_reversed}}</sp/an> quien se identifica con cédula de
+        <p>Que el/la señor(a) <span class="bold">{{user.get_full_name_reversed}}</span> quien se identifica con cédula de
             ciudadanía No. <span class="bold">{{user.cedula}}</span> de <span>{{user_data.expedition_city}} </span> labora en esta
             compañía y sus condiciones son las siguientes:</p>
         <p>TIPO DE CONTRATO: <span class="bold">{{user_data.contract_type}}</span></p>
         <p>FECHA DE INGRESO: <span class="bold">{{user_data.start_date}}</span></p>
         <p>CARGO: <span class="bold">{{user_data.position}}</span></p>
         <p>SALARIO: <span class="bold"> {{user_data.salary_text}} (${{user_data.salary_number}}) mensuales.</span></p>
+        {% if bonus %}
+            <p>Bonificaciones promedio de los últimos {{bonus}} meses: {{bonus_text}} (${{ bonus_amount }})</p>
+        {% endif %}
         <p>Esta certificación se expide el día {{user_data.today}} a solicitud del interesado y con destino a quien
             interese.</p>
         <p>Atentamente,</p>
