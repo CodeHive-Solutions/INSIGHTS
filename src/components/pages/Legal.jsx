@@ -314,16 +314,19 @@ export const Legal = () => {
         }
     };
 
-    // const handleAddPolicies = (name) => {
-    //     name = name.replace("_end_date", "");
-
-    //     const newInputs = [
-    //         { name: `${name}`, label: "Numero de Póliza", type: "text" },
-    //         { name: `${name}_start_date`, label: "Fecha de Inicio", type: "date" },
-    //         { name: `${name}_end_date`, label: "Fecha de Fin", type: "date" },
-    //     ];
-    //     setInputs((prev) => [...prev, ...newInputs]);
-    // };
+    const handleAddPolicies = (sectionName, i) => {
+        const newInputs = {
+            name: `${sectionName}_${i}`,
+            label: `Póliza de Cumplimiento ${i}`,
+            type: "text",
+            multiline: true, // Assuming multiline for policies
+        };
+        // Add the new policy field to your state or form data
+        setInputs((prevState) => ({
+            ...prevState,
+            [sectionName]: [...prevState[sectionName], newInputs],
+        }));
+    };
 
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
         const [field, meta] = useField(props);
@@ -335,26 +338,6 @@ export const Legal = () => {
                         <Chip label={label} size="small" />
                     </Divider>
                     <TextField key={props.name} sx={{ width: "390px" }} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />
-                </>
-            );
-        } else if (props.name.includes("end_date")) {
-            return (
-                <>
-                    <TextField
-                        key={props.name}
-                        sx={{ width: "390px" }}
-                        InputLabelProps={{ shrink: true }}
-                        multiline={multiline}
-                        rows={rows}
-                        type={type}
-                        label={label}
-                        {...field}
-                        helperText={errorText}
-                        error={!!errorText}
-                    />
-                    <Button onClick={() => handleAddPolicies(props.name)} startIcon={<AddIcon />} variant="outlined">
-                        Añadir
-                    </Button>
                 </>
             );
         }
@@ -510,6 +493,23 @@ export const Legal = () => {
                                         );
                                     })}
                                     {inputs.compliancePolicy.map((input, index) => {
+                                        if (index === inputs.compliancePolicy.length - 1) {
+                                            return (
+                                                <>
+                                                    <FormikTextField
+                                                        key={index}
+                                                        type={input.type}
+                                                        name={input.name}
+                                                        label={input.label}
+                                                        autoComplete="off"
+                                                        spellCheck={false}
+                                                    />
+                                                    <Button onClick={() => handleAddPolicies("compliancePolicy", index + 1)} startIcon={<AddIcon />} variant="outlined">
+                                                        Añadir
+                                                    </Button>{" "}
+                                                </>
+                                            );
+                                        }
                                         return (
                                             <FormikTextField key={index} type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
                                         );

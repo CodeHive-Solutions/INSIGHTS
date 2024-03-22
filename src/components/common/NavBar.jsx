@@ -58,7 +58,8 @@ const Navbar = () => {
             permissions.includes("contracts.view_contract") ||
             permissions.includes("operational_risk.view_events") ||
             permissions.includes("vacancy.view_reference") ||
-            permissions.includes("payslip.add_payslip"));
+            permissions.includes("payslip.add_payslip") ||
+            permissions.includes("employment_management.view_employmentcertification"));
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -463,14 +464,14 @@ const Navbar = () => {
                         <ListItemText primary="Registros de Desprendibles de Nomina" />
                     </MenuItem>
                 ) : null}
-                {permissions && permissions.includes("employment_management.view_employmentcertification") ? (
+                {/* {permissions && permissions.includes("employment_management.view_employmentcertification") ? (
                     <MenuItem onClick={() => navigate("/logged/certifications")}>
                         <ListItemIcon>
                             <TopicIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
-                ) : null}
+                ) : null} */}
             </Menu>
             {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />

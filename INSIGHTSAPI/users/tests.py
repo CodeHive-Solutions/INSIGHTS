@@ -117,7 +117,7 @@ class LDAPAuthenticationTest(TestCase):
         """Tests that the logout endpoint works as expected."""
         response = self.test_login_django(called=True)
         # Make a request that requires authentication
-        response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
+        response = self.client.get("/contracts/", cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 403)
         response2 = self.client.post(reverse("destroy-token"), cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response2.status_code, 200)

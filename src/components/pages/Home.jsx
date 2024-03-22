@@ -21,10 +21,11 @@ import cycBirthday from "../../images/home-carousel/cycBirthday.png";
 import youthFinances from "../../images/home-carousel/youth-finances.png";
 import womenDay from "../../images/home-carousel/women-day.png";
 import Avatar from "../../images/home-carousel/avatar.jpg";
+import saintWeek from "../../images/home-carousel/saint-week.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: womenDay }, { image: youthFinances }, { image: cycBirthday }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
+const homeImages = [{ image: saintWeek }, { image: youthFinances }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
