@@ -48,3 +48,4 @@ test.pdf
 src/videos/futbol.mp4
 *.zip
 *.mjs
+dist-bu/

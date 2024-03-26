@@ -287,6 +287,11 @@ LOGGING = {
             "filename": os.path.join(log_dir, "exceptions.log"),
             "formatter": "time-lvl-msg",
         },
+        "celery": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(log_dir, "celery1.log"),
+        },
     },
     "loggers": {
         "requests": {
@@ -313,6 +318,11 @@ LOGGING = {
             "handlers": ["console", "response_file", "exception_file"],
             "level": "INFO",
             "propagate": True,
+        },
+        "celery": {
+            "handlers": ["console", "celery"],
+            "level": "INFO",  # Adjust the log level as needed
+            "propagate": False,
         },
     },
 }
@@ -380,3 +390,11 @@ SIMPLE_JWT = {
     "AUTH_COOKIE": "access-token",
     "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true",
 }
+
+# Celery configuration
+CELERY_HIJACK_ROOT_LOGGER = False
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+CELERY_TIMEZONE = "UTC"
+CELERY_LOG_LEVEL = "INFO"
