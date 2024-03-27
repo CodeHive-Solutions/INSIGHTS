@@ -2,7 +2,6 @@
 
 import os
 import base64
-from turtle import title
 import pdfkit
 import logging
 import mysql.connector
@@ -18,7 +17,6 @@ from django.utils import timezone
 from payslip.models import Payslip
 from services.emails import send_email
 from users.models import User
-from hierarchy.models import Area
 from .models import EmploymentCertification
 
 
@@ -68,14 +66,16 @@ def capitalize_phrase(text):
 
 def create_employment_certification(request):
     """Create an employment certification."""
-    identification = request.data.get("identification")
-    months = int(request.data.get("months"))
+    identification = request.data.get("identification") or request.user.cedula
+    months = request.data.get("months")
     if months:
+        months = int(months)
         # Get the last X bonus in the payslips
         payslips = Payslip.objects.filter(
             identification=identification, biannual_bonus__gt=0
         ).order_by("-created_at")[:months]
         if months > payslips.count():
+            print(payslips.count())
             return Response(
                 {"error": f"El usuario no tiene {months} desprendibles de nómina."},
                 status=404,
@@ -185,7 +185,7 @@ def create_employment_certification(request):
 def send_employment_certification(request):
     """Send an employment certification."""
     if "identification" in request.data:
-        if not request.user.has_perm("users.send_employment_certification"):
+        if not request.user.has_perm("get_employment_certification"):
             return Response(
                 {"error": "No tienes permisos para realizar esta acción"}, status=403
             )
