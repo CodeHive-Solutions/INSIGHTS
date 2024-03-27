@@ -194,7 +194,12 @@ export const Legal = () => {
         }
     };
 
-    const handleCloseDialog = () => setOpenDialog(false);
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setNewInitialValues(initialValues);
+        setNewValidationSchema(validationSchema);
+        setInputs(initialInputs);
+    };
 
     const handleCloseDialogEdit = () => {
         setOpenDialogEdit(false);
@@ -609,6 +614,13 @@ export const Legal = () => {
                                         );
                                     })}
                                 </Box>
+                                {inputs.renovation.map((input, index) => {
+                                    return (
+                                        <Box key={index} sx={{ pt: "2rem" }}>
+                                            <FormikTextField key={index} type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
+                                        </Box>
+                                    );
+                                })}
 
                                 <Box sx={{ width: "100%", textAlign: "end" }}>
                                     <Button variant="contained" type="submit" startIcon={<SaveIcon></SaveIcon>}>
