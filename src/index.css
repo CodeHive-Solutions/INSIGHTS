@@ -67,3 +67,20 @@ import .waveWrapper {
     animation-delay: -5s;
     bottom: 50vh;
 }
+
+.img-magnifier-container {
+    margin: 2rem;
+    position: relative;
+}
+
+.magnifier-img {
+    width: 80vw;
+    height: auto;
+    border: 2px solid #c5c5c5;
+}
+
+.magnifier-image {
+    width: 400px;
+    height: 300px;
+    border: 2px solid #c5c5c5;
+}
