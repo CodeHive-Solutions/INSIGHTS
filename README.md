@@ -8,7 +8,7 @@ INSIGHTS is the intranet for C&C Services S.A.S, featuring secure login with Act
 -   **Backend**: Django, Django REST Framework
 -   **Authentication**: JWT, Active Directory, LDAP
 -   **Database**: MySQL, Redis
--   **Deployment**: Docker, Gunicorn
+-   **Deployment**: Linux, Docker, Apache, Gunicorn
 
 ## Features 🌟
 
