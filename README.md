@@ -24,6 +24,7 @@ INSIGHTS is the intranet for C&C Services S.A.S, featuring secure login with Act
 -   'About Us' page with company information and contact details
 -   Utility modules for enhanced productivity and collaboration
 -   Job certifications and Payrolls detachments
+-   Implementing a comprehensive suite of over one hundred tests to rigorously validate the functionality and performance of the application
 
 ## License
 
