@@ -19,11 +19,10 @@ import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import prosecutor from "../../images/home-carousel/prosecutor.png";
 import Avatar from "../../images/home-carousel/avatar.jpg";
-import saintWeek from "../../images/home-carousel/saint-week.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: prosecutor }, { image: saintWeek }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
+const homeImages = [{ image: prosecutor }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);

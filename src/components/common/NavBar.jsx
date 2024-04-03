@@ -344,14 +344,14 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {/* {isAdvisor ? ( */}
-                <MenuItem onClick={handleOpenDialog}>
-                    <ListItemIcon>
-                        <FlagIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Mis Metas" />
-                </MenuItem>
-                {/* ) : null} */}
+                {isAdvisor ? (
+                    <MenuItem onClick={handleOpenDialog}>
+                        <ListItemIcon>
+                            <FlagIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Mis Metas" />
+                    </MenuItem>
+                ) : null}
                 <MenuItem onClick={() => navigate("/logged/my-payslips")}>
                     <ListItemIcon>
                         <ReceiptIcon fontSize="small" />
@@ -473,7 +473,7 @@ const Navbar = () => {
                     </MenuItem>
                 ) : null} */}
             </Menu>
-            <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} />
+            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}{" "}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
