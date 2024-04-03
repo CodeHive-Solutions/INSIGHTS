@@ -287,12 +287,12 @@ LOGGING = {
             "filename": os.path.join(log_dir, "exceptions.log"),
             "formatter": "time-lvl-msg",
         },
-        # "celery": {
-        #     "level": "DEBUG",
-        #     "class": "logging.FileHandler",
-        #     "filename": os.path.join(log_dir, "celery1.log"),
-        #     "formatter": "time-lvl-msg",
-        # },
+        "celery": {
+            "level": "DEBUG",
+            "class": "logging.FileHandler",
+            "filename": os.path.join(log_dir, "celery1.log"),
+            "formatter": "time-lvl-msg",
+        },
     },
     "loggers": {
         "requests": {
@@ -320,11 +320,11 @@ LOGGING = {
             "level": "INFO",
             "propagate": True,
         },
-        # "celery": {
-        #     "handlers": ["console", "celery"],
-        #     "level": "DEBUG",  # Adjust the log level as needed
-        #     "propagate": False,
-        # },
+        "celery": {
+            "handlers": ["console", "celery"],
+            "level": "DEBUG",  # Adjust the log level as needed
+            "propagate": False,
+        },
     },
 }
 
@@ -393,10 +393,10 @@ SIMPLE_JWT = {
 }
 
 # Celery configuration
-# CELERY_HIJACK_ROOT_LOGGER = False
+CELERY_HIJACK_ROOT_LOGGER = False
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TIMEZONE = "UTC"
-# CELERY_LOG_FILE = os.path.join(log_dir, "celery1.log")
-# CELERY_LOG_LEVEL = "DEBUG"
+CELERY_LOG_FILE = os.path.join(log_dir, "celery1.log")
+CELERY_LOG_LEVEL = "DEBUG"
