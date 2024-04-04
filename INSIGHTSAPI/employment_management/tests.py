@@ -59,6 +59,7 @@ class EmploymentCertificationTest(BaseTestCase):
 
     def test_get_another_employment_certification_with_identification(self):
         """Tests that the user can get another user's employment certification with identification."""
+        self.create_demo_user()
         get_permission = Permission.objects.get(codename="get_employment_certification")
         self.user.user_permissions.add(get_permission)
         self.user.save()
@@ -73,6 +74,30 @@ class EmploymentCertificationTest(BaseTestCase):
         get_permission = Permission.objects.get(codename="get_employment_certification")
         self.user.user_permissions.add(get_permission)
         self.user.save()
+        self.create_demo_user()
+        for _ in range(6):
+            Payslip.objects.create(
+                title="title",
+                identification="1000065648",
+                name="name",
+                area="area",
+                job_title="job_title",
+                salary=1000000,
+                days=15,
+                biweekly_period=15,
+                transport_allowance=150000,
+                bonus_paycheck=150000,
+                biannual_bonus=150000,
+                gross_earnings=1000000,
+                healthcare_contribution=150000,
+                pension_contribution=150000,
+                tax_withholding=150000,
+                additional_deductions=150000,
+                apsalpen=150000,
+                total_deductions=150000,
+                severance=150000,
+                net_pay=150000,
+            )
         response = self.client.post(
             reverse("send-employment-certification"),
             {"months": 6, "identification": "1000065648"},

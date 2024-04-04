@@ -75,7 +75,6 @@ def create_employment_certification(request):
             identification=identification, biannual_bonus__gt=0
         ).order_by("-created_at")[:months]
         if months > payslips.count():
-            print(payslips.count())
             return Response(
                 {"error": f"El usuario no tiene {months} desprendibles de nómina."},
                 status=404,
@@ -184,11 +183,12 @@ def create_employment_certification(request):
 @permission_classes([IsAuthenticated])
 def send_employment_certification(request):
     """Send an employment certification."""
-    if "identification" in request.data:
-        if not request.user.has_perm("get_employment_certification"):
-            return Response(
-                {"error": "No tienes permisos para realizar esta acción"}, status=403
-            )
+    if "identification" in request.data and not request.user.has_perm(
+        "employment_management.get_employment_certification"
+    ):
+        return Response(
+            {"error": "No tienes permisos para realizar esta acción"}, status=403
+        )
     return create_employment_certification(request)
 
 
