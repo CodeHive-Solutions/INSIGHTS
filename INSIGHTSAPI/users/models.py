@@ -56,7 +56,6 @@ class User(AbstractUser):
 
         permissions = [
             ("upload_robinson_list", "Can upload robinson list"),
-            ("send_employment_certification", "Can send employment certification"),
         ]
 
     def get_full_name(self) -> str:
@@ -64,7 +63,7 @@ class User(AbstractUser):
         if self.last_name:
             return f"{self.first_name} {self.last_name}"
         return self.first_name
-    
+
     def get_full_name_reversed(self) -> str:
         """Return the full name of the user reversed."""
         if self.last_name:

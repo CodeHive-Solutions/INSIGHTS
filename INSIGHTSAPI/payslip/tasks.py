@@ -12,7 +12,6 @@ def send_email_with_attachment(
 ):
     i = 0
     for payslip in payslips:
-        print(i)
         i += 1
         rendered_template = render_to_string(
             "payslip.html",

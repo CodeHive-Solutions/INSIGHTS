@@ -32,6 +32,17 @@ class BaseTestCase(APITestCase):
         )
         self.user = User.objects.get(username="staffnet")
 
+    def create_demo_user(self):
+        """Create a demo user."""
+        demo_user = User.objects.create(
+            username="demo",
+            cedula="1000065648",
+            email="heibert.mogollon@cyc-bpo.com",
+            first_name="Demo",
+            last_name="User",
+        )
+        return demo_user
+
     def tearDown(self):
         """Tear down the test case."""
         self.logout()

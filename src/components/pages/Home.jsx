@@ -9,7 +9,7 @@ import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 
 // Material-UI
-import { Typography, Box, Grow, Container, useMediaQuery, Card } from "@mui/material";
+import { Typography, Box, Container, useMediaQuery, Card } from "@mui/material";
 
 // Media
 import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
@@ -17,14 +17,12 @@ import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
-import cycBirthday from "../../images/home-carousel/cycBirthday.png";
-import youthFinances from "../../images/home-carousel/youth-finances.png";
-import womenDay from "../../images/home-carousel/women-day.png";
+import prosecutor from "../../images/home-carousel/prosecutor.png";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: womenDay }, { image: youthFinances }, { image: cycBirthday }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
+const homeImages = [{ image: prosecutor }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);

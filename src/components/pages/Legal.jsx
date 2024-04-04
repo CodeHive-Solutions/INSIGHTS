@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 // Libraries
 import { motion, useIsPresent } from "framer-motion";
 import * as Yup from "yup";
@@ -97,6 +97,32 @@ const initialInputs = {
 };
 
 export const Legal = () => {
+    const initialValues = {
+        name: "",
+        city: "",
+        description: "",
+        expected_start_date: "",
+        value: "",
+        monthly_cost: "",
+        duration: "",
+        contact: "",
+        contact_telephone: "",
+        start_date: "",
+        civil_responsibility_policy: "",
+        civil_responsibility_policy_number: "",
+        civil_responsibility_policy_start_date: "",
+        civil_responsibility_policy_end_date: "",
+        compliance_policy: "",
+        compliance_policy_number: "",
+        compliance_policy_start_date: "",
+        compliance_policy_end_date: "",
+        insurance_policy: "",
+        insurance_policy_number: "",
+        insurance_policy_start_date: "",
+        insurance_policy_end_date: "",
+        renovation_date: "",
+    };
+
     const [rows, setRows] = useState([]);
     const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
@@ -109,6 +135,8 @@ export const Legal = () => {
     const [inputs, setInputs] = useState(initialInputs);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const [newInitialValues, setNewInitialValues] = useState(initialValues);
+    const [newValidationSchema, setNewValidationSchema] = useState(validationSchema);
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -166,7 +194,12 @@ export const Legal = () => {
         }
     };
 
-    const handleCloseDialog = () => setOpenDialog(false);
+    const handleCloseDialog = () => {
+        setOpenDialog(false);
+        setNewInitialValues(initialValues);
+        setNewValidationSchema(validationSchema);
+        setInputs(initialInputs);
+    };
 
     const handleCloseDialogEdit = () => {
         setOpenDialogEdit(false);
@@ -314,16 +347,68 @@ export const Legal = () => {
         }
     };
 
-    // const handleAddPolicies = (name) => {
-    //     name = name.replace("_end_date", "");
+    const handleAddPolicies = (inputName, i, policyType, inputLabel) => {
+        inputName = inputName.split("end")[0]; // Remove the index from the input name
+        inputLabel = inputLabel.split("Fin ")[1]; // Remove the index from the input label
 
-    //     const newInputs = [
-    //         { name: `${name}`, label: "Numero de Póliza", type: "text" },
-    //         { name: `${name}_start_date`, label: "Fecha de Inicio", type: "date" },
-    //         { name: `${name}_end_date`, label: "Fecha de Fin", type: "date" },
-    //     ];
-    //     setInputs((prev) => [...prev, ...newInputs]);
-    // };
+        const updatedInitialValues = {
+            ...newInitialValues,
+            [`${inputName}_${i}`]: "",
+            [`${inputName}number_${i}`]: "",
+            [`${inputName}start_date_${i}`]: "",
+            [`${inputName}end_date_${i}`]: "",
+        };
+        setNewInitialValues(updatedInitialValues);
+        console.log(updatedInitialValues);
+
+        // Add the new inputs to the newValidationSchema object
+        const updatedValidationSchema = newValidationSchema.shape({
+            ...newValidationSchema.fields,
+            [`${inputName}_${i}`]: Yup.string().required("Campo requerido"),
+            [`${inputName}number_${i}`]: Yup.string().required("Campo requerido"),
+            [`${inputName}start_date_${i}`]: Yup.string().required("Campo requerido"),
+            [`${inputName}end_date_${i}`]: Yup.string().required("Campo requerido"),
+        });
+        setNewValidationSchema(updatedValidationSchema);
+
+        const newInputs = [
+            {
+                name: `${inputName}_${i}`,
+                label: `${i} ${inputLabel}`,
+                type: "text",
+                multiline: true,
+            },
+            {
+                name: `${inputName}number_${i}`,
+                label: `Numero ${inputLabel}`,
+                type: "text",
+                multiline: true,
+            },
+            {
+                name: `${inputName}start_date_${i}`,
+                label: `Fecha Inicio ${inputLabel}`,
+                type: "date",
+                multiline: true,
+            },
+            {
+                name: `${inputName}end_date_${i}`,
+                label: `Fecha Fin ${inputLabel}`,
+                type: "date",
+                multiline: true,
+            },
+        ];
+
+        // Add the new inputs to the state inputs object in the correct position
+        if (policyType === "civilResponsibilityPolicy") {
+            setInputs({ ...inputs, civilResponsibilityPolicy: [...inputs.civilResponsibilityPolicy, ...newInputs] });
+        } else if (policyType === "compliancePolicy") {
+            setInputs({ ...inputs, compliancePolicy: [...inputs.compliancePolicy, ...newInputs] });
+        } else {
+            setInputs({ ...inputs, insurancePolicy: [...inputs.insurancePolicy, ...newInputs] });
+        }
+
+        // Add the new inputs to the newInitialValues object
+    };
 
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
         const [field, meta] = useField(props);
@@ -335,26 +420,6 @@ export const Legal = () => {
                         <Chip label={label} size="small" />
                     </Divider>
                     <TextField key={props.name} sx={{ width: "390px" }} type={type} label={label} {...field} helperText={errorText} error={!!errorText} />
-                </>
-            );
-        } else if (props.name.includes("end_date")) {
-            return (
-                <>
-                    <TextField
-                        key={props.name}
-                        sx={{ width: "390px" }}
-                        InputLabelProps={{ shrink: true }}
-                        multiline={multiline}
-                        rows={rows}
-                        type={type}
-                        label={label}
-                        {...field}
-                        helperText={errorText}
-                        error={!!errorText}
-                    />
-                    <Button onClick={() => handleAddPolicies(props.name)} startIcon={<AddIcon />} variant="outlined">
-                        Añadir
-                    </Button>
                 </>
             );
         }
@@ -478,26 +543,7 @@ export const Legal = () => {
             <Dialog maxWidth={"md"} open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Añadir un nuevo registro</DialogTitle>
                 <DialogContent>
-                    <Formik
-                        initialValues={{
-                            name: "",
-                            city: "",
-                            description: "",
-                            expected_start_date: "",
-                            value: "",
-                            monthly_cost: "",
-                            duration: "",
-                            contact: "",
-                            contact_telephone: "",
-                            start_date: "",
-                            civil_responsibility_policy: "",
-                            compliance_policy: "",
-                            insurance_policy: "",
-                            renovation_date: "",
-                        }}
-                        validationSchema={validationSchema}
-                        onSubmit={handleSubmit}
-                    >
+                    <Formik initialValues={newInitialValues} validationSchema={newValidationSchema} onSubmit={handleSubmit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
                                 {inputs.clients.map((input, index) => {
@@ -505,21 +551,76 @@ export const Legal = () => {
                                 })}
                                 <Box sx={{ display: "flex", flexWrap: "wrap", gap: "2rem" }}>
                                     {inputs.civilResponsibilityPolicy.map((input, index) => {
+                                        const uniqueKey = `${input.name}_${index}`; // Generate a unique key using input name and index
+                                        if (index === inputs.civilResponsibilityPolicy.length - 1) {
+                                            return (
+                                                <React.Fragment key={uniqueKey}>
+                                                    <FormikTextField type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
+
+                                                    <Button
+                                                        onClick={() => handleAddPolicies(input.name, (index + 5) / 4, "civilResponsibilityPolicy", input.label)}
+                                                        startIcon={<AddIcon />}
+                                                        variant="outlined"
+                                                    >
+                                                        Añadir
+                                                    </Button>
+                                                </React.Fragment>
+                                            );
+                                        }
                                         return (
                                             <FormikTextField key={index} type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
                                         );
                                     })}
                                     {inputs.compliancePolicy.map((input, index) => {
+                                        const uniqueKey = `${input.name}_${index}`; // Generate a unique key using input name and index
+                                        if (index === inputs.compliancePolicy.length - 1) {
+                                            return (
+                                                <React.Fragment key={uniqueKey}>
+                                                    <FormikTextField type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
+
+                                                    <Button
+                                                        onClick={() => handleAddPolicies(input.name, (index + 5) / 4, "compliancePolicy", input.label)}
+                                                        startIcon={<AddIcon />}
+                                                        variant="outlined"
+                                                    >
+                                                        Añadir
+                                                    </Button>
+                                                </React.Fragment>
+                                            );
+                                        }
                                         return (
                                             <FormikTextField key={index} type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
                                         );
                                     })}
                                     {inputs.insurancePolicy.map((input, index) => {
+                                        const uniqueKey = `${input.name}_${index}`; // Generate a unique key using input name and index
+                                        if (index === inputs.insurancePolicy.length - 1) {
+                                            return (
+                                                <React.Fragment key={uniqueKey}>
+                                                    <FormikTextField type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
+
+                                                    <Button
+                                                        onClick={() => handleAddPolicies(input.name, (index + 5) / 4, "insurancePolicy", input.label)}
+                                                        startIcon={<AddIcon />}
+                                                        variant="outlined"
+                                                    >
+                                                        Añadir
+                                                    </Button>
+                                                </React.Fragment>
+                                            );
+                                        }
                                         return (
                                             <FormikTextField key={index} type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
                                         );
                                     })}
                                 </Box>
+                                {inputs.renovation.map((input, index) => {
+                                    return (
+                                        <Box key={index} sx={{ pt: "2rem" }}>
+                                            <FormikTextField key={index} type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
+                                        </Box>
+                                    );
+                                })}
 
                                 <Box sx={{ width: "100%", textAlign: "end" }}>
                                     <Button variant="contained" type="submit" startIcon={<SaveIcon></SaveIcon>}>
@@ -540,7 +641,7 @@ export const Legal = () => {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={details} validationSchema={validationSchema} onSubmit={handleSubmitEdit}>
+                    <Formik initialValues={details} onSubmit={handleSubmitEdit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
                                 <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />

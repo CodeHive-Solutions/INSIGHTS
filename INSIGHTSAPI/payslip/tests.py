@@ -199,6 +199,8 @@ class PayslipTest(BaseTestCase):
             201,
             response.data,
         )
+        self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
+        self.assertEqual(Payslip.objects.count(), 40)
 
     def test_resend_payslip(self):
         """Test resend payslip."""

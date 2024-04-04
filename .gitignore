@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 .pnpm-store
 dist
+dist-bu
 dist-ssr
 *.local
 __pycache__
@@ -47,3 +48,4 @@ test.pdf
 src/videos/futbol.mp4
 *.zip
 *.mjs
+dist-bu/
