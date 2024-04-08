@@ -454,7 +454,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                     return Response(
                                         {
                                             "message": "Excel upload Failed.",
-                                            "error": str(validation_e),
                                         },
                                         status=framework_status.HTTP_400_BAD_REQUEST,
                                     )
@@ -464,7 +463,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                     return Response(
                                         {
                                             "message": "Excel upload Failed.",
-                                            "error": str(error),
                                         },
                                         status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR,
                                     )
@@ -502,8 +500,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                 logger.exception("Error: %s", str(error))
                                 return Response(
                                     {
-                                        "message": "Excel upload Failed.",
-                                        "error": str(error),
+                                        "message": "Excel upload Failed."
                                     },
                                     status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 )
@@ -675,14 +672,14 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 logger.setLevel(logging.ERROR)
                 logger.exception("Validation error: %s", str(validation_e))
                 return Response(
-                    {"message": "Excel upload Failed.", "Error": str(validation_e)},
+                    {"message": "Excel upload Failed."},
                     status=framework_status.HTTP_400_BAD_REQUEST,
                 )
             except Exception as error:
                 logger.setLevel(logging.ERROR)
                 logger.exception("Error: %s", str(error))
                 return Response(
-                    {"message": "Excel upload Failed.", "Error": str(error)},
+                    {"message": "Excel upload Failed."},
                     status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
         else:

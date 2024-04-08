@@ -23,12 +23,12 @@
 #     def test_get_complaints(self):
 #         """Test get complaints."""
 #         response = self.client.get("/pqrs/complaints/")
-#         self.assertEqual(response.status_code, 405)
+#         self.assertEqual(response.status_code, 405, response.data)
 
 #     def test_get_all_complaints(self):
 #         """Test get all complaints."""
 #         response = self.client.get("/pqrs/complaints/all/")
-#         self.assertEqual(response.status_code, 405)
+#         self.assertEqual(response.status_code, 405, response.data)
 
 #     def test_create_complaint(self):
 #         """Test create complaint."""
@@ -54,7 +54,7 @@
 #                 "contact_info": "Test",
 #             },
 #         )
-#         self.assertEqual(response.status_code, 201)
+#         self.assertEqual(response.status_code, 201, response.data)
 
 #     def test_create_suggestion(self):
 #         """Test create suggestion."""
@@ -67,7 +67,7 @@
 #                 "contact_info": "Test",
 #             },
 #         )
-#         self.assertEqual(response.status_code, 201)
+#         self.assertEqual(response.status_code, 201, response.data)
 
 #     def test_create_other(self):
 #         """Test create other."""
@@ -80,4 +80,4 @@
 #                 "contact_info": "Test",
 #             },
 #         )
-#         self.assertEqual(response.status_code, 201)
+#         self.assertEqual(response.status_code, 201, response.data)

@@ -16,6 +16,10 @@ class Payslip(models.Model):
     days = models.IntegerField()
     biweekly_period = models.DecimalField(max_digits=12, decimal_places=2)
     transport_allowance = models.DecimalField(max_digits=12, decimal_places=2)
+    night_shift_allowance = models.DecimalField(max_digits=12, decimal_places=2)
+    night_shift_overtime_hours = models.DecimalField(max_digits=12, decimal_places=2)
+    night_shift_holiday_hours = models.DecimalField(max_digits=12, decimal_places=2)
+
     bonus_paycheck = models.DecimalField(max_digits=12, decimal_places=2)
     biannual_bonus = models.DecimalField(max_digits=12, decimal_places=2)
     severance = models.DecimalField(max_digits=12, decimal_places=2)

@@ -76,7 +76,7 @@ INSTALLED_APPS = [
     "contracts",
     "users",
     "excels_processing",
-    # "pqrs",
+    "pqrs",
     "django_sendfile",
     "services",
     "blog",
