@@ -18,10 +18,19 @@ from payslip.models import Payslip
 from services.emails import send_email
 from users.models import User
 from .models import EmploymentCertification
+from .serializers import EmploymentCertificationSerializer
 
 
 logger = logging.getLogger("requests")
 
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_employment_certifications(request):
+    """Retrieve all employment certifications."""
+    certifications = EmploymentCertification.objects.all()
+    serializer = EmploymentCertificationSerializer(certifications, many=True)
+    return Response(serializer.data)
 
 def read_and_encode_image(file_path):
     """Read an image and encode it to base64."""
@@ -68,6 +77,7 @@ def create_employment_certification(request):
     """Create an employment certification."""
     identification = request.data.get("identification") or request.user.cedula
     months = request.data.get("months")
+    bonus_amount = None
     if months:
         months = int(months)
         # Get the last X bonus in the payslips
@@ -139,6 +149,7 @@ def create_employment_certification(request):
         start_date=employee[0],
         position=employee_info["position"],
         salary=employee[2],
+        bonuses=bonus_amount,
         contract_type=employee_info["contract_type"],
         expedition_city=employee_info["expedition_city"],
     )

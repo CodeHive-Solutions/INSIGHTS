@@ -147,10 +147,8 @@ def call_transfer_list(request):
         else:
             return Response({"error": "Invalid campaign"}, status=400)
 
-        search_path = path_old.format(date=date)
-        if not os.path.commonpath([search_path, paths[f"{campaign}_old"]]) == paths[
-            f"{campaign}_old"
-        ]:
+        search_path = os.path.normpath(path_old.format(date=date))
+        if not search_path.startswith(paths[f"{campaign}_old"]):
             return Response({"error": "Invalid folder path"}, status=400)
         if not os.path.exists(search_path):
             return Response(
