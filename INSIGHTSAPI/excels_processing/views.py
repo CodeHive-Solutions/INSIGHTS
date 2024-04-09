@@ -72,7 +72,7 @@ def robinson_list(request):
             )
     except Exception as error:
         logger.error(error)
-        return Response(str(error), status=500)
+        return Response(status=500)
     finally:
         if connection and connection.is_connected():
             connection.close()
@@ -147,11 +147,14 @@ def call_transfer_list(request):
         else:
             return Response({"error": "Invalid campaign"}, status=400)
 
-        if not os.path.exists(path_old.format(date=date)):
+        search_path = os.path.normpath(path_old.format(date=date))
+        if not search_path.startswith(paths[f"{campaign}_old"]):
+            return Response({"error": "Invalid folder path"}, status=400)
+        if not os.path.exists(search_path):
             return Response(
                 {"error": "Folder for that date does not exist."}, status=400
             )
-        for entry in os.scandir(path_old.format(date=date)):
+        for entry in os.scandir(search_path):
             if entry.name.endswith(".mp3") and pattern.search(entry.name):
                 try:
                     final_path = path_new.format(entry=entry)
@@ -164,7 +167,7 @@ def call_transfer_list(request):
                     break
                 except Exception as error:
                     logger.critical(error)
-                    return Response({"error": str(error)}, status=500)
+                    return Response(status=500)
         if match is not True:
             fails.append(number)
     return Response({"message": "Files transferred successfully.", "fails": fails})

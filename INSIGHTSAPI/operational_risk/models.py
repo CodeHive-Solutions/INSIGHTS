@@ -63,20 +63,20 @@ class Events(models.Model):
     recovered_quantity = models.IntegerField()
     recovered_quantity_by_insurance = models.IntegerField()
     event_class = models.ForeignKey(EventClass, on_delete=models.DO_NOTHING)
-    reported_by = models.CharField(max_length=100)
-    # Also called classification
-    critical = models.BooleanField()
-    level = models.ForeignKey(Level, on_delete=models.DO_NOTHING, null=True)
-    plan = models.CharField(max_length=250)
     event_title = models.CharField(max_length=250)
-    public_accounts_affected = models.CharField(max_length=250)
     process = models.ForeignKey(Process, on_delete=models.DO_NOTHING)
     lost_type = models.ForeignKey(LostType, on_delete=models.DO_NOTHING)
     description = models.CharField(max_length=750)
     product = models.ForeignKey(ProductLine, on_delete=models.DO_NOTHING)
-    close_date = models.DateTimeField()
-    learning = models.CharField(max_length=500)
     status = models.BooleanField()
+    close_date = models.DateTimeField()
+    reported_by = models.CharField(max_length=100)
+    # Also called classification
+    critical = models.BooleanField()
+    level = models.ForeignKey(Level, on_delete=models.DO_NOTHING, null=True)
+    public_accounts_affected = models.CharField(max_length=250)
+    plan = models.CharField(max_length=250)
+    learning = models.CharField(max_length=500)
 
     def __str__(self):
         """Return the event title."""

@@ -19,6 +19,9 @@ class EmploymentCertification(models.Model):
     salary = models.DecimalField(
         max_digits=10, decimal_places=2, verbose_name="Salario"
     )
+    bonuses = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, verbose_name="Bonificaciones"
+    )
     contract_type = models.CharField(max_length=100, verbose_name="Tipo de contrato")
     expedition_city = models.CharField(
         max_length=100, verbose_name="Ciudad de expedición"

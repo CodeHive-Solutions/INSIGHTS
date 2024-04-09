@@ -31,7 +31,7 @@ urlpatterns = [
     path("token/", include("api_token.urls")),
     path("files/", include("excels_processing.urls")),
     path("sgc/", include("sgc.urls")),
-    # path("pqrs/", include("pqrs.urls")),
+    path("pqrs/", include("pqrs.urls")),
     path("services/", include("services.urls")),
     path("contracts/", include("contracts.urls")),
     path("blog/", include("blog.urls")),
