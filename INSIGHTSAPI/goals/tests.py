@@ -40,14 +40,18 @@ class GoalAPITestCase(BaseTestCase):
 
     def test_get_my_goals(self):
         """Test the get-my-goals view."""
+        print(self.user.get_all_permissions())
+        print(User.objects.get(username="staffnet").get_all_permissions())
         self.user.user_permissions.clear()
+        print(self.user.username)
+        print(User.objects.get(username="staffnet").get_all_permissions())
+        print(self.user.get_all_permissions())
         response = self.client.get(reverse("goal-list"))
         self.assertEqual(response.status_code, 200)
 
     def test_metas_upload(self, called=False):
         """Test the upload-excel view."""
-        # if called:
-        # Create a SimpleUploadedFile instance from the Excel file
+
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()

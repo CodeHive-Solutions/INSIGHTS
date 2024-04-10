@@ -1,6 +1,7 @@
 """Email service."""
 
 import logging
+import sys
 import ssl
 import os
 import base64
@@ -92,6 +93,8 @@ def send_email(
             },
         )
         # print(email_content)
+        if "test" in sys.argv or settings.DEBUG:
+            to_emails = [settings.EMAIL_TEST]
         email = EmailMessage(
             subject,
             email_content,

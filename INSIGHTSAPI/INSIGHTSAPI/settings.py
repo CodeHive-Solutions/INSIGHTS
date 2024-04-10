@@ -156,6 +156,7 @@ EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = True
 EMAIL_HOST_USER = "no-reply@cyc-services.com.co"
 EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
+EMAIL_TEST = "heibert.mogollon@cyc-bpo.com"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
