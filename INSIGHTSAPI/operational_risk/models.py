@@ -57,7 +57,7 @@ class Events(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     discovery_date = models.DateTimeField()
-    accounting_date = models.DateTimeField(null=True)
+    accounting_date = models.DateField(null=True)
     currency = models.CharField(max_length=100)
     quantity = models.IntegerField()
     recovered_quantity = models.IntegerField()
@@ -69,7 +69,7 @@ class Events(models.Model):
     description = models.CharField(max_length=750)
     product = models.ForeignKey(ProductLine, on_delete=models.DO_NOTHING)
     status = models.BooleanField()
-    close_date = models.DateTimeField()
+    close_date = models.DateField()
     reported_by = models.CharField(max_length=100)
     # Also called classification
     critical = models.BooleanField()

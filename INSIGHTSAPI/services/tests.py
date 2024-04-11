@@ -34,13 +34,16 @@ class BaseTestCase(APITestCase):
 
     def create_demo_user(self):
         """Create a demo user."""
-        demo_user = User.objects.create(
+        demo_user = User.objects.get_or_create(
             username="demo",
             cedula="1000065648",
             email="heibert.mogollon@cyc-bpo.com",
             first_name="Demo",
             last_name="User",
         )
+        # Return the user object not the tuple
+        if isinstance(demo_user, tuple):
+            return demo_user[0]
         return demo_user
 
     def tearDown(self):
