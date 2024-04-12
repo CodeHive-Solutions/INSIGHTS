@@ -26,7 +26,7 @@ class EventsTest(BaseTestCase):
             "start_date": "2020-01-01 00:00:00",
             "end_date": "2020-01-01 00:00:00",
             "discovery_date": "2020-01-01 00:00:00",
-            "accounting_date": "2020-01-01 00:00:00",
+            "accounting_date": "2020-01-01",
             "currency": "USD",
             "quantity": 1,
             "recovered_quantity": 1,
@@ -55,6 +55,7 @@ class EventsTest(BaseTestCase):
         self.data["lost_type"] = self.data["lost_type"].name
         self.data["product"] = self.data["product"].name
         response = self.client.post(reverse("events-list"), self.data)
+        print(self.data)
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["description"], "TEST")
 

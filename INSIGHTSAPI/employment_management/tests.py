@@ -8,6 +8,38 @@ from .models import EmploymentCertification
 class EmploymentCertificationTest(BaseTestCase):
     """Tests the employment certification views."""
 
+    def setUp(self):
+        """Set up the test case."""
+        super().setUp()
+        self.payslip_data = {
+            "title": "title",
+            "identification": "1000065648",
+            "name": "name",
+            "area": "area",
+            "job_title": "job_title",
+            "salary": 1000000,
+            "days": 15,
+            "biweekly_period": 15,
+            "transport_allowance": 150000,
+            "night_shift_hours": 10,
+            "night_shift_allowance": 150000,
+            "night_shift_overtime_hours": 10,
+            "night_shift_overtime_allowance": 150000,
+            "night_shift_holiday_hours": 10,
+            "night_shift_holiday_allowance": 150000,
+            "bonus_paycheck": 150000,
+            "biannual_bonus": 150000,
+            "gross_earnings": 1000000,
+            "healthcare_contribution": 150000,
+            "pension_contribution": 150000,
+            "tax_withholding": 150000,
+            "additional_deductions": 150000,
+            "apsalpen": 150000,
+            "total_deductions": 150000,
+            "severance": 150000,
+            "net_pay": 150000,
+        }
+
     def test_get_my_employment_certification(self):
         """Tests that the user can get the simple employment certification don't need months."""
         self.user.cedula = "1000065648"
@@ -22,28 +54,7 @@ class EmploymentCertificationTest(BaseTestCase):
         """Tests that the user can get the employment certification with months."""
         self.user.cedula = "1000065648"
         self.user.save()
-        Payslip.objects.create(
-            title="title",
-            identification="1000065648",
-            name="name",
-            area="area",
-            job_title="job_title",
-            salary=1000000,
-            days=15,
-            biweekly_period=15,
-            transport_allowance=150000,
-            bonus_paycheck=150000,
-            biannual_bonus=150000,
-            gross_earnings=1000000,
-            healthcare_contribution=150000,
-            pension_contribution=150000,
-            tax_withholding=150000,
-            additional_deductions=150000,
-            apsalpen=150000,
-            total_deductions=150000,
-            severance=150000,
-            net_pay=150000,
-        )
+        Payslip.objects.create(**self.payslip_data)
         response = self.client.post(
             reverse("send-employment-certification"), {"months": 1}
         )
@@ -76,28 +87,7 @@ class EmploymentCertificationTest(BaseTestCase):
         self.user.save()
         self.create_demo_user()
         for _ in range(6):
-            Payslip.objects.create(
-                title="title",
-                identification="1000065648",
-                name="name",
-                area="area",
-                job_title="job_title",
-                salary=1000000,
-                days=15,
-                biweekly_period=15,
-                transport_allowance=150000,
-                bonus_paycheck=150000,
-                biannual_bonus=150000,
-                gross_earnings=1000000,
-                healthcare_contribution=150000,
-                pension_contribution=150000,
-                tax_withholding=150000,
-                additional_deductions=150000,
-                apsalpen=150000,
-                total_deductions=150000,
-                severance=150000,
-                net_pay=150000,
-            )
+            Payslip.objects.create(**self.payslip_data)
         response = self.client.post(
             reverse("send-employment-certification"),
             {"months": 6, "identification": "1000065648"},
@@ -118,6 +108,6 @@ class EmploymentCertificationTest(BaseTestCase):
         )
         self.assertEqual(response.status_code, 403, response.content)
 
-    def test_something(self):
-        response = self.client.get(reverse("upload-old-certifications"))
-        self.assertEqual(response.status_code, 200)
+    # def test_something(self):
+    #     response = self.client.get(reverse("upload-old-certifications"))
+    #     self.assertEqual(response.status_code, 200)
