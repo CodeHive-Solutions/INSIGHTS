@@ -14,11 +14,11 @@ configobj==5.0.8
 constantly==15.1.0
 cryptography==42.0.4
 dbus-python==1.2.18
-Django==4.2.10
+Django==4.2.11
 django-cors-headers==4.1.0
 django-simple-history==3.3.0
 djangorestframework==3.14.0
-dnspython==2.1.0
+dnspython==2.6.1
 et-xmlfile==1.1.0
 Flask==2.2.5
 Flask-Session==0.4.0
