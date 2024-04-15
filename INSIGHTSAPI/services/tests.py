@@ -89,7 +89,7 @@ class EmailServiceTest(APITestCase):
                 subject,
                 message,
                 to_emails,
-                sender_user="mismetas",
+                sender_user="no-reply",
                 attachments=[("asesor-vacante.png", image_data, "image/png")],
                 save_message=False,
                 email_owner="Test",

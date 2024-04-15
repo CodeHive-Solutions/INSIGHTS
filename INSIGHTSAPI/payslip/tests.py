@@ -1,5 +1,6 @@
 """Test for payslip. """
 
+import pandas as pd
 from services.tests import BaseTestCase
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -27,6 +28,12 @@ class PayslipTest(BaseTestCase):
             "days": 15,
             "biweekly_period": 15,
             "transport_allowance": 150000,
+            "surcharge_night_shift_hours": 15,
+            "surcharge_night_shift_allowance": 150000,
+            "surcharge_night_shift_holiday_hours": 15,
+            "surcharge_night_shift_holiday_allowance": 150000,
+            "surcharge_holiday_hours": 15,
+            "surcharge_holiday_allowance": 150000,
             "bonus_paycheck": 150000,
             "biannual_bonus": 150000,
             "gross_earnings": 1000000,
@@ -87,7 +94,13 @@ class PayslipTest(BaseTestCase):
         self.assertEqual(response.data["salary"], "28227321.00")
         self.assertEqual(response.data["days"], 15)
         self.assertEqual(response.data["biweekly_period"], "14113661.00")
-        self.assertEqual(response.data["transport_allowance"], "0.00")
+        self.assertEqual(response.data["transport_allowance"], "22000.00")
+        self.assertEqual(response.data["surcharge_night_shift_hours"], "15.0")
+        self.assertEqual(response.data["surcharge_night_shift_allowance"], "140000.00")
+        self.assertEqual(response.data["surcharge_night_shift_holiday_hours"], "17.1")
+        self.assertEqual(response.data["surcharge_night_shift_holiday_allowance"], "180000.00")
+        self.assertEqual(response.data["surcharge_holiday_hours"], "20.0")
+        self.assertEqual(response.data["surcharge_holiday_allowance"], "250000.00")
         self.assertEqual(response.data["bonus_paycheck"], "0.00")
         self.assertEqual(response.data["biannual_bonus"], "100800.00")
         self.assertEqual(response.data["severance"], "85325.00")
@@ -140,7 +153,7 @@ class PayslipTest(BaseTestCase):
         )
         self.assertEqual(
             response.data,
-            {"Error": "El archivo no tiene la cantidad de columnas requeridas."},
+            {"Error": "El archivo no tiene la cantidad de columnas requeridas de 26, tiene 2"},
         )
 
     def test_upload_without_permission(self):

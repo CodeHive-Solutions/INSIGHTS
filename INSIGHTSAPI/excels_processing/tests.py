@@ -142,6 +142,8 @@ class CallTransferTestCase(BaseTestCase):
         ) as file_obj:
             file_obj.write("test")
             self.assertTrue(os.path.exists(file_obj.name), file_obj.name)
+            # Close the file
+            file_obj.close()
         # Open the file to upload
         with open(
             "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Call_transfer_list_banco_agrario.csv",
@@ -159,27 +161,25 @@ class CallTransferTestCase(BaseTestCase):
     def tearDown(self):
         """Tear down the test case"""
         super().tearDown()
-        file_path_quality = "/var/servers/calidad/test/"
-        file_path_quality_check = file_path_quality + "test/2023/12/05/OUT"
-        if os.path.exists(file_path_quality) and os.path.exists(
-            file_path_quality_check
-        ):
-            rmtree(file_path_quality)
-        file_path_falabella = "/var/servers/falabella/test/"
-        file_path_falabella_check = file_path_falabella + "test/2023/12/05/OUT"
-        if os.path.exists(file_path_falabella) and os.path.exists(
-            file_path_falabella_check
-        ):
-            rmtree(file_path_falabella)
-        file_path_banco_agrario = "/var/servers/banco_agrario/test/"
-        file_path_banco_agrario_check = file_path_banco_agrario + "test/2023/12/05/IN"
-        print(file_path_banco_agrario)
-        print(file_path_banco_agrario_check)
-        print(os.path.exists(file_path_banco_agrario))
-        print(os.path.exists(file_path_banco_agrario_check))
-        if os.path.exists(file_path_banco_agrario) and os.path.exists(
-            file_path_banco_agrario_check
-        ):
-            rmtree(file_path_banco_agrario)
-        else:
-            print("No folder to delete")
+        # file_path_quality = "/var/servers/calidad/test/"
+        # file_path_quality_check = file_path_quality + "test/2023/12/05/OUT"
+        # if os.path.exists(file_path_quality) and os.path.exists(
+        #     file_path_quality_check
+        # ):
+        #     rmtree(file_path_quality)
+        # file_path_falabella = "/var/servers/falabella/test/"
+        # file_path_falabella_check = file_path_falabella + "test/2023/12/05/OUT"
+        # if os.path.exists(file_path_falabella) and os.path.exists(
+        #     file_path_falabella_check
+        # ):
+        #     rmtree(file_path_falabella)
+        # file_path_banco_agrario = "/var/servers/banco_agrario/test/"
+        # file_path_banco_agrario_check = file_path_banco_agrario + "test/2023/12/05/IN"
+        # # print(file_path_banco_agrario)
+        # # print(file_path_banco_agrario_check)
+        # # print(os.path.exists(file_path_banco_agrario))
+        # # print(os.path.exists(file_path_banco_agrario_check))
+        # if os.path.exists(file_path_banco_agrario) and os.path.exists(
+        #     file_path_banco_agrario_check
+        # ):
+        #     rmtree(file_path_banco_agrario)
