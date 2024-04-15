@@ -19,10 +19,12 @@ import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import prosecutor from "../../images/home-carousel/prosecutor.png";
 import Avatar from "../../images/home-carousel/avatar.jpg";
+import water from "../../images/home-carousel/water.png";
+import water2 from "../../images/home-carousel/water-2.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: prosecutor }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
+const homeImages = [{ image: water2 }, { image: water }, { image: prosecutor }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
@@ -61,7 +63,7 @@ const Home = () => {
 
                 let formattedName = "";
                 if (wholeName.split(" ").length === 4) {
-                    formattedName = `${firstNamesParts[1]} ${lastNamesParts[0]}`.trim();
+                    formattedName = `${firstNamesParts[0]} ${lastNamesParts[0]}`.trim();
                 } else {
                     formattedName = `${firstNames} ${lastNames}`.trim();
                 }

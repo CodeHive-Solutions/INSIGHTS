@@ -31,7 +31,7 @@ export const EmploymentCertification = () => {
 
     const getEmploymentCertifications = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}/employment-management//`, {
+            const response = await fetch(`${getApiUrl()}employment-management/get-employment-certifications`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -66,11 +66,34 @@ export const EmploymentCertification = () => {
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
         { field: "user", headerName: "Cedula", width: 100 },
-        { field: "position", headerName: "Cargo", width: 250, editable: false },
-        { field: "salary", headerName: "Salario", width: 150, editable: false },
+        { field: "position", headerName: "Cargo", width: 360, editable: false },
+        {
+            field: "salary",
+            headerName: "Salario",
+            width: 125,
+            editable: false,
+            valueGetter: (params) => params.row.salary * 1,
+            valueFormatter: (params) =>
+                new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                }).format(params.value),
+        },
+        {
+            field: "bonuses",
+            headerName: "Bonificación",
+            width: 125,
+            editable: false,
+            valueGetter: (params) => params.row.bonuses * 1,
+            valueFormatter: (params) =>
+                new Intl.NumberFormat("es-CO", {
+                    style: "currency",
+                    currency: "COP",
+                }).format(params.value),
+        },
         { field: "contract_type", headerName: "Contrato", width: 170, editable: false },
         { field: "start_date", headerName: "Fecha de Ingreso", width: 150, editable: false },
-        { field: "expedition", headerName: "Lugar de Expedición", width: 200, editable: false },
+        { field: "expedition_city", headerName: "Lugar de Expedición", width: 180, editable: false },
     ];
 
     return (

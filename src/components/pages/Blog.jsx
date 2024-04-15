@@ -143,11 +143,7 @@ const Blog = () => {
     };
 
     const handleFilterMonth = (month) => {
-        // Filter articles by month
-        console.log(month);
-
         // Logic to filter articles by month
-
         const filteredArticles = baseArticles.filter((article) => {
             const articleMonth = new Date(`${openYear}-${article.uploadDate.slice(0, 2)}-02`).toLocaleString("default", { month: "long" });
             return articleMonth === month;

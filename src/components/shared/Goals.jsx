@@ -118,7 +118,6 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
     };
 
     useEffect(() => {
-        console.log("working");
         getGoal();
     }, []);
 

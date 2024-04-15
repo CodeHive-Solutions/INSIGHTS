@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Libraries
 import * as XLSX from "xlsx";
 import { useNavigate } from "react-router-dom";
 
 // Material-UI
-import { Container, Box, Button, Typography, styled, LinearProgress, Fade, Tooltip, Dialog, DialogTitle, DialogContent } from "@mui/material";
+import { Container, Box, Button, Typography, styled, LinearProgress, Fade, Tooltip, Dialog, DialogTitle, DialogContent, TextField } from "@mui/material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -41,6 +41,11 @@ export const Payslips = () => {
     const [previewRows, setPreviewRows] = useState([]);
     const [loadingPreview, setLoadingPreview] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
+    const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
+    const [idPayslip, setIdPayslip] = useState();
+    const [disabled, setDisabled] = useState(false);
+    const emailRef = useRef();
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -95,12 +100,18 @@ export const Payslips = () => {
         width: 1,
     });
 
-    const handleResend = async (id) => {
+    const handleResend = async (event) => {
+        event.preventDefault();
+        setDisabled(true);
         setLoading(true);
+        const formData = new FormData();
+        formData.append("email", emailRef.current.value);
+
         try {
-            const response = await fetch(`${getApiUrl()}payslips/${id}/resend/`, {
+            const response = await fetch(`${getApiUrl()}payslips/${idPayslip}/resend/`, {
                 method: "POST",
                 credentials: "include",
+                body: formData,
             });
 
             const data = await response.json();
@@ -113,11 +124,14 @@ export const Payslips = () => {
                 throw new Error(data.detail);
             } else if (response.status === 201) {
                 setLoading(false);
+                setDisabled(false);
                 getPayslips();
                 showSnack("success", "Desprendible reenviado correctamente");
+                handleCloseDialogPayslip();
             }
         } catch (error) {
             setLoading(false);
+            setDisabled(false);
             console.error(error);
             showSnack("error", error.message);
         }
@@ -174,7 +188,7 @@ export const Payslips = () => {
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => handleResend(GridRowParams.id)}
+                            onClick={() => handleOpenDialogPayslip(GridRowParams.id)}
                         />
                     </Tooltip>,
                 ];
@@ -226,6 +240,12 @@ export const Payslips = () => {
             "days",
             "biweekly_period",
             "transport_allowance",
+            "surcharge_night_shift_hours",
+            "surcharge_night_shift_allowance",
+            "surcharge_night_shift_holiday_hours",
+            "surcharge_night_shift_holiday_allowance",
+            "surcharge_holiday_hours",
+            "surcharge_holiday_allowance",
             "bonus_paycheck",
             "biannual_bonus",
             "severance",
@@ -266,7 +286,6 @@ export const Payslips = () => {
             const worksheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[worksheetName];
             const data = XLSX.utils.sheet_to_csv(worksheet, { header: 1 });
-            console.log(csvToJSON(data));
             setPreviewRows(csvToJSON(data));
         };
 
@@ -309,8 +328,53 @@ export const Payslips = () => {
         }
     };
 
+    const handleCollapseEmail = () => {
+        setOpenCollapseEmail(!openCollapseEmail);
+    };
+
+    const handleCloseDialogPayslip = () => {
+        setOpenDialogPayslip(false);
+        setDisabled(false);
+    };
+
+    const handleOpenDialogPayslip = (id) => {
+        setIdPayslip(id);
+        setOpenDialogPayslip(true);
+    };
+
     return (
         <>
+            <Dialog open={openDialogPayslip} onClose={handleCloseDialogPayslip} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                <DialogTitle id="alert-dialog-title">{"¿Reenviar desprendible de nomina?"}</DialogTitle>
+                <DialogContent>
+                    <Typography color="text.secondary">
+                        Digita la dirección de correo electrónico al cual deseas que sea reenviado el desprendible de nomina correspondiente.
+                    </Typography>
+                    <Box component="form" onSubmit={handleResend}>
+                        <TextField
+                            required
+                            sx={{ mt: "1rem" }}
+                            inputRef={emailRef}
+                            autoFocus
+                            margin="dense"
+                            id="email"
+                            label="Correo electrónico"
+                            type="email"
+                            fullWidth
+                            variant="standard"
+                        />
+
+                        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: "1rem" }}>
+                            <Button disabled={disabled} variant="contained" onClick={handleCloseDialogPayslip} color="primary">
+                                Cancelar
+                            </Button>
+                            <Button type="submit" disabled={disabled} variant="contained" color="primary">
+                                Enviar
+                            </Button>
+                        </Box>
+                    </Box>
+                </DialogContent>
+            </Dialog>
             <Fade in={loading} unmountOnExit>
                 <LinearProgress variant="query" sx={{ width: "100%", position: "absolute", top: 0, zIndex: "100000" }} />
             </Fade>

@@ -337,7 +337,7 @@ export const Legal = () => {
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                handleCloseDialogEdit();
+                handleCloseDialogEdit();    
                 getPolicies();
                 showSnack("success", "Se ha actualizado el registro correctamente.");
             }
@@ -350,26 +350,6 @@ export const Legal = () => {
     const handleAddPolicies = (inputName, i, policyType, inputLabel) => {
         inputName = inputName.split("end")[0]; // Remove the index from the input name
         inputLabel = inputLabel.split("Fin ")[1]; // Remove the index from the input label
-
-        const updatedInitialValues = {
-            ...newInitialValues,
-            [`${inputName}_${i}`]: "",
-            [`${inputName}number_${i}`]: "",
-            [`${inputName}start_date_${i}`]: "",
-            [`${inputName}end_date_${i}`]: "",
-        };
-        setNewInitialValues(updatedInitialValues);
-        console.log(updatedInitialValues);
-
-        // Add the new inputs to the newValidationSchema object
-        const updatedValidationSchema = newValidationSchema.shape({
-            ...newValidationSchema.fields,
-            [`${inputName}_${i}`]: Yup.string().required("Campo requerido"),
-            [`${inputName}number_${i}`]: Yup.string().required("Campo requerido"),
-            [`${inputName}start_date_${i}`]: Yup.string().required("Campo requerido"),
-            [`${inputName}end_date_${i}`]: Yup.string().required("Campo requerido"),
-        });
-        setNewValidationSchema(updatedValidationSchema);
 
         const newInputs = [
             {
@@ -407,7 +387,27 @@ export const Legal = () => {
             setInputs({ ...inputs, insurancePolicy: [...inputs.insurancePolicy, ...newInputs] });
         }
 
+        const updatedInitialValues = {
+            ...newInitialValues,
+            [`${inputName}_${i}`]: "",
+            [`${inputName}number_${i}`]: "",
+            [`${inputName}start_date_${i}`]: "",
+            [`${inputName}end_date_${i}`]: "",
+        };
+
+        console.log(updatedInitialValues);
+        setNewInitialValues(updatedInitialValues);
         // Add the new inputs to the newInitialValues object
+
+        // Add the new inputs to the newValidationSchema object
+        const updatedValidationSchema = newValidationSchema.shape({
+            ...newValidationSchema.fields,
+            [`${inputName}_${i}`]: Yup.string().required("Campo requerido"),
+            [`${inputName}number_${i}`]: Yup.string().required("Campo requerido"),
+            [`${inputName}start_date_${i}`]: Yup.string().required("Campo requerido"),
+            [`${inputName}end_date_${i}`]: Yup.string().required("Campo requerido"),
+        });
+        setNewValidationSchema(updatedValidationSchema);
     };
 
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
