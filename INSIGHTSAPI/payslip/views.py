@@ -19,6 +19,12 @@ from .models import Payslip
 from .serializers import PayslipSerializer
 
 
+def convert_numeric_value(value):
+    try:
+        return float(value.replace(',', '.'))
+    except ValueError:
+        return value
+
 def send_payslip(payslips):
     payslip_data = []
     with open(str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb") as logo:
@@ -82,10 +88,10 @@ class PayslipViewSet(viewsets.ModelViewSet):
             if line.startswith(";;") or line == "":
                 continue
             data = line.split(";")
-            if len(data) < 18:
+            if len(data) != 26:
                 return Response(
                     {
-                        "Error": "El archivo no tiene la cantidad de columnas requeridas."
+                        "Error": f"El archivo no tiene la cantidad de columnas requeridas de 26, tiene {len(data)}",
                     },
                     status=400,
                 )
@@ -131,27 +137,27 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "name": name,
                     "area": data[3],
                     "job_title": data[4],
-                    "salary": data[5],
+                    "salary": convert_numeric_value(data[5]),
                     "days": data[6],
-                    "biweekly_period": data[7],
-                    "transport_allowance": data[8],
-                    "night_shift_hours": data[9],
-                    "night_shift_allowance": data[10],
-                    "night_shift_overtime_hours": data[11],
-                    "night_shift_overtime_allowance": data[12],
-                    "night_shift_holiday_hours": data[13],
-                    "night_shift_holiday_allowance": data[14],
-                    "bonus_paycheck": data[15],
-                    "biannual_bonus": data[16],
-                    "severance": data[17],
-                    "gross_earnings": data[18],
-                    "healthcare_contribution": data[19],
-                    "pension_contribution": data[20],
-                    "tax_withholding": data[21],
-                    "additional_deductions": data[22],
-                    "apsalpen": data[23],
-                    "total_deductions": data[24],
-                    "net_pay": data[25],
+                    "biweekly_period": convert_numeric_value(data[7]),
+                    "transport_allowance": convert_numeric_value(data[8]),
+                    "surcharge_night_shift_hours": convert_numeric_value(data[9]),
+                    "surcharge_night_shift_allowance": convert_numeric_value(data[10]),
+                    "surcharge_night_shift_holiday_hours": convert_numeric_value(data[11]),
+                    "surcharge_night_shift_holiday_allowance": convert_numeric_value(data[12]),
+                    "surcharge_holiday_hours": convert_numeric_value(data[13]),
+                    "surcharge_holiday_allowance": convert_numeric_value(data[14]),
+                    "bonus_paycheck": convert_numeric_value(data[15]),
+                    "biannual_bonus": convert_numeric_value(data[16]),
+                    "severance": convert_numeric_value(data[17]),
+                    "gross_earnings": convert_numeric_value(data[18]),
+                    "healthcare_contribution": convert_numeric_value(data[19]),
+                    "pension_contribution": convert_numeric_value(data[20]),
+                    "tax_withholding": convert_numeric_value(data[21]),
+                    "additional_deductions": convert_numeric_value(data[22]),
+                    "apsalpen": convert_numeric_value(data[23]),
+                    "total_deductions": convert_numeric_value(data[24]),
+                    "net_pay": convert_numeric_value(data[25]),
                     "email": email,
                 }
             )

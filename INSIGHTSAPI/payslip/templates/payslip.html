@@ -165,11 +165,23 @@
                                     </tr>
                                     <tr>
                                         <td>Prima</td>
-                                        <td style="border-left: solid 1px #ccc"></td>
+                                        <td style="border-left: solid 1px #ccc">${{payslip.biannual_bonus}}</td>
                                     </tr>
                                     <tr>
                                         <td>Intereses de cesantías</td>
-                                        <td style="border-left: solid 1px #ccc"></td>
+                                        <td style="border-left: solid 1px #ccc">${{payslip.severance}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Recargo nocturno ({{payslip.surcharge_night_shift_hours}} horas)</td>
+                                        <td style="border-left: solid 1px #ccc">${{payslip.surcharge_night_shift_allowance}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Recargo dominical o festivo ({{payslip.surcharge_night_shift_holiday_hours}} horas)</td>
+                                        <td style="border-left: solid 1px #ccc">${{payslip.surcharge_night_shift_holiday_allowance}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Recargo nocturno festivo ({{payslip.surcharge_holiday_hours}} horas)</td>
+                                        <td style="border-left: solid 1px #ccc">${{payslip.surcharge_holiday_allowance}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -202,6 +214,18 @@
                                     <tr>
                                         <td>Ap. Salud y Pensión Sobre Incentivo</td>
                                         <td style="border-left: solid 1px #ccc">${{payslip.apsalpen}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 25px"></td>
+                                        <td style="border-left: solid 1px #ccc"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 25px"></td>
+                                        <td style="border-left: solid 1px #ccc"></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 22px"></td>
+                                        <td style="border-left: solid 1px #ccc"></td>
                                     </tr>
                                 </tbody>
                             </table>

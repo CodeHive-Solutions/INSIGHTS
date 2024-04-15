@@ -156,20 +156,26 @@ def call_transfer_list(request):
             )
         for entry in os.scandir(search_path):
             if entry.name.endswith(".mp3") and pattern.search(entry.name):
-                try:
-                    final_path = path_new.format(entry=entry)
-                    # Transfer the file
-                    print(f"Copying {entry.path} to {final_path}")
-                    shutil.copy2(
-                        entry.path,
-                        final_path,
+                retries = 0
+                while retries < 3:
+                    try:
+                        final_path = path_new.format(entry=entry)
+                        # Transfer the file
+                        print(f"Copying {entry.path} to {final_path}")
+                        shutil.copy2(
+                            entry.path,
+                            final_path,
+                        )
+                        match = True
+                        print(f"File {entry.name} transferred successfully.")
+                        break
+                    except Exception as error:
+                        logger.critical(error)
+                        retries += 1
+                if retries == 3:
+                    return Response(
+                        {"error": "Error transferring the file"}, status=500
                     )
-                    match = True
-                    print(f"File {entry.name} transferred successfully.")
-                    break
-                except Exception as error:
-                    logger.critical(error)
-                    return Response(status=500)
         if match is not True:
             fails.append(number)
     return Response({"message": "Files transferred successfully.", "fails": fails})
