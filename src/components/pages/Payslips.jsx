@@ -49,7 +49,7 @@ export const Payslips = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions || !permissions.includes("payslip.add_payslip")) {
+        if (!permissions || !permissions.includes("payslip.view_payslip")) {
             navigate("/logged/home");
         }
     }, []);

@@ -12,7 +12,6 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { Typography, Box, Container, useMediaQuery, Card } from "@mui/material";
 
 // Media
-import vacanciesCarousel from "../../images/home-carousel/vacancies-1280-720.png";
 import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
@@ -24,7 +23,7 @@ import water2 from "../../images/home-carousel/water-2.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: water2 }, { image: water }, { image: prosecutor }, { image: ceroDiscrimination }, { image: vacanciesCarousel }];
+const homeImages = [{ image: water2 }, { image: water }, { image: prosecutor }, { image: ceroDiscrimination }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);

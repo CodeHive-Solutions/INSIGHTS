@@ -41,8 +41,11 @@ export const MyPayslips = () => {
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                if (!permissions || !permissions.includes("payslip.add_payslip")) {
-                    setRows(filtered);
+                if (permissions && permissions.includes("payslip.view_payslip")) {
+                    const userPayslips = data.filter((payslip) => payslip.identification === cedula);
+                    setRows(userPayslips);
+                } else {
+                    setRows(data);
                 }
             }
         } catch (error) {

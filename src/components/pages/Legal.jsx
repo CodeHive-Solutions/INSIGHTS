@@ -29,6 +29,7 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import AddIcon from "@mui/icons-material/Add";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const validationSchema = Yup.object().shape({
     name: Yup.string().required("Campo requerido"),
@@ -337,7 +338,7 @@ export const Legal = () => {
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                handleCloseDialogEdit();    
+                handleCloseDialogEdit();
                 getPolicies();
                 showSnack("success", "Se ha actualizado el registro correctamente.");
             }
@@ -347,7 +348,7 @@ export const Legal = () => {
         }
     };
 
-    const handleAddPolicies = (inputName, i, policyType, inputLabel) => {
+    const handleAddPolicies = (inputName, i, policyType, inputLabel, updateValidationSchema) => {
         inputName = inputName.split("end")[0]; // Remove the index from the input name
         inputLabel = inputLabel.split("Fin ")[1]; // Remove the index from the input label
 
@@ -379,35 +380,25 @@ export const Legal = () => {
         ];
 
         // Add the new inputs to the state inputs object in the correct position
-        if (policyType === "civilResponsibilityPolicy") {
-            setInputs({ ...inputs, civilResponsibilityPolicy: [...inputs.civilResponsibilityPolicy, ...newInputs] });
-        } else if (policyType === "compliancePolicy") {
-            setInputs({ ...inputs, compliancePolicy: [...inputs.compliancePolicy, ...newInputs] });
-        } else {
-            setInputs({ ...inputs, insurancePolicy: [...inputs.insurancePolicy, ...newInputs] });
-        }
+        setInputs({ ...inputs, [policyType]: [...inputs[policyType], ...newInputs] });
 
-        const updatedInitialValues = {
-            ...newInitialValues,
+        setNewInitialValues((currentValues) => ({
+            ...currentValues,
             [`${inputName}_${i}`]: "",
             [`${inputName}number_${i}`]: "",
             [`${inputName}start_date_${i}`]: "",
             [`${inputName}end_date_${i}`]: "",
-        };
+        }));
 
-        console.log(updatedInitialValues);
-        setNewInitialValues(updatedInitialValues);
-        // Add the new inputs to the newInitialValues object
-
-        // Add the new inputs to the newValidationSchema object
-        const updatedValidationSchema = newValidationSchema.shape({
-            ...newValidationSchema.fields,
-            [`${inputName}_${i}`]: Yup.string().required("Campo requerido"),
-            [`${inputName}number_${i}`]: Yup.string().required("Campo requerido"),
-            [`${inputName}start_date_${i}`]: Yup.string().required("Campo requerido"),
-            [`${inputName}end_date_${i}`]: Yup.string().required("Campo requerido"),
-        });
-        setNewValidationSchema(updatedValidationSchema);
+        updateValidationSchema((currentSchema) =>
+            currentSchema.shape({
+                ...currentSchema.fields,
+                [`${inputName}_${i}`]: Yup.string().required("Campo requerido"),
+                [`${inputName}number_${i}`]: Yup.string().required("Campo requerido"),
+                [`${inputName}start_date_${i}`]: Yup.string().required("Campo requerido"),
+                [`${inputName}end_date_${i}`]: Yup.string().required("Campo requerido"),
+            })
+        );
     };
 
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
@@ -558,13 +549,34 @@ export const Legal = () => {
                                                     <FormikTextField type={input.type} name={input.name} label={input.label} autoComplete="off" spellCheck={false} />
 
                                                     <Button
-                                                        onClick={() => handleAddPolicies(input.name, (index + 5) / 4, "civilResponsibilityPolicy", input.label)}
+                                                        sx={{ width: "100%" }}
+                                                        onClick={() =>
+                                                            handleAddPolicies(input.name, (index + 5) / 4, "civilResponsibilityPolicy", input.label, (schema) =>
+                                                                setNewValidationSchema(schema)
+                                                            )
+                                                        }
                                                         startIcon={<AddIcon />}
                                                         variant="outlined"
                                                     >
                                                         Añadir
                                                     </Button>
                                                 </React.Fragment>
+                                            );
+                                        } else if (input.name.includes("end")) {
+                                            return (
+                                                <>
+                                                    <FormikTextField
+                                                        key={index}
+                                                        type={input.type}
+                                                        name={input.name}
+                                                        label={input.label}
+                                                        autoComplete="off"
+                                                        spellCheck={false}
+                                                    />
+                                                    <Button startIcon={<KeyboardArrowDownIcon />} sx={{ width: "100%" }} variant="contained">
+                                                        Eliminar
+                                                    </Button>
+                                                </>
                                             );
                                         }
                                         return (
@@ -641,7 +653,7 @@ export const Legal = () => {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent>
-                    <Formik initialValues={details} onSubmit={handleSubmitEdit}>
+                    {/* <Formik initialValues={details} onSubmit={handleSubmitEdit}>
                         <Form>
                             <Box sx={{ display: "flex", gap: "1rem", pt: "0.5rem", flexWrap: "wrap" }}>
                                 <FormikTextField type="text" name="name" label="Clientes" autoComplete="off" spellCheck={false} />
@@ -689,7 +701,7 @@ export const Legal = () => {
                                 </Button>
                             </Box>
                         </Form>
-                    </Formik>
+                    </Formik> */}
                 </DialogContent>
             </Dialog>
         </>

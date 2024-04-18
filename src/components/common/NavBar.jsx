@@ -386,7 +386,9 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-                    {servicesPermission ? (
+                    {cedula === "19438555" || cedula === "1032495391" ? (
+                        <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
+                    ) : servicesPermission ? (
                         <Button
                             id="button-utils"
                             endIcon={anchorElUtils ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -466,13 +468,13 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                <MenuItem onClick={handleOpenAccountDialog}>
+                {/* <MenuItem onClick={handleOpenAccountDialog}>
                     <ListItemIcon>
                         <Avatar />
                     </ListItemIcon>
                     <ListItemText primary="Mi Cuenta" />
                 </MenuItem>
-                <Divider />
+                <Divider /> */}
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
