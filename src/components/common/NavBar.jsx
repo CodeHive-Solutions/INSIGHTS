@@ -8,6 +8,8 @@ import Goals from "../shared/Goals";
 import SnackbarAlert from "./SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import MyAccountDialog from "../shared/MyAccount";
+import InactivityDetector from "../shared/InactivityDetector";
+
 // Material-UI
 import {
     Box,
@@ -306,6 +308,7 @@ const Navbar = () => {
 
     return (
         <>
+            <InactivityDetector handleLogout={handleLogout} />
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>

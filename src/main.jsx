@@ -36,6 +36,7 @@ import MyPayslips from "./components/pages/MyPayslips";
 import SwiperSlider from "./components/shared/SwiperSlider";
 import EmploymentCertification from "./components/pages/EmploymentCertification";
 import ImageMagnifier from "./components/pages/ImageMagnifier";
+import InactivityDetector from "./components/shared/InactivityDetector";
 
 const theme = createTheme({
     typography: {
@@ -85,7 +86,7 @@ const router = createBrowserRouter([
     },
     {
         path: "test",
-        element: <ImageMagnifier />,
+        element: <InactivityDetector />,
     },
     {
         path: "/logged",
