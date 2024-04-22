@@ -152,7 +152,8 @@ def call_transfer_list(request):
             return Response({"error": "Invalid folder path"}, status=400)
         if not os.path.exists(search_path):
             return Response(
-                {"error": "Folder for that date does not exist."}, status=400
+                {"error": f"Folder for date {date.strftime('%d/%m/%Y')} does not exist."},
+                status=400
             )
         for entry in os.scandir(search_path):
             if entry.name.endswith(".mp3") and pattern.search(entry.name):

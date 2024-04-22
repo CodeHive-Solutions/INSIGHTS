@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { throttle } from "lodash";
 
 const InactivityDetector = ({ handleLogout }) => {
     useEffect(() => {
@@ -9,12 +10,11 @@ const InactivityDetector = ({ handleLogout }) => {
             inactivityTimeout = setTimeout(() => {
                 handleLogout();
             }, 150000); // Adjust the timeout value as needed (in milliseconds)
-        }; 
-
-        const handleActivity = () => {
-            console.log("User activity detected");
-            resetInactivityTimeout();
         };
+
+        const handleActivity = throttle(() => {
+            resetInactivityTimeout();
+        }, 1000); // Only allow handleActivity to be called once per second
 
         // Add event listeners to detect user activity
         window.addEventListener("mousemove", handleActivity);
