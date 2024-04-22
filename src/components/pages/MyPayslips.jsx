@@ -23,6 +23,8 @@ export const MyPayslips = () => {
     const [loading, setLoading] = useState(false);
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const emailRef = useRef(null);
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -39,7 +41,12 @@ export const MyPayslips = () => {
             if (!response.ok) {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
-                setRows(data);
+                if (permissions && permissions.includes("payslip.view_payslip")) {
+                    const userPayslips = data.filter((payslip) => payslip.identification === cedula);
+                    setRows(userPayslips);
+                } else {
+                    setRows(data);
+                }
             }
         } catch (error) {
             console.error(error);

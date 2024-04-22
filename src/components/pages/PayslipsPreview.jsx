@@ -20,7 +20,7 @@ const columns = [
                 currency: "COP",
             }).format(params.value),
     },
-    { field: "days", headerName: "Días", width: 130 },
+    { field: "days", headerName: "Días", width: 130, valueFormatter: (params) => params.value + " DÍAS" },
     {
         field: "biweekly_period",
         headerName: "Periodo Quincenal",
@@ -44,6 +44,53 @@ const columns = [
                 style: "currency",
                 currency: "COP",
             }).format(params.value),
+    },
+    {
+        field: "surcharge_night_shift_hours",
+        headerName: "Horas Laboradas Recargo Nocturno",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
+        valueFormatter: (params) => params.value + " HORAS",
+    },
+    {
+        field: "surcharge_night_shift_allowance",
+        headerName: "Recargo Nocturno",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
+        valueFormatter: (params) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(params.value),
+    },
+    {
+        field: "surcharge_night_shift_holiday_hours",
+        headerName: "Horas Laboradas Recargo Nocturno Festivo",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
+        valueFormatter: (params) => params.value + " HORAS",
+    },
+    {
+        field: "surcharge_night_shift_holiday_allowance",
+        headerName: "Recargo Nocturno Festivo",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
+        valueFormatter: (params) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(params.value),
+    },
+    {
+        field: "surcharge_holiday_hours",
+        headerName: "Horas Laboradas Recargo Dominical o Festivo",
+        width: 130,
+        type: "number",
+        valueFormatter: (params) => params.value + " HORAS",
+    },
+    {
+        field: "surcharge_holiday_allowance",
+        headerName: "Recargo Dominical o Festivo",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
+        valueFormatter: (params) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(params.value),
     },
     {
         field: "bonus_paycheck",
@@ -180,6 +227,7 @@ const columns = [
 ];
 
 const PayslipsPreview = ({ rows }) => {
+    console.log(rows);
     return (
         <div style={{ width: "100%", height: 400, boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
             <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />

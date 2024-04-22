@@ -114,10 +114,10 @@ export const RiskEvent = () => {
         Object.keys(cleanedDetails).forEach((key) => {
             cleanedDetails[key] = cleanedDetails[key] ?? "";
 
-            if (key === "close_date" && cleanedDetails[key]) {
-                // Assuming cleanedDetails[key] is a valid date string
-                cleanedDetails[key] = new Date(cleanedDetails[key]).toISOString().split("T")[0];
-            }
+            // if (key === "close_date" && cleanedDetails[key]) {
+            //     // Assuming cleanedDetails[key] is a valid date string
+            //     cleanedDetails[key] = new Date(cleanedDetails[key]).toISOString().split("T")[0];
+            // }
         });
 
         setDetails(cleanedDetails);
@@ -182,7 +182,7 @@ export const RiskEvent = () => {
             });
             if (response.status === 204) {
                 setRows(rows.filter((row) => row.id !== id));
-                getPolicies();
+                getOperationalRisk();
                 showSnack("success", "Se ha eliminado el registro correctamente.");
             } else {
                 showSnack("error", "Error al eliminar el registro");
@@ -207,7 +207,7 @@ export const RiskEvent = () => {
                         utf8WithBom: true,
                     }}
                 />
-                {permissions.includes("contracts.add_contract") ? (
+                {permissions.includes("operational_risk.add_events") ? (
                     <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
                         AÑADIR
                     </Button>
@@ -232,7 +232,7 @@ export const RiskEvent = () => {
                 throw new Error(data.detail);
             } else if (response.status === 201) {
                 handleCloseDialog();
-                getPolicies();
+                getOperationalRisk();
                 showSnack("success", "Se ha creado el registro correctamente.");
             }
         } catch (error) {
@@ -254,7 +254,7 @@ export const RiskEvent = () => {
                 throw new Error(data.detail);
             } else if (response.status === 200) {
                 handleCloseDialogEdit();
-                getPolicies();
+                getOperationalRisk();
                 showSnack("success", "Se ha actualizado el registro correctamente.");
             }
         } catch (error) {
@@ -264,11 +264,12 @@ export const RiskEvent = () => {
     };
 
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
+        console.log(props);
         const [field, meta] = useField(props);
         const errorText = meta.error && meta.touched ? meta.error : "";
         if (type === "select") {
             return (
-                <TextField sx={{ width: "390px" }} select label={label} {...field} helperText={errorText} error={!!errorText}>
+                <TextField disabled={disabled} sx={{ width: "390px" }} select label={label} {...field} helperText={errorText} error={!!errorText}>
                     {options.map((option) => (
                         <MenuItem key={option.value} value={option.value}>
                             {option.label}
@@ -345,13 +346,7 @@ export const RiskEvent = () => {
             width: 200,
             valueGetter: (params) => {
                 if (params.value) {
-                    const originalDate = new Date(params.value);
-                    const hour = originalDate.getHours();
-                    const minute = originalDate.getMinutes();
-                    const newDate = new Date();
-                    newDate.setHours(hour);
-                    newDate.setMinutes(minute);
-                    return newDate;
+                    return new Date(params.value);
                 } else {
                     return "";
                 }
@@ -374,7 +369,7 @@ export const RiskEvent = () => {
         {
             field: "discovery_date",
             type: "dateTime",
-            headerName: "Descubrimiento",
+            headerName: "Fecha de Descubrimiento",
             width: 200,
             editable: false,
             valueGetter: (params) => {
@@ -468,7 +463,7 @@ export const RiskEvent = () => {
                 { value: "CONTABILIDAD", label: "Contabilidad" },
                 { value: "IMPUESTOS", label: "Impuestos" },
                 { value: "PERSONAL Y NOMINA", label: "Personal y Nomina" },
-                { value: "PLANEACION Y ESTRATEGIA", label: "Plantación y Estrategica" },
+                { value: "PLANEACION ESTRATEGICA", label: "Planeación Estratégica" },
                 { value: "SERVICIOS GENERALES", label: "Servicios Generales" },
                 { value: "SISTEMAS", label: "Sistemas" },
                 { value: "VISITADORES", label: "Visitadores" },
@@ -557,7 +552,7 @@ export const RiskEvent = () => {
                 }
             },
         },
-        { field: "reported_by", type: "", headerName: "Reportado", width: 100, editable: false },
+        { field: "reported_by", type: "", headerName: "Reportado Por", width: 100, editable: false },
         {
             field: "critical",
             type: "singleSelect",
@@ -681,7 +676,7 @@ export const RiskEvent = () => {
                                         return null;
                                     } else if (column.field === "id") {
                                         return null;
-                                    } else if (column.field === "start_date" || column.field === "end_date") {
+                                    } else if (column.field === "start_date" || column.field === "end_date" || column.field === "discovery_date") {
                                         return <FormikTextField type="datetime-local" key={column.field} name={column.field} label={column.headerName} />;
                                     } else if (column.field === "close_date" || column.field === "accounting_date") {
                                         return <FormikTextField type="date" key={column.field} name={column.field} label={column.headerName} />;
@@ -749,7 +744,7 @@ export const RiskEvent = () => {
                                         return null;
                                     } else if (column.field === "id") {
                                         return null;
-                                    } else if (column.field === "start_date" || column.field === "end_date") {
+                                    } else if (column.field === "start_date" || column.field === "end_date" || column.field === "discovery_date") {
                                         return <FormikTextField type="datetime-local" key={column.field} name={column.field} label={column.headerName} />;
                                     } else if (column.field === "close_date" || column.field === "accounting_date") {
                                         return <FormikTextField type="date" key={column.field} name={column.field} label={column.headerName} />;
@@ -762,7 +757,8 @@ export const RiskEvent = () => {
                                         column.field === "product" ||
                                         column.field === "status" ||
                                         column.field === "level" ||
-                                        column.field === "critical"
+                                        column.field === "critical" ||
+                                        column.field === "currency"
                                     ) {
                                         return (
                                             <FormikTextField

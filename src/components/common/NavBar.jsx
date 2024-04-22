@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Libraries
 import { useNavigate, useMatch } from "react-router-dom";
@@ -7,9 +7,36 @@ import { useNavigate, useMatch } from "react-router-dom";
 import Goals from "../shared/Goals";
 import SnackbarAlert from "./SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import MyAccountDialog from "../shared/MyAccount";
+import InactivityDetector from "../shared/InactivityDetector";
 
 // Material-UI
-import { Box, Button, Typography, MenuItem, Menu, Tooltip, IconButton, Avatar, ListItemIcon, useMediaQuery, ListItemText, LinearProgress, Fade } from "@mui/material";
+import {
+    Box,
+    Button,
+    Typography,
+    MenuItem,
+    Menu,
+    Tooltip,
+    IconButton,
+    Avatar,
+    ListItemIcon,
+    useMediaQuery,
+    ListItemText,
+    LinearProgress,
+    Fade,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    DialogContentText,
+    FormGroup,
+    FormControlLabel,
+    Checkbox,
+    Collapse,
+    TextField,
+    Divider,
+} from "@mui/material";
 
 // Icons
 import { Logout, Settings } from "@mui/icons-material";
@@ -33,6 +60,7 @@ import logotipo from "../../images/cyc-logos/logo-navbar.webp";
 
 const Navbar = () => {
     const [openCollapse, setOpenCollapse] = useState(false);
+    const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorElUtils, setAnchorElUtils] = useState(null);
     const [anchorElMenu, setAnchorElMenu] = useState(null);
@@ -44,11 +72,17 @@ const Navbar = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
+    const [openAccountDialog, setOpenAccountDialog] = useState(false);
     const cedula = JSON.parse(localStorage.getItem("cedula"));
-    const [profilePicture, setProfilePicture] = useState();
+    const [openCertification, setOpenCertification] = useState(false);
+    const [openCollapseBonuses, setOpenCollapseBonuses] = useState(false);
+    const [checked, setChecked] = useState(false);
+    const emailRef = useRef(null);
     const cargoItem = localStorage.getItem("cargo");
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes("ASESOR");
     const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const currentEmail = JSON.parse(localStorage.getItem("email"));
+    const bonusesInput = useRef(null);
     const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
     const servicesPermission =
         permissions &&
@@ -141,6 +175,17 @@ const Navbar = () => {
     }
 
     const handleCloseSnack = () => setOpenSnack(false);
+
+    const handleOpenCertification = () => setOpenCertification(true);
+
+    const handleCloseCertification = () => {
+        setOpenCertification(false);
+        setOpenCollapseBonuses(false);
+        setChecked(false);
+        setOpenCollapseEmail(false);
+    };
+
+    const handleOpenCollapseBonuses = () => setOpenCollapseBonuses(!openCollapseBonuses);
     const handleOpenSnack = () => setOpenSnack(true);
 
     const handleClickMenu = (event) => {
@@ -165,6 +210,19 @@ const Navbar = () => {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleOpenAccountDialog = () => {
+        setOpenAccountDialog(true);
+    };
+
+    const handleCloseAccountDialog = () => {
+        setOpenAccountDialog(false);
+    };
+
+    const handleOpenCollapseEmail = () => {
+        setOpenCollapseEmail(!openCollapseEmail);
+        emailRef.current.value = "";
     };
 
     const showSnack = (severity, message, error) => {
@@ -199,6 +257,18 @@ const Navbar = () => {
 
     const sendCertification = async () => {
         setOpenCollapse(true);
+        let body = {};
+
+        if (checked) {
+            body = {
+                cedula,
+                bonuses: bonusesInput.current.value,
+            };
+        } else {
+            body = {
+                cedula,
+            };
+        }
 
         try {
             const response = await fetch(`${getApiUrl()}employment-management/send-employment-certification/`, {
@@ -207,7 +277,7 @@ const Navbar = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ cedula }),
+                body: JSON.stringify(body),
             });
 
             const data = await response.json();
@@ -219,6 +289,7 @@ const Navbar = () => {
                 }
                 showSnack("error", "Error en el servidor, por favor intente más tarde", true);
             } else if (response.status === 200) {
+                setOpenCertification(false);
                 showSnack("success", data.message + " correctamente al correo " + data.email.toLowerCase());
             }
         } catch (error) {
@@ -228,10 +299,64 @@ const Navbar = () => {
         }
     };
 
+    const handleChangeCheck = (event) => {
+        setChecked(event.target.checked);
+        handleOpenCollapseBonuses();
+    };
+
     const isMobile = useMediaQuery("(max-width: 600px)");
 
     return (
         <>
+            <InactivityDetector handleLogout={handleLogout} />
+            <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+                <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
+                <DialogContent sx={{ paddingBottom: 0 }}>
+                    <DialogContentText id="alert-dialog-description">
+                        Selecciona si deseas que la certificación se envíe a tu correo, ya sea con o sin bonificaciones, y especifica los meses promediados de estas, si
+                        las hubiera.
+                    </DialogContentText>
+                    <FormGroup sx={{ mt: ".5rem" }}>
+                        <FormControlLabel
+                            control={<Checkbox checked={checked} onChange={handleChangeCheck} inputProps={{ "aria-label": "controlled" }} />}
+                            label="Incluir bonificaciones"
+                        />
+                    </FormGroup>
+                    <Collapse sx={{ py: "1rem" }} in={openCollapseBonuses}>
+                        <TextField inputRef={bonusesInput} sx={{ width: "100%" }} defaultValue="3" label="Seleccione los meses promediados de bonificaciones" select>
+                            <MenuItem value={3}>Últimos 3 meses</MenuItem>
+                            <MenuItem value={6}>Últimos 6 meses</MenuItem>
+                            <MenuItem value={12}>Últimos 12 meses</MenuItem>
+                        </TextField>
+                    </Collapse>
+                    <Typography color="text.secondary">
+                        La certificación laboral sera enviada al correo electrónico:{" "}
+                        <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail.toLowerCase()}</span>
+                    </Typography>
+                    <Collapse in={!openCollapseEmail}>
+                        <Button variant="outlined" sx={{ mt: "1rem" }} onClick={handleOpenCollapseEmail}>
+                            Ese no es mi correo
+                        </Button>
+                    </Collapse>
+                    <Collapse in={openCollapseEmail}>
+                        <TextField
+                            sx={{ mt: "1rem" }}
+                            inputRef={emailRef}
+                            autoFocus
+                            margin="dense"
+                            id="email"
+                            label="Correo electrónico"
+                            type="email"
+                            fullWidth
+                            variant="standard"
+                        />
+                    </Collapse>
+                </DialogContent>
+                <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Button onClick={handleCloseCertification}>Cancelar</Button>
+                    <Button onClick={sendCertification}>Enviar</Button>
+                </DialogActions>
+            </Dialog>
             <Fade in={openCollapse}>
                 <LinearProgress sx={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 1002 }} variant="query" />
             </Fade>
@@ -264,7 +389,9 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-                    {servicesPermission ? (
+                    {cedula === "19438555" || cedula === "1032495391" ? (
+                        <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
+                    ) : servicesPermission ? (
                         <Button
                             id="button-utils"
                             endIcon={anchorElUtils ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -344,6 +471,13 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
+                {/* <MenuItem onClick={handleOpenAccountDialog}>
+                    <ListItemIcon>
+                        <Avatar />
+                    </ListItemIcon>
+                    <ListItemText primary="Mi Cuenta" />
+                </MenuItem>
+                <Divider /> */}
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
@@ -358,7 +492,7 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Mis desprendibles de nomina" />
                 </MenuItem>
-                {/* <MenuItem onClick={() => sendCertification()}>
+                {/* <MenuItem onClick={handleOpenCertification}>
                     <ListItemIcon>
                         <DescriptionIcon fontSize="small" />
                     </ListItemIcon>
@@ -464,17 +598,18 @@ const Navbar = () => {
                         <ListItemText primary="Registros de Desprendibles de Nomina" />
                     </MenuItem>
                 ) : null}
-                {/* {permissions && permissions.includes("employment_management.view_employmentcertification") ? (
+                {permissions && permissions.includes("employment_management.view_employmentcertification") ? (
                     <MenuItem onClick={() => navigate("/logged/certifications")}>
                         <ListItemIcon>
                             <TopicIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
-                ) : null} */}
+                ) : null}
             </Menu>
-            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}{" "}
+            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+            <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
         </>
     );
 };
