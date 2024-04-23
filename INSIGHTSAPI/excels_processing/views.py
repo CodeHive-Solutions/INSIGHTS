@@ -2,8 +2,8 @@
 
 import logging
 import os
-import shutil
 import re
+import shutil
 from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -163,10 +163,8 @@ def call_transfer_list(request):
                         final_path = path_new.format(entry=entry)
                         # Transfer the file
                         print(f"Copying {entry.path} to {final_path}")
-                        shutil.copy2(
-                            entry.path,
-                            final_path,
-                        )
+                        with open(entry.path, 'rb') as src, open(final_path, 'wb') as dest:
+                            shutil.copyfileobj(src, dest)
                         match = True
                         print(f"File {entry.name} transferred successfully.")
                         break
