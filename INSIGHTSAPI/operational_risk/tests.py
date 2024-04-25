@@ -55,7 +55,6 @@ class EventsTest(BaseTestCase):
         self.data["lost_type"] = self.data["lost_type"].name
         self.data["product"] = self.data["product"].name
         response = self.client.post(reverse("events-list"), self.data)
-        print(self.data)
         self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(response.data["description"], "TEST")
 

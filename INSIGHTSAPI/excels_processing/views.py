@@ -162,11 +162,9 @@ def call_transfer_list(request):
                     try:
                         final_path = path_new.format(entry=entry)
                         # Transfer the file
-                        print(f"Copying {entry.path} to {final_path}")
                         with open(entry.path, 'rb') as src, open(final_path, 'wb') as dest:
                             shutil.copyfileobj(src, dest)
                         match = True
-                        print(f"File {entry.name} transferred successfully.")
                         break
                     except Exception as error:
                         logger.critical(error)
