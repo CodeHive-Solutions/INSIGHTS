@@ -9,7 +9,7 @@ const InactivityDetector = ({ handleLogout }) => {
             clearTimeout(inactivityTimeout);
             inactivityTimeout = setTimeout(() => {
                 handleLogout();
-            }, 150000); // Adjust the timeout value as needed (in milliseconds)
+            }, 5000); // Adjust the timeout value as needed (in milliseconds)
         };
 
         const handleActivity = throttle(() => {

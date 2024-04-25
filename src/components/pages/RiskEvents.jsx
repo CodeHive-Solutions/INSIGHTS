@@ -37,7 +37,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import MoreIcon from "@mui/icons-material/More";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 const validationSchema = Yup.object().shape({
@@ -197,7 +197,6 @@ export const RiskEvent = () => {
     const CustomToolbar = () => {
         return (
             <GridToolbarContainer>
-                <GridToolbarColumnsButton />
                 <GridToolbarFilterButton />
                 <GridToolbarDensitySelector />
                 <GridToolbarExport
@@ -343,6 +342,7 @@ export const RiskEvent = () => {
             field: "start_date",
             type: "dateTime",
             headerName: "Fecha de Inicio",
+            hidden: true,
             width: 200,
             valueGetter: (params) => {
                 if (params.value) {
@@ -613,7 +613,7 @@ export const RiskEvent = () => {
                     <GridActionsCellItem
                         onClick={() => getDetails(id)}
                         sx={{ transition: ".3s ease", "&:hover": { color: "primary.main" } }}
-                        icon={<MoreHorizIcon />}
+                        icon={<MoreIcon />}
                         label="Detalles"
                     />
                 </Tooltip>,
@@ -652,7 +652,12 @@ export const RiskEvent = () => {
                     }}
                     initialState={{
                         sorting: {
-                            sortModel: [{ field: "id", sort: "desc" }],
+                            sortModel: [{ field: "start_date", sort: "desc" }],
+                        },
+                        columns: {
+                            columnVisibilityModel: {
+                                id: false,
+                            },
                         },
                     }}
                 ></DataGrid>

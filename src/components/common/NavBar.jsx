@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // Libraries
-import { useNavigate, useMatch } from "react-router-dom";
+import { useNavigate, useMatch, useLocation } from "react-router-dom";
 
 // Custom Components
 import Goals from "../shared/Goals";
@@ -84,6 +84,9 @@ const Navbar = () => {
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
     const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
+    const location = useLocation();
+    const [currentPath, setCurrentPath] = useState(location.pathname);
+
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||
@@ -94,6 +97,10 @@ const Navbar = () => {
             permissions.includes("vacancy.view_reference") ||
             permissions.includes("payslip.add_payslip") ||
             permissions.includes("employment_management.view_employmentcertification"));
+
+    useEffect(() => {
+        setCurrentPath(location.pathname);
+    }, [location]);
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -243,12 +250,15 @@ const Navbar = () => {
 
             if (!response.ok) {
                 localStorage.removeItem("refresh-timer-ls");
-                navigate("/", { replace: true });
+                // Pass a parameter to the login component to show an alert
+                console.log(location.pathname);
+                navigate("/", { state: { showAlert: true, lastLocation: currentPath } });
             }
 
             if (response.status === 200) {
                 localStorage.removeItem("refresh-timer-ls");
-                navigate("/", { replace: true });
+                console.log(location);
+                navigate("/", { state: { showAlert: true, lastLocation: currentPath } });
             }
         } catch (error) {
             console.error(error);
@@ -492,12 +502,12 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Mis desprendibles de nomina" />
                 </MenuItem>
-                {/* <MenuItem onClick={handleOpenCertification}>
+                <MenuItem onClick={handleOpenCertification}>
                     <ListItemIcon>
                         <DescriptionIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
-                </MenuItem> */}
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />

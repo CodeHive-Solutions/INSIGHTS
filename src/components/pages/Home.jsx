@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useLocation } from "react";
 
 // Libraries and Hooks
 import { useInView } from "react-intersection-observer";
@@ -72,7 +72,6 @@ const Home = () => {
                         image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
                         name: formattedName,
                         subtitle: employee.campana_general,
-                        description: employee.descripcion,
                     };
                 }
 
@@ -81,7 +80,6 @@ const Home = () => {
                     image: Avatar,
                     name: formattedName,
                     subtitle: employee.campana_general,
-                    description: employee.descripcion,
                 };
             } catch (error) {
                 return null; // Handle fetch errors by returning null
@@ -224,7 +222,7 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"280px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"500px"} width={"100%"} />
                     )}
                 </Card>
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -241,7 +239,7 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"280px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"500px"} width={"100%"} />
                     )}
                 </Card>{" "}
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
@@ -258,7 +256,7 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"280px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"500px"} width={"100%"} />
                     )}
                 </Card>{" "}
             </Box>
