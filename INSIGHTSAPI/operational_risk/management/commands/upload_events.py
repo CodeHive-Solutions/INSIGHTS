@@ -113,7 +113,7 @@ class Command(BaseCommand):
                 lost_type=LostType.objects.get(id=event_row["tipoperdida"]),
                 description=event_row["descripcion_evento"],
                 product=product,
-                date_of_closure=event_row["fechacierre_incidencia"],
+                close_date=event_row["fechacierre_incidencia"],
                 learning=event_row["aprendizaje"],
                 status=event_row["estado"],
             )

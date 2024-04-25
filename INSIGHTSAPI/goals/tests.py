@@ -38,14 +38,11 @@ class GoalAPITestCase(BaseTestCase):
         response = self.client.get(reverse("goal-list"))
         self.assertEqual(response.status_code, 200)
 
-    def test_get_my_goals(self):
+    def test_get_my_goals_without_permission(self):
         """Test the get-my-goals view."""
-        print(self.user.get_all_permissions())
-        print(User.objects.get(username="staffnet").get_all_permissions())
         self.user.user_permissions.clear()
-        print(self.user.username)
-        print(User.objects.get(username="staffnet").get_all_permissions())
-        print(self.user.get_all_permissions())
+        # Refresh the user
+        self.user.refresh_from_db()
         response = self.client.get(reverse("goal-list"))
         self.assertEqual(response.status_code, 200)
 
