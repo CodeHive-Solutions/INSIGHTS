@@ -8,9 +8,9 @@ const InactivityDetector = ({ handleLogout }) => {
         const resetInactivityTimeout = () => {
             clearTimeout(inactivityTimeout);
             inactivityTimeout = setTimeout(() => {
-                handleLogout();
-            }, 5000); // Adjust the timeout value as needed (in milliseconds)
-        };
+                handleLogout(true);
+            }, 150000); // Adjust the timeout value as needed (in milliseconds)
+         };
 
         const handleActivity = throttle(() => {
             resetInactivityTimeout();

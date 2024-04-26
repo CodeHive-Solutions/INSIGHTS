@@ -51,8 +51,8 @@ const Login = () => {
     const [disabled, setDisabled] = useState(false);
     const location = useLocation();
     const showAlert = location.state?.showAlert;
-    const lastLocation = location.state?.lastLocation;
-
+    const lastLocationPath = location.state?.lastLocation ? new URL(location.state?.lastLocation).pathname : null;
+    const [lastLocation, setLastLocation] = useState(null);
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
@@ -64,11 +64,10 @@ const Login = () => {
 
     useEffect(() => {
         if (showAlert) {
-            console.log("showAlert:", showAlert);
-            console.log("lastLocation:", lastLocation);
             // Show the alert here
             showSnack("info", "Has sido desconectado por inactividad. Por favor, inicia sesión nuevamente.");
             // Clear the showAlert state
+            setLastLocation(lastLocationPath);
             navigate(".", { state: { ...location.state, showAlert: false, lastLocation: null }, replace: true });
         }
     }, [showAlert, navigate, location, lastLocation]);
@@ -128,7 +127,7 @@ const Login = () => {
                 localStorage.setItem("cargo", JSON.stringify(data.cargo));
                 localStorage.setItem("email", JSON.stringify(data.email));
                 if (lastLocation) {
-                    navigate(lastLocation);
+                    navigate(lastLocation, { replace: true });
                 } else {
                     navigate("/logged/home");
                 }

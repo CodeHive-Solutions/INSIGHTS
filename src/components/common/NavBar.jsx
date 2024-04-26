@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // Libraries
-import { useNavigate, useMatch, useLocation } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 
 // Custom Components
 import Goals from "../shared/Goals";
@@ -84,8 +84,6 @@ const Navbar = () => {
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
     const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
-    const location = useLocation();
-    const [currentPath, setCurrentPath] = useState(location.pathname);
 
     const servicesPermission =
         permissions &&
@@ -97,10 +95,6 @@ const Navbar = () => {
             permissions.includes("vacancy.view_reference") ||
             permissions.includes("payslip.add_payslip") ||
             permissions.includes("employment_management.view_employmentcertification"));
-
-    useEffect(() => {
-        setCurrentPath(location.pathname);
-    }, [location]);
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -241,7 +235,7 @@ const Navbar = () => {
         }
     };
 
-    const handleLogout = async () => {
+    const handleLogout = async (inactivity) => {
         try {
             const response = await fetch(`${getApiUrl()}token/destroy/`, {
                 method: "POST",
@@ -250,15 +244,24 @@ const Navbar = () => {
 
             if (!response.ok) {
                 localStorage.removeItem("refresh-timer-ls");
-                // Pass a parameter to the login component to show an alert
-                console.log(location.pathname);
-                navigate("/", { state: { showAlert: true, lastLocation: currentPath } });
+                if (inactivity === true) {
+                    // Pass a parameter to the login component to show an alert
+                    const currentUrl = window.location.href;
+                    navigate("/", { state: { showAlert: true, lastLocation: currentUrl } });
+                } else {
+                    navigate("/");
+                }
             }
 
             if (response.status === 200) {
                 localStorage.removeItem("refresh-timer-ls");
-                console.log(location);
-                navigate("/", { state: { showAlert: true, lastLocation: currentPath } });
+                if (inactivity === true) {
+                    // Pass a parameter to the login component to show an alert
+                    const currentUrl = window.location.href;
+                    navigate("/", { state: { showAlert: true, lastLocation: currentUrl } });
+                } else {
+                    navigate("/");
+                }
             }
         } catch (error) {
             console.error(error);
@@ -271,12 +274,12 @@ const Navbar = () => {
 
         if (checked) {
             body = {
-                cedula,
                 bonuses: bonusesInput.current.value,
+                email: emailRef.current.value,
             };
         } else {
             body = {
-                cedula,
+                email: emailRef.current.value,
             };
         }
 
@@ -357,6 +360,7 @@ const Navbar = () => {
                             id="email"
                             label="Correo electrónico"
                             type="email"
+                            name="email"
                             fullWidth
                             variant="standard"
                         />
