@@ -154,6 +154,7 @@ EMAIL_HOST = "mail.cyc-services.com.co"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = True
+DEFAULT_FROM_EMAIL = "no-reply@cyc-services.com.co"
 EMAIL_HOST_USER = "no-reply@cyc-services.com.co"
 EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
 EMAIL_TEST = "heibert.mogollon@cyc-bpo.com"
