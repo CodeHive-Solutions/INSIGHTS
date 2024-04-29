@@ -37,7 +37,8 @@ import SwiperSlider from "./components/shared/SwiperSlider";
 import EmploymentCertification from "./components/pages/EmploymentCertification";
 import ImageMagnifier from "./components/pages/ImageMagnifier";
 import InactivityDetector from "./components/shared/InactivityDetector";
-    
+import Pqrs from "./components/pages/Pqrs";
+
 const theme = createTheme({
     typography: {
         fontFamily: [
@@ -97,7 +98,7 @@ const router = createBrowserRouter([
                 path: "home",
                 element: <Home />,
             },
-            {   
+            {
                 path: "about-us",
                 element: <About />,
             },
@@ -156,6 +157,10 @@ const router = createBrowserRouter([
             {
                 path: "certifications",
                 element: <EmploymentCertification />,
+            },
+            {
+                path: "pqrs",
+                element: <Pqrs />,
             },
         ],
     },
