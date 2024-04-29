@@ -148,12 +148,11 @@ TEMPLATES = [
     },
 ]
 
+ADMINS = [("Heibert Mogollon", "heibert203@hotmail.com"), ("Juan Carreño", "juan.carreno@gmail.com")]
 EMAIL_BACKEND = "INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mail.cyc-services.com.co"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-# EMAIL_USE_SSL = True
 DEFAULT_FROM_EMAIL = "no-reply@cyc-services.com.co"
 EMAIL_HOST_USER = "no-reply@cyc-services.com.co"
 EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
@@ -288,6 +287,10 @@ LOGGING = {
             "class": "logging.FileHandler",
             "filename": os.path.join(log_dir, "exceptions.log"),
             "formatter": "time-lvl-msg",
+        },
+        "mail_admins": {
+            "level": "ERROR",
+            "class": "django.utils.log.AdminEmailHandler",
         },
         "celery": {
             "level": "INFO",
