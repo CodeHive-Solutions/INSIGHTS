@@ -82,7 +82,7 @@ def create_employment_certification(request):
         months = int(months)
         # Get the last X bonus in the payslips
         payslips = Payslip.objects.filter(
-            identification=identification, biannual_bonus__gt=0
+            identification=identification
         ).order_by("-created_at")[:months]
         if months > payslips.count():
             return Response(
@@ -90,7 +90,7 @@ def create_employment_certification(request):
                 status=404,
             )
         # Get the average of the last X bonus
-        bonus_amount = sum([p.biannual_bonus for p in payslips]) / len(payslips)
+        bonus_amount = sum([p.bonus_paycheck + p.surcharge_holiday_allowance + p.surcharge_night_shift_allowance + p.surcharge_night_shift_holiday_allowance for p in payslips]) / len(payslips)
     if identification:
         user = User.objects.filter(cedula=identification).first()
         if not user:
@@ -182,7 +182,7 @@ def create_employment_certification(request):
     email_content = EmailMessage(
         "Certificación laboral",
         "Adjunto se encuentra la certificación laboral solicitada.",
-        settings.EMAIL_HOST_USER,
+        None,
         [str(email)],
     )
     email_content.attach("Certificación laboral.pdf", pdf, "application/pdf")

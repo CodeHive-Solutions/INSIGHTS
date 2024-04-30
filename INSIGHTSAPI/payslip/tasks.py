@@ -26,8 +26,6 @@ def send_email_with_attachment(
         )
         subject = f"Desprendible de nomina para {payslip['title']}"
         message = "Adjunto se encuentra el desprendible de nomina, en caso de tener alguna duda, por favor comunicarse con el departamento de recursos humanos."
-        if "test" in sys.argv or settings.DEBUG:
-            payslip["email"] = settings.EMAIL_TEST
         email = EmailMessage(subject, message, from_email, [payslip["email"]])
         attachment = ((f"{payslip['title']}.pdf", pdf, "application/pdf"),)
         email.attachments = attachment
