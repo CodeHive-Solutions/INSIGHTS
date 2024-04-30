@@ -21,9 +21,11 @@ import Avatar from "../../images/home-carousel/avatar.jpg";
 import water from "../../images/home-carousel/water-webpage.png";
 import water2 from "../../images/home-carousel/water-2.png";
 import water3 from "../../images/home-carousel/water-3.png";
+import laborDay from "../../images/home-carousel/labor-day.png";
+
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: water3 }, { image: water2 }, { image: water }, { image: prosecutor }, { image: ceroDiscrimination }];
+const homeImages = [{ image: laborDay }, { image: water3 }, { image: water2 }, { image: water }, { image: prosecutor }, { image: ceroDiscrimination }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
