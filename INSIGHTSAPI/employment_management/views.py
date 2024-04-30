@@ -2,8 +2,8 @@
 
 import os
 import base64
-import pdfkit
 import logging
+import pdfkit
 import mysql.connector
 from num2words import num2words
 from rest_framework.response import Response
@@ -15,7 +15,7 @@ from django.db import connections
 from django.utils.formats import number_format
 from django.utils import timezone
 from payslip.models import Payslip
-from services.emails import send_email
+from django.core.mail import EmailMessage
 from users.models import User
 from .models import EmploymentCertification
 from .serializers import EmploymentCertificationSerializer
@@ -175,18 +175,20 @@ def create_employment_certification(request):
     except Exception as e:
         logger.critical(f"Error creating PDF: {e}")
         return Response({"error": "No se pudo crear el archivo PDF"}, status=500)
-
-    # Send the certification
-    errors = send_email(
+    if "email" in request.data and request.data["email"]: # This is a going to be removed
+        email = request.data["email"]
+    else:
+        email = user.email
+    email_content = EmailMessage(
         "Certificación laboral",
         "Adjunto se encuentra la certificación laboral solicitada.",
-        [str(user.email)],
-        attachments=[("Certificación laboral.pdf", pdf, "application/pdf")],
+        settings.EMAIL_HOST_USER,
+        [str(email)],
     )
-    if errors:
-        return Response({"error": "Error enviando el correo"}, status=500)
+    email_content.attach("Certificación laboral.pdf", pdf, "application/pdf")
+    email_content.send()
     return Response(
-        {"message": "Certificación laboral enviada", "email": user.email}, status=200
+        {"message": "Certificación laboral enviada", "email": email}, status=200
     )
 
 

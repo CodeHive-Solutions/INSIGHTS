@@ -84,6 +84,7 @@ const Navbar = () => {
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
     const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
+
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||
@@ -234,7 +235,7 @@ const Navbar = () => {
         }
     };
 
-    const handleLogout = async () => {
+    const handleLogout = async (inactivity) => {
         try {
             const response = await fetch(`${getApiUrl()}token/destroy/`, {
                 method: "POST",
@@ -243,12 +244,24 @@ const Navbar = () => {
 
             if (!response.ok) {
                 localStorage.removeItem("refresh-timer-ls");
-                navigate("/", { replace: true });
+                if (inactivity === true) {
+                    // Pass a parameter to the login component to show an alert
+                    const currentUrl = window.location.href;
+                    navigate("/", { state: { showAlert: true, lastLocation: currentUrl } });
+                } else {
+                    navigate("/");
+                }
             }
 
             if (response.status === 200) {
                 localStorage.removeItem("refresh-timer-ls");
-                navigate("/", { replace: true });
+                if (inactivity === true) {
+                    // Pass a parameter to the login component to show an alert
+                    const currentUrl = window.location.href;
+                    navigate("/", { state: { showAlert: true, lastLocation: currentUrl } });
+                } else {
+                    navigate("/");
+                }
             }
         } catch (error) {
             console.error(error);
@@ -261,12 +274,12 @@ const Navbar = () => {
 
         if (checked) {
             body = {
-                cedula,
                 bonuses: bonusesInput.current.value,
+                email: emailRef.current.value,
             };
         } else {
             body = {
-                cedula,
+                email: emailRef.current.value,
             };
         }
 
@@ -347,6 +360,7 @@ const Navbar = () => {
                             id="email"
                             label="Correo electrónico"
                             type="email"
+                            name="email"
                             fullWidth
                             variant="standard"
                         />
@@ -389,6 +403,7 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
+                    <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink>
                     {cedula === "19438555" || cedula === "1032495391" ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (
@@ -492,12 +507,12 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Mis desprendibles de nomina" />
                 </MenuItem>
-                {/* <MenuItem onClick={handleOpenCertification}>
+                <MenuItem onClick={handleOpenCertification}>
                     <ListItemIcon>
                         <DescriptionIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
-                </MenuItem> */}
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />

@@ -93,8 +93,10 @@ def send_email(
             },
         )
         # print(email_content)
-        if "test" in sys.argv or settings.DEBUG:
-            to_emails = [settings.EMAIL_TEST]
+        if ("test" in sys.argv or settings.DEBUG) and not (
+            all(str(email).lower() not in ["heibert", "juan.carreno"] for email in to_emails)
+        ):
+            raise Exception(f"Email {to_emails} not allowed in test mode")
         email = EmailMessage(
             subject,
             email_content,

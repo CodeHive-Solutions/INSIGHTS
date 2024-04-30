@@ -1,15 +1,18 @@
+"""Custom Email Backend for Django using our own SMTP server"""
+import sys
 import ssl
 import logging
-from django.core.mail.backends.smtp import EmailBackend
 from smtplib import SMTP
-from django.conf import settings
 from imaplib import IMAP4_SSL
+from django.conf import settings
+from django.core.mail.backends.smtp import EmailBackend
 
 
 logger = logging.getLogger("requests")
 
 
 class CustomEmailBackend(EmailBackend):
+    """Custom Email Backend for Django using our own SMTP server"""
     def open(self):
         if self.connection:
             return False
@@ -39,6 +42,11 @@ class CustomEmailBackend(EmailBackend):
 
             num_sent = 0
             for message in email_messages:
+                if ("test" in sys.argv or settings.DEBUG) and not (
+                    all("heibert" in str(email).lower() or "juan.carreno" in str(email).lower() for email in message.to)
+                ):
+                    
+                    raise Exception(f"Email {message.to} not allowed in test mode")
                 sent = self._send(message)
                 if sent:
                     num_sent += 1
@@ -50,6 +58,7 @@ class CustomEmailBackend(EmailBackend):
         return num_sent
 
     def save_to_sent_folder(self, email_msg):
+        """Save a copy of the email to the 'sent' folder"""
         with IMAP4_SSL(settings.EMAIL_HOST) as imap_connection:
             imap_connection.login(self.username, self.password)
             imap_connection.select('"sent"', readonly=False)

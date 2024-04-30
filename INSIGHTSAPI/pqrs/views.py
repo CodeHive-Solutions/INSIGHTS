@@ -1,13 +1,12 @@
 """This module contains the PQRS viewset."""
+import sys
 import logging
-from attr import mutable
 from rest_framework import viewsets
-from rest_framework import permissions
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from services.emails import send_email
-from django.db import connections
+from django.core.mail import EmailMessage
+from django.core.mail import mail_admins
 from django.conf import settings
 from .models import Complaint, Congratulation, Suggestion, Other
 from .serializers import (
@@ -40,43 +39,44 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Save the post data when creating a new model instance."""
-        if not "name" in self.request.data:
-            return Response({"error": "El nombre es requerido"}, status=400)
-        if not "type" in self.request.data:
-            return Response({"error": "El tipo es requerido"}, status=400)
+        if not "area" in self.request.data:
+            return Response({"error": "El area es requerida"}, status=400)
+        if not "description" in self.request.data:
+            return Response({"error": "La descripción es requerida"}, status=400)
         response = super().create(request, *args, **kwargs)
-        user = self.request.user
-        name = self.request.data["name"].split("-")
-        name = f"{name[0].strip()} {name[1].strip()}"
 
         if response.status_code == status.HTTP_201_CREATED:
-            with connections["staffnet"].cursor() as cursor:
-                cursor.execute(
-                    "SELECT correo_corporativo FROM personal_information WHERE nombre = %s",
-                    (name,),
+            options = {
+                "test": settings.EMAIL_TEST,
+                "EJECUTIVO": "PABLO.CASTANEDA@CYC-BPO.COM",
+                "GERENCIA GENERAL": "CESAR.GARZON@CYC-BPO.COM",
+                "GERENCIA DE RIESGO Y CONTROL INTERNO": "MARIO.GIRON@CYC-BPO.COM",
+                "GERENCIA GESTIÓN HUMANA": "JEANNETH.PINZON@CYC-BPO.COM",
+                "GERENCIA DE PLANEACIÓN": "ANGELA.DURAN@CYC-BPO.COM",
+                "GERENCIA ADMINISTRATIVA": "MELIDA.SANDOVAL@CYC-BPO.COM",
+                "GERENCIA DE LEGAL Y RIESGO": "DIEGO.GONZALEZ@CYC-BPO.COM",
+                "GERENCIA DE OPERACIONES": "ADRIANA.PAEZ@CYC-BPO.COM",
+                "GERENCIA DE MERCADEO": "HECTOR.SOTELO@CYC-BPO.COM",
+            }
+            email = options.get(self.request.data["area"].lower())
+            if not email:
+                mail_admins(
+                    "Error en PQRS",
+                    f"El area {self.request.data['area']} no tiene un correo asociado.",
                 )
-                row = cursor.fetchone()
-                if not row or not row[0]:
-                    return Response(
-                        {"error": f"No se encontró el email de {name}"},
-                        status=status.HTTP_404_NOT_FOUND,
-                    )
-                if "test" in request.data.get("type").lower() or settings.DEBUG:
-                    cc_emails = ["juan.carreno@cyc-bpo.com"]
-                else:
-                    cc_emails = ["marlon.botero@cyc-bpo.com"]
-                errors = send_email(
-                    sender_user="mismetas",
-                    subject="Nueva PQRS",
-                    message=f"<p>El usuario {user.first_name} {user.last_name} ha creado una nueva PQRS: </p> {request.data['description']}",
-                    to_emails=[row[0]],
-                    cc_emails=cc_emails,
-                    html_content=True,
-                    email_owner="PQRS",
-                    return_path="heibert.mogollon@cyc-bpo.com",
-                )
-                if errors:
-                    return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data=f"El tipo {self.request.data['type']} no tiene un correo asociado.")
+            if settings.DEBUG or "test" in sys.argv:
+                cc_emails = ["juan.carreno@cyc-bpo.com"]
+            else:
+                cc_emails = ["marlon.botero@cyc-bpo.com"]
+            email = EmailMessage(
+                "Nueva PQRS",
+                f"Se ha creado una nueva PQRS: {request.data['description']}",
+                None,
+                [email],
+                cc=cc_emails,  
+            )
+            email.send()
         return response
 
 

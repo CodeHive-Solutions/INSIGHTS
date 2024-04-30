@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 // Libraries
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
@@ -49,7 +49,10 @@ const Login = () => {
     const [loadingBar, setLoadingBar] = useState(false);
     const [openCedula, setOpenCedula] = useState(false);
     const [disabled, setDisabled] = useState(false);
-
+    const location = useLocation();
+    const showAlert = location.state?.showAlert;
+    const lastLocationPath = location.state?.lastLocation ? new URL(location.state?.lastLocation).pathname : null;
+    const [lastLocation, setLastLocation] = useState(null);
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
@@ -58,6 +61,16 @@ const Login = () => {
             navigate("/logged/home");
         }
     }, []);
+
+    useEffect(() => {
+        if (showAlert) {
+            // Show the alert here
+            showSnack("info", "Has sido desconectado por inactividad. Por favor, inicia sesión nuevamente.");
+            // Clear the showAlert state
+            setLastLocation(lastLocationPath);
+            navigate(".", { state: { ...location.state, showAlert: false, lastLocation: null }, replace: true });
+        }
+    }, [showAlert, navigate, location, lastLocation]);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
@@ -113,7 +126,11 @@ const Login = () => {
                 localStorage.setItem("cedula", JSON.stringify(data.cedula));
                 localStorage.setItem("cargo", JSON.stringify(data.cargo));
                 localStorage.setItem("email", JSON.stringify(data.email));
-                navigate("/logged/home");
+                if (lastLocation) {
+                    navigate(lastLocation, { replace: true });
+                } else {
+                    navigate("/logged/home");
+                }
             }
         } catch (error) {
             if (error.message === "Tu usuario esta siendo creado, por favor intenta mas tarde.") {

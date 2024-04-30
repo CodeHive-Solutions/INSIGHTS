@@ -47,7 +47,7 @@ class EmploymentCertificationTest(BaseTestCase):
         self.user.save()
         response = self.client.post(reverse("send-employment-certification"))
         self.assertEqual(response.status_code, 200, response.content)
-        self.assertEqual(response.data["email"], "HEIBERT.MOGOLLON@CYC-BPO.COM")
+        self.assertEqual(response.data["email"], "HEIBERT.MOGOLLON@GMAIL.COM")
         self.assertEqual(EmploymentCertification.objects.count(), 1)
 
     def test_get_my_employment_certification_with_months(self):
