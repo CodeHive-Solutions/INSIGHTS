@@ -46,7 +46,7 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
         response = super().create(request, *args, **kwargs)
         if response.status_code == status.HTTP_201_CREATED:
             options = {
-                "test": settings.EMAIL_TEST,
+                "TEST": settings.EMAIL_TEST,
                 "EJECUTIVO": "PABLO.CASTANEDA@CYC-BPO.COM",
                 "GERENCIA GENERAL": "CESAR.GARZON@CYC-BPO.COM",
                 "GERENCIA DE RIESGO Y CONTROL INTERNO": "MARIO.GIRON@CYC-BPO.COM",
@@ -57,13 +57,13 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                 "GERENCIA DE OPERACIONES": "ADRIANA.PAEZ@CYC-BPO.COM",
                 "GERENCIA DE MERCADEO": "HECTOR.SOTELO@CYC-BPO.COM",
             }
-            email = options.get(self.request.data["area"].lower())
+            email = options.get(self.request.data["area"].upper())
             if not email:
                 mail_admins(
                     "Error en PQRS",
                     f"El area {self.request.data['area']} no tiene un correo asociado.",
                 )
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data=f"El tipo {self.request.data['area']} no tiene un correo asociado.")
+                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data=f"El area {self.request.data['area']} no tiene un correo asociado.")
             if settings.DEBUG or "test" in sys.argv:
                 cc_emails = ["juan.carreno@cyc-bpo.com"]
             else:

@@ -18,13 +18,13 @@ def update_user(request):
         # Connect to the non-Django app's database
         with connections['staffnet'].cursor() as cursor:
             # Dynamically construct the SQL query
-            query = 'UPDATE users SET '
+            query = 'UPDATE personal_information SET '
             for key, value in request.POST.items():
                 query += f'{key} = "{value}", '
-            query = query[:-2] + ' WHERE id = %s'
+            query = query[:-2] + ' WHERE cedula = %s'
             # Execute the query
             print(query)
-            if 'test' not in sys.argv:
+            if 'test' in sys.argv:
                 cursor.execute(query, (request.user.cedula,))
         return Response({'message': 'User updated successfully'})
     except Error as e:
