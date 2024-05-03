@@ -123,3 +123,15 @@ class LDAPAuthenticationTest(TestCase):
         self.assertEqual(response2.status_code, 200)
         response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 401)
+
+class UserTestCase(BaseTestCase):
+
+    def test_user_update(self):
+        """Tests the user update endpoint."""
+        response = self.client.post(
+            reverse("update_users"),
+            {
+                "celular": "1234567890",
+            },
+        )
+        self.assertEqual(response.status_code, 200, response.data)

@@ -274,7 +274,7 @@ const Navbar = () => {
 
         if (checked) {
             body = {
-                bonuses: bonusesInput.current.value,
+                months: bonusesInput.current.value,
                 email: emailRef.current.value,
             };
         } else {
@@ -300,7 +300,7 @@ const Navbar = () => {
                     showSnack("error", "Error en el servidor, por favor intente más tarde", true);
                     throw new Error(data.detail);
                 }
-                showSnack("error", "Error en el servidor, por favor intente más tarde", true);
+                showSnack("error", data.error, true);
             } else if (response.status === 200) {
                 setOpenCertification(false);
                 showSnack("success", data.message + " correctamente al correo " + data.email.toLowerCase());
@@ -403,7 +403,8 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-                    <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink>
+
+                    {cedula === "1000065648" || cedula === "1001185389" ? <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> : null}
                     {cedula === "19438555" || cedula === "1032495391" ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (

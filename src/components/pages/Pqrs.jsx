@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Container, Box, Typography, TextField, MenuItem, Button, LinearProgress } from "@mui/material";
 import { Formik, Form, useField, useFormikContext } from "formik";
 import * as Yup from "yup";
@@ -7,7 +9,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 
 const areas = [
-    { value: "CARREÑO DAZA - JUAN SEBASTIAN", label: "CARREÑO DAZA JUAN SEBASTIAN" },
+    { value: "test", label: "test" },
     { value: "EJECUTIVO", label: "Castañeda Camacho Pablo Cesar - Presidente" },
     { value: "GERENCIA GENERAL", label: "César Alberto Garzón Navas - Gerente General" },
     { value: "GERENCIA DE RIESGO Y CONTROL INTERNO", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
@@ -37,6 +39,15 @@ const Suggestions = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
+    const navigate = useNavigate();
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+        if (cedula !== "1001185389" && cedula !== "1000065648") {
+            navigate("/logged/home");
+        }
+    }, []);
 
     const handleCloseSnack = () => setOpenSnack(false);
     const showSnack = (severity, message, error) => {
@@ -121,7 +132,7 @@ const Suggestions = () => {
                 <Form>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                         <FormikTextField type="select" options={areas} name="area" label="Area" autoComplete="off" spellCheck={false} />
-gh
+
                         <FormikTextField type="select" options={motivos} name="motivo" label="Motivo" autoComplete="off" spellCheck={false} />
 
                         <FormikTextField width="100%" type="text" multiline={true} rows={8} name="description" label="Mensaje" autoComplete="off" spellCheck={false} />
