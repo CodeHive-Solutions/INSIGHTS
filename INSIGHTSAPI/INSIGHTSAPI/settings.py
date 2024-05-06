@@ -148,7 +148,13 @@ TEMPLATES = [
     },
 ]
 
-ADMINS = [("Heibert Mogollon", "heibert203@hotmail.com"), ("Juan Carreño", "juan.carreno@gmail.com")]
+ADMINS = [
+    ("Heibert Mogollon", "heibert203@hotmail.com"),
+    # ("Heibert Mogollon", "heibert.mogollon@gmail.com"),
+    ("Heibert Mogollon", "heibert.mogollon@cyc-bpo.com"),
+    ("Juan Carreño", "carrenosebastian54@gmail.com"),
+]
+SERVER_EMAIL = "no-reply@cyc-services.com.co"
 EMAIL_BACKEND = "INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
 EMAIL_HOST = "mail.cyc-services.com.co"
 EMAIL_PORT = 587

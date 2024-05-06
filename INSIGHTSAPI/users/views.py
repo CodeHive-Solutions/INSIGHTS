@@ -23,7 +23,6 @@ def update_user(request):
                 query += f'{key} = "{value}", '
             query = query[:-2] + ' WHERE cedula = %s'
             # Execute the query
-            print(query)
             if 'test' in sys.argv:
                 cursor.execute(query, (request.user.cedula,))
         return Response({'message': 'User updated successfully'})
