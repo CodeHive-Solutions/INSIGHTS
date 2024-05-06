@@ -127,7 +127,7 @@ const Suggestions = () => {
                     ortografía para que tu mensaje sea totalmente legible.
                 </Typography>
             </Box>
-            <Formik initialValues={{ name: "", motivo: "", description: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
+            <Formik initialValues={{ area: "", motivo: "", description: "" }} validationSchema={validationSchema} onSubmit={handleSubmit}>
                 {}
                 <Form>
                     <Box sx={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
