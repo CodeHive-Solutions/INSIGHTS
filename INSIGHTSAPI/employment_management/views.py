@@ -32,6 +32,7 @@ def get_employment_certifications(request):
     serializer = EmploymentCertificationSerializer(certifications, many=True)
     return Response(serializer.data)
 
+
 def read_and_encode_image(file_path):
     """Read an image and encode it to base64."""
     if os.path.exists(file_path):
@@ -44,7 +45,7 @@ def read_and_encode_image(file_path):
 
 
 def capitalize_phrase(text):
-    """Capitalize a phrase ignoring conjunctions and prepositions in uppercase and lowercase."""
+    """Capitalize a phrase, excluding conjunctions and prepositions."""
     ignore_words = [
         "de",
         "del",
@@ -82,15 +83,24 @@ def create_employment_certification(request):
         months = int(months)
         # Get the last X bonus in the payslips
         payslips = Payslip.objects.filter(
-            identification=identification
-        ).order_by("-created_at")[:months]
+            identification=identification).order_by(
+            "-created_at"
+        )[:months]
         if months > payslips.count():
             return Response(
                 {"error": f"El usuario no tiene {months} desprendibles de nómina."},
                 status=404,
             )
         # Get the average of the last X bonus
-        bonus_amount = sum([p.bonus_paycheck + p.surcharge_holiday_allowance + p.surcharge_night_shift_allowance + p.surcharge_night_shift_holiday_allowance for p in payslips]) / len(payslips)
+        bonus_amount = sum(
+            [
+                p.bonus_paycheck
+                + p.surcharge_holiday_allowance
+                + p.surcharge_night_shift_allowance
+                + p.surcharge_night_shift_holiday_allowance
+                for p in payslips
+            ]
+        ) / len(payslips)
     if identification:
         user = User.objects.filter(cedula=identification).first()
         if not user:
@@ -175,7 +185,9 @@ def create_employment_certification(request):
     except Exception as e:
         logger.critical(f"Error creating PDF: {e}")
         return Response({"error": "No se pudo crear el archivo PDF"}, status=500)
-    if "email" in request.data and request.data["email"]: # This is a going to be removed
+    if (
+        "email" in request.data and request.data["email"]
+    ):  # This is a going to be removed
         email = request.data["email"]
     else:
         email = user.email
@@ -185,7 +197,7 @@ def create_employment_certification(request):
         None,
         [str(email)],
     )
-    email_content.attach("Certificación laboral.pdf", pdf, "application/pdf")
+    email_content.attach(filename="Certificación laboral.pdf", content=pdf, mimetype="application/pdf") # type: ignore
     email_content.send()
     return Response(
         {"message": "Certificación laboral enviada", "email": email}, status=200
@@ -222,7 +234,7 @@ def upload_old_certifications(request):
         "SELECT * FROM userscyc.despre_nom_his where fecha_envio > '2023-09' and fecha_envio < '2024-02-27'"
     )
     i = 0
-    for row in cursor.fetchall():
+    for row in cursor.fetchall(): # type: ignore
         i += 1
         Payslip.objects.create(
             title=row[1],
