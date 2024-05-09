@@ -403,7 +403,7 @@ SIMPLE_JWT = {
     "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true",
 }
 
-# Celery configuration
+# Celery configuration for the tasks
 CELERY_HIJACK_ROOT_LOGGER = False
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
