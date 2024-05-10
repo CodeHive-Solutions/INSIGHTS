@@ -92,7 +92,7 @@ def create_employment_certification(request):
                 status=404,
             )
         # Get the average of the last X bonus
-        bonus_amount = sum(
+        bonus_amount = int(sum(
             [
                 p.bonus_paycheck
                 + p.surcharge_holiday_allowance
@@ -100,7 +100,7 @@ def create_employment_certification(request):
                 + p.surcharge_night_shift_holiday_allowance
                 for p in payslips
             ]
-        ) / len(payslips)
+        ) / len(payslips))
     if identification:
         user = User.objects.filter(cedula=identification).first()
         if not user:
