@@ -508,12 +508,12 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Mis desprendibles de nomina" />
                 </MenuItem>
-                <MenuItem onClick={handleOpenCertification}>
+                {/* <MenuItem onClick={handleOpenCertification}>
                     <ListItemIcon>
                         <DescriptionIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />

@@ -148,7 +148,13 @@ TEMPLATES = [
     },
 ]
 
-ADMINS = [("Heibert Mogollon", "heibert203@hotmail.com"), ("Juan Carreño", "juan.carreno@gmail.com")]
+ADMINS = [
+    ("Heibert Mogollon", "heibert203@hotmail.com"),
+    # ("Heibert Mogollon", "heibert.mogollon@gmail.com"),
+    ("Heibert Mogollon", "heibert.mogollon@cyc-bpo.com"),
+    ("Juan Carreño", "carrenosebastian54@gmail.com"),
+]
+SERVER_EMAIL = "no-reply@cyc-services.com.co"
 EMAIL_BACKEND = "INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
 EMAIL_HOST = "mail.cyc-services.com.co"
 EMAIL_PORT = 587
@@ -397,7 +403,7 @@ SIMPLE_JWT = {
     "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true",
 }
 
-# Celery configuration
+# Celery configuration for the tasks
 CELERY_HIJACK_ROOT_LOGGER = False
 CELERY_BROKER_URL = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"

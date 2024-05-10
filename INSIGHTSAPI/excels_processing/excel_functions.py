@@ -67,7 +67,6 @@ def file_to_data_frame(file: BinaryIO) -> pd.DataFrame:
 
     data_frame = read_excel(file)
 
-    print(data_frame)
     """
     try:
         if file.name.endswith(".csv"):

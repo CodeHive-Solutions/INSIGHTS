@@ -110,15 +110,16 @@ const Vacancies = () => {
 
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.error);
-            }
-
             if (response.status === 201) {
                 showSnack("success", "La información de la vacante ha sido enviada correctamente.");
-                setOpenVacancy(false);
-                setOpenCollapse(false);
+            } else if (response.status === 400) {
+                // return the message from the API that's in the first property of the response object
+                showSnack("info", data.non_field_errors);
+            } else {
+                throw new Error(data.error);
             }
+            setOpenCollapse(false);
+            setOpenVacancy(false);
         } catch (error) {
             console.error(error);
             showSnack("error", error.message);
