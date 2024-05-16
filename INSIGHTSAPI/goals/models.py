@@ -5,9 +5,9 @@ from simple_history.models import HistoricalRecords
 
 
 class Goals(models.Model):
-    """This class represents the goals model."""
+    """Represents a goal associated with an individual's cedula."""
 
-    cedula = models.BigIntegerField(primary_key=True)
+    cedula = models.CharField(max_length=10, primary_key=True)
     name = models.CharField(max_length=100)
     job_title_goal = models.CharField(max_length=100)
     job_title_execution = models.CharField(max_length=100, null=True)
