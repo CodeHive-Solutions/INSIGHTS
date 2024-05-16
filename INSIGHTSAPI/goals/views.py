@@ -221,7 +221,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
         cedula = self.kwargs.get("pk")
         date = self.request.GET.get("date", None)
         column = self.request.GET.get("column", None)
-        if (
+        if request.user.cedula == cedula:
+            return super().retrieve(request, *args, **kwargs)
+        elif (
             date is not None
             and column is not None
             and (
