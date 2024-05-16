@@ -147,9 +147,15 @@ export const Payslips = () => {
         },
         { field: "name", headerName: "Nombre", width: 300, editable: false },
         {
+            field: "title",
+            headerName: "Desprendible",
+            width: 300,
+            editable: false,
+        },
+        {
             field: "area",
             headerName: "Area",
-            width: 250,
+            width: 150,
             editable: false,
         },
         {
@@ -169,7 +175,7 @@ export const Payslips = () => {
             field: "created_at",
             type: "date",
             headerName: "Fecha de envió",
-            width: 150,
+            width: 100,
             editable: false,
             valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
         },
