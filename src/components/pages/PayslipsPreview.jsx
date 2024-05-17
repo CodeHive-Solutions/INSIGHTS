@@ -178,7 +178,7 @@ const columns = [
     },
     {
         field: "apsalpen",
-        headerName: "Aporte a Salud y Pensión",
+        headerName: "Aporte a Salud y Pensión Sobre Incentivo",
         width: 130,
         type: "number",
         valueGetter: (params) => params.row.apsalpen * 1,

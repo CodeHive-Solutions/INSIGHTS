@@ -83,12 +83,11 @@ const Navbar = () => {
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
-    const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
 
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||
-            goalsStatsPermission ||
+            permissions.includes("goals.view_goals") ||
             permissions.includes("excels_processing.call_transfer") ||
             permissions.includes("contracts.view_contract") ||
             permissions.includes("operational_risk.view_events") ||
@@ -558,7 +557,7 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {goalsStatsPermission ? (
+                {permissions && permissions.includes("goals.view_goals") ? (
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />

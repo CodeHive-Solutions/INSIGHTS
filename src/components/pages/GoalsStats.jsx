@@ -27,11 +27,10 @@ const AnalisisMetas = () => {
     const yearRef = useRef();
     const goalType = useRef(null);
     const navigate = useNavigate();
-    const cedula = JSON.parse(localStorage.getItem("cedula"));
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
 
     useEffect(() => {
-        window.scrollTo(0, 0);
-        if (!cedula.includes("28172713") && !cedula.includes("1001185389") && !cedula.includes("1020780559") && !cedula.includes("25878771")) {
+        if (!permissions || !permissions.includes("goals.view_goals")) {
             navigate("/logged/home");
         }
     }, []);

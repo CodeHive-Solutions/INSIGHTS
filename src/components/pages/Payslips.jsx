@@ -259,8 +259,8 @@ export const Payslips = () => {
             "healthcare_contribution",
             "pension_contribution",
             "tax_withholding",
-            "apsalpen",
             "additional_deductions",
+            "apsalpen",
             "total_deductions",
             "net_pay",
         ];
