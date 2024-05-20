@@ -41,6 +41,7 @@ urlpatterns = [
     path("payslips/", include("payslip.urls")),
     path("employment-management/", include("employment_management.urls")),
     path("users/", include("users.urls")),
+    path("vacation/", include("vacation.urls")),
 ]
 
 handler500 = "rest_framework.exceptions.server_error"
