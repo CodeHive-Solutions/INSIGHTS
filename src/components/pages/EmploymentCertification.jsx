@@ -10,6 +10,7 @@ import { getApiUrl } from "../../assets/getApi";
 // Material-UI
 import { Container, Typography } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 
 export const EmploymentCertification = () => {
     const [rows, setRows] = useState([]);
@@ -92,6 +93,7 @@ export const EmploymentCertification = () => {
                 }).format(params.value),
         },
         { field: "contract_type", headerName: "Contrato", width: 170, editable: false },
+        { field: "created_at", type: "dateTime", headerName: "Fecha de Creación", width: 170, editable: false, valueFormatter: (params) => new Date(params.value).toLocaleString()},
         { field: "start_date", headerName: "Fecha de Ingreso", width: 150, editable: false },
         { field: "expedition_city", headerName: "Lugar de Expedición", width: 180, editable: false },
     ];
@@ -111,6 +113,11 @@ export const EmploymentCertification = () => {
                     Certificaciones Laborales
                 </Typography>
                 <DataGrid
+                    initialState={{
+                        sorting: {
+                            sortModel: [{ field: "created_at", sort: "desc" }],
+                        },
+                    }}
                     sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     rows={rows}
