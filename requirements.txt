@@ -63,7 +63,7 @@ pyserial==3.5
 python-magic==0.4.24
 pytz==2023.3
 redis==4.5.4
-requests==2.31.0
+requests==2.32.0
 requests-toolbelt==0.9.1
 SecretStorage==3.3.1
 service-identity==18.1.0
