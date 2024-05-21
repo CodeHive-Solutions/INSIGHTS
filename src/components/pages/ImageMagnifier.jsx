@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Box from "@mui/material/Box";
-import imageTest from "../../images/test.png";
+import imageTest from "../../images/workstations/piso-2.png";
 
 function ImageMagnifier() {
     const [showMagnifier, setShowMagnifier] = useState(false);

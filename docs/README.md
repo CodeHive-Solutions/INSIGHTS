@@ -46,6 +46,19 @@ INSIGHTS is the intranet for C&C Services S.A.S, featuring secure login with Act
 -   Job certifications and Payrolls detachments
 -   Implementing a comprehensive suite of over one hundred tests to rigorously validate the functionality and performance of the application
 
+## Installation
+
+### Frontend:
+Pre-requisites:
+- Git
+- Node.js
+- Pnpm
+
+1. Clone the project repository `git clone https://github.com/CodeHive-Solutions/INSIGHTS.git`
+2. Go to the project directory `cd INSIGHTS`
+3. Install the dependencies by running `pnpm install` (assuming you have pnpm installed)
+
+
 ## Usage
 
 ### Frontend:

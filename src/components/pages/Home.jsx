@@ -18,10 +18,8 @@ import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import prosecutor from "../../images/home-carousel/prosecutor.png";
 import Avatar from "../../images/home-carousel/avatar.jpg";
-import water from "../../images/home-carousel/water-webpage.png";
 import water2 from "../../images/home-carousel/water-2.png";
 import water3 from "../../images/home-carousel/water-3.png";
-import laborDay from "../../images/home-carousel/labor-day.png";
 import motherDay from "../../images/home-carousel/mother-day.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];

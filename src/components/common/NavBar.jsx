@@ -338,7 +338,6 @@ const Navbar = () => {
                         <TextField inputRef={bonusesInput} sx={{ width: "100%" }} defaultValue="3" label="Seleccione los meses promediados de bonificaciones" select>
                             <MenuItem value={3}>Últimos 3 meses</MenuItem>
                             <MenuItem value={6}>Últimos 6 meses</MenuItem>
-                            <MenuItem value={12}>Últimos 12 meses</MenuItem>
                         </TextField>
                     </Collapse>
                     <Typography color="text.secondary">
