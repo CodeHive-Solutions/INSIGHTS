@@ -32,4 +32,4 @@ This project is proprietary and confidential.
 
 Unauthorized copying, distribution, or modification of this software is strictly prohibited.
 
-All rights reserved. (C) CodeHive-Solutions.
+All rights reserved.
