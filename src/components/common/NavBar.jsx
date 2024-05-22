@@ -93,7 +93,9 @@ const Navbar = () => {
             permissions.includes("operational_risk.view_events") ||
             permissions.includes("vacancy.view_reference") ||
             permissions.includes("payslip.add_payslip") ||
-            permissions.includes("employment_management.view_employmentcertification"));
+            permissions.includes("employment_management.view_employmentcertification") ||
+            permissions.includes("goals.add_goals")
+        );
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -564,7 +566,7 @@ const Navbar = () => {
                         <ListItemText primary="Análisis de Metas" />
                     </MenuItem>
                 ) : null}
-                {permissions && permissions.includes("users.upload_robinson_list") ? (
+                {permissions && (permissions.includes("users.upload_robinson_list") || permissions.includes("goals.add_goals")) ? (
                     <MenuItem onClick={() => navigate("/logged/upload-files")}>
                         <ListItemIcon>
                             <UploadFileIcon fontSize="small" />
