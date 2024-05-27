@@ -28,6 +28,7 @@
         "@mui/material": "^5.15.15",
         "@mui/x-data-grid": "^6.19.11",
         "@react-pdf/renderer": "^3.4.4",
+        "cally": "^0.6.1",
         "formik": "^2.4.6",
         "framer-motion": "^10.18.0",
         "jspdf": "^2.5.1",

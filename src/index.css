@@ -84,3 +84,58 @@ import .waveWrapper {
     height: 300px;
     border: 2px solid #c5c5c5;
 }
+
+calendar-range {
+    svg {
+        height: 16px;
+        width: 16px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+    }
+
+    path {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+
+    &::part(button) {
+        border: 1px solid #adb5bd;
+        background-color: #fff;
+        border-radius: 3px;
+        width: 26px;
+        height: 26px;
+    }
+
+    &::part(button):focus-visible {
+        outline: 2px solid #00587e;
+    }
+}
+
+calendar-month {
+    --color-accent: #00587e;
+    --color-text-on-accent: #ffffff;
+
+    &::part(button) {
+        border-radius: 3px;
+    }
+
+    &::part(range-inner) {
+        border-radius: 0;
+        background-color: #0076A8;
+    }
+
+    &::part(range-start) {
+        border-start-end-radius: 0;
+        border-end-end-radius: 0;
+    }
+
+    &::part(range-end) {
+        border-start-start-radius: 0;
+        border-end-start-radius: 0;
+    }
+
+    &::part(range-start range-end) {
+        border-radius: 3px;
+    }
+}

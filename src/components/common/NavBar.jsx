@@ -9,6 +9,7 @@ import SnackbarAlert from "./SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import MyAccountDialog from "../shared/MyAccount";
 import InactivityDetector from "../shared/InactivityDetector";
+import VacationsRequest from "../shared/VacationsRequest";
 
 // Material-UI
 import {
@@ -54,6 +55,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DescriptionIcon from "@mui/icons-material/Description";
 import TopicIcon from "@mui/icons-material/Topic";
+import LuggageIcon from "@mui/icons-material/Luggage";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
@@ -83,6 +85,7 @@ const Navbar = () => {
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
+    const [openVacation, setOpenVacation] = useState(false);
 
     const servicesPermission =
         permissions &&
@@ -94,8 +97,7 @@ const Navbar = () => {
             permissions.includes("vacancy.view_reference") ||
             permissions.includes("payslip.add_payslip") ||
             permissions.includes("employment_management.view_employmentcertification") ||
-            permissions.includes("goals.add_goals")
-        );
+            permissions.includes("goals.add_goals"));
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -318,11 +320,16 @@ const Navbar = () => {
         handleOpenCollapseBonuses();
     };
 
+    const handleOpenVacation = () => {
+        setOpenVacation(true);
+    };
+
     const isMobile = useMediaQuery("(max-width: 600px)");
 
     return (
         <>
             <InactivityDetector handleLogout={handleLogout} />
+            <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} />
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>
@@ -513,6 +520,12 @@ const Navbar = () => {
                         <DescriptionIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
+                </MenuItem>
+                <MenuItem onClick={handleOpenVacation}>
+                    <ListItemIcon>
+                        <LuggageIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Solicitud de Vacaciones" />
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>

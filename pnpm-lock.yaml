@@ -29,6 +29,9 @@ dependencies:
   '@react-pdf/renderer':
     specifier: ^3.4.4
     version: 3.4.4(react@18.3.0)
+  cally:
+    specifier: ^0.6.1
+    version: 0.6.1
   formik:
     specifier: ^2.4.6
     version: 2.4.6(react@18.3.0)
@@ -2910,8 +2913,8 @@ packages:
       '@babel/plugin-transform-react-jsx-self': 7.24.1(@babel/core@7.24.4)
       '@babel/plugin-transform-react-jsx-source': 7.24.1(@babel/core@7.24.4)
       magic-string: 0.27.0
-      vite: 5.2.10
       react-refresh: 0.14.1
+      vite: 5.2.10
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3023,6 +3026,10 @@ packages:
     resolution: {integrity: sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==}
     engines: {node: '>= 4.5.0'}
     hasBin: true
+    dev: false
+
+  /atomico@1.79.2:
+    resolution: {integrity: sha512-mshhLRMeIltNYbnQnqgnrvJ/uDa8XDfTQcjw3ymOygQqwHIQ4Sp0LcNYMCbACkV3DtV+eDXb9szwU4qMUuGwYQ==}
     dev: false
 
   /attr-accept@2.2.2:
@@ -3245,6 +3252,12 @@ packages:
   /callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
     engines: {node: '>=6'}
+
+  /cally@0.6.1:
+    resolution: {integrity: sha512-Tt9qS5JlCrfPLIyy81gKaBlf6SArav77OZBu4rCjSYRXPz3VQMmyQ463a1ktUb6/MMHThqEM0Pmjjr5k/byVgg==}
+    dependencies:
+      atomico: 1.79.2
+    dev: false
 
   /camelcase@5.3.1:
     resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
