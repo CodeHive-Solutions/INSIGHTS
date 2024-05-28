@@ -20,11 +20,11 @@ import prosecutor from "../../images/home-carousel/prosecutor.png";
 import Avatar from "../../images/home-carousel/avatar.jpg";
 import water2 from "../../images/home-carousel/water-2.png";
 import water3 from "../../images/home-carousel/water-3.png";
-import motherDay from "../../images/home-carousel/mother-day.png";
+import securityPractices from "../../images/home-carousel/security-practices.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: motherDay }, { image: water3 }, { image: water2 }, { image: prosecutor }, { image: ceroDiscrimination }];
+const homeImages = [{ image: securityPractices  }, { image: water3 }, { image: water2 }, { image: prosecutor }, { image: ceroDiscrimination }];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
