@@ -181,7 +181,18 @@ export default ShoppingCart;
 ### Backend:
 
 #### Pre-requisites:
+- Install Python 3.10 or higher and pip
+- Go to the project directory `cd /your/path/INSIGHTS/INSIGHTSAPI`
 
+#### Installation:
+1. Get the project from the repository `git clone https://github.com/CodeHive-Solutions/INSIGHTS.git`
+2. Go to the API directory `cd INSIGHTS/INSIGHTSAPI`
+3. Install the dependencies by running `pip install -r requirements.txt`
+4. Create a `.env` file with the following environment variables:
+    ```
+    SECRET_KEY=your_secret_key
+    DEBUG=True (for development)
+    ALLOWED_HOSTS=YOUR_SERVER_IP or your_domain (e.g. "intranet.cyc-bpo.com, localhost")
 
 ## Migration
 

@@ -38,24 +38,23 @@ MEDIA_ROOT = BASE_DIR / "media"
 SENDFILE_ROOT = MEDIA_ROOT
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv("DEBUG") is not None else False
-# DEBUG = False
+# don't run with debug turned on in production!
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
+def str_to_bool(value: str) -> bool:
+    """Convert a string to a boolean."""
+    return value.lower() in ("true", "t", "1")
 
-if DEBUG:
-    ALLOWED_HOSTS = ["insights-api-dev.cyc-bpo.com"]
-else:
-    ALLOWED_HOSTS = ["insights-api.cyc-bpo.com"]
+allowed_hosts_env = os.getenv("ALLOWED_HOSTS", "")
+
+# This is to avoid the error of having an empty string as an allowed host (This is a security risk)
+# If the environment variable is an empty string, return an empty list, otherwise split by comma
+ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",")] if allowed_hosts_env else []
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -106,9 +105,6 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_JWT.CookieJWTAuthentication",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
 }
 
 
@@ -126,10 +122,13 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 if not DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        "https://intranet.cyc-bpo.com",
-        "https://staffnet-api.cyc-bpo.com",
-    ]
+    cors_allowed_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
+    # This is to avoid the error of having an empty string as an allowed host (This is a security risk)
+    CORS_ALLOWED_ORIGINS = cors_allowed_origins.split(",") if cors_allowed_origins else []
+    # CORS_ALLOWED_ORIGINS = [
+    #     "https://intranet.cyc-bpo.com",
+    #     "https://staffnet-api.cyc-bpo.com",
+    # ]
 
 ROOT_URLCONF = "INSIGHTSAPI.urls"
 
@@ -345,7 +344,7 @@ AUTH_USER_MODEL = "users.User"
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
 AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGÍA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
-AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
+AUTH_LDAP_BIND_PASSWORD = os.getenv("AdminLDAPPassword")
 
 # AUTH_LDAP_USER_SEARCH = LDAPSearch(
 #     "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
