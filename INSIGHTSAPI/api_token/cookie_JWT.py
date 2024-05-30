@@ -1,6 +1,8 @@
 """
-This module contains the CookieJWTAuthentication class, which is used to authenticate requests through a JSON web token.
+This module contains the CookieJWTAuthentication class,
+which is used to authenticate requests through a JSON web token.
 """
+
 import logging
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import get_user_model
@@ -15,10 +17,10 @@ class CustomAuthBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         """Authenticate the superusers."""
         if not request:
-            UserModel = get_user_model()
+            user_model = get_user_model()
             try:
-                user = UserModel.objects.get(username=username)
-            except UserModel.DoesNotExist:
+                user = user_model.objects.get(username=username)
+            except user_model.DoesNotExist:
                 return None
 
             # Check if the user is a superuser
@@ -30,11 +32,11 @@ class CustomAuthBackend(ModelBackend):
                 return jwt_authentication.authenticate(request)
 
     def get_user(self, user_id):
-        UserModel = get_user_model()
+        user_model = get_user_model()
 
         try:
-            return UserModel.objects.get(pk=user_id)
-        except UserModel.DoesNotExist:
+            return user_model.objects.get(pk=user_id)
+        except user_model.DoesNotExist:
             return None
 
 

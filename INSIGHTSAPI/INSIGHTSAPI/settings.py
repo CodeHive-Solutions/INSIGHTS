@@ -12,12 +12,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from datetime import timedelta, datetime
 from pathlib import Path
+import sys
 import os
 import ssl
-import ldap  # type: ignore
-from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion  # type: ignore
+import ldap
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
 from dotenv import load_dotenv
-import sys
 
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
@@ -28,7 +28,9 @@ if not os.path.isfile(ENV_PATH):
 load_dotenv(ENV_PATH)
 
 # This allows to use the server with a self signed certificate
-ssl._create_default_https_context = ssl._create_unverified_context
+ssl._create_default_https_context = (
+    ssl._create_unverified_context
+)  # pylint: disable=protected-access
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -44,15 +46,19 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
+
 def str_to_bool(value: str) -> bool:
     """Convert a string to a boolean."""
     return value.lower() in ("true", "t", "1")
+
 
 allowed_hosts_env = os.getenv("ALLOWED_HOSTS", "")
 
 # This is to avoid the error of having an empty string as an allowed host (This is a security risk)
 # If the environment variable is an empty string, return an empty list, otherwise split by comma
-ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",")] if allowed_hosts_env else []
+ALLOWED_HOSTS = (
+    [host.strip() for host in allowed_hosts_env.split(",")] if allowed_hosts_env else []
+)
 
 # Application definition
 INSTALLED_APPS = [
@@ -83,7 +89,7 @@ INSTALLED_APPS = [
     "operational_risk",
     "payslip",
     "employment_management",
-    "vacation"
+    "vacation",
 ]
 
 MIDDLEWARE = [
@@ -103,7 +109,7 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_JWT.CookieJWTAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_jwt.CookieJWTAuthentication",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
@@ -123,12 +129,12 @@ CORS_ALLOW_CREDENTIALS = True
 
 if not DEBUG:
     cors_allowed_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
-    # This is to avoid the error of having an empty string as an allowed host (This is a security risk)
-    CORS_ALLOWED_ORIGINS = cors_allowed_origins.split(",") if cors_allowed_origins else []
-    # CORS_ALLOWED_ORIGINS = [
-    #     "https://intranet.cyc-bpo.com",
-    #     "https://staffnet-api.cyc-bpo.com",
-    # ]
+    # This avoid the error of having an empty string as an allowed host (This is a security risk)
+    CORS_ALLOWED_ORIGINS = (
+        [cors.strip() for cors in cors_allowed_origins.split(",")]
+        if cors_allowed_origins
+        else []
+    )
 
 ROOT_URLCONF = "INSIGHTSAPI.urls"
 
@@ -148,21 +154,25 @@ TEMPLATES = [
     },
 ]
 
-ADMINS = [
-    ("Heibert Mogollon", "heibert203@hotmail.com"),
-    # ("Heibert Mogollon", "heibert.mogollon@gmail.com"),
-    ("Heibert Mogollon", "heibert.mogollon@cyc-bpo.com"),
-    ("Juan Carreño", "carrenosebastian54@gmail.com"),
-]
-SERVER_EMAIL = "no-reply@cyc-services.com.co"
+admins = os.getenv("ADMINS", "")
+
+ADMINS = (
+    [tuple(admin.strip().split(":")) for admin in admins.split(",")] if admins else []
+)
+
+SERVER_EMAIL = os.environ["SERVER_EMAIL"]
 EMAIL_BACKEND = "INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
-EMAIL_HOST = "mail.cyc-services.com.co"
-EMAIL_PORT = 587
+EMAIL_HOST = os.environ["EMAIL_HOST"]
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "no-reply@cyc-services.com.co"
-EMAIL_HOST_USER = "no-reply@cyc-services.com.co"
+DEFAULT_FROM_EMAIL = SERVER_EMAIL
+EMAIL_HOST_USER = SERVER_EMAIL
 EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
-EMAIL_TEST = "heibert.mogollon@cyc-bpo.com"
+# EMAIL_FOR_TEST = "heibert.mogollon@cyc-bpo.com"
+# This is the email where the test emails are going to be sent
+EMAIL_FOR_TEST = os.getenv("EMAIL_FOR_TEST", "")
+EMAILS_ETHICAL_LINE = os.environ["EMAILS_ETHICAL_LINE"].split(",")
+print(EMAILS_ETHICAL_LINE)
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -239,7 +249,7 @@ USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
-    "api_token.cookie_JWT.CustomAuthBackend",
+    "api_token.cookie_jwt.CustomAuthBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -297,6 +307,7 @@ LOGGING = {
         "mail_admins": {
             "level": "ERROR",
             "class": "django.utils.log.AdminEmailHandler",
+            "include_html": True,
         },
         "celery": {
             "level": "INFO",
@@ -307,7 +318,7 @@ LOGGING = {
     },
     "loggers": {
         "requests": {
-            "handlers": ["response_file", "exception_file"],
+            "handlers": ["response_file", "exception_file", "mail_admins"],
             "level": "DEBUG",
             "propagate": True,
         },
@@ -336,6 +347,10 @@ LOGGING = {
             "level": "INFO",
             "propagate": True,
         },
+    },
+    "root": {
+        "handlers": ["exception_file", "mail_admins"],
+        "level": "ERROR",
     },
 }
 
@@ -383,9 +398,11 @@ AUTH_LDAP_USER_ATTR_MAP = {
 AUTH_LDAP_ALWAYS_UPDATE_USER = False
 
 # This works faster in ldap but i don't know how implement it with the sAMAcountName
-# AUTH_LDAP_USER_DN_TEMPLATE = 'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
+# AUTH_LDAP_USER_DN_TEMPLATE =
+#'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
-# AUTH_LDAP_USER_DN_TEMPLATE = '(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
+# AUTH_LDAP_USER_DN_TEMPLATE =
+#'(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 if DEBUG:
     SENDFILE_BACKEND = "django_sendfile.backends.development"
@@ -400,7 +417,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
     "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
     "AUTH_COOKIE": "access-token",
-    "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true",
+    "USER_AUTHENTICATION_RULE": "api_token.cookie_jwt.always_true",
 }
 
 # Celery configuration for the tasks

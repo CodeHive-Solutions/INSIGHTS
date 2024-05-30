@@ -193,7 +193,11 @@ export default ShoppingCart;
     SECRET_KEY=your_secret_key
     DEBUG=True (for development)
     ALLOWED_HOSTS=YOUR_SERVER_IP or your_domain (e.g. "intranet.cyc-bpo.com, localhost")
-
+    ADMINS=your_name and your_email (e.g. "John Doe:john@example.com, Jane Smith:jane@example.com")
+    SERVER_EMAIL=The email that will be used to send emails
+    EMAIL_HOST=your.smtp.server.com
+    EMAIL_PORT=your smtp port usually 587
+    EMAIL_HOST_PASSWORD=your smtp password
 ## Migration
 
 ### Frontend:

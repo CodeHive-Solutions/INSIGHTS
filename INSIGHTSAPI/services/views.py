@@ -3,8 +3,7 @@
 import logging
 import os
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django_sendfile import sendfile
 from django.shortcuts import get_object_or_404
@@ -57,13 +56,14 @@ def send_report_ethical_line(request):
     if "contact_info" in request.data:
         contact_info = f"\nEl usuario desea ser contactado mediante:\n{request.data['contact_info']}"
     if settings.DEBUG or "test" in request.data["complaint"].lower():
-        to_emails = ["heibert.mogollon@cyc-bpo.com", "juan.carreno@cyc-bpo.com"]
+        to_emails = [settings.EMAIL_FOR_TEST]
     else:
-        to_emails = [
-            "cesar.garzon@cyc-bpo.com",
-            "mario.giron@cyc-bpo.com",
-            "jeanneth.pinzon@cyc-bpo.com",
-        ]
+        # to_emails = [
+        #     "cesar.garzon@cyc-bpo.com",
+        #     "mario.giron@cyc-bpo.com",
+        #     "jeanneth.pinzon@cyc-bpo.com",
+        # ]
+        to_emails = [settings.
     errors = send_email(
         sender_user="mismetas",
         subject=f"Denuncia de {request.data['complaint']}",
@@ -76,3 +76,8 @@ def send_report_ethical_line(request):
     if errors:
         return Response({"error": "Hubo un error en el envió del correo"}, status=500)
     return Response({"message": "Correo enviado correctamente"}, status=200)
+
+
+def trigger_error(request):
+    """Trigger an error for testing purposes."""
+    raise Exception("Test error")

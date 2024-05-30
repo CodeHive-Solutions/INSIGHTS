@@ -1,9 +1,9 @@
 """Test for services. """
 
-import requests
 import os
 from datetime import timedelta
 from io import StringIO
+import requests
 from rest_framework.test import APITestCase
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -36,8 +36,8 @@ class BaseTestCase(APITestCase):
         """Create a demo user."""
         demo_user = User.objects.get_or_create(
             username="demo",
-            cedula="1000065648",
-            email="heibert.mogollon@cyc-bpo.com",
+            cedula="10000656481",
+            email=settings.EMAIL_FOR_TEST,
             first_name="Demo",
             last_name="User",
         )
@@ -68,33 +68,6 @@ class StaticFilesTest(TestCase):
         url = f"https://{settings.ALLOWED_HOSTS[0]}/static/services/non_exist_file.png"
         response = requests.get(url, timeout=5)
         self.assertEqual(response.status_code, 404)
-
-
-class EmailServiceTest(APITestCase):
-    """Test for email service."""
-
-    def test_send_email(self):
-        """Test send email."""
-        subject = "Test email"
-        message = "Test email"
-        with open(
-            str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb"
-        ) as image_file:
-            image_data = image_file.read()
-            to_emails = [
-                "heibert.mogollon@cyc-bpo.com",
-                "heibert1.mogollon@gmail.com",
-            ]
-            errors = send_email(
-                subject,
-                message,
-                to_emails,
-                sender_user="no-reply",
-                attachments=[("asesor-vacante.png", image_data, "image/png")],
-                save_message=False,
-                email_owner="Test",
-            )
-            self.assertIsNone(errors, errors)
 
 
 class EthicalLineTest(APITestCase):

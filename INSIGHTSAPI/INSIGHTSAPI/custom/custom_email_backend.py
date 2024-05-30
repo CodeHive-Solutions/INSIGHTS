@@ -1,5 +1,5 @@
-
 """Custom Email Backend for Django using our own SMTP server"""
+
 import sys
 import ssl
 import logging
@@ -14,6 +14,11 @@ logger = logging.getLogger("requests")
 
 class CustomEmailBackend(EmailBackend):
     """Custom Email Backend for Django using our own SMTP server"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.outbox = []
+
     def open(self):
         if self.connection:
             return False
@@ -43,15 +48,25 @@ class CustomEmailBackend(EmailBackend):
 
             num_sent = 0
             for message in email_messages:
+                # print(message.to)
+                # print(message.subject)
+                # print(message)
                 if ("test" in sys.argv or settings.DEBUG) and not (
-                    all("heibert" in str(email).lower() or "juan.carreno" in str(email).lower() for email in message.to)
+                    all(
+                        "heibert" in str(email).lower()
+                        or "carreno" in str(email).lower()
+                        or "diego.martinez.p@cyc-bpo.com" in str(email).lower()
+                        for email in message.to
+                    )
                 ):
-                    
                     raise Exception(f"Email {message.to} not allowed in test mode")
                 sent = self._send(message)
                 if sent:
                     num_sent += 1
+                    self.outbox.append(message)
                     self.save_to_sent_folder(message)
+                else:
+                    print("Email not sent")
 
             if new_conn_created:
                 self.close()
