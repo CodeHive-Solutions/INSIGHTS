@@ -21,10 +21,20 @@ import Avatar from "../../images/home-carousel/avatar.jpg";
 import water2 from "../../images/home-carousel/water-2.png";
 import water3 from "../../images/home-carousel/water-3.png";
 import securityPractices from "../../images/home-carousel/security-practices.png";
+import ranking from "../../images/home-carousel/ranking.png";
+import securityAdvices from "../../images/home-carousel/security-advices.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: securityPractices  }, { image: water3 }, { image: water2 }, { image: prosecutor }, { image: ceroDiscrimination }];
+const homeImages = [
+    { image: securityAdvices },
+    { image: ranking },
+    { image: securityPractices },
+    { image: water3 },
+    { image: water2 },
+    { image: prosecutor },
+    { image: ceroDiscrimination },
+];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
@@ -212,8 +222,8 @@ const Home = () => {
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {yesterdayBirthdays.length === 0 ? (
                         <>
-                            <img alt="imagen-pastel-cumpleaños" src={cake}></img>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}>
+                            <img style={{ borderRadius: "15px" }} width={350} height={465} alt="imagen-pastel-cumpleaños" src={cake}></img>
+                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", pt: "2rem" }}>
                                 <Typography variant="h6" color="gray">
                                     Ayer no hubo cumpleaños
                                 </Typography>
@@ -223,14 +233,14 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"500px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"465px"} width={"100%"} />
                     )}
                 </Card>
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {todayBirthdays.length === 0 ? (
                         <>
-                            <img alt="imagen-pastel-cumpleaños" src={cake}></img>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}>
+                            <img style={{ borderRadius: "15px" }} width={350} height={465} alt="imagen-pastel-cumpleaños" src={cake}></img>
+                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", pt: "2rem" }}>
                                 <Typography variant="h6" color="gray">
                                     Hoy no hay cumpleaños
                                 </Typography>
@@ -240,14 +250,14 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"500px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"465px"} width={"100%"} />
                     )}
                 </Card>{" "}
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {tomorrowBirthdays.length === 0 ? (
                         <>
-                            <img alt="imagen-pastel-cumpleaños" src={cake}></img>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}>
+                            <img style={{ borderRadius: "15px" }} width={350} height={465} alt="imagen-pastel-cumpleaños" src={cake}></img>
+                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", pt: "2rem" }}>
                                 <Typography variant="h6" color="gray">
                                     Mañana no hay cumpleaños
                                 </Typography>
@@ -257,7 +267,7 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"500px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"465px"} width={"100%"} />
                     )}
                 </Card>{" "}
             </Box>

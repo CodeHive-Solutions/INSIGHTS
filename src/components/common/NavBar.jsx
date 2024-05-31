@@ -329,7 +329,7 @@ const Navbar = () => {
     return (
         <>
             <InactivityDetector handleLogout={handleLogout} />
-            {/* <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} /> */}
+            <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} />
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>
@@ -521,12 +521,12 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
                 </MenuItem>
-                {/* <MenuItem onClick={handleOpenVacation}>
+                <MenuItem onClick={handleOpenVacation}>
                     <ListItemIcon>
                         <LuggageIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Solicitud de Vacaciones" />
-                </MenuItem> */}
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
