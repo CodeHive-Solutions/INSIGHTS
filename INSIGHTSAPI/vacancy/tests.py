@@ -1,4 +1,5 @@
 """Test for vacancy."""
+
 import os
 import tempfile
 import shutil
@@ -94,7 +95,8 @@ class VacancyTest(BaseTestCase):
         self.user.user_permissions.clear()
         vacancy = Vacancy.objects.create(**self.data)
         response = self.client.patch(
-            reverse("vacancy-detail", args=[vacancy.id]), {"name": "Auxiliar de servicios generales"}
+            reverse("vacancy-detail", args=[vacancy.id]),
+            {"name": "Auxiliar de servicios generales"},
         )
         self.assertEqual(response.status_code, 403, response.data)
 
@@ -102,12 +104,18 @@ class VacancyTest(BaseTestCase):
         """Test update other column than active."""
         vacancy = Vacancy.objects.create(**self.data)
         response = self.client.patch(
-            reverse("vacancy-detail", args=[vacancy.id]), {"name": "Auxiliar de servicios generales"}
+            reverse("vacancy-detail", args=[vacancy.id]),
+            {"name": "Auxiliar de servicios generales"},
         )
         self.assertEqual(response.status_code, 400, response.data)
         # Now try with a put request
         response = self.client.put(
-            reverse("vacancy-detail", args=[vacancy.id]), {"name": "Auxiliar de servicios generales", "image": self.data["image"], "is_active": False}
+            reverse("vacancy-detail", args=[vacancy.id]),
+            {
+                "name": "Auxiliar de servicios generales",
+                "image": self.data["image"],
+                "is_active": False,
+            },
         )
         self.assertEqual(response.status_code, 400, response.data)
         self.assertEqual(response.data, {"error": "No se puede modificar la vacante"})
@@ -202,8 +210,10 @@ class ReferenceTest(BaseTestCase):
             },
         )
         self.assertEqual(response.status_code, 400, response.data)
-        self.assertIn('non_field_errors', response.data)
-        self.assertIn('Ya referenciaste a esta persona.', response.data['non_field_errors'])
+        self.assertIn("non_field_errors", response.data)
+        self.assertIn(
+            "Ya referenciaste a esta persona.", response.data["non_field_errors"]
+        )
 
 
 class VacancyApplyTest(BaseTestCase):
@@ -222,7 +232,7 @@ class VacancyApplyTest(BaseTestCase):
                 image=image,
             )
         user = User.objects.get(username="staffnet")
-        user.cedula = "1000065648"
+        user.cedula = settings.CEDULA_TEST
         user.save()
         response = self.client.post(
             reverse("vacancy_apply"),
@@ -234,6 +244,6 @@ class VacancyApplyTest(BaseTestCase):
         self.assertEqual(
             response.data,
             {
-                "message": 'Correo enviado correctamente a "heibert.mogollon@cyc-bpo.com"'
+                "message": "Correo enviado correctamente a " + str(user.email),
             },
         )

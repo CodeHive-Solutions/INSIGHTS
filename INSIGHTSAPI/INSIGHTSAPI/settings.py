@@ -156,9 +156,14 @@ TEMPLATES = [
 
 admins = os.getenv("ADMINS", "")
 
-ADMINS = (
-    [tuple(admin.strip().split(":")) for admin in admins.split(",")] if admins else []
-)
+if "test" in sys.argv:
+    ADMINS = []
+else:
+    ADMINS = (
+        [tuple(admin.strip().split(":")) for admin in admins.split(",")]
+        if admins
+        else []
+    )
 
 SERVER_EMAIL = os.environ["SERVER_EMAIL"]
 EMAIL_BACKEND = "INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
@@ -167,12 +172,14 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = SERVER_EMAIL
 EMAIL_HOST_USER = SERVER_EMAIL
-EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
-# EMAIL_FOR_TEST = "heibert.mogollon@cyc-bpo.com"
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
+EMAILS_ETHICAL_LINE = [email.strip() for email in os.environ["EMAILS_ETHICAL_LINE"].split(",")]
+
+
 # This is the email where the test emails are going to be sent
 EMAIL_FOR_TEST = os.getenv("EMAIL_FOR_TEST", "")
-EMAILS_ETHICAL_LINE = os.environ["EMAILS_ETHICAL_LINE"].split(",")
-print(EMAILS_ETHICAL_LINE)
+# This cedula need to be in the StaffNet database it's used in many tests
+CEDULA_TEST = os.environ["CEDULA_TEST"]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

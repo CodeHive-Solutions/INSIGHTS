@@ -92,7 +92,6 @@ def send_email(
                 "logo_base64": logo_base64,
             },
         )
-        # print(email_content)
         if ("test" in sys.argv or settings.DEBUG) and not (
             all(str(email).lower() not in ["heibert", "juan.carreno"] for email in to_emails)
         ):

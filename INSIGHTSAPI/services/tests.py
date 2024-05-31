@@ -5,14 +5,13 @@ from datetime import timedelta
 from io import StringIO
 import requests
 from rest_framework.test import APITestCase
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.core.management import call_command
 from django.conf import settings
 from contracts.models import Contract
 from users.models import User
-from .emails import send_email
 
 
 class BaseTestCase(APITestCase):
@@ -36,7 +35,7 @@ class BaseTestCase(APITestCase):
         """Create a demo user."""
         demo_user = User.objects.get_or_create(
             username="demo",
-            cedula="10000656481",
+            cedula=settings.CEDULA_TEST,
             email=settings.EMAIL_FOR_TEST,
             first_name="Demo",
             last_name="User",
@@ -73,6 +72,9 @@ class StaticFilesTest(TestCase):
 class EthicalLineTest(APITestCase):
     """Test for ethical line."""
 
+    @override_settings(
+        EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
+    )
     def test_send_report_ethical_line_without_contact(self):
         """Test send report ethical line."""
         response = self.client.post(
@@ -84,6 +86,9 @@ class EthicalLineTest(APITestCase):
         )
         self.assertEqual(response.status_code, 200, response.data)
 
+    @override_settings(
+        EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
+    )
     def test_send_report_ethical_line_with_contact(self):
         """Test send report ethical line."""
         response = self.client.post(
@@ -97,6 +102,9 @@ class EthicalLineTest(APITestCase):
         self.assertEqual(response.status_code, 200, response.data)
 
 
+@override_settings(
+    EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
+)
 class SchedulerTest(TestCase):
     """Test for scheduler."""
 

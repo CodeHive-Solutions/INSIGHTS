@@ -4,12 +4,10 @@ from celery import current_app
 from django.test import TestCase
 from django.conf import settings
 from django.core.mail import get_connection
-from django.core.mail import mail_admins
 from django.test import override_settings
 from django.core.mail import EmailMessage
 from django.urls import reverse
 from INSIGHTSAPI.tasks import add_numbers
-from INSIGHTSAPI.custom.custom_email_backend import CustomEmailBackend
 
 
 class CeleryTestCase(TestCase):
@@ -35,8 +33,7 @@ class CustomEmailBackendTestCase(TestCase):
     """Test case for the CustomEmailBackend class."""
 
     @override_settings(
-        ADMINS=[settings.ADMINS[0]],
-        EMAIL_BACKEND='INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend',
+        EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend",
     )
     def test_send_messages(self):
         """Test the send_messages method."""
@@ -70,13 +67,13 @@ class CustomEmailBackendTestCase(TestCase):
             self.assertIn("not allowed in test mode", str(e))
 
     @override_settings(
-        ADMINS=[('Heibert Mogollon', 'heibert.mogollon@cyc-bpo.com')],
+        ADMINS=[("Heibert Mogollon", settings.EMAIL_FOR_TEST)],
         DEBUG=False,  # Ensure DEBUG is False to enable email sending on errors
-        EMAIL_BACKEND='INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend',
+        EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend",
     )
     def test_admin_email_on_server_error(self):
         """Test that an email is sent to the admins on a server error."""
         with self.assertRaises(Exception) as context:
-            self.client.get(reverse('trigger_error'))
+            self.client.get(reverse("trigger_error"))
 
         self.assertIn("Test error", str(context.exception))

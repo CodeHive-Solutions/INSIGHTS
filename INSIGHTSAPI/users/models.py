@@ -1,13 +1,11 @@
 """This file contains the custom user model for the users app."""
 
-from enum import unique
 import logging
-from math import e
-import os
 import sys
 from django.contrib.auth.models import AbstractUser
 from django.db import connections
 from django.db import models
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from hierarchy.models import Area
 
@@ -90,7 +88,7 @@ class User(AbstractUser):
                     and not self.cedula
                 ) or self.cedula == "00000000":
                     result = ("00000000", "Administrador", "Administrador")
-                    self.email = "heibert.mogollon@cyc-bpo.com"
+                    self.email = settings.EMAIL_FOR_TEST
                     # self.email = "heibert.mogollon@gmail.com"
                     # self.email = "heibert203@hotmail.com"
                     # self.email = "juan.carreno@cyc-bpo.com"

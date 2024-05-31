@@ -1,11 +1,13 @@
 """This file contains the code to run the scheduler """
+
+import logging
 from datetime import timedelta
 from django.core.management.base import BaseCommand
-from django.utils import timezone
+from django.core.mail import send_mail, mail_admins
+from django.conf import settings
 from django.db.models import Q
+from django.utils import timezone
 from contracts.models import Contract
-from services.emails import send_email
-import logging
 
 logger = logging.getLogger("requests")
 
@@ -26,7 +28,7 @@ class Command(BaseCommand):
         ):
             to_email = ["DIEGO.GONZALEZ@CYC-BPO.COM", "MELIDA.SANDOVAL@CYC-BPO.COM"]
         else:
-            to_email = ["heibert.mogollon@cyc-bpo.com"]
+            to_email = [settings.EMAIL_FOR_TEST]
         target_date_30 = timezone.now() + timedelta(days=30)
         target_date_15 = timezone.now() + timedelta(days=15)
         target_date_7 = timezone.now() + timedelta(days=7)
@@ -45,32 +47,28 @@ class Command(BaseCommand):
                     f"Hoy es el ultimo dia para renovar el contrato '{contract.name}'"
                 )
             else:
-                message = f"""El contrato '{contract.name}' necesita ser renovado, terminará en {days_left} días, 
+                message = f"""
+                El contrato '{contract.name}' necesita ser renovado, terminará en {days_left} días,
                 este contrato es el encargado de {contract.description} para renovarlo asegúrate de ponerte en 
                 contacto con {contract.contact} mediante {contract.contact_telephone} recuerda que la fecha
                 de renovación es el {contract.renovation_date}"""
-            errors = send_email(
-                f"{contract.name} necesita ser renovado",
-                message,
-                to_email,
-                cc_emails=[
-                    "juan.carreno@cyc-bpo.com",
-                    "heibert.mogollon@cyc-bpo.com",
-                ],
-                save_message=True,
-                email_owner="Contratos C&C",
-            )
-            if errors:
-                self.stdout.write(self.style.ERROR(f"Error sending email: {errors}"))
-                send_email(
-                    f"Error enviando correo para el contrato {contract.name}",
-                    f"Error enviando correo para el contrato {contract.name}",
-                    ["heibert.mogollon@gmail.com"],
-                    save_message=True,
+            try:
+                send_mail(
+                    f"{contract.name} necesita ser renovado",
+                    message,
+                    None,
+                    to_email,
                 )
-            else:
                 self.stdout.write(
                     self.style.WARNING(
                         f"Email sent for contract {contract.name} to {to_email}"
                     )
+                )
+            except Exception as e:
+                logger.error(
+                    "Error enviando correo para el contrato %s: %s", contract.name, e
+                )
+                mail_admins(
+                    f"Error enviando correo para el contrato {contract.name}",
+                    f"Error enviando correo para el contrato {contract.name}",
                 )

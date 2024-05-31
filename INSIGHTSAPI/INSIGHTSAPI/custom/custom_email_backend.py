@@ -48,9 +48,6 @@ class CustomEmailBackend(EmailBackend):
 
             num_sent = 0
             for message in email_messages:
-                # print(message.to)
-                # print(message.subject)
-                # print(message)
                 if ("test" in sys.argv or settings.DEBUG) and not (
                     all(
                         "heibert" in str(email).lower()

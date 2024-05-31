@@ -14,9 +14,10 @@ class VacationRequestModelTestCase(BaseTestCase):
     def setUp(self):
         """Create a user and a vacation request."""
         super().setUp()
+        test_user = self.create_demo_user()
         pdf = SimpleUploadedFile("test.pdf", b"file_content")
         self.vacation_request = {
-            "employee_name": "John Doe",
+            "user": test_user.pk,
             "start_date": "2021-01-01",
             "end_date": "2021-01-05",
             "reason": "Vacation",
@@ -57,4 +58,5 @@ class VacationRequestModelTestCase(BaseTestCase):
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        print(response.data)
         self.assertEqual(response.data["non_field_errors"][0], "La fecha de inicio no puede ser mayor a la fecha de fin.")

@@ -1,10 +1,8 @@
 """Test for payslip. """
 
-import pandas as pd
 from services.tests import BaseTestCase
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.core import mail
 from .models import Payslip
 
 
