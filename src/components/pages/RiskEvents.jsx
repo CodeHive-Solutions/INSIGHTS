@@ -263,7 +263,6 @@ export const RiskEvent = () => {
     };
 
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
-        console.log(props);
         const [field, meta] = useField(props);
         const errorText = meta.error && meta.touched ? meta.error : "";
         if (type === "select") {

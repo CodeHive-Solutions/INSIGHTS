@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import Login from "../src/components/pages/Login";
 import { createMemoryHistory } from "history";
-import { createBrowserRouter, Router } from "react-router-dom";
+import { Router } from "react-router-dom";
 
 describe("Login component", () => {
     test("renders login form with username and password fields", () => {

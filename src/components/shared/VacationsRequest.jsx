@@ -94,7 +94,6 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     };
 
     const sendCertification = () => {
-        console.log("Certification sent");
         setOpenVacation(false);
     };
 
@@ -103,15 +102,14 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
             <DialogTitle id="alert-dialog-title">{"¿Solicitud de Vacaciones?"}</DialogTitle>
             <DialogContent sx={{ paddingBottom: 0 }}>
                 <DialogContentText id="alert-dialog-description">Selecciona las fechas de inicio y fin de tus vacaciones.</DialogContentText>
+                
                 <Box sx={{ p: "2rem" }}>
                     <Picker value={value} onChange={onChange} />
-                    <Collapse in={value}>
-                        <Typography sx={{ pt: "2rem" }}>
-                            Periodo de vacaciones seleccionado:{" "}
-                            <Collapse in={collapseDate}>
-                                <span style={{ fontWeight: 600 }}>{value}</span>
-                            </Collapse>
-                        </Typography>
+                    <Collapse in={!!value}>
+                        <Typography sx={{ pt: "2rem" }}>Periodo de vacaciones seleccionado: </Typography>
+                        <Collapse in={collapseDate}>
+                            <span style={{ fontWeight: 600 }}>{value}</span>
+                        </Collapse>
                     </Collapse>
                 </Box>
             </DialogContent>

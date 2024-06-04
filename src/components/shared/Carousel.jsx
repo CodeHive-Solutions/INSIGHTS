@@ -39,7 +39,6 @@ function Item(props) {
         } else if (props.item.image.includes("youth-finances")) {
             setIsVacancy(true);
         } else if (props.item.image.includes("water-webpage")) {
-            console.log(props.item.image);
             setIsVacancy(true);
         }
     }, []);
