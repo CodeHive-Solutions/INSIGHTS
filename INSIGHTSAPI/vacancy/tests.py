@@ -231,9 +231,6 @@ class VacancyApplyTest(BaseTestCase):
                 name="Auxiliar de servicios generales TEST",
                 image=image,
             )
-        user = User.objects.get(username="staffnet")
-        user.cedula = settings.CEDULA_TEST
-        user.save()
         response = self.client.post(
             reverse("vacancy_apply"),
             {
@@ -244,6 +241,6 @@ class VacancyApplyTest(BaseTestCase):
         self.assertEqual(
             response.data,
             {
-                "message": "Correo enviado correctamente a " + str(user.email),
+                "message": 'Correo enviado correctamente a "' + str(self.user.email) + '"',
             },
         )

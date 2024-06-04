@@ -1,10 +1,11 @@
 """This module contains the tests for the goals app."""
 
 from django.db.models import Q
+from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils import timezone
 from django.urls import reverse
-from django.core.files.uploadedfile import SimpleUploadedFile
-from django.contrib.auth.models import Permission
 from services.tests import BaseTestCase
 from rest_framework import status
 from users.models import User
@@ -248,7 +249,7 @@ class GoalAPITestCase(BaseTestCase):
 
         # Create a goal object
         Goals.objects.create(
-            cedula="1000065648",
+            cedula=settings.TEST_CEDULA,
             name="Heibert",
             campaign_goal="Base Test Goal",
             result="50",
@@ -268,7 +269,7 @@ class GoalAPITestCase(BaseTestCase):
             "accepted": True,
         }
         # Send a PATCH request to the update-goal view
-        response = self.client.patch("/goals/1000065648/", data=payload)
+        response = self.client.patch("/goals/" + str(settings.TEST_CEDULA) +"/", data=payload)
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         # Assert that the goal was updated with the new data
@@ -402,7 +403,7 @@ class GoalAPITestCase(BaseTestCase):
         for data in table_info_data:
             TableInfo.objects.create(**data)
         goal = Goals.objects.create(
-            cedula="1000065648",
+            cedula=settings.TEST_CEDULA,
             name="Heibert",
             campaign_goal="Base Test Goal",
             result="50",
@@ -437,7 +438,7 @@ class GoalAPITestCase(BaseTestCase):
         """Test the update-goal view."""
         # Get the first goal from the database
         goal = Goals.objects.create(
-            cedula="1000065648",
+            cedula=settings.TEST_CEDULA,
             name="Heibert",
             campaign_goal="Base Test Goal",
             result="50",
@@ -471,7 +472,7 @@ class GoalAPITestCase(BaseTestCase):
         """Test the update-goal view."""
         # Get the first goal from the database
         goal = Goals.objects.create(
-            cedula="1000065648",
+            cedula=settings.TEST_CEDULA,
             name="Heibert",
             campaign_goal="Base Test Goal",
             result="50",

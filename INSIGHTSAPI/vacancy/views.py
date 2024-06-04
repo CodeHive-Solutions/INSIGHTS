@@ -93,7 +93,7 @@ def send_vacancy_apply(request):
     subject = f"Aplicación a {vacancy}"
     user = User.objects.get(username=request.user)
     if user.cedula == 999999999 or settings.DEBUG or "test" in sys.argv:
-        cedula = "1000065648"
+        cedula = settings.TEST_CEDULA
         to_emails = [settings.EMAIL_FOR_TEST]
     else:
         cedula = user.cedula

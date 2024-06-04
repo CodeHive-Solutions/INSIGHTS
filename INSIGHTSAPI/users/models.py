@@ -41,6 +41,13 @@ class User(AbstractUser):
         related_name="users",
     )
     job_title = models.CharField(max_length=100, null=True, blank=True)
+    job_position = models.ForeignKey(
+        "hierarchy.JobPosition",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="users",
+    )
     date_joined = None
     last_login = None
 
@@ -55,6 +62,12 @@ class User(AbstractUser):
         permissions = [
             ("upload_robinson_list", "Can upload robinson list"),
         ]
+
+    def is_boss(self, user):
+        """Return True if the user is the boss of the user."""
+        if user.area == self.area:
+            return True
+        return False
 
     def get_full_name(self) -> str:
         """Return the full name of the user."""
@@ -89,9 +102,6 @@ class User(AbstractUser):
                 ) or self.cedula == "00000000":
                     result = ("00000000", "Administrador", "Administrador")
                     self.email = settings.EMAIL_FOR_TEST
-                    # self.email = "heibert.mogollon@gmail.com"
-                    # self.email = "heibert203@hotmail.com"
-                    # self.email = "juan.carreno@cyc-bpo.com"
                 elif not result:
                     raise ValidationError(
                         "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
@@ -122,12 +132,9 @@ class User(AbstractUser):
                 isinstance(field, (models.CharField, models.TextField))
                 and field.name != "password"
                 and self.__dict__[field.name]
-                and type(getattr(self, field.attname)) == str
+                and isinstance(getattr(self, field.attname), str)
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
-        # print(User.objects.filter().first())
-        # print(User.objects.filter(cedula=self.cedula).first())
-        # print("GUARDANDO")
         super(User, self).save(*args, **kwargs)
 
 

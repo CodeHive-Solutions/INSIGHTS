@@ -35,7 +35,7 @@ class BaseTestCase(APITestCase):
         """Create a demo user."""
         demo_user = User.objects.get_or_create(
             username="demo",
-            cedula=settings.CEDULA_TEST,
+            cedula=settings.TEST_CEDULA,
             email=settings.EMAIL_FOR_TEST,
             first_name="Demo",
             last_name="User",
@@ -150,18 +150,18 @@ class SchedulerTest(TestCase):
         management_command_output = call_command("run_scheduler", stdout=stdout)
 
         self.assertIn(
-            f"Email sent for contract {contract_30_days.name} to ['heibert",
+            f"Email sent for contract {contract_30_days.name} to ['" + settings.EMAIL_FOR_TEST,
             stdout.getvalue(),
         )
         self.assertIn(
-            f"Email sent for contract {contract_15_days.name} to ['heibert",
+            f"Email sent for contract {contract_15_days.name} to ['" + settings.EMAIL_FOR_TEST,
             stdout.getvalue(),
         )
         self.assertIn(
-            f"Email sent for contract {contract_7_days.name} to ['heibert",
+            f"Email sent for contract {contract_7_days.name} to ['" + settings.EMAIL_FOR_TEST,
             stdout.getvalue(),
         )
         self.assertIn(
-            f"Email sent for contract {contract_today.name} to ['heibert",
+            f"Email sent for contract {contract_today.name} to ['" + settings.EMAIL_FOR_TEST,
             stdout.getvalue(),
         )

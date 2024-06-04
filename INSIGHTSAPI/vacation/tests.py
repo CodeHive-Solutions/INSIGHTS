@@ -1,9 +1,10 @@
 """This file contains the tests for the vacation model."""
 
 from services.tests import BaseTestCase
-from django.urls import reverse
 from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.urls import reverse
+from users.models import User
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
 
@@ -42,13 +43,17 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_vacation_retrieve(self):
         """Test retrieving a vacation endpoint."""
+        self.vacation_request["user"] = User.objects.get(username="demo")
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.get(
             reverse("vacation_retrieve", kwargs={"pk": vacation_object.pk})
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data["employee_name"], self.vacation_request["employee_name"])
+        self.assertEqual(response.data["user"], self.vacation_request["user"].pk)
+        self.assertEqual(response.data["start_date"], self.vacation_request["start_date"])
+        self.assertEqual(response.data["end_date"], self.vacation_request["end_date"])
+        self.assertEqual(response.data["reason"], self.vacation_request["reason"])
 
     def test_vacation_create_invalid_dates(self):
         """Test creating a vacation with invalid dates."""
@@ -58,5 +63,4 @@ class VacationRequestModelTestCase(BaseTestCase):
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        print(response.data)
         self.assertEqual(response.data["non_field_errors"][0], "La fecha de inicio no puede ser mayor a la fecha de fin.")
