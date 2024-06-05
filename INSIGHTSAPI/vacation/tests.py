@@ -16,6 +16,8 @@ class VacationRequestModelTestCase(BaseTestCase):
         """Create a user and a vacation request."""
         super().setUp()
         test_user = self.create_demo_user()
+        self.user.job_position.rank = 7
+        self.user.job_position.save()
         pdf = SimpleUploadedFile("test.pdf", b"file_content")
         self.vacation_request = {
             "user": test_user.pk,
@@ -64,3 +66,18 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["non_field_errors"][0], "La fecha de inicio no puede ser mayor a la fecha de fin.")
+
+    def test_vacation_create_invalid_rank(self):
+        """Test creating a vacation with invalid rank."""
+        demo_user = User.objects.get(username="demo")
+        demo_user.job_position.rank = 1
+        demo_user.job_position.save()
+        demo_user.save()
+        # demo_user.refresh_from_db()
+        staffnet_user = User.objects.get(username="staffnet")
+        response = self.client.post(
+            reverse("vacation_create"),
+            self.vacation_request,
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data["non_field_errors"][0], "No puedes crear una solicitud para este usuario.")

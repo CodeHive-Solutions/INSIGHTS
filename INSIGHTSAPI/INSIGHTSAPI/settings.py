@@ -90,6 +90,7 @@ INSTALLED_APPS = [
     "payslip",
     "employment_management",
     "vacation",
+    "notifications",
 ]
 
 MIDDLEWARE = [

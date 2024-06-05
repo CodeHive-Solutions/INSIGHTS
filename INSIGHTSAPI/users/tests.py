@@ -66,8 +66,6 @@ class LDAPAuthenticationTest(TestCase):
     def test_login_django(self, called=False):
         """Tests that the login endpoint works as expected."""
         if called:
-            # username = "david.alvarez"
-            # password = "asdf123.+"
             username = "staffnet"
             password = os.environ["StaffNetLDAP"]
             data = {
@@ -80,6 +78,18 @@ class LDAPAuthenticationTest(TestCase):
             refresh = self.client.cookies.get("refresh-token")
             self.assertIsNotNone(token, "No authentication token found in the response")
             self.assertIsNotNone(refresh, "No refresh token found in the response")
+            self.assertEqual(User.objects.count(), 1)
+            user = User.objects.first()
+            if user:
+                self.assertEqual(str(user.username).lower(), username)
+                self.assertEqual(user.email, settings.EMAIL_FOR_TEST)
+                self.assertEqual(user.first_name, "STAFFNET")
+                self.assertEqual(user.last_name, "LDAP")
+                self.assertEqual(user.cedula, "00000000")
+                self.assertEqual(user.job_position.name, "Administrador")
+                self.assertEqual(user.job_position.rank, 8)
+            else:
+                self.fail("User not created.")
             return response
 
     def test_login_update_user_without_windows_user(self):
@@ -124,14 +134,14 @@ class LDAPAuthenticationTest(TestCase):
         response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 401)
 
-# class UserTestCase(BaseTestCase):
+class UserTestCase(BaseTestCase):
 
-#     def test_user_update(self):
-#         """Tests the user update endpoint."""
-#         response = self.client.post(
-#             reverse("update_users"),
-#             {
-#                 "celular": "1234567890",
-#             },
-#         )
-#         self.assertEqual(response.status_code, 200, response.data)
+    def test_get_full_name(self):
+        """Tests that the full name is returned correctly."""
+        user = User(first_name="David", last_name="Alvarez")
+        self.assertEqual(user.get_full_name(), "David Alvarez")
+
+    def test_get_full_name_reversed(self):
+        """Tests that the full name is returned correctly."""
+        user = User(first_name="David", last_name="Alvarez")
+        self.assertEqual(user.get_full_name_reversed(), "Alvarez David ")

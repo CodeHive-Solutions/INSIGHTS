@@ -3,11 +3,12 @@
 import logging
 import sys
 from django.contrib.auth.models import AbstractUser
+from django.core.mail import mail_admins
 from django.db import connections
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from hierarchy.models import Area
+from hierarchy.models import Area, JobPosition
 
 logger = logging.getLogger("exceptions")
 
@@ -111,7 +112,26 @@ class User(AbstractUser):
                 user = User.objects.filter(cedula=self.cedula).first()
                 if user:
                     self.pk = user.pk
-                self.job_title = result[1]
+                job_position = JobPosition.objects.filter(name=result[1]).first()
+                if not job_position:
+                    if "gerente jr" in result[1].lower():
+                        rank = 4
+                    elif "gerente" in result[1].lower():
+                        rank = 3
+                    elif "director" in result[1].lower() or "jefe" in result[1].lower():
+                        rank = 5
+                    elif "coordinador" in result[1].lower():
+                        rank = 6
+                    elif "auxiliar" in result[1].lower():
+                        rank = 7
+                    else:
+                        mail_admins(
+                            "Cargo no encontrado",
+                            f"El cargo {result[1]} no fue encontrado en la base de datos de jerarquía.",
+                        )
+                        rank = 8
+                    job_position = JobPosition.objects.create(name=result[1], rank=rank)
+                self.job_position_id = job_position.id
                 area, _ = Area.objects.get_or_create(name=result[2])
                 self.area_id = area.id
                 if not self.is_superuser:
