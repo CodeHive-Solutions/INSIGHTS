@@ -4,7 +4,27 @@ import React, { useEffect, useRef, forwardRef, useImperativeHandle, useState } f
 import "cally";
 
 //Material UI
-import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button, Box, Typography, Collapse, IconButton } from "@mui/material";
+import {
+    styled,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    Button,
+    Box,
+    Typography,
+    Collapse,
+    IconButton,
+    TextField,
+    MenuItem,
+} from "@mui/material";
+
+// Custom Components
+import { getApiUrl } from "../../assets/getApi";
+
+// Icons
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const useListener = (ref, event, listener) => {
     useEffect(() => {
@@ -70,7 +90,58 @@ const Picker = ({ value, onChange }) => {
 
 const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     const [value, setValue] = useState("");
-    const [collapseDate, setCollapseDate] = useState(false);
+    const [collapseDate, setCollapseDate] = useState(true);
+    const [employeesInCharge, setEmployeesInCharge] = useState([]);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [fileName, setFileName] = useState("Example");
+
+    useEffect(() => {
+        getEmployeesInCharge();
+    }, []);
+
+    const getEmployeesInCharge = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}test/`, {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 500) {
+                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
+                    throw new Error(data.detail);
+                }
+                showSnack("error", data.error, true);
+            } else if (response.status === 200) {
+                setEmployeesInCharge(data.employees);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const VisuallyHiddenInput = styled("input")({
+        clip: "rect(0 0 0 0)",
+        clipPath: "inset(50%)",
+        height: 1,
+        overflow: "hidden",
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        whiteSpace: "nowrap",
+        width: 1,
+    });
+
+    const handleFileInputChange = (event) => {
+        const file = event.target.files[0];
+        setFileName(file.name);
+        setSelectedFile(file);
+    };
 
     const onChange = (event) => {
         if (value === "") {
@@ -88,22 +159,66 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
         }, 200);
     };
 
-    const handleCloseCertification = () => {
+    const handleCloseVacationDialog = () => {
         setOpenVacation(false);
         setValue("");
     };
 
-    const sendCertification = () => {
-        setOpenVacation(false);
+    const handleSubmitVacationRequest = async () => {
+        let body = {};
+        console.log(value);
+        body["start_date"] = value.split("/")[0];
+        body["end_date"] = value.split("/")[1];
+
+        try {
+            const response = await fetch(`${getApiUrl()}test/`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 500) {
+                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
+                    throw new Error(data.detail);
+                }
+                showSnack("error", data.error, true);
+            } else if (response.status === 200) {
+                handleCloseVacationDialog();
+                showSnack("success", "Solicitud de vacaciones enviada correctamente");
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
-        <Dialog maxWidth={"lg"} open={openVacation} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+        <Dialog maxWidth={"lg"} open={openVacation} onClose={handleCloseVacationDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
             <DialogTitle id="alert-dialog-title">{"¿Solicitud de Vacaciones?"}</DialogTitle>
             <DialogContent sx={{ paddingBottom: 0 }}>
-                <DialogContentText id="alert-dialog-description">Selecciona las fechas de inicio y fin de tus vacaciones.</DialogContentText>
-                
+                <DialogContentText id="alert-dialog-description">Selecciona las fechas de inicio y fin de las vacaciones del empleado</DialogContentText>
                 <Box sx={{ p: "2rem" }}>
+                    <TextField select label="Empleado" sx={{ width: "535px", mb: "2rem" }}>
+                        {employeesInCharge.map((employee) => (
+                            <MenuItem key={employee.id} value={employee.id}>
+                                {employee.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+
+                    <Typography color="primary.main" variant="subtitle2">
+                        {fileName}
+                    </Typography>
+                    <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                        SUBIR ARCHIVO
+                        <VisuallyHiddenInput accept=".csv" type="file" onChange={handleFileInputChange} />
+                    </Button>
+
                     <Picker value={value} onChange={onChange} />
                     <Collapse in={!!value}>
                         <Typography sx={{ pt: "2rem" }}>Periodo de vacaciones seleccionado: </Typography>
@@ -114,10 +229,10 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
                 </Box>
             </DialogContent>
             <DialogActions sx={{ display: "flex", justifyContent: "space-between", px: "2rem" }}>
-                <Button variant="contained" onClick={handleCloseCertification}>
+                <Button variant="contained" onClick={handleCloseVacationDialog}>
                     Cancelar
                 </Button>
-                <Button variant="contained" onClick={sendCertification}>
+                <Button variant="contained" onClick={handleSubmitVacationRequest}>
                     Solicitar
                 </Button>
             </DialogActions>
