@@ -12,9 +12,10 @@ class VacationRequest(models.Model):
     )
     start_date = models.DateField()
     end_date = models.DateField()
-    reason = models.TextField()
     request_file = models.FileField(upload_to="vacation_requests/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    hr_approved = models.BooleanField(default=False)
+    hr_approved_at = models.DateTimeField(null=True, blank=True)
     uploaded_by = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="uploaded_requests"
     )

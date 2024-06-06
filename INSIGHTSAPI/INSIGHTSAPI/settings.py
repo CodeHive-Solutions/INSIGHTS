@@ -157,7 +157,7 @@ TEMPLATES = [
 
 admins = os.getenv("ADMINS", "")
 
-if "test" in sys.argv:
+if "test" in sys.argv or ALLOWED_HOSTS[0].find("-dev") != -1:
     ADMINS = []
 else:
     ADMINS = (
