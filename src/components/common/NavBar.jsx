@@ -10,6 +10,7 @@ import { getApiUrl } from "../../assets/getApi";
 import MyAccountDialog from "../shared/MyAccount";
 import InactivityDetector from "../shared/InactivityDetector";
 import VacationsRequest from "../shared/VacationsRequest";
+import Notifications from "../shared/Notifications";
 
 // Material-UI
 import {
@@ -37,6 +38,7 @@ import {
     Collapse,
     TextField,
     Divider,
+    Badge,
 } from "@mui/material";
 
 // Icons
@@ -56,6 +58,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DescriptionIcon from "@mui/icons-material/Description";
 import TopicIcon from "@mui/icons-material/Topic";
 import LuggageIcon from "@mui/icons-material/Luggage";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
@@ -86,6 +89,9 @@ const Navbar = () => {
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
     const [openVacation, setOpenVacation] = useState(false);
+    const [anchorNotification, setAnchorNotification] = useState(null);
+    const openNotification = Boolean(anchorNotification);
+    const [notifications, setNotifications] = useState([]);
 
     const servicesPermission =
         permissions &&
@@ -178,6 +184,33 @@ const Navbar = () => {
         );
     }
 
+    const getNotifications = async () => {
+        try {
+            const response = await fetch(`${getApiUrl()}notifications/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 500) {
+                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
+                    throw new Error(data.detail);
+                }
+                showSnack("error", data.error, true);
+            } else if (response.status === 200) {
+                setNotifications(data.notifications);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    useEffect(() => {
+        getNotifications();
+    }, []);
+
     const handleCloseSnack = () => setOpenSnack(false);
 
     const handleOpenCertification = () => setOpenCertification(true);
@@ -206,6 +239,10 @@ const Navbar = () => {
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
+    };
+
+    const handleOpenNotification = (event) => {
+        setAnchorNotification(event.currentTarget);
     };
 
     const handleClickUtils = (event) => {
@@ -330,6 +367,12 @@ const Navbar = () => {
         <>
             <InactivityDetector handleLogout={handleLogout} />
             <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} />
+            <Notifications
+                notifications={notifications}
+                setAnchorNotification={setAnchorNotification}
+                anchorNotification={anchorNotification}
+                openNotification={openNotification}
+            />
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>
@@ -441,7 +484,21 @@ const Navbar = () => {
                             Servicios
                         </Button>
                     ) : null}
-                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
+                        <Tooltip title="Mis Notificaciones">
+                            <Badge badgeContent={notifications?.length || 0} color="primary" overlap="circular" variant="dot">
+                                <IconButton
+                                    onClick={handleOpenNotification}
+                                    size="small"
+                                    sx={{ ml: 2 }}
+                                    aria-controls={openNotification ? "notification-menu" : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={openNotification ? "true" : undefined}
+                                >
+                                    <NotificationsIcon sx={{ width: 30, height: 30 }} />
+                                </IconButton>
+                            </Badge>
+                        </Tooltip>
                         <Tooltip title="Mi Cuenta">
                             <IconButton
                                 onClick={handleClick}

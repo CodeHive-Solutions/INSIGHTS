@@ -24,7 +24,7 @@ import {
 import { getApiUrl } from "../../assets/getApi";
 
 // Icons
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
 
 const useListener = (ref, event, listener) => {
     useEffect(() => {
@@ -93,7 +93,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     const [collapseDate, setCollapseDate] = useState(true);
     const [employeesInCharge, setEmployeesInCharge] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [fileName, setFileName] = useState("Example");
+    const [fileName, setFileName] = useState("SUBIR CARTA DE SOLICITUD DE VACACIONES");
 
     useEffect(() => {
         getEmployeesInCharge();
@@ -162,22 +162,22 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     const handleCloseVacationDialog = () => {
         setOpenVacation(false);
         setValue("");
+        setFileName("SUBIR CARTA DE SOLICITUD DE VACACIONES");
+        setSelectedFile(null);
     };
 
     const handleSubmitVacationRequest = async () => {
-        let body = {};
-        console.log(value);
-        body["start_date"] = value.split("/")[0];
-        body["end_date"] = value.split("/")[1];
+        const formData = new FormData();
+        formData.append("request_file", selectedFile);
+        formData.append("start_date", value.split("/")[0]);
+        formData.append("end_date", value.split("/")[1]);
+        formData.append("user", 1); // Hardcoded for now
 
         try {
-            const response = await fetch(`${getApiUrl()}test/`, {
+            const response = await fetch(`${getApiUrl()}vacation/`, {
                 method: "POST",
                 credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body),
+                body: formData,
             });
 
             const data = await response.json();
@@ -201,9 +201,9 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
         <Dialog maxWidth={"lg"} open={openVacation} onClose={handleCloseVacationDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
             <DialogTitle id="alert-dialog-title">{"¿Solicitud de Vacaciones?"}</DialogTitle>
             <DialogContent sx={{ paddingBottom: 0 }}>
-                <DialogContentText id="alert-dialog-description">Selecciona las fechas de inicio y fin de las vacaciones del empleado</DialogContentText>
-                <Box sx={{ p: "2rem" }}>
-                    <TextField select label="Empleado" sx={{ width: "535px", mb: "2rem" }}>
+                <DialogContentText id="alert-dialog-description"></DialogContentText>
+                <Box sx={{ p: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
+                    <TextField select label="Empleado" sx={{ width: "535px" }}>
                         {employeesInCharge.map((employee) => (
                             <MenuItem key={employee.id} value={employee.id}>
                                 {employee.name}
@@ -211,13 +211,12 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
                         ))}
                     </TextField>
 
-                    <Typography color="primary.main" variant="subtitle2">
-                        {fileName}
-                    </Typography>
-                    <Button component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                        SUBIR ARCHIVO
-                        <VisuallyHiddenInput accept=".csv" type="file" onChange={handleFileInputChange} />
-                    </Button>
+                    <Box>
+                        <Button sx={{ width: "535px" }} component="label" variant="contained" startIcon={<UploadFileIcon />}>
+                            {fileName}
+                            <VisuallyHiddenInput accept=".pdf" type="file" onChange={handleFileInputChange} />
+                        </Button>
+                    </Box>
 
                     <Picker value={value} onChange={onChange} />
                     <Collapse in={!!value}>

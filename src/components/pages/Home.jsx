@@ -1,4 +1,4 @@
-import { useEffect, useState, useLocation } from "react";
+import React, { useEffect, useState, useLocation } from "react";
 
 // Libraries and Hooks
 import { useInView } from "react-intersection-observer";
@@ -9,7 +9,7 @@ import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 
 // Material-UI
-import { Typography, Box, Container, useMediaQuery, Card } from "@mui/material";
+import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
 
 // Media
 import realBenefit2 from "../../images/benefits/benefit-1.png";
@@ -17,21 +17,20 @@ import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import prosecutor from "../../images/home-carousel/prosecutor.png";
-import Avatar from "../../images/home-carousel/avatar.jpg";
-import water2 from "../../images/home-carousel/water-2.png";
+import AvatarImage from "../../images/home-carousel/avatar.jpg";
 import water3 from "../../images/home-carousel/water-3.png";
 import securityPractices from "../../images/home-carousel/security-practices.png";
 import ranking from "../../images/home-carousel/ranking.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
-
+import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: socialSecurityCertificate },
     { image: securityAdvices },
     { image: ranking },
     { image: securityPractices },
     { image: water3 },
-    { image: water2 },
     { image: prosecutor },
     { image: ceroDiscrimination },
 ];
@@ -88,7 +87,7 @@ const Home = () => {
 
                 // If image not found, return null
                 return {
-                    image: Avatar,
+                    image: AvatarImage,
                     name: formattedName,
                     subtitle: employee.campana_general,
                 };
