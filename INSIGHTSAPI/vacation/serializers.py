@@ -1,6 +1,5 @@
 """Serializers for the vacation app."""
 
-from os import read
 from rest_framework import serializers
 from users.models import User
 from notifications.utils import create_notification
@@ -10,6 +9,7 @@ from .models import VacationRequest
 class VacationRequestSerializer(serializers.ModelSerializer):
     """Serializer for the vacation request model."""
 
+    start_date = serializers.DurationField
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     uploaded_by = serializers.PrimaryKeyRelatedField(
         read_only=True, default=serializers.CurrentUserDefault()
@@ -39,17 +39,17 @@ class VacationRequestSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         """Return the representation of the vacation request."""
         data = super().to_representation(instance)
-        print(data)
         data["user"] = instance.user.get_full_name()
         data["uploaded_by"] = instance.uploaded_by.get_full_name()
         return data
 
     def validate(self, attrs):
         """Validate the dates of the vacation request."""
-        if attrs["start_date"] > attrs["end_date"]:
-            raise serializers.ValidationError(
-                "La fecha de inicio no puede ser mayor a la fecha de fin."
-            )
+        if "start_date" in attrs and "end_date" in attrs:
+            if attrs["start_date"] > attrs["end_date"]:
+                raise serializers.ValidationError(
+                    "End date cannot be before start date."
+                )
         uploaded_by = (
             self.instance.uploaded_by if self.instance else self.context["request"].user
         )
@@ -76,7 +76,11 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Update the vacation request."""
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
+        allowed_fields = [
+            "hr_approved",
+        ]
+        for field, value in validated_data.items():
+            if field in allowed_fields:
+                setattr(instance, field, value)
         instance.save()
         return instance

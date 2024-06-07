@@ -79,11 +79,22 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_vacation_create_invalid_user(self):
         """Test creating a vacation for the same user."""
-        self.vacation_request["user"] = self.user
+        self.vacation_request["user"] = self.user.pk
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        print(response.data)
-        self.assertEqual(response.data["non_field_errors"][0], "No puedes subir solicitudes para ti mismo.")
+        self.assertEqual(response.data["non_field_errors"][0], "No puedes subir solicitudes para ti mismo.", response.data)
+
+    def test_vacation_hr_approve(self):
+        """Test HR approving a vacation."""
+        self.vacation_request["user"] = User.objects.get(username="demo")
+        self.vacation_request["uploaded_by"] = self.user
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data["hr_approved"])
+        self.assertIsNotNone(response.data["hr_approved_at"])
