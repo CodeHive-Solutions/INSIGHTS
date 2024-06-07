@@ -372,6 +372,7 @@ const Navbar = () => {
                 setAnchorNotification={setAnchorNotification}
                 anchorNotification={anchorNotification}
                 openNotification={openNotification}
+                getNotifications={getNotifications}
             />
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>

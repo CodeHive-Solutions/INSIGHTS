@@ -22,6 +22,8 @@ import {
 
 // Custom Components
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
+import SnackbarAlert from "../common/SnackBarAlert";
 
 // Icons
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -94,6 +96,22 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     const [employeesInCharge, setEmployeesInCharge] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState("SUBIR CARTA DE SOLICITUD DE VACACIONES");
+    const [openSnack, setOpenSnack] = useState(false);
+    const [severity, setSeverity] = useState("success");
+    const [message, setMessage] = useState("");
+
+    const showSnack = (severity, message, error) => {
+        setSeverity(severity);
+        setMessage(message);
+        setOpenSnack(true);
+        if (error) {
+            console.error("error:", message);
+        }
+    };
+
+    const handleCloseSnack = () => {
+        setOpenSnack(false);
+    };
 
     useEffect(() => {
         getEmployeesInCharge();
@@ -109,16 +127,11 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
                 },
             });
 
-            const data = await response.json();
+            await handleError(response);
 
-            if (!response.ok) {
-                if (response.status === 500) {
-                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
-                    throw new Error(data.detail);
-                }
-                showSnack("error", data.error, true);
-            } else if (response.status === 200) {
-                setEmployeesInCharge(data.employees);
+            if (response.status === 200) {
+                const data = await response.json();
+                setEmployeesInCharge(data.data);
             }
         } catch (error) {
             console.error(error);
@@ -180,17 +193,10 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
                 body: formData,
             });
 
-            const data = await response.json();
+            await handleError(response, showSnack);
 
-            if (!response.ok) {
-                if (response.status === 500) {
-                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
-                    throw new Error(data.detail);
-                }
-                showSnack("error", data.error, true);
-            } else if (response.status === 200) {
+            if (response.status === 201) {
                 handleCloseVacationDialog();
-                showSnack("success", "Solicitud de vacaciones enviada correctamente");
             }
         } catch (error) {
             console.error(error);
@@ -198,44 +204,54 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     };
 
     return (
-        <Dialog maxWidth={"lg"} open={openVacation} onClose={handleCloseVacationDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-            <DialogTitle id="alert-dialog-title">{"¿Solicitud de Vacaciones?"}</DialogTitle>
-            <DialogContent sx={{ paddingBottom: 0 }}>
-                <DialogContentText id="alert-dialog-description"></DialogContentText>
-                <Box sx={{ p: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-                    <TextField select label="Empleado" sx={{ width: "535px" }}>
-                        {employeesInCharge.map((employee) => (
-                            <MenuItem key={employee.id} value={employee.id}>
-                                {employee.name}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+        <>
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
 
-                    <Box>
-                        <Button sx={{ width: "535px" }} component="label" variant="contained" startIcon={<UploadFileIcon />}>
-                            {fileName}
-                            <VisuallyHiddenInput accept=".pdf" type="file" onChange={handleFileInputChange} />
-                        </Button>
-                    </Box>
+            <Dialog
+                maxWidth={"lg"}
+                open={openVacation}
+                onClose={handleCloseVacationDialog}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">{"¿Solicitud de Vacaciones?"}</DialogTitle>
+                <DialogContent sx={{ paddingBottom: 0 }}>
+                    <DialogContentText id="alert-dialog-description"></DialogContentText>
+                    <Box sx={{ p: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
+                        <TextField select label="Empleado" sx={{ width: "535px" }}>
+                            {employeesInCharge.map((employee) => (
+                                <MenuItem key={employee.id} value={employee.id}>
+                                    {employee.name}
+                                </MenuItem>
+                            ))}
+                        </TextField>
 
-                    <Picker value={value} onChange={onChange} />
-                    <Collapse in={!!value}>
-                        <Typography sx={{ pt: "2rem" }}>Periodo de vacaciones seleccionado: </Typography>
-                        <Collapse in={collapseDate}>
-                            <span style={{ fontWeight: 600 }}>{value}</span>
+                        <Box>
+                            <Button sx={{ width: "535px" }} component="label" variant="contained" startIcon={<UploadFileIcon />}>
+                                {fileName}
+                                <VisuallyHiddenInput accept=".pdf" type="file" onChange={handleFileInputChange} />
+                            </Button>
+                        </Box>
+
+                        <Picker value={value} onChange={onChange} />
+                        <Collapse in={!!value}>
+                            <Typography sx={{ pt: "2rem" }}>Periodo de vacaciones seleccionado: </Typography>
+                            <Collapse in={collapseDate}>
+                                <span style={{ fontWeight: 600 }}>{value}</span>
+                            </Collapse>
                         </Collapse>
-                    </Collapse>
-                </Box>
-            </DialogContent>
-            <DialogActions sx={{ display: "flex", justifyContent: "space-between", px: "2rem" }}>
-                <Button variant="contained" onClick={handleCloseVacationDialog}>
-                    Cancelar
-                </Button>
-                <Button variant="contained" onClick={handleSubmitVacationRequest}>
-                    Solicitar
-                </Button>
-            </DialogActions>
-        </Dialog>
+                    </Box>
+                </DialogContent>
+                <DialogActions sx={{ display: "flex", justifyContent: "space-between", px: "2rem" }}>
+                    <Button variant="contained" onClick={handleCloseVacationDialog}>
+                        Cancelar
+                    </Button>
+                    <Button variant="contained" onClick={handleSubmitVacationRequest}>
+                        Solicitar
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };
 
