@@ -115,15 +115,13 @@ class User(AbstractUser):
                 job_position = JobPosition.objects.filter(name=result[1]).first()
                 if not job_position:
                     if "gerente jr" in result[1].lower():
-                        rank = 4
-                    elif "gerente" in result[1].lower():
-                        rank = 3
-                    elif "director" in result[1].lower() or "jefe" in result[1].lower():
                         rank = 5
-                    elif "coordinador" in result[1].lower():
+                    elif "gerente" in result[1].lower():
                         rank = 6
-                    elif "auxiliar" in result[1].lower():
-                        rank = 7
+                    elif "director" in result[1].lower() or "jefe" in result[1].lower():
+                        rank = 4
+                    elif "coordinador" in result[1].lower():
+                        rank = 3
                     else:
                         mail_admins(
                             "Cargo no encontrado",

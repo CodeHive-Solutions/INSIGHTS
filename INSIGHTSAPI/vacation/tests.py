@@ -28,11 +28,15 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_vacation_create(self):
         """Test creating a vacation endpoint."""
+        self.vacation_request["uploaded_by"] = self.vacation_request["user"] # This is a security check
+        self.vacation_request["hr_approved"] = True
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        self.assertEqual(response.data["uploaded_by"], self.user.get_full_name())
+        self.assertEqual(response.data["hr_approved"], None)
 
     def test_vacation_list(self):
         """Test listing all vacations endpoint."""
@@ -89,12 +93,26 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_vacation_hr_approve(self):
         """Test HR approving a vacation."""
+        self.user.job_position.name = "GERENTE DE GESTION HUMANA"
+        self.user.job_position.save()
+        self.vacation_request["user"] = User.objects.get(username="demo")
+
+        self.vacation_request["uploaded_by"] = self.user
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"hr_approved": True},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertTrue(response.data["hr_approved"])
+
+    def test_vacation_hr_approve_no_hr(self):
+        """Test HR approving a vacation without being an HR."""
         self.vacation_request["user"] = User.objects.get(username="demo")
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-detail", kwargs={"pk": vacation_object.pk})
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"hr_approved": True},
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(response.data["hr_approved"])
-        self.assertIsNotNone(response.data["hr_approved_at"])
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)

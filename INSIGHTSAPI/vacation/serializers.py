@@ -1,8 +1,10 @@
 """Serializers for the vacation app."""
 
+from tkinter import N
 from rest_framework import serializers
 from users.models import User
 from notifications.utils import create_notification
+from django.utils import timezone
 from .models import VacationRequest
 
 
@@ -29,11 +31,15 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "hr_approved",
             "hr_approved_at",
             "uploaded_by",
+            "status",
+            "comment",
         ]
         read_only_fields = [
-            "uploaded_at" "hr_approved",
+            "hr_approved",
             "hr_approved_at",
+            "status",
             "uploaded_by",
+            "uploaded_at",
         ]
 
     def to_representation(self, instance):
@@ -41,6 +47,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["user"] = instance.user.get_full_name()
         data["uploaded_by"] = instance.uploaded_by.get_full_name()
+        data.pop("request_file")
         return data
 
     def validate(self, attrs):
@@ -48,19 +55,20 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         if "start_date" in attrs and "end_date" in attrs:
             if attrs["start_date"] > attrs["end_date"]:
                 raise serializers.ValidationError(
-                    "End date cannot be before start date."
+                    "La fecha de inicio no puede ser mayor a la fecha de fin."
                 )
         uploaded_by = (
             self.instance.uploaded_by if self.instance else self.context["request"].user
         )
-        if attrs["user"] == uploaded_by:
-            raise serializers.ValidationError(
-                "No puedes subir solicitudes para ti mismo."
-            )
-        if uploaded_by.job_position.rank >= attrs["user"].job_position.rank:
-            raise serializers.ValidationError(
-                "No puedes crear una solicitud para este usuario."
-            )
+        if "user" in attrs:
+            if attrs["user"] == uploaded_by:
+                raise serializers.ValidationError(
+                    "No puedes subir solicitudes para ti mismo."
+                )
+            if attrs["user"].job_position.rank >= uploaded_by.job_position.rank:
+                raise serializers.ValidationError(
+                    "No puedes crear una solicitud para este usuario."
+                )
         return attrs
 
     def create(self, validated_data):
@@ -70,7 +78,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         create_notification(
             user=validated_data["user"],
             title="Nueva solicitud de vacaciones",
-            message="Se ha creado una nueva solicitud de vacaciones para ti.",
+            message="Se ha creado una solicitud de vacaciones para ti, espera la aprobación del departamento de recursos humanos.",
         )
         return vacation_request
 
@@ -78,7 +86,25 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         """Update the vacation request."""
         allowed_fields = [
             "hr_approved",
+            "comment",
         ]
+        if "hr_approved" in validated_data:
+            validated_data["hr_approved_at"] = timezone.now()
+            if validated_data["hr_approved"]:
+                validated_data["status"] = "APPROVED"
+                create_notification(
+                    instance.user,
+                    "Solicitud de vacaciones",
+                    f"Tu solicitud de vacaciones del {instance.start_date} al {instance.end_date} ha sido aprobada. ¡Disfrútalas!",
+                )
+            else:
+                validated_data["status"] = "REJECTED"
+                create_notification(
+                    instance.user,
+                    "Solicitud de vacaciones",
+                    f"Tu solicitud de vacaciones del {instance.start_date} al {instance.end_date} ha sido rechazada debido a: 
+                    {validated_data['comment']}",
+                )
         for field, value in validated_data.items():
             if field in allowed_fields:
                 setattr(instance, field, value)
