@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { styled, TextField, Container, Box, Typography, Button, Collapse, MenuItem } from "@mui/material";
@@ -79,13 +80,10 @@ const Quality = () => {
         setOpenCollapse(false);
     };
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCampaignChange = (event) => {
@@ -105,41 +103,16 @@ const Quality = () => {
             formData.append("folder", callType.current.value);
 
             try {
-                const response = await fetch(`${getApiUrl()}files/call-transfer-list/`, {
+                const response = await fetch(`${getApiUrl().apiUrl}files/call-transfer-list/`, {
                     method: "POST",
                     body: formData,
                     credentials: "include",
                 });
 
                 setLoading(false);
-                if (!response.ok) {
-                    if (response.status === 500) {
-                        showSnack("error", "Lo sentimos, se ha producido un error inesperado.");
-                        throw new Error(response.statusText);
-                    } else if (response.status === 400) {
-                        const data = await response.json();
-                        showSnack("error", data.error);
-                        throw new Error(response.statusText);
-                    } else if (response.status === 422) {
-                        showSnack("error", "El archivo no cumple con el formato.");
-                        throw new Error(response.statusText);
-                    } else if (response.status === 403) {
-                        showSnack("error", "No tiene permiso para realizar esta acción.");
-                        throw new Error(response.statusText);
-                    } else if (response.status === 409) {
-                        showSnack("error", "El archivo ya existe.");
-                        throw new Error(response.statusText);
-                    } else if (response.status === 404) {
-                        showSnack("error", "No se encontraron registros para actualizar.");
-                        throw new Error(response.statusText);
-                    } else if (response.status === 401) {
-                        showSnack("error", "No tiene permiso para realizar esta acción.");
-                        throw new Error(response.statusText);
-                    } else {
-                        showSnack("error", "Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.");
-                    }
-                    throw new Error(response.statusText);
-                }
+
+                await handleError(response, showSnack);
+
                 if (response.status === 200) {
                     const data = await response.json();
                     if (data.fails.length === 0) {
@@ -150,7 +123,9 @@ const Quality = () => {
                     }
                 }
             } catch (error) {
-                console.error(error);
+                if (getApiUrl().environment === "development") {
+                    console.error(error);
+                }
             }
         }
     };

@@ -11,6 +11,7 @@ import MyAccountDialog from "../shared/MyAccount";
 import InactivityDetector from "../shared/InactivityDetector";
 import VacationsRequest from "../shared/VacationsRequest";
 import Notifications from "../shared/Notifications";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import {
@@ -107,20 +108,14 @@ const Navbar = () => {
 
     const refreshToken = async (refreshTimer) => {
         try {
-            const response = await fetch(`${getApiUrl()}token/refresh/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}token/refresh/`, {
                 method: "POST",
                 credentials: "include",
             });
 
-            const data = await response.json();
+            await handleError(response, showSnack);
 
-            if (!response.ok) {
-                if (refreshTimer) {
-                    localStorage.removeItem("refresh-timer-ls");
-                }
-                navigate("/", { replace: true });
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            if (response.status === 200) {
                 if (refreshTimer === null) {
                     localStorage.setItem(
                         "refresh-timer-ls",
@@ -137,7 +132,9 @@ const Navbar = () => {
                 }
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -186,24 +183,21 @@ const Navbar = () => {
 
     const getNotifications = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}notifications/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}notifications/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
+            await handleError(response, showSnack);
 
-            if (!response.ok) {
-                if (response.status === 500) {
-                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
-                    throw new Error(data.detail);
-                }
-                showSnack("error", data.error, true);
-            } else if (response.status === 200) {
-                setNotifications(data.notifications);
+            if (response.status === 200) {
+                const data = await response.json();
+                setNotifications(data);
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -266,32 +260,20 @@ const Navbar = () => {
         emailRef.current.value = "";
     };
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleLogout = async (inactivity) => {
         try {
-            const response = await fetch(`${getApiUrl()}token/destroy/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}token/destroy/`, {
                 method: "POST",
                 credentials: "include",
             });
 
-            if (!response.ok) {
-                localStorage.removeItem("refresh-timer-ls");
-                if (inactivity === true) {
-                    // Pass a parameter to the login component to show an alert
-                    const currentUrl = window.location.href;
-                    navigate("/", { state: { showAlert: true, lastLocation: currentUrl } });
-                } else {
-                    navigate("/");
-                }
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 localStorage.removeItem("refresh-timer-ls");
@@ -304,7 +286,9 @@ const Navbar = () => {
                 }
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -324,7 +308,7 @@ const Navbar = () => {
         }
 
         try {
-            const response = await fetch(`${getApiUrl()}employment-management/send-employment-certification/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}employment-management/send-employment-certification/`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -333,20 +317,17 @@ const Navbar = () => {
                 body: JSON.stringify(body),
             });
 
-            const data = await response.json();
+            await handleError(response, showSnack);
 
-            if (!response.ok) {
-                if (response.status === 500) {
-                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
-                    throw new Error(data.detail);
-                }
-                showSnack("error", data.error, true);
-            } else if (response.status === 200) {
+            if (response.status === 200) {
+                const data = await response.json();
                 setOpenCertification(false);
                 showSnack("success", data.message + " correctamente al correo " + data.email.toLowerCase());
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         } finally {
             setOpenCollapse(false);
         }

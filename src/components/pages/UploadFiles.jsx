@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Typography, Box, Collapse } from "@mui/material";
@@ -33,13 +34,10 @@ const UploadFiles = () => {
         }
     }, []);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const onDrop = useCallback((acceptedFiles) => {
@@ -76,11 +74,11 @@ const UploadFiles = () => {
             formData.append("cedula", cedula);
             let path;
             if (selectedFile.name.includes("meta")) {
-                path = `${getApiUrl()}goals/`;
+                path = `${getApiUrl().apiUrl}goals/`;
             } else if (selectedFile.name.toUpperCase().includes("ROBINSON")) {
-                path = `${getApiUrl()}files/robinson-list/`;
+                path = `${getApiUrl().apiUrl}files/robinson-list/`;
             } else if (selectedFile.name.toUpperCase().includes("BIRTHDAYS")) {
-                path = `${getApiUrl(true)}massive-update`;
+                path = `${getApiUrl(true).apiUrl}massive-update`;
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");
                 setLoading(false);
@@ -94,30 +92,12 @@ const UploadFiles = () => {
                 });
 
                 setLoading(false);
-                if (!response.ok) {
-                    if (response.status === 500) {
-                        showSnack("error", "Lo sentimos, se ha producido un error inesperado.");
-                        throw new Error(response.statusText);
-                    } else if (response.status === 400) {
-                        const data = await response.json();
-                        showSnack("error", data.message);
-                        throw new Error(response.statusText);
-                    } else if (response.status === 403) {
-                        showSnack("error", "No tiene permiso para realizar esta acción.");
-                        throw new Error(response.statusText);
-                    }
 
-                    const data = await response.json();
-                    if (path === `${getApiUrl()}goals/`) {
-                        console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                        showSnack("error", "Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                        throw new Error(response.statusText);
-                    }
-                }
+                await handleError(response, showSnack);
 
                 const data = await response.json();
 
-                if (response.status === 201 && path === `${getApiUrl()}files/robinson-list/`) {
+                if (response.status === 201 && path === `${getApiUrl().apiUrl}files/robinson-list/`) {
                     showSnack(
                         "success",
                         "La importación se ejecutó exitosamente, " +
@@ -125,17 +105,19 @@ const UploadFiles = () => {
                             " registros fueron añadidos.\nRegistros totales en la base de datos: " +
                             data.database_rows
                     );
-                } else if (response.status === 200 && path === `${getApiUrl()}files/robinson-list/`) {
+                } else if (response.status === 200 && path === `${getApiUrl().apiUrl}files/robinson-list/`) {
                     showSnack(
                         "success",
                         "La importación se ejecutó exitosamente, no se encontraron registros por añadir.\nRegistros totales en la base de datos: " + data.database_rows
                     );
-                } else {
+                } else if (response.status === 200) {
                     showSnack("success", "El cargue se subió exitosamente.");
                 }
             } catch (error) {
+                if (getApiUrl().environment === "development") {
+                    console.error(error);
+                }
                 setLoading(false);
-                console.error(error);
             }
         }
     };

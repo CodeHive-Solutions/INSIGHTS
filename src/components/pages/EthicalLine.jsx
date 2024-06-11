@@ -8,6 +8,7 @@ import * as Yup from "yup";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Media
 import ethicalLineBackground from "../../images/ethical-line/ethical-line-background.jpg";
@@ -77,13 +78,11 @@ const EthicalLine = () => {
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
-    const showSnack = (severity, message, error) => {
+
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleSubmit = async (values) => {
@@ -103,7 +102,7 @@ const EthicalLine = () => {
         showSnack("success", "Sugerencia enviada correctamente");
 
         try {
-            const response = await fetch(`${getApiUrl()}services/send-ethical-line/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}services/send-ethical-line/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(rest),
@@ -112,24 +111,15 @@ const EthicalLine = () => {
 
             setLoadingBar(false);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
+                showSnack("success", "Sugerencia enviada correctamente");
             }
         } catch (error) {
-            console.error(error);
-
-            if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
-                showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
-            } else {
-                console.error(error.message);
-                showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
             }
-
             setLoadingBar(false);
         }
     };

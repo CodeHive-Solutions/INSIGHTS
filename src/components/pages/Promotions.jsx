@@ -7,6 +7,7 @@ import { Box, Card, Typography, Container } from "@mui/material";
 import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 const Promotions = () => {
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
@@ -20,19 +21,16 @@ const Promotions = () => {
         setOpenSnack(false);
     };
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`${getApiUrl(true)}profile-picture/${employee.cedula}`, {
+                const imageResponse = await fetch(`${getApiUrl(true).apiUrl}profile-picture/${employee.cedula}`, {
                     method: "GET",
                 });
 
@@ -69,7 +67,9 @@ const Promotions = () => {
                     description: employee.descripcion,
                 };
             } catch (error) {
-                return null; // Handle fetch errors by returning null
+                if (getApiUrl().environment === "development") {
+                    console.error(error);
+                }
             }
         });
 
@@ -78,18 +78,13 @@ const Promotions = () => {
 
     const getBirthdaysId = async () => {
         try {
-            const response = await fetch(`${getApiUrl(true)}profile-picture/birthday`, {
+            const response = await fetch(`${getApiUrl(true).apiUrl}profile-picture/birthday`, {
                 method: "GET",
             });
 
             const data = await response.json();
 
-            if (!response.ok) {
-                if (response.status === 404) {
-                    return;
-                }
-                throw new Error(data.detail);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 const yesterdayBirthdays = data.data.yesterday;
@@ -105,8 +100,9 @@ const Promotions = () => {
                 setTomorrowBirthdays(tomorrowImages);
             }
         } catch (error) {
-            showSnack("error", error.message);
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 

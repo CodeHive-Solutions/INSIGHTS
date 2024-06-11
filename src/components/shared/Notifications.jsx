@@ -3,6 +3,7 @@ import React, { useState } from "react";
 // Custom Components
 import { getApiUrl } from "../../assets/getApi";
 import SnackbarAlert from "../common/SnackBarAlert";
+import { handleError } from "../../assets/handleError";
 
 // Material UI
 import { MenuItem, Menu, Box, Typography, ListItemIcon, ListItemText, Avatar, ListItemAvatar, List, ListItem, Divider, Button, IconButton } from "@mui/material";
@@ -48,12 +49,13 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
     const handleClickOptions = (event, id, notificationStatusOptions) => {
         setNotificationId(id);
         setAnchorElOptions(event.currentTarget);
-        setNotificationStatus(notificationStatusOptions);
+        console.log(notificationStatusOptions);
+        setNotificationStatus(!notificationStatusOptions);
     };
 
     const handleMarkAs = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}/notifications/${notificationId}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}/notifications/${notificationId}`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,39 +64,39 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
                     status: !notificationStatus,
                 }),
             });
-            const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
                 setNotificationStatus(!notificationStatus);
                 setAnchorElOptions(null);
                 getNotifications();
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
     const handleDeleteNotification = async () => {
-        try {
-            const response = await fetch(`${getApiUrl()}/notifications/${notificationId}`, {
+        try {g
+            const response = await fetch(`${getApiUrl().apiUrl}/notifications/${notificationId}`, {
                 method: "DELETE",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                credentials: "include",
             });
-            const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
                 setAnchorElOptions(null);
                 showSnack("Notificación eliminada", "success");
                 getNotifications();
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -129,111 +131,34 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
                     },
                 }}
             >
-                {/* example hardcoded notifications */}
-                <List
-                    sx={{
-                        backgroundColor: "#e3f5fd",
-                        width: "100%",
+                {notifications.map((notification) => (
+                    <List
+                        key={notification.id}
+                        sx={{
+                            backgroundColor: notification.read ? "#f5fafc" : "#e3f5fd",
+                            width: "100%",
 
-                        maxWidth: 400,
-                        "&:hover": {
-                            backgroundColor: "#e3f5fd",
-                            cursor: "pointer",
-                        },
-                    }}
-                >
-                    <ListItem alignItems="flex-start">
-                        <ListItemAvatar>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary="Lorem ipsum dolor sit amet consectetur, adipisicing elit."
-                            secondary={
-                                <Typography sx={{ display: "inline" }} variant="body2" color="gray">
-                                    <span style={{ color: "#131313" }}>Ali Connors</span> — Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor similique
-                                    soluta ipsa architecto voluptatibus nemo consectetur quas, hic odio voluptatem sunt possimus delectus quaerat id, voluptate culpa nam
-                                    natus impedit."
-                                </Typography>
-                            }
-                        />
-                        <IconButton onClick={(event) => handleClickOptions(event, true)}>
-                            <MoreHoriz />
-                        </IconButton>
-                    </ListItem>
-                </List>
-                <List
-                    sx={{
-                        backgroundColor: "#f5fafc",
-                        width: "100%",
-
-                        maxWidth: 400,
-                        "&:hover": {
-                            backgroundColor: "#f5f5f5",
-                            cursor: "pointer",
-                        },
-                    }}
-                >
-                    <ListItem alignItems="flex-start">
-                        <ListItemAvatar>
-                            <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                        </ListItemAvatar>
-                        <ListItemText
-                            primary="Lorem ipsum dolor sit amet consectetur, adipisicing elit."
-                            secondary={
-                                <Typography sx={{ display: "inline" }} variant="body2" color="gray">
-                                    <span style={{ color: "#131313" }}>Ali Connors</span> — Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolor similique
-                                    soluta ipsa architecto voluptatibus nemo consectetur quas, hic odio voluptatem sunt possimus delectus quaerat id, voluptate culpa nam
-                                    natus impedit."
-                                </Typography>
-                            }
-                        />
-                        <IconButton onClick={(event) => handleClickOptions(event, true)}>
-                            <MoreHoriz />
-                        </IconButton>
-                    </ListItem>
-                </List>
-                <Divider variant="inset" component="li" />
-
-                {notifications?.length > 0 ? (
-                    notifications.map((notification) => (
-                        <List
-                            sx={{
-                                backgroundColor: notificationStatus ? "#e3f5fd" : "#f5fafc",
-                                width: "100%",
-
-                                maxWidth: 400,
-                                "&:hover": {
-                                    backgroundColor: "#f5f5f5",
-                                    cursor: "pointer",
-                                },
-                            }}
-                        >
-                            <ListItem alignItems="flex-start">
-                                <ListItemAvatar>
-                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                                </ListItemAvatar>
-                                <ListItemText
-                                    primary={notification.title}
-                                    secondary={
-                                        <Typography sx={{ display: "inline" }} variant="body2" color="gray">
-                                            <span style={{ color: "#131313" }}>{notification.user}</span> — {notification.message}
-                                        </Typography>
-                                    }
-                                />
-                                <IconButton onClick={(event) => handleClickOptions(event, notification.id, true)}>
-                                    <MoreHoriz />
-                                </IconButton>
-                            </ListItem>
-                        </List>
-                    ))
-                ) : (
-                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", p: "2rem" }}>
-                        <Typography color="text.secondary" sx={{ p: "1rem" }}>
-                            No tienes notificaciones
-                        </Typography>
-                        <NotificationsNoneIcon sx={{ fontSize: 50 }} fontSize="large" color="disabled" />
-                    </Box>
-                )}
+                            maxWidth: 400,
+                        }}
+                    >
+                        <ListItem alignItems="flex-start">
+                            <ListItemAvatar>
+                                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                            </ListItemAvatar>
+                            <ListItemText
+                                primary={notification.title}
+                                secondary={
+                                    <Typography sx={{ display: "inline" }} variant="body2" color="gray">
+                                        {notification.message}
+                                    </Typography>
+                                }
+                            />
+                            <IconButton onClick={(event) => handleClickOptions(event, notification.id, notification.read)}>
+                                <MoreHoriz />
+                            </IconButton>
+                        </ListItem>
+                    </List>
+                ))}
             </Menu>
 
             {/* options menu */}

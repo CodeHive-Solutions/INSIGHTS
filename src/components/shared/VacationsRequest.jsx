@@ -100,13 +100,10 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState("");
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseSnack = () => {
@@ -119,7 +116,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
 
     const getEmployeesInCharge = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}test/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}test/`, {
                 method: "GET",
                 credentials: "include",
                 headers: {
@@ -127,14 +124,16 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
                 },
             });
 
-            await handleError(response);
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 const data = await response.json();
                 setEmployeesInCharge(data.data);
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -187,19 +186,21 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
         formData.append("user", 1); // Hardcoded for now
 
         try {
-            const response = await fetch(`${getApiUrl()}vacation/`, {
-                method: "POST",
+            const response = await fetch(`${getApiUrl().apiUrl}services/trigger-error`, {
+                method: "GET",
                 credentials: "include",
-                body: formData,
             });
 
             await handleError(response, showSnack);
 
             if (response.status === 201) {
                 handleCloseVacationDialog();
+                showSnack("success", "Solicitud de vacaciones enviada correctamente.");
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -218,13 +219,13 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
                 <DialogContent sx={{ paddingBottom: 0 }}>
                     <DialogContentText id="alert-dialog-description"></DialogContentText>
                     <Box sx={{ p: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-                        <TextField select label="Empleado" sx={{ width: "535px" }}>
+                        {/* <TextField select label="Empleado" sx={{ width: "535px" }}>
                             {employeesInCharge.map((employee) => (
                                 <MenuItem key={employee.id} value={employee.id}>
                                     {employee.name}
                                 </MenuItem>
                             ))}
-                        </TextField>
+                        </TextField> */}
 
                         <Box>
                             <Button sx={{ width: "535px" }} component="label" variant="contained" startIcon={<UploadFileIcon />}>

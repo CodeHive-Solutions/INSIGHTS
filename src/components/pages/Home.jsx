@@ -7,6 +7,7 @@ import { useInView } from "react-intersection-observer";
 import { getApiUrl } from "../../assets/getApi.js";
 import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
@@ -46,19 +47,16 @@ const Home = () => {
 
     const handleCloseSnack = () => setOpenSnack(false);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`${getApiUrl(true)}profile-picture/${employee.cedula}`, {
+                const imageResponse = await fetch(`${getApiUrl(true).apiUrl}profile-picture/${employee.cedula}`, {
                     method: "GET",
                 });
 
@@ -92,7 +90,9 @@ const Home = () => {
                     subtitle: employee.campana_general,
                 };
             } catch (error) {
-                return null; // Handle fetch errors by returning null
+                if (getApiUrl().environment === "development") {
+                    console.error(error);
+                }
             }
         });
 
@@ -101,20 +101,14 @@ const Home = () => {
 
     const getBirthdaysId = async () => {
         try {
-            const response = await fetch(`${getApiUrl(true)}profile-picture/birthday`, {
+            const response = await fetch(`${getApiUrl(true).apiUrl}profile-picture/birthday`, {
                 method: "GET",
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (response.status === 404) {
-                    return;
-                }
-                throw new Error(data.detail);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
+                const data = await response.json();
                 const yesterdayBirthdays = data.data.yesterday;
                 const todayBirthdays = data.data.today;
                 const tomorrowBirthdays = data.data.tomorrow;
@@ -128,8 +122,9 @@ const Home = () => {
                 setTomorrowBirthdays(tomorrowImages);
             }
         } catch (error) {
-            showSnack("error", error.message);
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 

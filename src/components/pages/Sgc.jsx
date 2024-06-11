@@ -8,6 +8,7 @@ import { Formik, Form, useField, useFormikContext } from "formik";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, MenuItem, styled, Tooltip } from "@mui/material";
@@ -95,20 +96,21 @@ export const Sgc = () => {
 
     const getFiles = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}sgc/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}sgc/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 setRows(data.objects);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -128,13 +130,10 @@ export const Sgc = () => {
     };
     const handleOpenDialog = () => setOpenDialog(true);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
@@ -168,21 +167,21 @@ export const Sgc = () => {
 
     const handleDeleteClick = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}sgc/${id}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}sgc/${id}`, {
                 method: "delete",
                 credentials: "include",
             });
+
+            await handleError(response, showSnack);
             if (response.status === 204) {
                 setRows(rows.filter((row) => row.id !== id));
                 getFiles();
                 showSnack("success", "Se ha eliminado el registro correctamente.");
-            } else {
-                showSnack("error", "Error al eliminar el registro");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
-            setSnackbarMessage("Error al eliminar la meta: " + error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -197,22 +196,23 @@ export const Sgc = () => {
             formData.append("version", newRow.version);
 
             try {
-                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
+                const response = await fetch(`${getApiUrl().apiUrl}sgc/${newRow.id}/`, {
                     method: "PATCH",
                     credentials: "include",
                     body: formData,
                 });
-                const data = await response.json();
-                if (!response.ok) {
-                    throw new Error(data);
-                } else if (response.status === 200) {
+
+                await handleError(response, showSnack);
+
+                if (response.status === 200) {
                     getFiles();
                     showSnack("success", "El archivo ha sido actualizado correctamente.");
                     return data;
                 }
             } catch (error) {
-                console.error(error);
-                showSnack("error", error.message);
+                if (getApiUrl().environment === "development") {
+                    console.error(error);
+                }
             }
         } else {
             try {
@@ -225,18 +225,18 @@ export const Sgc = () => {
                     body: JSON.stringify(newRow),
                 });
 
-                if (!response.ok) {
-                    const data = await response.json();
-                    console.error(data);
-                    throw new Error(response.statusText);
-                } else if (response.status === 200) {
+                await handleError(response, showSnack);
+
+                if (response.status === 200) {
                     const data = await response.json();
                     getFiles();
                     showSnack("success", "El registro ha sido actualizado correctamente.");
                     return data;
                 }
             } catch (error) {
-                console.error(error);
+                if (getApiUrl().environment === "development") {
+                    console.error(error);
+                }
             }
         }
     };
@@ -295,22 +295,23 @@ export const Sgc = () => {
         formData.append("file", selectedFile);
 
         try {
-            const response = await fetch(`${getApiUrl()}sgc/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}sgc/`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
             });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 201) {
+
+            await handleError(response, showSnack);
+
+            if (response.status === 201) {
                 handleCloseDialog();
                 getFiles();
                 showSnack("success", "Se ha cargado el archivo correctamente.");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 

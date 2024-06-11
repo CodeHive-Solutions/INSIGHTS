@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import { useNavigate } from "react-router-dom";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Container, Typography, Box, TextField, MenuItem, Button } from "@mui/material";
@@ -18,9 +19,9 @@ import {
 } from "@mui/x-data-grid";
 
 const AnalisisMetas = () => {
-    const [openSnackbar, setOpenSnackbar] = useState(false);
-    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
-    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [openSnack, setOpenSnack] = useState(false);
+    const [severity, setSeverity] = useState("success");
+    const [message, setMessage] = useState("");
     const [rows, setRows] = useState([]);
     const [yearsArray, setYearsArray] = useState([]);
     const monthRef = useRef();
@@ -75,41 +76,21 @@ const AnalisisMetas = () => {
 
     const getGoals = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals`, {
+            const response = await fetch(`${getApiUrl().apiUrl}goals`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            if (!response.ok) {
-                if (response.status === 500) {
-                    console.error("Lo sentimos, se ha producido un error inesperado.");
-                    setOpenSnackbar(true);
-                    setSnackbarSeverity("error");
-                    setSnackbarMessage("Lo sentimos, se ha producido un error inesperado");
-                    throw new Error(response.statusText);
-                } else if (response.status === 400) {
-                    const data = await response.json();
-                    console.error("Lo sentimos, se ha producido un error inesperado.");
-                    setOpenSnackbar(true);
-                    setSnackbarSeverity("error");
-                    setSnackbarMessage(data.message);
-                    throw new Error(response.statusText);
-                }
-
-                const data = await response.json();
-                console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                setOpenSnackbar(true);
-                setSnackbarSeverity("error");
-                setSnackbarMessage("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                throw new Error(response.statusText);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 const data = await response.json();
                 modifyData(data);
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -279,34 +260,12 @@ const AnalisisMetas = () => {
     const handleFilter = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch(`${getApiUrl()}goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            if (!response.ok) {
-                if (response.status === 500) {
-                    console.error("Lo sentimos, se ha producido un error inesperado.");
-                    setOpenSnackbar(true);
-                    setSnackbarSeverity("error");
-                    setSnackbarMessage("Lo sentimos, se ha producido un error inesperado");
-                    throw new Error(response.statusText);
-                } else if (response.status === 400) {
-                    const data = await response.json();
-                    console.error("Lo sentimos, se ha producido un error inesperado.");
-                    setOpenSnackbar(true);
-                    setSnackbarSeverity("error");
-                    setSnackbarMessage(data.message);
-                    throw new Error(response.statusText);
-                }
-
-                const data = await response.json();
-                console.error("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                setOpenSnackbar(true);
-                setSnackbarSeverity("error");
-                setSnackbarMessage("Message: " + data.message + " Asesor: " + data.Asesor + " Error: " + data.error);
-                throw new Error(response.statusText);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 const data = await response.json();
@@ -336,7 +295,9 @@ const AnalisisMetas = () => {
                 modifyData(data);
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -348,6 +309,12 @@ const AnalisisMetas = () => {
         } else if (selectedValue === "execution" && monthRef.current.value === "" && yearRef.current.value === "") {
             setColumns(executionColumns);
         }
+    };
+
+    const showSnack = (message, severity) => {
+        setMessage(message);
+        setSeverity(severity);
+        setOpenSnack(true);
     };
 
     return (
@@ -414,7 +381,7 @@ const AnalisisMetas = () => {
                 }}
                 getRowId={(row) => row.cedula}
             />
-            <SnackbarAlert open={openSnackbar} onClose={handleCloseSnackbar} severity={snackbarSeverity} message={snackbarMessage} />
+            <SnackbarAlert open={openSnack} onClose={handleCloseSnackbar} severity={severity} message={message} />
         </Container>
     );
 };

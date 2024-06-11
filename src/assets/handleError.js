@@ -4,10 +4,10 @@ export const handleError = async (response, showSnack) => {
     let errorMessage = "Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.";
 
     if (!response.ok) {
-        const data = await response.json();
-
+        
         switch (response.status) {
             case 400:
+                const data = await response.json();
                 const firstKey = Object.keys(data)[0];
                 errorMessage = firstKey ? data[firstKey] : "Por favor, verifica la información ingresada y vuelve a intentarlo.";
                 break;
@@ -28,7 +28,8 @@ export const handleError = async (response, showSnack) => {
                 errorMessage = "Lo sentimos, se ha producido un error inesperado.";
                 break;
             default:
-                errorMessage = data.error || "Ocurrió un error inesperado.";
+                const defaultData = await response.json();
+                errorMessage = defaultData.error || "Ocurrió un error inesperado.";
         }
         showSnack("error", errorMessage);
         throw new Error(errorMessage);
