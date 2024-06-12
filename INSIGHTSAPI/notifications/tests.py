@@ -20,17 +20,14 @@ class NotificationTests(BaseTestCase):
         self.assertEqual(response.data[0]["message"], "Test notification")
 
     def test_mark_notification_as_read(self):
-        url = reverse("mark-notification-as-read", args=[self.notification.id])
-        response = self.client.post(url)
+        url = reverse("notifications-patch", args=[self.notification.id])
+        response = self.client.patch(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_mark_nonexistent_notification_as_read(self):
-        url = reverse(
-            "mark-notification-as-read", args=[999]
-        )  # non-existent notification ID
-        response = self.client.post(url)
-
+        url = reverse("notifications-patch", args=[999])  # non-existent notification ID
+        response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
         self.assertEqual(response.data["error"], "Notification not found")
 
@@ -43,7 +40,7 @@ class NotificationTests(BaseTestCase):
 
     def test_mark_notification_as_read_unauthenticated(self):
         self.logout()
-        url = reverse("mark-notification-as-read", args=[self.notification.id])
-        response = self.client.post(url)
+        url = reverse("notifications-patch", args=[self.notification.id])
+        response = self.client.patch(url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

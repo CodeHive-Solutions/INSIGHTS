@@ -35,7 +35,6 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "comment",
         ]
         read_only_fields = [
-            "hr_approved",
             "hr_approved_at",
             "status",
             "uploaded_by",
@@ -73,6 +72,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create the vacation request."""
+        validated_data.pop("hr_approved", None)
         validated_data["uploaded_by"] = self.context["request"].user
         vacation_request = super().create(validated_data)
         create_notification(
@@ -86,6 +86,8 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         """Update the vacation request."""
         allowed_fields = [
             "hr_approved",
+            "hr_approved_at",
+            "status",
             "comment",
         ]
         if "hr_approved" in validated_data:
@@ -102,8 +104,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                 create_notification(
                     instance.user,
                     "Solicitud de vacaciones",
-                    f"Tu solicitud de vacaciones del {instance.start_date} al {instance.end_date} ha sido rechazada debido a: 
-                    {validated_data['comment']}",
+                    f"Tu solicitud de vacaciones del {instance.start_date} al {instance.end_date} ha sido rechazada debido a: {validated_data['comment']}",
                 )
         for field, value in validated_data.items():
             if field in allowed_fields:

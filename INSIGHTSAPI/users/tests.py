@@ -87,7 +87,7 @@ class LDAPAuthenticationTest(TestCase):
                 self.assertEqual(user.last_name, "LDAP")
                 self.assertEqual(user.cedula, "00000000")
                 self.assertEqual(user.job_position.name, "Administrador")
-                self.assertEqual(user.job_position.rank, 8)
+                self.assertEqual(user.job_position.rank, 1)
             else:
                 self.fail("User not created.")
             return response
@@ -145,3 +145,19 @@ class UserTestCase(BaseTestCase):
         """Tests that the full name is returned correctly."""
         user = User(first_name="David", last_name="Alvarez")
         self.assertEqual(user.get_full_name_reversed(), "Alvarez David ")
+
+    def test_get_users(self):
+        """Tests that the get_users endpoint works as expected."""
+        demo_user = self.create_demo_user()
+        self.user.job_position.rank = 7
+        self.user.job_position.save()
+        response = self.client.get(reverse("get_users"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}])
+
+    def test_get_user_higher_rank(self):
+        """Tests that the get_users endpoint works as expected."""
+        self.create_demo_user()
+        response = self.client.get(reverse("get_users"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])

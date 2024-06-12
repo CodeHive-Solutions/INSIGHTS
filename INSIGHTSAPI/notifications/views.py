@@ -12,14 +12,13 @@ class NotificationListView(generics.ListAPIView):
     def get_queryset(self):
         return self.request.user.notifications.all().order_by('-created_at')
 
-class MarkNotificationAsReadView(APIView):
+class NotificationPatchView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, notification_id):
-        try:
-            notification = Notification.objects.get(id=notification_id, user=request.user)
+    def patch(self, request, *args, **kwargs):
+        if request.user.notifications.filter(pk=kwargs['pk']).exists():
+            notification = Notification.objects.get(pk=kwargs['pk'])
             notification.read = True
             notification.save()
-            return Response({'status': 'notification marked as read'})
-        except Notification.DoesNotExist:
-            return Response({'error': 'Notification not found'}, status=404)
+            return Response(status=200)
+        return Response({'error': 'Notification not found'}, status=404)

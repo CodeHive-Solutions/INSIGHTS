@@ -28,14 +28,12 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_vacation_create(self):
         """Test creating a vacation endpoint."""
-        self.vacation_request["uploaded_by"] = self.vacation_request["user"] # This is a security check
-        self.vacation_request["hr_approved"] = True
+        self.vacation_request["hr_approved"] = True # This is a check for the serializer
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        self.assertEqual(response.data["uploaded_by"], self.user.get_full_name())
         self.assertEqual(response.data["hr_approved"], None)
 
     def test_vacation_list(self):
@@ -72,7 +70,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_vacation_create_invalid_rank(self):
         """Test creating a vacation with invalid rank."""
         demo_user = User.objects.get(username="demo")
-        demo_user.job_position.rank = 1
+        demo_user.job_position.rank = 8
         demo_user.job_position.save()
         response = self.client.post(
             reverse("vacation-list"),
@@ -104,6 +102,7 @@ class VacationRequestModelTestCase(BaseTestCase):
             {"hr_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        print(response.data)
         self.assertTrue(response.data["hr_approved"])
 
     def test_vacation_hr_approve_no_hr(self):

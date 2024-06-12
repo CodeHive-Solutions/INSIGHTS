@@ -127,7 +127,7 @@ class User(AbstractUser):
                             "Cargo no encontrado",
                             f"El cargo {result[1]} no fue encontrado en la base de datos de jerarquía.",
                         )
-                        rank = 8
+                        rank = 1
                     job_position = JobPosition.objects.create(name=result[1], rank=rank)
                 self.job_position_id = job_position.id
                 area, _ = Area.objects.get_or_create(name=result[2])
