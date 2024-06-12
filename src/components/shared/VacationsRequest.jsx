@@ -18,6 +18,7 @@ import {
     IconButton,
     TextField,
     MenuItem,
+    Autocomplete,
 } from "@mui/material";
 
 // Custom Components
@@ -99,6 +100,8 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     const [openSnack, setOpenSnack] = useState(false);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState("");
+    const [valueAutocomplete, setValueAutocomplete] = useState(null); // [value, setValue
+    const userSelected = useRef(null);
 
     const showSnack = (severity, message) => {
         setSeverity(severity);
@@ -116,19 +119,17 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
 
     const getEmployeesInCharge = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}test/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}users/get-users/`, {
                 method: "GET",
                 credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
             });
 
             await handleError(response, showSnack);
 
             if (response.status === 200) {
                 const data = await response.json();
-                setEmployeesInCharge(data.data);
+                // format the data to put it in the autocomplete
+                setEmployeesInCharge(data.map((item) => ({ id: item.id, label: item.name })));
             }
         } catch (error) {
             if (getApiUrl().environment === "development") {
@@ -179,16 +180,18 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
     };
 
     const handleSubmitVacationRequest = async () => {
+        console.log(valueAutocomplete);
         const formData = new FormData();
         formData.append("request_file", selectedFile);
         formData.append("start_date", value.split("/")[0]);
         formData.append("end_date", value.split("/")[1]);
-        formData.append("user", 1); // Hardcoded for now
+        formData.append("user", valueAutocomplete.id);
 
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}services/trigger-error`, {
-                method: "GET",
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
+                method: "POST",
                 credentials: "include",
+                body: formData,
             });
 
             await handleError(response, showSnack);
@@ -219,13 +222,16 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
                 <DialogContent sx={{ paddingBottom: 0 }}>
                     <DialogContentText id="alert-dialog-description"></DialogContentText>
                     <Box sx={{ p: "2rem", display: "flex", flexDirection: "column", gap: "2rem" }}>
-                        {/* <TextField select label="Empleado" sx={{ width: "535px" }}>
-                            {employeesInCharge.map((employee) => (
-                                <MenuItem key={employee.id} value={employee.id}>
-                                    {employee.name}
-                                </MenuItem>
-                            ))}
-                        </TextField> */}
+                        <Autocomplete
+                            disablePortal
+                            onChange={(event, newValue) => {
+                                setValueAutocomplete(newValue);
+                            }}
+                            id="combo-box-demo"
+                            options={employeesInCharge}
+                            sx={{ width: "max-width" }}
+                            renderInput={(params) => <TextField {...params} label="Empleado" />}
+                        />
 
                         <Box>
                             <Button sx={{ width: "535px" }} component="label" variant="contained" startIcon={<UploadFileIcon />}>

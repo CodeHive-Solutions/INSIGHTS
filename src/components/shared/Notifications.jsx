@@ -32,7 +32,7 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
         setAnchorNotification(null);
     };
 
-    const showSnack = (message, severity) => {
+    const showSnack = (severity, message) => {
         setMessage(message);
         setSeverity(severity);
         setOpenSnack(true);
@@ -80,7 +80,7 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
     };
 
     const handleDeleteNotification = async () => {
-        try {g
+        try {
             const response = await fetch(`${getApiUrl().apiUrl}/notifications/${notificationId}`, {
                 method: "DELETE",
                 credentials: "include",
@@ -113,7 +113,6 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
                 PaperProps={{
                     elevation: 0,
                     sx: {
-                        overflow: "visible",
                         filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
                         mt: 1.5,
                         "&:before": {
@@ -137,7 +136,6 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
                         sx={{
                             backgroundColor: notification.read ? "#f5fafc" : "#e3f5fd",
                             width: "100%",
-
                             maxWidth: 400,
                         }}
                     >
