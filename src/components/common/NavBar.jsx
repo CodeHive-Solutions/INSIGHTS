@@ -60,6 +60,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import TopicIcon from "@mui/icons-material/Topic";
 import LuggageIcon from "@mui/icons-material/Luggage";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
@@ -104,7 +105,8 @@ const Navbar = () => {
             permissions.includes("vacancy.view_reference") ||
             permissions.includes("payslip.add_payslip") ||
             permissions.includes("employment_management.view_employmentcertification") ||
-            permissions.includes("goals.add_goals"));
+            permissions.includes("goals.add_goals") ||
+            permissions.includes("vacation.view_vacationrequest"));
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -533,13 +535,13 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {/* <MenuItem onClick={handleOpenAccountDialog}>
+                <MenuItem onClick={handleOpenAccountDialog}>
                     <ListItemIcon>
                         <Avatar />
                     </ListItemIcon>
                     <ListItemText primary="Mi Cuenta" />
                 </MenuItem>
-                <Divider /> */}
+                <Divider />
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
@@ -672,6 +674,14 @@ const Navbar = () => {
                             <TopicIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Certificados Laborales" />
+                    </MenuItem>
+                ) : null}
+                {permissions && permissions.includes("vacation.view_vacationrequest") ? (
+                    <MenuItem onClick={() => navigate("/logged/vacations")}>
+                        <ListItemIcon>
+                            <BeachAccessIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Registro de vacaciones" />
                     </MenuItem>
                 ) : null}
             </Menu>

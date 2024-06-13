@@ -38,6 +38,7 @@ import EmploymentCertification from "./components/pages/EmploymentCertification"
 import ImageMagnifier from "./components/pages/ImageMagnifier";
 import InactivityDetector from "./components/shared/InactivityDetector";
 import Pqrs from "./components/pages/Pqrs";
+import Vacations from "./components/pages/Vacations";
 
 const theme = createTheme({
     typography: {
@@ -161,6 +162,10 @@ const router = createBrowserRouter([
             {
                 path: "pqrs",
                 element: <Pqrs />,
+            },
+            {
+                path: "vacations",
+                element: <Vacations />,
             },
         ],
     },

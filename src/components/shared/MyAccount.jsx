@@ -32,18 +32,6 @@ const personalFields = [
         type: "text",
     },
     {
-        id: "apellidos",
-        label: "Apellidos",
-        name: "apellidos",
-        type: "text",
-    },
-    {
-        id: "nombres",
-        label: "Nombres",
-        name: "nombres",
-        type: "text",
-    },
-    {
         id: "estado_civil",
         label: "Estado civil",
         name: "estado_civil",
@@ -86,20 +74,6 @@ const personalFields = [
         ],
     },
     {
-        id: "estrato",
-        label: "Estrato",
-        name: "estrato",
-        type: "select",
-        options: [
-            { value: 1, label: "Estrato 1" },
-            { value: 2, label: "Estrato 2" },
-            { value: 3, label: "Estrato 3" },
-            { value: 4, label: "Estrato 4" },
-            { value: 5, label: "Estrato 5" },
-            { value: 6, label: "Estrato 6" },
-        ],
-    },
-    {
         id: "tel_fijo",
         label: "Teléfono fijo",
         name: "tel_fijo",
@@ -115,7 +89,7 @@ const personalFields = [
     },
     {
         id: "parentesco",
-        label: "Parentesco",
+        label: "Parentesco del contacto de emergencia",
         name: "parentesco",
         type: "select",
         options: [
@@ -135,7 +109,7 @@ const personalFields = [
     },
     {
         id: "tel_contacto",
-        label: "Teléfono de contacto",
+        label: "Teléfono de contacto de emergencia",
         name: "tel_contacto",
         type: "text",
     },
@@ -199,7 +173,7 @@ const MyAccountDialog = ({ open, onClose }) => {
                     select={myField.type === "select"}
                     helperText={errorText}
                     error={!!errorText}
-                    {...field} 
+                    {...field}
                 >
                     {myField.options &&
                         myField.options.map((option) => (
