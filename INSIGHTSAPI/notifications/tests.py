@@ -44,3 +44,13 @@ class NotificationTests(BaseTestCase):
         response = self.client.patch(url)
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_max_notifications(self):
+        for i in range(13):
+            Notification.objects.create(user=self.user, message=f"Notification {i}")
+
+        url = reverse("notifications-list")
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), 10)
+        self.assertEqual(response.data[0]["message"], "Notification 12")
+        self.assertEqual(response.data[9]["message"], "Notification 3")

@@ -28,15 +28,20 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "end_date",
             "request_file",
             "uploaded_at",
-            "hr_approved",
+            "manager_approbation",
+            "manager_approved_at",
+            "hr_approbation",
             "hr_approved_at",
+            "payroll_approbation",
+            "payroll_approved_at",
             "uploaded_by",
             "status",
             "comment",
         ]
         read_only_fields = [
+            "manager_approved_at",
             "hr_approved_at",
-            "status",
+            "payroll_approved_at",
             "uploaded_by",
             "uploaded_at",
         ]
@@ -47,6 +52,9 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data["user"] = instance.user.get_full_name()
         data["uploaded_by"] = instance.uploaded_by.get_full_name()
         data.pop("request_file")
+        data.pop("manager_approved_at")
+        data.pop("hr_approved_at")
+        data.pop("payroll_approved_at")
         return data
 
     def validate(self, attrs):
@@ -72,40 +80,28 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create the vacation request."""
-        validated_data.pop("hr_approved", None)
+        validated_data.pop("hr_approbation", None)
         validated_data["uploaded_by"] = self.context["request"].user
         vacation_request = super().create(validated_data)
         create_notification(
-            user=validated_data["user"],
             title="Nueva solicitud de vacaciones",
-            message="Se ha creado una solicitud de vacaciones para ti, espera la aprobación del departamento de recursos humanos.",
+            message=f"Se ha subido una nueva solicitud de vacaciones del {validated_data['start_date']} al {validated_data['end_date']} por parte de {validated_data['uploaded_by'].get_full_name()}.",
+            user=validated_data["user"],
         )
         return vacation_request
 
     def update(self, instance, validated_data):
         """Update the vacation request."""
         allowed_fields = [
-            "hr_approved",
+            "manager_approbation",
+            "manager_approved_at",
+            "hr_approbation",
             "hr_approved_at",
+            "payroll_approbation",
+            "payroll_approved_at",
             "status",
             "comment",
         ]
-        if "hr_approved" in validated_data:
-            validated_data["hr_approved_at"] = timezone.now()
-            if validated_data["hr_approved"]:
-                validated_data["status"] = "APPROVED"
-                create_notification(
-                    instance.user,
-                    "Solicitud de vacaciones",
-                    f"Tu solicitud de vacaciones del {instance.start_date} al {instance.end_date} ha sido aprobada. ¡Disfrútalas!",
-                )
-            else:
-                validated_data["status"] = "REJECTED"
-                create_notification(
-                    instance.user,
-                    "Solicitud de vacaciones",
-                    f"Tu solicitud de vacaciones del {instance.start_date} al {instance.end_date} ha sido rechazada debido a: {validated_data['comment']}",
-                )
         for field, value in validated_data.items():
             if field in allowed_fields:
                 setattr(instance, field, value)
