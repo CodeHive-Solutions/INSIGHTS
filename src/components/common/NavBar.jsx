@@ -348,7 +348,10 @@ const Navbar = () => {
 
     return (
         <>
+            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <InactivityDetector handleLogout={handleLogout} />
+            <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
             <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} />
             <Notifications
                 notifications={notifications}
@@ -437,8 +440,7 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-
-                    {cedula === "1000065648" || cedula === "1001185389" ? <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> : null}
+                    <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink>
                     {cedula === "19438555" || cedula === "1032495391" ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (
@@ -540,8 +542,9 @@ const Navbar = () => {
                         <Avatar />
                     </ListItemIcon>
                     <ListItemText primary="Mi Cuenta" />
-                </MenuItem>
+                </MenuItem> 
                 <Divider />
+
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
@@ -685,9 +688,6 @@ const Navbar = () => {
                     </MenuItem>
                 ) : null}
             </Menu>
-            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
-            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
-            <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
         </>
     );
 };

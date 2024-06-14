@@ -12,6 +12,8 @@ export const handleError = async (response, showSnack) => {
                 errorMessage = firstKey ? data[firstKey] : "Por favor, verifica la información ingresada y vuelve a intentarlo.";
                 break;
             case 401:
+                errorMessage = "Su sesión ha expirado. Por favor, inicie sesión nuevamente.";
+                break;
             case 403:
                 errorMessage = "No tiene permiso para realizar esta acción.";
                 break;

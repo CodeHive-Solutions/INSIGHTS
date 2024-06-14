@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Container, Box, Typography, TextField, MenuItem, Button, LinearProgress } from "@mui/material";
-import { Formik, Form, useField, useFormikContext } from "formik";
+import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import SendIcon from "@mui/icons-material/Send";
 import SnackbarAlert from "../common/SnackBarAlert";
@@ -10,7 +9,6 @@ import { getApiUrl } from "../../assets/getApi";
 import { handleError } from "../../assets/handleError";
 
 const areas = [
-    { value: "test", label: "test" },
     { value: "EJECUTIVO", label: "Castañeda Camacho Pablo Cesar - Presidente" },
     { value: "GERENCIA GENERAL", label: "César Alberto Garzón Navas - Gerente General" },
     { value: "GERENCIA DE RIESGO Y CONTROL INTERNO", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
@@ -40,12 +38,11 @@ const Suggestions = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
-    const navigate = useNavigate();
-    const cedula = JSON.parse(localStorage.getItem("cedula"));
+    const permissions = JSON.parse(localStorage.getItem("permissions"));
 
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (cedula !== "1001185389" && cedula !== "1000065648") {
+        if (!permissions || (!permissions.includes("users.upload_robinson_list") && !permissions.includes("goals.add_goals"))) {
             navigate("/logged/home");
         }
     }, []);

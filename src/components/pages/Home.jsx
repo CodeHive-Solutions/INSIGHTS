@@ -24,9 +24,12 @@ import securityPractices from "../../images/home-carousel/security-practices.png
 import ranking from "../../images/home-carousel/ranking.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
 import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
+import riskManagerFarewell from "../../images/home-carousel/risk-manager-farewell.png";
+
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: riskManagerFarewell },
     { image: socialSecurityCertificate },
     { image: securityAdvices },
     { image: ranking },
