@@ -72,14 +72,26 @@ class User(AbstractUser):
 
     def get_full_name(self) -> str:
         """Return the full name of the user."""
+
+        def capitalize_name(name: str) -> str:
+            return " ".join(part.capitalize() for part in name.split())
+
         if self.last_name:
-            return f"{self.first_name} {self.last_name}"
-        return self.first_name
+            return (
+                f"{capitalize_name(self.first_name)} {capitalize_name(self.last_name)}"
+            )
+        return capitalize_name(self.first_name)
 
     def get_full_name_reversed(self) -> str:
         """Return the full name of the user reversed."""
+
+        def capitalize_name(name: str) -> str:
+            return " ".join(part.capitalize() for part in name.split())
+
         if self.last_name:
-            return f"{self.last_name} {self.first_name} "
+            return (
+                f"{capitalize_name(self.last_name)} {capitalize_name(self.first_name)}"
+            )
         return self.first_name
 
     def save(self, *args, **kwargs):

@@ -22,7 +22,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     {"detail": "You do not have permission to perform this action."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
-        if "hr_approbation" in request.data:
+        elif "hr_approbation" in request.data:
             # Check if the user is an HR
             if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
                 return super().partial_update(request, *args, **kwargs)
@@ -31,15 +31,14 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     {"detail": "You do not have permission to perform this action."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
-        if "payroll_approbation" in request.data:
+        elif "payroll_approbation" in request.data:
             # Check if the user is in payroll
             if request.user.has_perm("vacation.payroll_approbation"):
                 return super().partial_update(request, *args, **kwargs)
         # Just allow the owner of the request to update the status
         elif "status" in request.data and request.user == self.get_object().uploaded_by:
             return super().partial_update(request, *args, **kwargs)
-        else:
-            return Response(
-                {"detail": "You do not have permission to perform this action."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        return Response(
+            {"detail": "You do not have permission to perform this action."},
+            status=status.HTTP_403_FORBIDDEN,
+        )

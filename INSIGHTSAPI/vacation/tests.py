@@ -114,10 +114,10 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"status": "CANCELLED"},
+            {"status": "CANCELADA"},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertEqual(response.data["status"], "CANCELLED")
+        self.assertEqual(response.data["status"], "CANCELADA")
 
     def test_vacation_owner_cancel_no_owner(self):
         """Test the owner cancelling a vacation without being the owner."""
@@ -126,7 +126,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"status": "CANCELLED"},
+            {"status": "CANCELADA"},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
@@ -195,3 +195,14 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertTrue(response.data["payroll_approbation"])
+
+    def test_vacation_payroll_approve_no_payroll(self):
+        """Test payroll approving a vacation without being in payroll."""
+        self.vacation_request["user"] = User.objects.get(username="demo")
+        self.vacation_request["uploaded_by"] = self.user
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"payroll_approbation": True},
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
