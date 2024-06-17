@@ -5,7 +5,7 @@ import * as XLSX from "xlsx";
 import { useNavigate } from "react-router-dom";
 
 // Material-UI
-import { Container, Box, Button, Typography, styled, LinearProgress, Fade, Tooltip, Dialog, DialogTitle, DialogContent, TextField, Chip } from "@mui/material";
+import { Container, Box, Button, Typography, styled, LinearProgress, Fade, Tooltip, Dialog, DialogTitle, DialogContent, TextField, Chip, Collapse } from "@mui/material";
 import {
     DataGrid,
     GridActionsCellItem,
@@ -51,13 +51,15 @@ export const Vacations = () => {
     const [loading, setLoading] = useState(false);
     const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
     const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
-    const [idPayslip, setIdPayslip] = useState();
+    const [vacationId, setVacationId] = useState();
     const [disabled, setDisabled] = useState(false);
-    const emailRef = useRef();
+    const [openObservationsInput, setOpenObservationsInput] = useState(false);
+    const observationsRef = useRef();
     const cargo = localStorage.getItem("cargo");
     const managerApprovalPermission = cargo.includes("ANALISTA");
     const hrApprovalPermission = cargo === "GERENTE DE GESTION HUMANA";
     const payrollApprovalPermission = permissions.includes("vacation.payroll_aprobbation");
+    const [buttonType, setButtonType] = useState("button");
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -110,15 +112,15 @@ export const Vacations = () => {
         width: 1,
     });
 
-    const handleResend = async (event) => {
+    const handleApproval = async (event) => {
         event.preventDefault();
         setDisabled(true);
         setLoading(true);
         const formData = new FormData();
-        formData.append("email", emailRef.current.value);
+        formData.append("observations", observationsRef.current.value);
 
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}payslips/${idPayslip}/resend/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacations/${vacationId}/`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
@@ -436,6 +438,14 @@ export const Vacations = () => {
     const handleCloseDialogPayslip = () => {
         setOpenDialogPayslip(false);
         setDisabled(false);
+        setOpenObservationsInput(false);
+        setButtonType("button");
+        setLoading(false);
+    };
+
+    const handleDecline = async () => {
+        setOpenObservationsInput(true);
+        setButtonType("submit");
     };
 
     const handleOpenDialogPayslip = (id) => {
@@ -443,18 +453,8 @@ export const Vacations = () => {
     };
 
     const handleVacancyApproval = (id, field, type) => {
-        if (field === "manager" && !managerApprovalPermission) {
-            showSnack("error", "No tienes permisos para aprobar solicitudes de vacaciones");
-            return;
-        } else if (field === "hr" && !hrApprovalPermission) {
-            showSnack("error", "No tienes permisos para aprobar solicitudes de vacaciones");
-            return;
-        } else if (field === "payroll" && !payrollApprovalPermission) {
-            showSnack("error", "No tienes permisos para aprobar solicitudes de vacaciones");
-            return;
-        }
-
         setOpenDialogPayslip(true);
+        setVacationId(id);
     };
 
     return (
@@ -466,15 +466,35 @@ export const Vacations = () => {
                         Si aprueba la solicitud de vacaciones, el empleado será notificado y se continuara con el proceso de aprobación de la solicitud.
                     </Typography>
                     <Box component="form" onSubmit={handleResend}>
-                        <TextField sx={{ my: "1rem" }} variant="filled" fullWidth id="outlined-multiline-flexible" label="Observaciones" multiline maxRows={4} />
+                        <Collapse in={openObservationsInput}>
+                            <TextField
+                                inputRef={observationsRef}
+                                sx={{ my: "1rem" }}
+                                required={buttonType === "submit"}
+                                disabled={disabled}
+                                variant="filled"
+                                fullWidth
+                                id="outlined-multiline-flexible"
+                                label="Observaciones"
+                                multiline
+                                maxRows={4}
+                            />
+                        </Collapse>
 
                         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mt: "1rem" }}>
                             <Button disabled={disabled} variant="contained" onClick={handleCloseDialogPayslip} color="primary">
                                 Cancelar
                             </Button>
-                            <Button type="submit" disabled={disabled} variant="contained" color="primary">
-                                Aprobar
-                            </Button>
+                            <Box sx={{ display: "flex", gap: "1rem" }}>
+                                <Collapse in={buttonType === "button"}>
+                                    <Button onClick={handleDecline} type={buttonType} disabled={disabled} variant="contained" color="error">
+                                        Rechazar
+                                    </Button>
+                                </Collapse>
+                                <Button type="submit" disabled={disabled} variant="contained" color={buttonType === "submit" ? "error" : "primary"}>
+                                    {buttonType === "submit" ? "Rechazar" : "Aprobar"}
+                                </Button>
+                            </Box>
                         </Box>
                     </Box>
                 </DialogContent>

@@ -80,7 +80,7 @@ const Home = () => {
 
                 if (imageResponse.status === 200) {
                     return {
-                        image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
+                        image: `${getApiUrl(true).apiUrl}profile-picture/${employee.cedula}`,
                         name: formattedName,
                         subtitle: employee.campana_general,
                     };
