@@ -94,6 +94,7 @@ const Navbar = () => {
     const [anchorNotification, setAnchorNotification] = useState(null);
     const openNotification = Boolean(anchorNotification);
     const [notifications, setNotifications] = useState([]);
+    const operationalRiskPermission = permissions && permissions.includes("operational_risk.view_events");
 
     const servicesPermission =
         permissions &&
@@ -441,7 +442,7 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
                     <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink>
-                    {cedula === "19438555" || cedula === "1032495391" ? (
+                    {!operationalRiskPermission ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (
                         <Button
@@ -542,7 +543,7 @@ const Navbar = () => {
                         <Avatar />
                     </ListItemIcon>
                     <ListItemText primary="Mi Cuenta" />
-                </MenuItem> 
+                </MenuItem>
                 <Divider />
 
                 {isAdvisor ? (
@@ -684,7 +685,7 @@ const Navbar = () => {
                         <ListItemIcon>
                             <BeachAccessIcon fontSize="small" />
                         </ListItemIcon>
-                        <ListItemText primary="Registro de vacaciones" />
+                        <ListItemText primary="Registros de vacaciones" />
                     </MenuItem>
                 ) : null}
             </Menu>

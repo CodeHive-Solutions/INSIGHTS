@@ -80,7 +80,7 @@ const Home = () => {
 
                 if (imageResponse.status === 200) {
                     return {
-                        image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
+                        image: `${getApiUrl(true).apiUrl}profile-picture/${employee.cedula}`,
                         name: formattedName,
                         subtitle: employee.campana_general,
                     };
@@ -120,6 +120,7 @@ const Home = () => {
                 const todayImages = await fetchImages(todayBirthdays);
                 const tomorrowImages = await fetchImages(tomorrowBirthdays);
 
+                console.log(yesterdayImages, todayImages, tomorrowImages);
                 setYesterdayBirthdays(yesterdayImages);
                 setTodayBirthdays(todayImages);
                 setTomorrowBirthdays(tomorrowImages);
