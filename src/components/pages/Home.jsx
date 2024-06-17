@@ -120,6 +120,7 @@ const Home = () => {
                 const todayImages = await fetchImages(todayBirthdays);
                 const tomorrowImages = await fetchImages(tomorrowBirthdays);
 
+                console.log(yesterdayImages, todayImages, tomorrowImages);
                 setYesterdayBirthdays(yesterdayImages);
                 setTodayBirthdays(todayImages);
                 setTomorrowBirthdays(tomorrowImages);
