@@ -144,7 +144,7 @@ class UserTestCase(BaseTestCase):
     def test_get_full_name_reversed(self):
         """Tests that the full name is returned correctly."""
         user = User(first_name="David", last_name="Alvarez")
-        self.assertEqual(user.get_full_name_reversed(), "Alvarez David ")
+        self.assertEqual(user.get_full_name_reversed(), "Alvarez David")
 
     def test_get_users(self):
         """Tests that the get_users endpoint works as expected."""
