@@ -38,14 +38,6 @@ const Suggestions = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
-    const permissions = JSON.parse(localStorage.getItem("permissions"));
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        if (!permissions || (!permissions.includes("users.upload_robinson_list") && !permissions.includes("goals.add_goals"))) {
-            navigate("/logged/home");
-        }
-    }, []);
 
     const handleCloseSnack = () => setOpenSnack(false);
 

@@ -64,7 +64,7 @@ const Home = () => {
                 });
 
                 const firstNames = employee.nombres;
-                const lastNames = employee.apellidos;
+                const lastNames = employee.apellidos || "";
 
                 const firstNamesParts = firstNames.split(" ");
                 const lastNamesParts = lastNames.split(" ");
@@ -120,7 +120,6 @@ const Home = () => {
                 const todayImages = await fetchImages(todayBirthdays);
                 const tomorrowImages = await fetchImages(tomorrowBirthdays);
 
-                console.log(yesterdayImages, todayImages, tomorrowImages);
                 setYesterdayBirthdays(yesterdayImages);
                 setTodayBirthdays(todayImages);
                 setTomorrowBirthdays(tomorrowImages);

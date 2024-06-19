@@ -465,7 +465,7 @@ export const Vacations = () => {
                     <Typography color="text.secondary">
                         Si aprueba la solicitud de vacaciones, el empleado será notificado y se continuara con el proceso de aprobación de la solicitud.
                     </Typography>
-                    <Box component="form" onSubmit={handleResend}>
+                    <Box component="form" onSubmit={handleApproval}>
                         <Collapse in={openObservationsInput}>
                             <TextField
                                 inputRef={observationsRef}

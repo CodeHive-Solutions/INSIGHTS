@@ -39,6 +39,7 @@ import ImageMagnifier from "./components/pages/ImageMagnifier";
 import InactivityDetector from "./components/shared/InactivityDetector";
 import Pqrs from "./components/pages/Pqrs";
 import Vacations from "./components/pages/Vacations";
+import PowerBI from "./components/pages/PowerBI";
 
 const theme = createTheme({
     typography: {
@@ -166,6 +167,10 @@ const router = createBrowserRouter([
             {
                 path: "vacations",
                 element: <Vacations />,
+            },
+            {
+                path: "test",
+                element: <PowerBI />,
             },
         ],
     },
