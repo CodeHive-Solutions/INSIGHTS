@@ -1,10 +1,7 @@
 """This view allow to upload an Excel file with the goals of the staff and save them in the db."""
 
-import base64
-import email
 import logging
 import re
-import ssl
 import locale
 from django.core.exceptions import ValidationError
 from django.db import transaction
@@ -14,8 +11,7 @@ from openpyxl import load_workbook
 from rest_framework import status as framework_status
 from rest_framework import viewsets
 from rest_framework.response import Response
-from services.emails import send_email
-from rest_framework.exceptions import PermissionDenied
+from django.core.mail import send_mail
 
 from services.permissions import CustomizableGetDjangoModelViewPermissions
 
@@ -58,6 +54,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 table_info = TableInfo.objects.filter(name=instance.table_goal)
                 accepted_state = "aceptada" if request.data["accepted"] else "rechazada"
                 table_data = ""
+                table_data_plain = ""
                 for table in table_info:
                     table_data += f"""
                     <tr>
@@ -69,10 +66,29 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         <td>{table.collection_account}</td>
                     </tr>
                     """
+                    table_data_plain += f"{table.fringe:<15} | {table.diary_goal:<10} | {table.days:<4} | {table.month_goal:<18} | {table.hours:<7} | {table.collection_account}\n"
                 if "CLARO" in instance.campaign_goal.upper():
-                    send_email(
+                    send_mail(
                         f"Meta {month}",
                         f"""
+                        La meta fue {accepted_state}.
+
+                        Información de la meta:
+
+                        - Cedula: {instance['cedula']}
+                        - Nombres: {instance['name']}
+                        - Campaña: {instance['campaign_goal']}
+                        - Cargo: {instance['job_title_goal']}
+                        - Coordinador: {instance['coordinator_goal']}
+                        - Mes: {instance['goal_date']}
+
+                        Franja           | Meta Diaria | Días | Meta Mes con Pago | Por Hora | Recaudo por Cuenta
+                        -----------------------------------------------------------------------------------------
+                        {table_data_plain}
+                        """,
+                        None,
+                        [user.email],
+                        html_message="""
                         <p style="text-align: start">
                         La meta fue <b>{accepted_state}</b>.<br>
                         
@@ -100,20 +116,33 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             </tr>
                         </table>
                         """,
-                        [user.email],
-                        email_owner="Entrega de metas",
-                        html_content=True,
-                        safe_mode=False,
                     )
                     return Response(
                         {"message": f"La meta fue {accepted_state}."},
                         status=framework_status.HTTP_200_OK,
                     )
                 else:
-                    send_email(
+                    send_mail(
                         f"Meta {month}",
                         f"""
-                        
+                        La meta fue {accepted_state}.
+
+                        Información de la meta:
+
+                        - Cedula: {instance['cedula']}
+                        - Nombres: {instance['name']}
+                        - Campaña: {instance['campaign_goal']}
+                        - Cargo: {instance['job_title_goal']}
+                        - Coordinador: {instance['coordinator_goal']}
+                        - Mes: {instance['goal_date']}
+
+                        Descripción de la Variable a medir | Cantidad
+                        ---------------------------------- | --------
+                        {instance['criteria_goal']:<33} | {instance['quantity_goal']}
+                        """,
+                        None,
+                        [user.email],
+                        html_message=f"""
                         <p style="text-align: start">La meta fue <b>{accepted_state}</b>.<br>
                         Información de la meta:<br>
                         </p>
@@ -136,10 +165,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             </tr>
                         </table>
                         """,
-                        [user.email],
-                        email_owner="Entrega de metas",
-                        html_content=True,
-                        safe_mode=False,
                     )
                     return Response(
                         {"message": "La meta fue aceptada."},
@@ -162,13 +187,30 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 instance.accepted_execution_at = timezone.now()
                 instance.accepted_execution = request.data["accepted_execution"]
                 instance.save()
-                send_email(
+                send_mail(
                     f"Ejecución de meta {month}",
                     f"""
+                    La ejecución de la meta fue {accepted_state}.
+                    
+                    Información de la ejecución de la meta:
+                    
+                    - Cedula: {instance['cedula']}
+                    - Nombres: {instance['name']}
+                    - Campaña: {instance['campaign_execution']}
+                    - Cargo: {instance['job_title_execution']}
+                    - Coordinador: {instance['coordinator_execution']}
+                    - Mes: {instance['execution_date']}
+                    
+                    Clean Desk    | Evaluación | Resultado | Calidad | Total
+                    ------------- | ---------- | --------- | ------- | -----
+                    {instance['clean_desk']:<13} | {instance['evaluation']:<10} | {instance['result']:<9} | {instance['quality']:<7} | {instance['total']}
+                    """,
+                    None,
+                    [user.email],
+                    html_message=f"""
                     <p style="text-align: start">La ejecución de la meta fue <b>{accepted_state}</b>.<br>
-
                     Información de la ejecución de la meta:<br>
-                     <p/>
+                    <p/>
                     <ul style="padding-bottom: 1rem; text-align: start">
                         <li>Cedula: {instance.cedula}</li>
                         <li>Nombres: {instance.name}</li>
@@ -194,10 +236,6 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         </tr>
                     </table>
                     """,
-                    [user.email],
-                    email_owner="Ejecución de metas",
-                    html_content=True,
-                    safe_mode=False,
                 )
                 return Response(
                     {"message": f"La ejecución fue {accepted_state}."},
@@ -501,9 +539,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                                 logger.setLevel(logging.ERROR)
                                 logger.exception("Error: %s", str(error))
                                 return Response(
-                                    {
-                                        "message": "Excel upload Failed."
-                                    },
+                                    {"message": "Excel upload Failed."},
                                     status=framework_status.HTTP_500_INTERNAL_SERVER_ERROR,
                                 )
                         return Response(

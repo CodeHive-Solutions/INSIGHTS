@@ -3,6 +3,7 @@
 import sys
 import ssl
 import logging
+from email.utils import formataddr
 from smtplib import SMTP
 from imaplib import IMAP4_SSL
 from django.conf import settings
@@ -15,9 +16,86 @@ logger = logging.getLogger("requests")
 class CustomEmailBackend(EmailBackend):
     """Custom Email Backend for Django using our own SMTP server"""
 
+    display_name = "INTRANET C&C"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.outbox = []
+
+    def add_signature(self, message):
+        """Add a signature to the email body depending on the content subtype, and add html alternatives if needed"""
+        html_signature = """
+        <table style="width: 100%; border-top: 1px solid #ccc; margin-top: 20px;">
+            <tr id="contact-info">
+                <td style="padding: 10px; width: 35%;">
+                    <a href="https://cyc-bpo.com/">
+                    <img src="https://raw.githubusercontent.com/CodeHive-Solutions/INSIGHTS/a79b9187f5eb34bf1e41111c9f957ed4f75842ba/INSIGHTSAPI/static/images/Logo_cyc_text.png" width="100%" alt="C&C SERVICES S.A.S">
+                    </a>
+                </td>
+                <td style="padding: 20px;">
+                    <strong>C&C SERVICES S.A.S</strong> <br>
+                    https://cyc-bpo.com/ <br>
+                    PBX: (601)7461166-Ext: 8081 <br>
+                    Calle 19 #3-16 | Piso 3-CC Barichara <br>
+                    Bogotá D.C.-Colombia
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding: 10px; font-size: 12px;">
+                    <strong>Aviso de confidencialidad:</strong><br>
+                    Este correo electrónico y cualquier archivo adjunto son confidenciales y pueden contener información privilegiada. Si usted no es el destinatario correcto, por favor notifique al remitente respondiendo este mensaje y elimine inmediatamente este correo electrónico y cualquier archivo adjunto de su sistema. Si está usted recibiendo este correo electrónico por error, no debe copiar este mensaje o divulgar su contenido a ninguna persona.
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding: 10px; font-size: 12px;">
+                    Mensaje generado automáticamente, por favor no responder.
+                </td>
+            </tr>
+        </table>
+        """
+
+        plain_signature = """
+        ---
+        C&C SERVICES S.A.S
+        https://cyc-bpo.com/
+        PBX: (601)7461166-Ext: 8081
+        Calle 19 #3-16 | Piso 3-CC Barichara
+        Bogotá D.C.-Colombia
+
+        Aviso de confidencialidad:
+        Este correo electrónico y cualquier archivo adjunto son confidenciales y pueden contener información privilegiada. Si usted no es el destinatario correcto, por favor notifique al remitente respondiendo este mensaje y elimine inmediatamente este correo electrónico y cualquier archivo adjunto de su sistema. Si está usted recibiendo este correo electrónico por error, no debe copiar este mensaje o divulgar su contenido a ninguna persona.
+
+        Mensaje generado automáticamente, por favor no responder.
+        """
+
+        # Add the appropriate signature based on content_subtype
+        if message.content_subtype == "html":
+            message.body += html_signature
+        else:
+            message.body += plain_signature
+
+        # Ensure HTML signature is added to the HTML alternative part
+        if message.alternatives:
+            has_html_alternative = False
+            for i, (content, mime_type) in enumerate(message.alternatives):
+                if mime_type == "text/html":
+                    message.alternatives[i] = (content + html_signature, mime_type)
+                    has_html_alternative = True
+            if not has_html_alternative:
+                message.alternatives.append(
+                    (message.body.replace("\n", "<br>") + html_signature, "text/html")
+                )
+        else:
+            # If no alternatives, ensure a plain text alternative is added
+            message.alternatives.append(
+                (message.body.replace("\n", "<br>") + html_signature, "text/html")
+            )
+            if message.content_subtype != "html":
+                message.alternatives.append((message.body, "text/plain"))
+
+        # Ensure the message body is plain text if alternatives exist
+        if message.content_subtype == "html" and message.alternatives:
+            message.body = plain_signature
 
     def open(self):
         if self.connection:
@@ -57,6 +135,10 @@ class CustomEmailBackend(EmailBackend):
                     )
                 ):
                     raise Exception(f"Email {message.to} not allowed in test mode")
+
+                self.add_signature(message)
+
+                message.from_email = formataddr((self.display_name, self.username))
                 sent = self._send(message)
                 if sent:
                     num_sent += 1
