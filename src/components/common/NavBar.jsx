@@ -441,7 +441,7 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-                    <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink>
+                    {/* <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> */}
                     {!operationalRiskPermission ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (
@@ -566,12 +566,12 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
                 </MenuItem>
-                <MenuItem onClick={handleOpenVacation}>
+                {/* <MenuItem onClick={handleOpenVacation}>
                     <ListItemIcon>
                         <LuggageIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Solicitud de Vacaciones" />
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -680,14 +680,14 @@ const Navbar = () => {
                         <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
                 ) : null}
-                {permissions && permissions.includes("vacation.view_vacationrequest") ? (
+                {/* {permissions && permissions.includes("vacation.view_vacationrequest") ? (
                     <MenuItem onClick={() => navigate("/logged/vacations")}>
                         <ListItemIcon>
                             <BeachAccessIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Registros de vacaciones" />
                     </MenuItem>
-                ) : null}
+                ) : null} */}
             </Menu>
         </>
     );

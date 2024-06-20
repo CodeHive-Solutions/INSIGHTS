@@ -161,10 +161,6 @@ const router = createBrowserRouter([
                 element: <EmploymentCertification />,
             },
             {
-                path: "pqrs",
-                element: <Pqrs />,
-            },
-            {
                 path: "vacations",
                 element: <Vacations />,
             },
