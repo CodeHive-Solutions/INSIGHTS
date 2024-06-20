@@ -1,7 +1,16 @@
 """This module defines the tests for the contracts app."""
+
 from services.tests import BaseTestCase
 from users.models import User
 from django.contrib.auth.models import Permission
+from django.test import TestCase
+from django.core.management import call_command
+from django.utils import timezone
+from io import StringIO
+from django.conf import settings
+from django.test import override_settings
+from contracts.models import Contract
+from datetime import timedelta
 from .models import Contract
 
 
@@ -124,3 +133,72 @@ class TestContracts(BaseTestCase):
         response = self.client.delete(f"/contracts/{self.contract.id}/")
         self.assertEqual(response.status_code, 204, response.data)
         self.assertEqual(Contract.objects.count(), 0)
+
+
+@override_settings(
+    EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
+)
+class SchedulerTest(TestCase):
+    """Test for scheduler."""
+
+    def test_scheduler(self):
+        """Test scheduler."""
+
+        contract_data = {
+            "name": "Contract 30 Days",
+            "city": "Bogota",
+            "description": "Test",
+            "expected_start_date": timezone.now().date(),
+            "value": 100000,
+            "monthly_cost": 10000,
+            "duration": timezone.now().date(),
+            "contact": "Test",
+            "contact_telephone": "123456789",
+            "start_date": timezone.now().date(),
+            "civil_responsibility_policy": "Test",
+            "compliance_policy": "Test",
+            "insurance_policy": "Test",
+            "renovation_date": timezone.now().date() + timedelta(days=30),
+        }
+
+        contract_30_days = Contract.objects.create(**contract_data)
+
+        # Create a contract with a renovation date 15 days from now
+        contract_data["name"] = "Contract 15 Days"
+        contract_data["renovation_date"] = timezone.now().date() + timedelta(days=15)
+        contract_15_days = Contract.objects.create(**contract_data)
+
+        # Create a contract with a renovation date 7 days from now
+        contract_data["name"] = "Contract 7 Days"
+        contract_data["renovation_date"] = timezone.now().date() + timedelta(days=7)
+        contract_7_days = Contract.objects.create(**contract_data)
+
+        # Create a contract with a renovation date today
+        contract_data["name"] = "Contract Today"
+        contract_data["renovation_date"] = timezone.now().date()
+        contract_today = Contract.objects.create(**contract_data)
+
+        # Run the logic to check for contract renewal
+        stdout = StringIO()
+        management_command_output = call_command("run_scheduler", stdout=stdout)
+
+        self.assertIn(
+            f"Email sent for contract {contract_30_days.name} to ['"
+            + settings.EMAIL_FOR_TEST,
+            stdout.getvalue(),
+        )
+        self.assertIn(
+            f"Email sent for contract {contract_15_days.name} to ['"
+            + settings.EMAIL_FOR_TEST,
+            stdout.getvalue(),
+        )
+        self.assertIn(
+            f"Email sent for contract {contract_7_days.name} to ['"
+            + settings.EMAIL_FOR_TEST,
+            stdout.getvalue(),
+        )
+        self.assertIn(
+            f"Email sent for contract {contract_today.name} to ['"
+            + settings.EMAIL_FOR_TEST,
+            stdout.getvalue(),
+        )

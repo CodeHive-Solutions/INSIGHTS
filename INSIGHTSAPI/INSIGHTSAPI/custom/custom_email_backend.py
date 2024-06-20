@@ -61,18 +61,12 @@ class CustomEmailBackend(EmailBackend):
         PBX: (601)7461166-Ext: 8081
         Calle 19 #3-16 | Piso 3-CC Barichara
         Bogotá D.C.-Colombia
-
+    
         Aviso de confidencialidad:
         Este correo electrónico y cualquier archivo adjunto son confidenciales y pueden contener información privilegiada. Si usted no es el destinatario correcto, por favor notifique al remitente respondiendo este mensaje y elimine inmediatamente este correo electrónico y cualquier archivo adjunto de su sistema. Si está usted recibiendo este correo electrónico por error, no debe copiar este mensaje o divulgar su contenido a ninguna persona.
-
+    
         Mensaje generado automáticamente, por favor no responder.
         """
-
-        # Add the appropriate signature based on content_subtype
-        if message.content_subtype == "html":
-            message.body += html_signature
-        else:
-            message.body += plain_signature
 
         # Ensure HTML signature is added to the HTML alternative part
         if message.alternatives:
@@ -87,15 +81,27 @@ class CustomEmailBackend(EmailBackend):
                 )
         else:
             # If no alternatives, ensure a plain text alternative is added
-            message.alternatives.append(
-                (message.body.replace("\n", "<br>") + html_signature, "text/html")
-            )
-            if message.content_subtype != "html":
+            if message.content_subtype == "html":
+                message.alternatives.append(
+                    (message.body.replace("\n", "<br>") + html_signature, "text/html")
+                )
+            else:
+                message.alternatives.append(
+                    (message.body.replace("\n", "<br>") + html_signature, "text/html")
+                )
                 message.alternatives.append((message.body, "text/plain"))
+
+        # Add the appropriate signature based on content_subtype
+        if message.content_subtype == "html":
+            message.body += html_signature
+        else:
+            message.body += plain_signature
 
         # Ensure the message body is plain text if alternatives exist
         if message.content_subtype == "html" and message.alternatives:
-            message.body = plain_signature
+            message.body = (
+                message.body.replace(html_signature, "").strip() + plain_signature
+            )
 
     def open(self):
         if self.connection:

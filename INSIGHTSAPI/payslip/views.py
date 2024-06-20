@@ -1,17 +1,13 @@
 """Views for the payslip."""
 
-import pdfkit
 import base64
-from faker import Faker
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.decorators import api_view
 
 # from services.emails import send_email
-from django.core import mail
 from users.models import User
-from django.template.loader import render_to_string
 from django.db import connections
 from django.conf import settings
 from .tasks import send_email_with_attachment

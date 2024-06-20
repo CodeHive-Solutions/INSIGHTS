@@ -86,7 +86,7 @@ class PayslipTest(BaseTestCase):
         )
         self.assertEqual(response.data["title"], "SEGUNDA QUINCENA MES DE ENERO 2024")
         self.assertEqual(response.data["identification"], settings.TEST_CEDULA)
-        self.assertEqual(response.data["name"], "HEIBERT STEVEN MOGOLLON MAHECHA")
+        self.assertEqual(response.data["name"], payslip.name)
         self.assertEqual(response.data["area"], "Ejecutivo")
         self.assertEqual(response.data["job_title"], "Cargo #3")
         self.assertEqual(response.data["salary"], "28227321.00")
