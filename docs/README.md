@@ -198,6 +198,19 @@ export default ShoppingCart;
     EMAIL_HOST=your.smtp.server.com
     EMAIL_PORT=your smtp port usually 587
     EMAIL_HOST_PASSWORD=your smtp password
+    EMAILS_ETHICAL_LINE= List of emails separated by commas that will receive the emails (e.g. "email1@example.com", "email2@example.com", etc)
+    EMAIL_FOR_TEST=The email that will receive the test emails (e.g. "email@example.com")
+    TEST_CEDULA=The cedula that will be used for testing purposes (It have to be register in StaffNet) (e.g. "123456789")
+    SERVER_DB=YOUR_DB_SERVER_IP (e.g. "173.16.0.22")
+    INSIGHTS_DB_PASS=YOUR_DB_PASSWORD (e.g. "password")
+    AdminLDAPPassword=YOUR_LDAP_PASSWORD (e.g. "password")
+    ```
+5. In the `settings.py` file, change the `ENV_PATH` variable to the path of the `.env` file
+6. Run the following command to realize the migrations: `python manage.py migrate`
+7. Verify that all has been set up correctly by running the following command: `python manage.py test`
+8. Run the following command to start the backend server: `python manage.py runserver`
+9. The backend server will start running on port 8000 that is to say, you can access the backend by going to `http://server_ip:8000`
+
 ## Migration
 
 ### Frontend:

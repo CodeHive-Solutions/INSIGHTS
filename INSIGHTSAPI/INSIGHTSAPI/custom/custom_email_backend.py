@@ -1,5 +1,3 @@
-"""Custom Email Backend for Django using our own SMTP server"""
-
 import sys
 import ssl
 import logging
@@ -8,6 +6,7 @@ from smtplib import SMTP
 from imaplib import IMAP4_SSL
 from django.conf import settings
 from django.core.mail.backends.smtp import EmailBackend
+from django.core.mail import EmailMultiAlternatives
 
 
 logger = logging.getLogger("requests")
@@ -68,8 +67,8 @@ class CustomEmailBackend(EmailBackend):
         Mensaje generado automáticamente, por favor no responder.
         """
 
-        # Ensure HTML signature is added to the HTML alternative part
-        if message.alternatives:
+        if isinstance(message, EmailMultiAlternatives):
+            # Ensure HTML signature is added to the HTML alternative part
             has_html_alternative = False
             for i, (content, mime_type) in enumerate(message.alternatives):
                 if mime_type == "text/html":
@@ -82,14 +81,14 @@ class CustomEmailBackend(EmailBackend):
         else:
             # If no alternatives, ensure a plain text alternative is added
             if message.content_subtype == "html":
-                message.alternatives.append(
+                message.alternatives = [
                     (message.body.replace("\n", "<br>") + html_signature, "text/html")
-                )
+                ]
             else:
-                message.alternatives.append(
-                    (message.body.replace("\n", "<br>") + html_signature, "text/html")
-                )
-                message.alternatives.append((message.body, "text/plain"))
+                message.alternatives = [
+                    (message.body.replace("\n", "<br>") + html_signature, "text/html"),
+                    (message.body, "text/plain")
+                ]
 
         # Add the appropriate signature based on content_subtype
         if message.content_subtype == "html":
@@ -98,7 +97,7 @@ class CustomEmailBackend(EmailBackend):
             message.body += plain_signature
 
         # Ensure the message body is plain text if alternatives exist
-        if message.content_subtype == "html" and message.alternatives:
+        if message.content_subtype == "html" and isinstance(message, EmailMultiAlternatives):
             message.body = (
                 message.body.replace(html_signature, "").strip() + plain_signature
             )
@@ -119,7 +118,7 @@ class CustomEmailBackend(EmailBackend):
             if not self.fail_silently:
                 raise e
 
-    # Override the send_messages method without changing his working
+    # Override the send_messages method without changing its functionality
     def send_messages(self, email_messages):
         if not email_messages:
             return

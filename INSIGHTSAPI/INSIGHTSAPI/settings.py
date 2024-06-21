@@ -193,7 +193,7 @@ DATABASES = {
         "HOST": os.environ["SERVER_DB"],
         "PORT": "3306",
         "USER": "INSIGHTSUSER",
-        "PASSWORD": os.environ["INSIGHTSMYSQL"],
+        "PASSWORD": os.environ["INSIGHTS_DB_PASS"],
         "NAME": "insights",
     },
     "staffnet": {
@@ -201,7 +201,7 @@ DATABASES = {
         "HOST": os.environ["SERVER_DB"],
         "PORT": "3306",
         "USER": "INSIGHTSUSER",
-        "PASSWORD": os.environ["INSIGHTSMYSQL"],
+        "PASSWORD": os.environ["INSIGHTS_DB_PASS"],
         "NAME": "staffnet",
         "TEST": {"MIRROR": "staffnet"},
     },

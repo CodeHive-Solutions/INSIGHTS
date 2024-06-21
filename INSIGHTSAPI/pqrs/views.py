@@ -45,6 +45,7 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
         if not "description" in self.request.data:
             return Response({"error": "La descripción es requerida"}, status=400)
         response = super().create(request, *args, **kwargs)
+        
         if response.status_code == status.HTTP_201_CREATED:
             options = {
                 "TEST": settings.EMAIL_FOR_TEST,

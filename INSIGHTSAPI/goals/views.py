@@ -129,16 +129,16 @@ class GoalsViewSet(viewsets.ModelViewSet):
 
                         Información de la meta:
 
-                        - Cedula: {instance['cedula']}
-                        - Nombres: {instance['name']}
-                        - Campaña: {instance['campaign_goal']}
-                        - Cargo: {instance['job_title_goal']}
-                        - Coordinador: {instance['coordinator_goal']}
-                        - Mes: {instance['goal_date']}
+                        - Cedula: {instance.cedula}
+                        - Nombres: {instance.name}
+                        - Campaña: {instance.campaign_goal}
+                        - Cargo: {instance.job_title_goal}
+                        - Coordinador: {instance.coordinator_goal}
+                        - Mes: {instance.goal_date}
 
                         Descripción de la Variable a medir | Cantidad
                         ---------------------------------- | --------
-                        {instance['criteria_goal']:<33} | {instance['quantity_goal']}
+                        {instance.criteria_goal:<33} | {instance.quantity_goal}
                         """,
                         None,
                         [user.email],
@@ -194,16 +194,16 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     
                     Información de la ejecución de la meta:
                     
-                    - Cedula: {instance['cedula']}
-                    - Nombres: {instance['name']}
-                    - Campaña: {instance['campaign_execution']}
-                    - Cargo: {instance['job_title_execution']}
-                    - Coordinador: {instance['coordinator_execution']}
-                    - Mes: {instance['execution_date']}
+                    - Cedula: {instance.cedula}
+                    - Nombres: {instance.name}
+                    - Campaña: {instance.campaign_execution}
+                    - Cargo: {instance.job_title_execution}
+                    - Coordinador: {instance.coordinator_execution}
+                    - Mes: {instance.execution_date}
                     
                     Clean Desk    | Evaluación | Resultado | Calidad | Total
                     ------------- | ---------- | --------- | ------- | -----
-                    {instance['clean_desk']:<13} | {instance['evaluation']:<10} | {instance['result']:<9} | {instance['quality']:<7} | {instance['total']}
+                    {instance.clean_desk:<13} | {instance.evaluation:<10} | {instance.result:<9} | {instance.quality:<7} | {instance.total}
                     """,
                     None,
                     [user.email],
