@@ -205,6 +205,7 @@ export const Sgc = () => {
                 await handleError(response, showSnack);
 
                 if (response.status === 200) {
+                    const data = await response.json();
                     getFiles();
                     showSnack("success", "El archivo ha sido actualizado correctamente.");
                     return data;
@@ -216,7 +217,7 @@ export const Sgc = () => {
             }
         } else {
             try {
-                const response = await fetch(`${getApiUrl()}sgc/${newRow.id}/`, {
+                const response = await fetch(`${getApiUrl().apiUrl}sgc/${newRow.id}/`, {
                     method: "PATCH",
                     credentials: "include",
                     headers: {

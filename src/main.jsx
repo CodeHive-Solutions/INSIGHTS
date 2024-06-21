@@ -168,6 +168,10 @@ const router = createBrowserRouter([
                 path: "test",
                 element: <PowerBI />,
             },
+            // {
+            //     path: "pqrs",
+            //     element: <Pqrs />,
+            // },
         ],
     },
 ]);

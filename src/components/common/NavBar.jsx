@@ -442,7 +442,7 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
                     {/* <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> */}
-                    {!operationalRiskPermission ? (
+                    {operationalRiskPermission ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (
                         <Button
