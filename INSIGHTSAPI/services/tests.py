@@ -1,17 +1,13 @@
 """Test for services. """
 
 import os
-from datetime import timedelta
-from io import StringIO
 import requests
 from rest_framework.test import APITestCase
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
-from django.utils import timezone
-from django.core.management import call_command
 from django.conf import settings
-from contracts.models import Contract
 from users.models import User
+from hierarchy.models import Area, JobPosition
 
 
 class BaseTestCase(APITestCase):
@@ -39,6 +35,25 @@ class BaseTestCase(APITestCase):
             email=settings.EMAIL_FOR_TEST,
             first_name="Demo",
             last_name="User",
+        )
+        # Return the user object not the tuple
+        if isinstance(demo_user, tuple):
+            return demo_user[0]
+        return demo_user
+
+    def create_demo_user_admin(self):
+        """Create a demo user with admin permissions."""
+        # Set the id and 
+        demo_user = User.objects.get_or_create(
+            pk=999,
+            username="demo_admin",
+            email=settings.EMAIL_FOR_TEST,
+            first_name="Admin Demo",
+            last_name="User",
+            area=Area.objects.get_or_create(name="Admin")[0],
+            job_position=JobPosition.objects.get_or_create(name="Admin", rank=100)[0],
+            is_staff=True,
+            is_superuser=True,
         )
         # Return the user object not the tuple
         if isinstance(demo_user, tuple):

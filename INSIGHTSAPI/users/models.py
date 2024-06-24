@@ -64,12 +64,6 @@ class User(AbstractUser):
             ("upload_robinson_list", "Can upload robinson list"),
         ]
 
-    def is_boss(self, user):
-        """Return True if the user is the boss of the user."""
-        if user.area == self.area:
-            return True
-        return False
-
     def get_full_name(self) -> str:
         """Return the full name of the user."""
 
@@ -96,7 +90,7 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
-        if not self.pk or self.cedula:
+        if not self.pk or self.cedula != "":
             with connections["staffnet"].cursor() as db_connection:
                 if not self.cedula:
                     db_connection.execute(
@@ -166,13 +160,3 @@ class User(AbstractUser):
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)
-
-
-# @receiver(pre_save, sender=User)
-# def pre_save_user(sender, instance, **kwargs):
-#     print("PRE SAVE")
-#     print(sender.__dict__)
-#     print()
-#     print(instance.__dict__)
-#     print()
-#     print(kwargs)
