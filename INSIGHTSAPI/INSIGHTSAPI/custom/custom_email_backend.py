@@ -87,7 +87,7 @@ class CustomEmailBackend(EmailBackend):
             else:
                 message.alternatives = [
                     (message.body.replace("\n", "<br>") + html_signature, "text/html"),
-                    (message.body, "text/plain")
+                    (message.body, "text/plain"),
                 ]
 
         # Add the appropriate signature based on content_subtype
@@ -97,7 +97,9 @@ class CustomEmailBackend(EmailBackend):
             message.body += plain_signature
 
         # Ensure the message body is plain text if alternatives exist
-        if message.content_subtype == "html" and isinstance(message, EmailMultiAlternatives):
+        if message.content_subtype == "html" and isinstance(
+            message, EmailMultiAlternatives
+        ):
             message.body = (
                 message.body.replace(html_signature, "").strip() + plain_signature
             )
@@ -133,14 +135,13 @@ class CustomEmailBackend(EmailBackend):
             for message in email_messages:
                 if ("test" in sys.argv or settings.DEBUG) and not (
                     all(
-                        "heibert" in str(email).lower()
+                        "heibert.mogollon@cyc-bpo.com" in str(email).lower()
                         or "carreno" in str(email).lower()
                         or "diego.martinez.p@cyc-bpo.com" in str(email).lower()
                         for email in message.to
                     )
                 ):
                     raise Exception(f"Email {message.to} not allowed in test mode")
-
                 self.add_signature(message)
 
                 message.from_email = formataddr((self.display_name, self.username))

@@ -51,7 +51,9 @@ class VacationRequestModelTestCase(BaseTestCase):
         response = self.client.get(reverse("vacation-list"))
         vacation_requests = VacationRequest.objects.filter(user=self.user)
         serializer = VacationRequestSerializer(vacation_requests, many=True)
-        self.assertEqual(response.data, serializer.data, (response.data, serializer.data))
+        self.assertEqual(
+            response.data, serializer.data, (response.data, serializer.data)
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_vacation_list_hr(self):
@@ -71,18 +73,34 @@ class VacationRequestModelTestCase(BaseTestCase):
         """Test listing all vacations endpoint for a manager."""
         self.user.job_position.rank = 5
         self.user.job_position.save()
-        print(self.user.area)
-        print(self.test_user.area)
         self.vacation_request["user"] = self.test_user
         self.vacation_request["uploaded_by"] = self.user
         VacationRequest.objects.create(**self.vacation_request)
+        self.vacation_request["user"] = self.user
+        self.vacation_request["uploaded_by"] = self.test_user
+        VacationRequest.objects.create(**self.vacation_request)
+        # Change the area of the test user to match the user's area
+        demo_user_admin = self.create_demo_user_admin()
+        demo_user_admin.area = self.user.area
+        demo_user_admin.save()
+        demo_user_admin.job_position.rank = 1
+        demo_user_admin.job_position.save()
+        self.vacation_request["user"] = demo_user_admin
+        self.vacation_request["uploaded_by"] = self.test_user
+        VacationRequest.objects.create(**self.vacation_request)
         response = self.client.get(reverse("vacation-list"))
+        print(self.user.job_position.rank, self.user.area, demo_user_admin.area, demo_user_admin.job_position.rank)
         vacation_requests = VacationRequest.objects.filter(
-            Q(uploaded_by__job_position__rank__lt=self.user.job_position.rank) | Q(user=self.user)
+            (Q(uploaded_by=self.user) | Q(user=self.user))
+            | (
+                Q(user__job_position__rank__lt=self.user.job_position.rank)
+                & Q(user__area=self.user.area)
+            )
         )
         serializer = VacationRequestSerializer(vacation_requests, many=True)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3, response.data)
 
     def test_vacation_retrieve(self):
         """Test retrieving a vacation endpoint."""

@@ -13,14 +13,21 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        # Check if the user is a manager
-        if request.user.job_position.rank >= 5:
+        if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
+            queryset = self.queryset.all()
+        elif request.user.job_position.rank >= 5:
+            print(request.user.area)
+            print(VacationRequest.objects.all())
+            for i in VacationRequest.objects.all():
+                print(i.user.area)
             queryset = self.queryset.filter(
                 (Q(uploaded_by=request.user) | Q(user=request.user))
-                & Q(user__job_position__rank__lt=request.user.job_position.rank)
+                | (
+                    Q(user__job_position__rank__lt=request.user.job_position.rank)
+                    & Q(user__area=request.user.area)
+                )
             )
-        elif request.user.job_position.name == "GERENTE DE GESTION HUMANA":
-            queryset = self.queryset.all()
+            print(queryset)
         elif request.user.has_perm("vacation.payroll_approbation"):
             queryset = self.queryset.all()
         else:
