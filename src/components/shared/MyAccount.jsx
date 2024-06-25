@@ -5,6 +5,9 @@ import { Dialog, DialogContent, DialogActions, Button, TextField, Typography, Me
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
+// Custom components and assets
+import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 const initialValues = {
     cedula: "",
     apellidos: "",
@@ -160,6 +163,26 @@ const validationSchema = Yup.object().shape({
 });
 
 const MyAccountDialog = ({ open, onClose }) => {
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+
+    const getInitialValues = async () => {
+        try {
+            const response = await fetch(`${getApiUrl(true).apiUrl}personal-information/${cedula}`, {
+                method: "GET",
+            });
+
+            await handleError(response);
+        } catch (error) {
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
+        }
+    };
+
+    useState(() => {
+        getInitialValues();
+    });
+
     const MyTextFields = () => {
         return personalFields.map((myField) => {
             const [field, meta] = useField(myField);
@@ -217,7 +240,7 @@ const MyAccountDialog = ({ open, onClose }) => {
                     </DialogContent>
                     <DialogActions>
                         <Button variant="contained" onClick={onClose}>
-                            CAncelar
+                            Cancelar
                         </Button>
                         <Button variant="contained" type="submit">
                             Actualizar

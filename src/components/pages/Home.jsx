@@ -21,18 +21,20 @@ import prosecutor from "../../images/home-carousel/prosecutor.png";
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
 import water3 from "../../images/home-carousel/water-3.png";
 import securityPractices from "../../images/home-carousel/security-practices.png";
-import ranking from "../../images/home-carousel/ranking.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
 import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
 import riskManagerFarewell from "../../images/home-carousel/risk-manager-farewell.png";
+import security from "../../images/home-carousel/security.png";
+import drugs from "../../images/home-carousel/drugs.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: security },
+    { image: drugs },
     { image: riskManagerFarewell },
     { image: socialSecurityCertificate },
     { image: securityAdvices },
-    { image: ranking },
     { image: securityPractices },
     { image: water3 },
     { image: prosecutor },

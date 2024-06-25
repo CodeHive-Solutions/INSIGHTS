@@ -352,7 +352,7 @@ const Navbar = () => {
             {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <InactivityDetector handleLogout={handleLogout} />
-            {/* <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} /> */}
+            <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
             {/* <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} /> */}
             {/* <Notifications
                 notifications={notifications}

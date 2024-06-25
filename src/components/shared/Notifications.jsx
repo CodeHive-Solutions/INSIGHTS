@@ -55,7 +55,7 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
 
     const handleMarkAs = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}/notifications/${notificationId}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}/notifications/${notificationId}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -81,7 +81,7 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
 
     const handleDeleteNotification = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}/notifications/${notificationId}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}notifications/${notificationId}/`, {
                 method: "DELETE",
                 credentials: "include",
             });
