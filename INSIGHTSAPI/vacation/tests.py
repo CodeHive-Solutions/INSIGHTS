@@ -89,7 +89,6 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.test_user
         VacationRequest.objects.create(**self.vacation_request)
         response = self.client.get(reverse("vacation-list"))
-        print(self.user.job_position.rank, self.user.area, demo_user_admin.area, demo_user_admin.job_position.rank)
         vacation_requests = VacationRequest.objects.filter(
             (Q(uploaded_by=self.user) | Q(user=self.user))
             | (

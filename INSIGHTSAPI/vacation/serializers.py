@@ -1,10 +1,8 @@
 """Serializers for the vacation app."""
 
-from tkinter import N
 from rest_framework import serializers
 from users.models import User
 from notifications.utils import create_notification
-from django.utils import timezone
 from .models import VacationRequest
 
 
