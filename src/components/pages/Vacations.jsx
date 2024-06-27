@@ -60,6 +60,7 @@ export const Vacations = () => {
     const hrApprovalPermission = cargo === "GERENTE DE GESTION HUMANA";
     const payrollApprovalPermission = permissions.includes("vacation.payroll_aprobbation");
     const [buttonType, setButtonType] = useState("button");
+    const [approvalType, setApprovalType] = useState("");
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -116,23 +117,30 @@ export const Vacations = () => {
         event.preventDefault();
         setDisabled(true);
         setLoading(true);
+
         const formData = new FormData();
-        formData.append("observations", observationsRef.current.value);
+
+        if (buttonType === "submit") {
+            formData.append(approvalType, 0);
+            formData.append("comment", observationsRef.current.value);
+        } else {
+            formData.append(approvalType, 1);
+        }
 
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacations/${vacationId}/`, {
-                method: "POST",
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/${vacationId}/`, {
+                method: "PATCH",
                 credentials: "include",
                 body: formData,
             });
 
             await handleError(response, showSnack);
 
-            if (response.status === 201) {
+            if (response.status === 200) {
                 setLoading(false);
                 setDisabled(false);
-                getPayslips();
-                showSnack("success", "Desprendible reenviado correctamente");
+                getVacations();
+                showSnack("success", "Solicitud de vacaciones actualizada");
                 handleCloseDialogPayslip();
             }
         } catch (error) {
@@ -216,31 +224,11 @@ export const Vacations = () => {
             },
             renderCell: (params) => {
                 if (params.value === "PENDIENTE") {
-                    return (
-                        <Chip
-                            onClick={managerApprovalPermission ? () => handleVacancyApproval(params.id, "manager", "") : null}
-                            icon={<PendingIcon />}
-                            label="Pendiente"
-                        />
-                    );
+                    return <Chip onClick={() => handleVacancyApproval(params.id, "manager_approbation")} icon={<PendingIcon />} label="Pendiente" />;
                 } else if (params.value === "APROBADA") {
-                    return (
-                        <Chip
-                            onClick={managerApprovalPermission ? () => handleVacancyApproval(params.id, "manager", 1) : null}
-                            icon={<CheckCircleIcon />}
-                            label="Aprobada"
-                            color="success"
-                        />
-                    );
+                    return <Chip onClick={() => handleVacancyApproval(params.id, "manager_approbation")} icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
                 }
-                return (
-                    <Chip
-                        onClick={managerApprovalPermission ? () => handleVacancyApproval(params.id, "manager", 0) : null}
-                        icon={<CancelIcon />}
-                        label="Rechazado"
-                        color="error"
-                    />
-                );
+                return <Chip onClick={() => handleVacancyApproval(params.id, "manager_approbation")} icon={<CancelIcon />} label="Rechazado" color="error" />;
             },
         },
         {
@@ -260,20 +248,11 @@ export const Vacations = () => {
             },
             renderCell: (params) => {
                 if (params.value === "PENDIENTE") {
-                    return <Chip onClick={hrApprovalPermission ? () => handleVacancyApproval(params.id, "hr") : null} icon={<PendingIcon />} label="Pendiente" />;
+                    return <Chip onClick={() => handleVacancyApproval(params.id, "hr_approbation")} icon={<PendingIcon />} label="Pendiente" />;
                 } else if (params.value === "APROBADA") {
-                    return (
-                        <Chip
-                            onClick={hrApprovalPermission ? () => handleVacancyApproval(params.id, "hr", 1) : null}
-                            icon={<CheckCircleIcon />}
-                            label="Aprobada"
-                            color="success"
-                        />
-                    );
+                    return <Chip onClick={() => handleVacancyApproval(params.id, "hr_approbation")} icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
                 }
-                return (
-                    <Chip onClick={hrApprovalPermission ? () => handleVacancyApproval(params.id, "hr", 0) : null} icon={<CancelIcon />} label="Rechazada" color="error" />
-                );
+                return <Chip onClick={() => handleVacancyApproval(params.id, "hr_approbation")} icon={<CancelIcon />} label="Rechazada" color="error" />;
             },
         },
         {
@@ -293,31 +272,11 @@ export const Vacations = () => {
             },
             renderCell: (params) => {
                 if (params.value === "PENDIENTE") {
-                    return (
-                        <Chip
-                            onClick={payrollApprovalPermission ? () => handleVacancyApproval(params.id, "payroll", "") : null}
-                            icon={<PendingIcon />}
-                            label="Pendiente"
-                        />
-                    );
+                    return <Chip onClick={() => handleVacancyApproval(params.id, "payroll_approbation")} icon={<PendingIcon />} label="Pendiente" />;
                 } else if (params.value === "APROBADA") {
-                    return (
-                        <Chip
-                            onClick={payrollApprovalPermission ? () => handleVacancyApproval(params.id, "payroll", 1) : null}
-                            icon={<CheckCircleIcon />}
-                            label="Aprobada"
-                            color="success"
-                        />
-                    );
+                    return <Chip onClick={() => handleVacancyApproval(params.id, "payroll_approbation")} icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
                 }
-                return (
-                    <Chip
-                        onClick={payrollApprovalPermission ? () => handleVacancyApproval(params.id, "payroll", 0) : null}
-                        icon={<CancelIcon />}
-                        label="Rechazada"
-                        color="error"
-                    />
-                );
+                return <Chip onClick={() => handleVacancyApproval(params.id, "payroll_approbation")} icon={<CancelIcon />} label="Rechazada" color="error" />;
             },
         },
 
@@ -452,9 +411,10 @@ export const Vacations = () => {
         setIdPayslip(id);
     };
 
-    const handleVacancyApproval = (id, field, type) => {
+    const handleVacancyApproval = (id, approvalType) => {
         setOpenDialogPayslip(true);
         setVacationId(id);
+        setApprovalType(approvalType);
     };
 
     return (
@@ -465,7 +425,7 @@ export const Vacations = () => {
                     <Typography color="text.secondary">
                         Si aprueba la solicitud de vacaciones, el empleado será notificado y se continuara con el proceso de aprobación de la solicitud.
                     </Typography>
-                    <Box component="form" onSubmit={handleApproval}>
+                    <Box component="form">
                         <Collapse in={openObservationsInput}>
                             <TextField
                                 inputRef={observationsRef}
@@ -491,7 +451,13 @@ export const Vacations = () => {
                                         Rechazar
                                     </Button>
                                 </Collapse>
-                                <Button type="submit" disabled={disabled} variant="contained" color={buttonType === "submit" ? "error" : "primary"}>
+                                <Button
+                                    onClick={handleApproval}
+                                    type="submit"
+                                    disabled={disabled}
+                                    variant="contained"
+                                    color={buttonType === "submit" ? "error" : "primary"}
+                                >
                                     {buttonType === "submit" ? "Rechazar" : "Aprobar"}
                                 </Button>
                             </Box>

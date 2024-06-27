@@ -19,24 +19,25 @@ import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import prosecutor from "../../images/home-carousel/prosecutor.png";
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
-import water3 from "../../images/home-carousel/water-3.png";
 import securityPractices from "../../images/home-carousel/security-practices.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
-import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
-import riskManagerFarewell from "../../images/home-carousel/risk-manager-farewell.png";
 import security from "../../images/home-carousel/security.png";
 import drugs from "../../images/home-carousel/drugs.png";
-
+import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
+import environment from "../../images/home-carousel/environment.png";
+import environment2 from "../../images/home-carousel/environment-2.png";
+import lgtbqiaPlus from "../../images/home-carousel/lgtbqia-plus.png";
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: lgtbqiaPlus },
+    { image: environment },
+    { image: environment2 },
+    { image: socialSecurityCertificate },
     { image: security },
     { image: drugs },
-    { image: riskManagerFarewell },
-    { image: socialSecurityCertificate },
     { image: securityAdvices },
     { image: securityPractices },
-    { image: water3 },
     { image: prosecutor },
     { image: ceroDiscrimination },
 ];
