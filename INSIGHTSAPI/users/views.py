@@ -1,75 +1,148 @@
+import os
 import logging
 import requests
 from rest_framework.decorators import api_view
-from rest_framework.decorators import login_required
+from rest_framework.permissions import IsAuthenticated
+from django.core.mail import mail_admins
 from rest_framework.response import Response
 
 logger = logging.getLogger("requests")
 
 
+def login_staffnet():
+    """Do a request to the StaffNet API to login the user."""
+    data = {
+        "user": "staffnet",
+        "password": os.environ["StaffNetLDAP"],
+    }
+    response = requests.post("https://staffnet-api-dev.cyc-bpo.com/login", json=data)
+    if response.status_code != 200:
+        logger.error("Error logging in StaffNet: {}".format(response.text))
+        mail_admins(
+            "Error logging in StaffNet",
+            "Error logging in StaffNet: {}".format(response.text),
+        )
+        return None
+    os.environ["StaffNetToken"] = response.cookies["StaffNet"]
+    return True
+
+
+@api_view(["GET"])
+def get_profile(request):
+    """Do a request to the StaffNet API to get the user profile."""
+    if not request.user.is_authenticated:
+        return Response(
+            {
+                "error": "No tienes permisos para acceder a esta información, por favor inicia sesión."
+            },
+            status=401,
+        )
+
+    if os.environ.get("StaffNetToken") is None:
+        if not login_staffnet():
+            return Response(
+                {
+                    "error": "Encontramos un error obteniendo tu perfil, por favor intenta más tarde."
+                },
+                status=500,
+            )
+    user = request.user
+    response = requests.get(
+        "https://staffnet-api-dev.cyc-bpo.com/personal-information/{}".format(
+            user.cedula
+        ),
+        cookies={"StaffNet": os.environ["StaffNetToken"]},
+    )
+    if response.status_code != 200:
+        logger.error("Error getting user profile: {}".format(response.text))
+        return Response(
+            {
+                "error": "Encontramos un error obteniendo tu perfil, por favor intenta más tarde."
+            },
+            status=500,
+        )
+    return Response(response.json())
+
+
 @api_view(["PATCH"])
-@login_required
 def update_profile(request):
     """Do a request to the StaffNet API to update the user profile."""
-    if (
-        request.data.get("cedula") is None
-        or request.data.get("cedula") is not request.user.cedula
-    ):
+    if not request.user.is_authenticated:
         return Response(
-            {"error": "No tienes permiso para realizar esta acción"}, status=403
+            {
+                "error": "No tienes permisos para acceder a esta información, por favor inicia sesión."
+            },
+            status=401,
         )
+
+    if os.environ.get("StaffNetToken") is None:
+        if not login_staffnet():
+            return Response(
+                {
+                    "error": "Encontramos un error actualizando tu perfil, por favor intenta más tarde."
+                },
+                status=500,
+            )
     user = request.user
-    # Get the user data
+    columns = [
+        "estado_civil",
+        "hijos",
+        "personas_a_cargo",
+        "tel_fijo",
+        "celular",
+        "correo",
+        "contacto_emergencia",
+        "parentesco",
+        "tel_contacto",
+    ]
+
     data = {
         "table": "personal_information",
         "cedula": user.cedula,
-        "value": [
-            request.get("name"),
-            request.get("last_name"),
-            request.get("gender"),
-            request.get("civil_status"),
-            request.get("children"),
-            request.get("dependents"),
-            request.get("stratum"),
-            request.get("phone"),
-            request.get("cellphone"),
-            request.get("email"),
-            request.get("emergency_contact"),
-            request.get("relationship"),
-            request.get("emergency_phone"),
-        ],
-        "column": [
-            "nombres",
-            "apellidos",
-            "genero",
-            "estado_civil",
-            "hijos",
-            "personas_a_cargo",
-            "estrato",
-            "tel_fijo",
-            "celular",
-            "correo",
-            "contacto_emergencia",
-            "parentesco",
-            "tel_contacto",
-        ],
     }
-    # Remove the None values
-    data = {key: value for key, value in data.items() if value is not None}
+
+    data["value"] = []
+    data["column"] = []
+    # Get the values from the request
+    for value in columns:
+        if request.data.get(value) is not None:
+            data["value"].append(request.data.get(value))
+            data["column"].append(value)
+
+    if not data["value"] or not data["column"]:
+        return Response(
+            {
+                "error": "Alguno de los datos ingresados no es válido, por favor verifica e intenta de nuevo."
+            },
+            status=400,
+        )
+
     # Make the request
     response = requests.patch(
-        "https://staffnet.com/api/v1/users/{}/".format(user.id),
-        data=data,
-        headers={"Authorization ": "Bearer {}".format(user.auth_token)},
+        "https://staffnet-api-dev.cyc-bpo.com/update",
+        json=data,
+        cookies={"StaffNet": os.environ["StaffNetToken"]},
     )
     # Check the response
-    if response.status_code != 200:
+    if response.status_code == 400:
+        return Response(
+            {
+                "error": "Alguno de los datos ingresados no es válido, por favor verifica e intenta de nuevo."
+            },
+            status=400,
+        )
+    elif response.status_code != 200:
         logger.error("Error updating user profile: {}".format(response.text))
-        return Response({"error": "Error updating user profile"}, status=500)
+        return Response(
+            {
+                "error": "Encontramos un error actualizando tu perfil, por favor intenta más tarde."
+            },
+            status=500,
+        )
+    return Response({"message": "User profile updated"})
 
 
 # @api_view(['GET'])
-# @login_required
 # def get_users(request):
 #     user_rank = request.user.job_position.rank
 #     if user_rank >= 6:

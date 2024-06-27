@@ -1,8 +1,9 @@
 """Tests for the users app."""
 
 import os
-from services.tests import BaseTestCase
 import ldap  # type: ignore
+import random
+from services.tests import BaseTestCase
 from users.models import User
 from django.test import TestCase
 from django.conf import settings
@@ -134,6 +135,7 @@ class LDAPAuthenticationTest(TestCase):
         response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 401)
 
+
 class UserTestCase(BaseTestCase):
 
     def test_get_full_name(self):
@@ -146,18 +148,34 @@ class UserTestCase(BaseTestCase):
         user = User(first_name="David", last_name="Alvarez")
         self.assertEqual(user.get_full_name_reversed(), "Alvarez David")
 
-    def test_get_users(self):
-        """Tests that the get_users endpoint works as expected."""
-        demo_user = self.create_demo_user()
-        self.user.job_position.rank = 7
-        self.user.job_position.save()
-        response = self.client.get(reverse("get_users"))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}])
+    # def test_get_users(self):
+    #     """Tests that the get_users endpoint works as expected."""
+    #     demo_user = self.create_demo_user()
+    #     self.user.job_position.rank = 7
+    #     self.user.job_position.save()
+    #     response = self.client.get(reverse("get_users"))
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}])
 
-    def test_get_user_higher_rank(self):
-        """Tests that the get_users endpoint works as expected."""
-        self.create_demo_user()
-        response = self.client.get(reverse("get_users"))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [])
+    # def test_get_user_higher_rank(self):
+    #     """Tests that the get_users endpoint works as expected."""
+    #     self.create_demo_user()
+    #     response = self.client.get(reverse("get_users"))
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(response.data, [])
+
+    def test_get_user_profile(self):
+        """Tests that the get_user_profile endpoint works as expected."""
+        self.user.cedula = settings.TEST_CEDULA
+        self.user.save()
+        response = self.client.get(reverse("get_profile"))
+        self.assertEqual(response.status_code, 200, response.data)
+
+    def test_update_user(self):
+        """Tests that the update_user endpoint works as expected."""
+        # Create a random number for cell phone
+        data = {"estado_civil": "Soltero", "hijos": random.randint(0, 999999)}
+        self.user.cedula = settings.TEST_CEDULA
+        self.user.save()
+        response = self.client.patch(reverse("update_profile"), data)
+        self.assertEqual(response.status_code, 200, response.data)
