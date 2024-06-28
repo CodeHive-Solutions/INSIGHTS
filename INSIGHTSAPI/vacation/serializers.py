@@ -49,7 +49,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["user"] = instance.user.get_full_name()
         data["uploaded_by"] = instance.uploaded_by.get_full_name()
-        data.pop("request_file")
+        # data.pop("request_file")
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
         data.pop("payroll_approved_at")

@@ -179,3 +179,13 @@ class UserTestCase(BaseTestCase):
         self.user.save()
         response = self.client.patch(reverse("update_profile"), data)
         self.assertEqual(response.status_code, 200, response.data)
+
+    def test_update_user_email(self):
+        """Tests that the update_user endpoint works as expected."""
+        data = {"correo": "test{}@cyc-bpo.com".format(random.randint(0, 999999))}
+        self.user.cedula = settings.TEST_CEDULA
+        self.user.save()
+        response = self.client.patch(reverse("update_profile"), data)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.user.refresh_from_db()
+        self.assertEqual(str(self.user.email).lower(), data["correo"])

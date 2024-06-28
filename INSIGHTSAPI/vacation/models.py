@@ -14,7 +14,7 @@ class VacationRequest(models.Model):
     )
     start_date = models.DateField()
     end_date = models.DateField()
-    request_file = models.FileField(upload_to="vacation_requests/")
+    request_file = models.FileField(upload_to="files/vacation_requests/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
     manager_approbation = models.BooleanField(null=True, blank=True)
     manager_approved_at = models.DateTimeField(null=True, blank=True)

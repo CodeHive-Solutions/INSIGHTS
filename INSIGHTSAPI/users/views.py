@@ -2,7 +2,6 @@ import os
 import logging
 import requests
 from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
 from django.core.mail import mail_admins
 from rest_framework.response import Response
 
@@ -127,7 +126,7 @@ def update_profile(request):
     if response.status_code == 400:
         return Response(
             {
-                "error": "Alguno de los datos ingresados no es válido, por favor verifica e intenta de nuevo."
+                "error": "No se detectaron cambios en tu perfil, por favor verifica e intenta de nuevo."
             },
             status=400,
         )
@@ -139,6 +138,9 @@ def update_profile(request):
             },
             status=500,
         )
+    if "correo" in data["column"]:
+        user.email = data["value"][data["column"].index("correo")]
+        user.save()
     return Response({"message": "User profile updated"})
 
 
