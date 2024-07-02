@@ -6,6 +6,7 @@ from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.db.models import Q
+from .factories import VacationFactory
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
 
@@ -16,6 +17,8 @@ class VacationRequestModelTestCase(BaseTestCase):
     def setUp(self):
         """Create a user and a vacation request."""
         super().setUp()
+        vacation = VacationFactory()
+        print(vacation)
         self.test_user = self.create_demo_user()
         self.user.job_position.rank = 2
         self.user.job_position.save()
@@ -55,6 +58,8 @@ class VacationRequestModelTestCase(BaseTestCase):
             response.data, serializer.data, (response.data, serializer.data)
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["user"], self.user.get_full_name())
 
     def test_vacation_list_hr(self):
         """Test listing all vacations endpoint for HR."""

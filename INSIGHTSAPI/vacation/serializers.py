@@ -2,7 +2,6 @@
 
 from rest_framework import serializers
 from users.models import User
-from notifications.utils import create_notification
 from .models import VacationRequest
 
 
@@ -49,7 +48,6 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["user"] = instance.user.get_full_name()
         data["uploaded_by"] = instance.uploaded_by.get_full_name()
-        # data.pop("request_file")
         data.pop("manager_approved_at")
         data.pop("hr_approved_at")
         data.pop("payroll_approved_at")
@@ -78,14 +76,12 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create the vacation request."""
+        # Remove the approbation fields from the validated data
         validated_data.pop("hr_approbation", None)
+        validated_data.pop("payroll_approbation", None)
+        validated_data.pop("manager_approbation", None)
         validated_data["uploaded_by"] = self.context["request"].user
         vacation_request = super().create(validated_data)
-        create_notification(
-            title="Nueva solicitud de vacaciones",
-            message=f"Se ha subido una nueva solicitud de vacaciones del {validated_data['start_date']} al {validated_data['end_date']} por parte de {validated_data['uploaded_by'].get_full_name()}.",
-            user=validated_data["user"],
-        )
         return vacation_request
 
     def update(self, instance, validated_data):

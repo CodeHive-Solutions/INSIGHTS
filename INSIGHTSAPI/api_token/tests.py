@@ -66,6 +66,10 @@ class TokenCheckTest(APITestCase):
             response.data["permissions"],
             user.get_all_permissions(),
         )
+        self.assertEqual(response.data["cedula"], user.cedula)
+        self.assertEqual(response.data["cargo"], user.job_title)
+        self.assertEqual(response.data["email"], user.email)
+        self.assertEqual(response.data["rango"], user.job_position.rank)
 
     def test_token_obtain_fail(self):
         """Test that the token obtain endpoint works correctly."""

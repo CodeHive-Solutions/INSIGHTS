@@ -160,3 +160,11 @@ class User(AbstractUser):
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)
+
+    def save_factory(self, *args, **kwargs):
+        """The most simple save method for the factory."""
+        area, _ = Area.objects.get_or_create(name="Factory")
+        self.area_id = area.id
+        job_position, _ = JobPosition.objects.get_or_create(name="Factory", rank=1)
+        self.job_position_id = job_position.id
+        super(User, self).save(*args, **kwargs)

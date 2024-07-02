@@ -28,7 +28,7 @@ class BaseTestCase(APITestCase):
         self.user = User.objects.get(username="staffnet")
 
     def create_demo_user(self):
-        """Create a demo user."""
+        """Create a demo user for tests."""
         demo_user = User.objects.get_or_create(
             username="demo",
             cedula=settings.TEST_CEDULA,

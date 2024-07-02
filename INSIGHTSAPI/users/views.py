@@ -4,6 +4,7 @@ import requests
 from rest_framework.decorators import api_view
 from django.core.mail import mail_admins
 from rest_framework.response import Response
+from users.models import User
 
 logger = logging.getLogger("requests")
 
@@ -144,15 +145,17 @@ def update_profile(request):
     return Response({"message": "User profile updated"})
 
 
-# @api_view(['GET'])
-# def get_users(request):
-#     user_rank = request.user.job_position.rank
-#     if user_rank >= 6:
-#         # Get all users that have a lower rank than the current user
-#         users = User.objects.filter(job_position__rank__lt=user_rank)
-#     else:
-#         # Get all users that have a lower rank than the current user and are in the same area
-#         users = User.objects.filter(job_position__rank__lt=user_rank, area=request.user.area)
-#     # Serialize the users
-#     data = [{'id': user.id, 'name': user.get_full_name()} for user in users]
-#     return Response(data)
+@api_view(["GET"])
+def get_subordinates(request):
+    user_rank = request.user.job_position.rank
+    if user_rank >= 6:
+        # Get all users that have a lower rank than the current user
+        users = User.objects.filter(job_position__rank__lt=user_rank)
+    else:
+        # Get all users that have a lower rank than the current user and are in the same area
+        users = User.objects.filter(
+            job_position__rank__lt=user_rank, area=request.user.area
+        )
+    # Serialize the users
+    data = [{"id": user.id, "name": user.get_full_name()} for user in users]
+    return Response(data)

@@ -88,3 +88,4 @@ class VacationRequest(models.Model):
                 self.user,
             )
         super().save(*args, **kwargs)
+

@@ -3,6 +3,9 @@ from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from notifications.utils import create_notification
+from django.core.mail import mail_admins
+from users.models import User
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
 
@@ -11,6 +14,28 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
     queryset = VacationRequest.objects.all()
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        if response.status_code == status.HTTP_201_CREATED and response.data:
+            create_notification(
+                "Solicitud de vacaciones creada",
+                f"Se ha creado una solicitud de vacaciones a tu nombre del {response.data['start_date']} al {response.data['end_date']}",
+                User.objects.get(pk=request.data["user"]),
+            )
+            hr_user = User.objects.filter(job_position__name="GERENTE DE GESTION HUMANA").first()
+            if not hr_user:
+                mail_admins(
+                    "No se encontró un usuario con el cargo GERENTE DE GESTION HUMANA",
+                    "No se encontró un usuario con el cargo GERENTE DE GESTION HUMANA para notificar sobre la nueva solicitud de vacaciones.",
+                )
+                return response
+            create_notification(
+                "Nueva solicitud de vacaciones",
+                f"Se ha creado una solicitud de vacaciones para {response.data['user']}",
+                hr_user,
+            )
+        return response
 
     def list(self, request, *args, **kwargs):
         if request.user.job_position.name == "GERENTE DE GESTION HUMANA":

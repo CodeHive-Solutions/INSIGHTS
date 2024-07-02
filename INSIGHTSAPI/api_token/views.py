@@ -48,6 +48,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.data["cedula"] = user.cedula
             response.data["cargo"] = user.job_title
             response.data["email"] = user.email
+            response.data["rango"] = user.job_position.rank
         return response
 
 

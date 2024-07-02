@@ -1,24 +1,37 @@
-# notifications/views.py
-from rest_framework import generics, permissions
+from rest_framework import permissions, status, viewsets
 from rest_framework.response import Response
-from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 from .models import Notification
 from .serializers import NotificationSerializer
 
-class NotificationListView(generics.ListAPIView):
+class NotificationsViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
     serializer_class = NotificationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    queryset = Notification.objects.all()
 
-    def get_queryset(self):
-        return self.request.user.notifications.all().order_by('-created_at')
+    def create(self, request, *args, **kwargs):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-class NotificationPatchView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    def list(self, request):
+        queryset = request.user.notifications.all().order_by('-created_at')
+        serializer = NotificationSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-    def patch(self, request, *args, **kwargs):
-        if request.user.notifications.filter(pk=kwargs['pk']).exists():
-            notification = Notification.objects.get(pk=kwargs['pk'])
-            notification.read = True
-            notification.save()
-            return Response(status=200)
-        return Response({'error': 'Notification not found'}, status=404)
+    def retrieve(self, request, pk=None):
+        notification = get_object_or_404(Notification, pk=pk, user=request.user)
+        serializer = NotificationSerializer(notification)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def partial_update(self, request, pk=None):
+        notification = get_object_or_404(Notification, pk=pk, user=request.user)
+        notification.read = not notification.read
+        notification.save()
+        return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request, pk=None):
+        notification = get_object_or_404(Notification, pk=pk, user=request.user)
+        notification.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
