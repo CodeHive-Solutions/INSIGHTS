@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
 // Libraries
-import * as XLSX from "xlsx";
 import { useNavigate } from "react-router-dom";
 
 // Material-UI
@@ -19,18 +18,13 @@ import {
 
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
-import PayslipsPreview from "./PayslipsPreview.jsx";
 import { getApiUrl } from "../../assets/getApi";
 import { handleError } from "../../assets/handleError";
+import VacationsRequest from "../shared/VacationsRequest.jsx";
 
 // Icons
-import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
-import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
+import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 import FileOpenIcon from "@mui/icons-material/FileOpen";
-import BlockIcon from "@mui/icons-material/Block";
-import TroubleshootIcon from "@mui/icons-material/Troubleshoot";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingIcon from "@mui/icons-material/Pending";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -43,7 +37,7 @@ export const Vacations = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem("permissions"));
-    const [openDialog, setOpenDialog] = useState(false);
+    const [openVacation, setOpenVacation] = useState(false);
     const [fileName, setFileName] = useState("Subir archivo");
     const [payslipFile, setPayslipFile] = useState(null);
     const [previewRows, setPreviewRows] = useState([]);
@@ -56,6 +50,7 @@ export const Vacations = () => {
     const [openObservationsInput, setOpenObservationsInput] = useState(false);
     const observationsRef = useRef();
     const cargo = localStorage.getItem("cargo");
+    const rank = JSON.parse(localStorage.getItem("rango"));
     const managerApprovalPermission = cargo.includes("ANALISTA");
     const hrApprovalPermission = cargo === "GERENTE DE GESTION HUMANA";
     const payrollApprovalPermission = permissions.includes("vacation.payroll_aprobbation");
@@ -326,7 +321,7 @@ export const Vacations = () => {
         },
     ];
 
-    const handleOpenDialog = () => setOpenDialog(true);
+    const handleOpenDialog = () => setOpenVacation(true);
     const handleCloseDialog = () => {
         setOpenDialog(false);
         setFileName("Subir archivo");
@@ -347,9 +342,11 @@ export const Vacations = () => {
                         utf8WithBom: true,
                     }}
                 />
-                <Button size="small" onClick={handleOpenDialog} startIcon={<PersonAddAlt1Icon />}>
-                    AÑADIR
-                </Button>
+                {rank > 1 ? (
+                    <Button size="small" onClick={handleOpenDialog} startIcon={<BeachAccessIcon />}>
+                        Solicitar vacaciones
+                    </Button>
+                ) : null}
                 <Box sx={{ textAlign: "end", flex: "1" }}>
                     <GridToolbarQuickFilter />
                 </Box>
@@ -495,28 +492,7 @@ export const Vacations = () => {
                     rows={rows}
                 ></DataGrid>
             </Container>
-            <Dialog fullWidth={true} maxWidth="xl" open={openDialog} onClose={handleCloseDialog}>
-                <Fade
-                    in={loadingPreview}
-                    style={{
-                        transitionDelay: loadingPreview ? "800ms" : "0ms",
-                    }}
-                    unmountOnExit
-                >
-                    <LinearProgress />
-                </Fade>
-                <DialogTitle>Cargar Desprendibles de Nomina</DialogTitle>
-                <DialogContent>
-                    <Button sx={{ width: "250px", overflow: "hidden", mb: "2rem" }} variant="outlined" component="label" startIcon={<CloudUploadIcon />}>
-                        {fileName}
-                        <VisuallyHiddenInput id="file" name="file" type="file" accept=".csv" onChange={handleFileInputChange} />
-                    </Button>
-                    <PayslipsPreview rows={previewRows} />
-                    <Button sx={{ mt: "1rem" }} variant="contained" onClick={submitPayslipFile} type="submit" startIcon={<ArrowCircleUpIcon></ArrowCircleUpIcon>}>
-                        Subir
-                    </Button>
-                </DialogContent>
-            </Dialog>
+            <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

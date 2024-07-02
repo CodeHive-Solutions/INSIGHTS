@@ -119,7 +119,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
 
     const getEmployeesInCharge = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}users/get-users/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}users/get-subordinates/`, {
                 method: "GET",
                 credentials: "include",
             });

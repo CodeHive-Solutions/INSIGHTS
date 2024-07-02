@@ -90,7 +90,6 @@ const Navbar = () => {
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
-    const [openVacation, setOpenVacation] = useState(false);
     const [anchorNotification, setAnchorNotification] = useState(null);
     const openNotification = Boolean(anchorNotification);
     const [notifications, setNotifications] = useState([]);
@@ -204,9 +203,11 @@ const Navbar = () => {
         }
     };
 
-    useEffect(() => {
-        getNotifications();
-    }, []);
+    if (getApiUrl().environment === "development") {
+        useEffect(() => {
+            getNotifications();
+        }, []);
+    }
 
     const handleCloseSnack = () => setOpenSnack(false);
 
@@ -341,26 +342,27 @@ const Navbar = () => {
         handleOpenCollapseBonuses();
     };
 
-    const handleOpenVacation = () => {
-        setOpenVacation(true);
-    };
-
     const isMobile = useMediaQuery("(max-width: 600px)");
 
     return (
         <>
             {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
-            <InactivityDetector handleLogout={handleLogout} />
-            <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
-            {/* <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} /> */}
-            <Notifications
-                notifications={notifications}
-                setAnchorNotification={setAnchorNotification}
-                anchorNotification={anchorNotification}
-                openNotification={openNotification}
-                getNotifications={getNotifications}
-            />
+
+            {getApiUrl().environment === "development" ? (
+                <>
+                    <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
+                    <Notifications
+                        notifications={notifications}
+                        setAnchorNotification={setAnchorNotification}
+                        anchorNotification={anchorNotification}
+                        openNotification={openNotification}
+                        getNotifications={getNotifications}
+                    />
+                </>
+            ) : (
+                <InactivityDetector handleLogout={handleLogout} />
+            )}
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>
@@ -441,8 +443,8 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-                    {/* <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> */}
-                    {operationalRiskPermission && getApiUrl().apiUrl === "production" ? (
+                    {getApiUrl().environment === "development" ? <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> : null}
+                    {operationalRiskPermission && getApiUrl().environment === "production" ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (
                         <Button
@@ -472,20 +474,22 @@ const Navbar = () => {
                         </Button>
                     ) : null}
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
-                        <Tooltip title="Mis Notificaciones">
-                            <Badge badgeContent={notifications?.length || 0} color="primary" overlap="circular" variant="dot">
-                                <IconButton
-                                    onClick={handleOpenNotification}
-                                    size="small"
-                                    sx={{ ml: 2 }}
-                                    aria-controls={openNotification ? "notification-menu" : undefined}
-                                    aria-haspopup="true"
-                                    aria-expanded={openNotification ? "true" : undefined}
-                                >
-                                    <NotificationsIcon sx={{ width: 30, height: 30 }} />
-                                </IconButton>
-                            </Badge>
-                        </Tooltip>
+                        {getApiUrl().environment === "development" ? (
+                            <Tooltip title="Mis Notificaciones">
+                                <Badge badgeContent={notifications?.length || 0} color="primary" overlap="circular" variant="dot">
+                                    <IconButton
+                                        onClick={handleOpenNotification}
+                                        size="small"
+                                        sx={{ ml: 2 }}
+                                        aria-controls={openNotification ? "notification-menu" : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={openNotification ? "true" : undefined}
+                                    >
+                                        <NotificationsIcon sx={{ width: 30, height: 30 }} />
+                                    </IconButton>
+                                </Badge>
+                            </Tooltip>
+                        ) : null}
                         <Tooltip title="Mi Cuenta">
                             <IconButton
                                 onClick={handleClick}
@@ -499,8 +503,6 @@ const Navbar = () => {
                             </IconButton>
                         </Tooltip>
                     </Box>
-                    {/* </>
-                    )} */}
                 </Box>
             </Box>
             <Menu
@@ -538,13 +540,15 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                <MenuItem onClick={handleOpenAccountDialog}>
-                    <ListItemIcon>
-                        <Avatar />
-                    </ListItemIcon>
-                    <ListItemText primary="Mi Cuenta" />
-                </MenuItem>
-                <Divider />
+                {getApiUrl().environment === "development" ? (
+                    <MenuItem onClick={handleOpenAccountDialog}>
+                        <ListItemIcon>
+                            <Avatar />
+                        </ListItemIcon>
+                        <ListItemText primary="Mi Cuenta" />
+                        <Divider />
+                    </MenuItem>
+                ) : null}
 
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
@@ -566,12 +570,6 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
                 </MenuItem>
-                {/* <MenuItem onClick={handleOpenVacation}>
-                    <ListItemIcon>
-                        <LuggageIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Solicitud de Vacaciones" />
-                </MenuItem> */}
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />

@@ -18,6 +18,7 @@ import { MoreHoriz } from "@mui/icons-material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 
 const Notifications = ({ anchorNotification, openNotification, setAnchorNotification, notifications, getNotifications }) => {
     const [anchorElOptions, setAnchorElOptions] = useState(null);
@@ -55,8 +56,9 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
 
     const handleMarkAs = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}/notifications/${notificationId}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}notifications/${notificationId}/`, {
                 method: "PATCH",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -88,9 +90,9 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
 
             await handleError(response, showSnack);
 
-            if (response.status === 200) {
+            if (response.status === 204) {
                 setAnchorElOptions(null);
-                showSnack("Notificación eliminada", "success");
+                showSnack("success", "Notificación eliminada");
                 getNotifications();
             }
         } catch (error) {
@@ -130,33 +132,46 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
                     },
                 }}
             >
-                {notifications.map((notification) => (
-                    <List
-                        key={notification.id}
-                        sx={{
-                            backgroundColor: notification.read ? "#f5fafc" : "#e3f5fd",
-                            width: "100%",
-                            maxWidth: 400,
-                        }}
-                    >
-                        <ListItem alignItems="flex-start">
-                            <ListItemAvatar>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={notification.title}
-                                secondary={
-                                    <Typography sx={{ display: "inline" }} variant="body2" color="gray">
-                                        {notification.message}
-                                    </Typography>
-                                }
-                            />
-                            <IconButton onClick={(event) => handleClickOptions(event, notification.id, notification.read)}>
-                                <MoreHoriz />
-                            </IconButton>
+                {notifications.length > 0 ? (
+                    notifications.map((notification) => (
+                        <List
+                            key={notification.id}
+                            sx={{
+                                backgroundColor: notification.read ? "#f5fafc" : "#e3f5fd",
+                                width: "100%",
+                                maxWidth: 400,
+                            }}
+                        >
+                            <ListItem alignItems="flex-start">
+                                <ListItemAvatar>
+                                    <Avatar sx={{ bgcolor: "orange" }} alt="Notification Icon">
+                                        <BeachAccessIcon />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={notification.title}
+                                    secondary={
+                                        <Typography sx={{ display: "inline" }} variant="body2" color="gray">
+                                            {notification.message}
+                                        </Typography>
+                                    }
+                                />
+                                <IconButton onClick={(event) => handleClickOptions(event, notification.id, notification.read)}>
+                                    <MoreHoriz />
+                                </IconButton>
+                            </ListItem>
+                        </List>
+                    ))
+                ) : (
+                    <List>
+                        <ListItem alignItems="center">
+                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "1rem", p: "2rem" }}>
+                                <NotificationsNoneIcon sx={{ color: "gray", fontSize: "42px" }} />
+                                <ListItemText sx={{ color: "gray" }} primary="No tienes notificaciones" />
+                            </Box>
                         </ListItem>
                     </List>
-                ))}
+                )}
             </Menu>
 
             {/* options menu */}

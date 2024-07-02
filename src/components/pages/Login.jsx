@@ -124,6 +124,7 @@ const Login = () => {
                 localStorage.setItem("cedula", JSON.stringify(data.cedula));
                 localStorage.setItem("cargo", JSON.stringify(data.cargo));
                 localStorage.setItem("email", JSON.stringify(data.email));
+                localStorage.setItem("rango", JSON.stringify(data.rango));
                 if (lastLocation) {
                     navigate(lastLocation, { replace: true });
                 } else {
