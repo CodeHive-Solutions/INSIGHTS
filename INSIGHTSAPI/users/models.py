@@ -41,7 +41,6 @@ class User(AbstractUser):
         blank=False,
         related_name="users",
     )
-    job_title = models.CharField(max_length=100, null=True, blank=True)
     job_position = models.ForeignKey(
         "hierarchy.JobPosition",
         on_delete=models.CASCADE,

@@ -67,7 +67,7 @@ class TokenCheckTest(APITestCase):
             user.get_all_permissions(),
         )
         self.assertEqual(response.data["cedula"], user.cedula)
-        self.assertEqual(response.data["cargo"], user.job_title)
+        self.assertEqual(response.data["cargo"], user.job_position.name)
         self.assertEqual(response.data["email"], user.email)
         self.assertEqual(response.data["rango"], user.job_position.rank)
 

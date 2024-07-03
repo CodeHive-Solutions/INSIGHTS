@@ -5,15 +5,15 @@ from .models import User
 
 
 
+fake_data = faker.Faker()
 
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
-    faker = faker.Faker()
     factory.Faker._DEFAULT_LOCALE = "es_ES"
     cedula = factory.Faker("random_int", min=1000000000, max=9999999999)
-    first_name = factory.LazyFunction(lambda: "Fake" + faker.first_name())
+    first_name = factory.LazyFunction(lambda: "Fake " + fake_data.first_name())
     last_name = factory.Faker("last_name")
     username = factory.LazyAttribute(lambda o: f"{o.first_name}_{o.last_name}")
     email = factory.Faker("email")
@@ -26,5 +26,3 @@ class UserFactory(DjangoModelFactory):
         obj = model_class(*args, **kwargs)
         obj.save_factory()
         return obj
-
-UserFactory.create_batch(10)

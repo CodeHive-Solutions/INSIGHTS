@@ -13,7 +13,7 @@ def upper_case_name(obj):
 class CustomUserAdmin(UserAdmin):
     """Custom user admin."""
 
-    readonly_fields = ["username", "job_title", "area"]
+    readonly_fields = ["username", "area"]
 
     list_display = (
         "username",
