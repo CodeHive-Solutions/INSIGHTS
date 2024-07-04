@@ -78,13 +78,13 @@ class VacationRequest(models.Model):
         elif self.status == "RECHAZADA":
             create_notification(
                 f"Solicitud de vacaciones rechazada",
-                f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido rechazada. Haz click aquí para más información.",
+                f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido rechazada.",
                 self.user,
             )
         elif self.status == "CANCELADA":
             create_notification(
                 f"Solicitud de vacaciones cancelada",
-                f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido cancelada. Haz click aquí para más información.",
+                f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido cancelada.",
                 self.user,
             )
         super().save(*args, **kwargs)
