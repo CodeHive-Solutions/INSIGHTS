@@ -65,7 +65,7 @@ export const EmploymentCertification = () => {
 
     const columns = [
         { field: "id", headerName: "ID", width: 70 },
-        { field: "user", headerName: "Cedula", width: 100 },
+        { field: "cedula", headerName: "Cedula", width: 100 },
         { field: "position", headerName: "Cargo", width: 360, editable: false },
         {
             field: "salary",
