@@ -38,6 +38,9 @@ import EmploymentCertification from "./components/pages/EmploymentCertification"
 import ImageMagnifier from "./components/pages/ImageMagnifier";
 import InactivityDetector from "./components/shared/InactivityDetector";
 import Pqrs from "./components/pages/Pqrs";
+import Vacations from "./components/pages/Vacations";
+import PowerBI from "./components/pages/PowerBI";
+import { getApiUrl } from "./assets/getApi";
 
 const theme = createTheme({
     typography: {
@@ -159,9 +162,19 @@ const router = createBrowserRouter([
                 element: <EmploymentCertification />,
             },
             {
-                path: "pqrs",
-                element: <Pqrs />,
+                path: "vacations",
+                element: <Vacations />,
             },
+            {
+                path: "test",
+                element: <PowerBI />,
+            },
+            getApiUrl().environment === "development"
+                ? {
+                      path: "pqrs",
+                      element: <Pqrs />,
+                  }
+                : null,
         ],
     },
 ]);

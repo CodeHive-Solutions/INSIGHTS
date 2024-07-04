@@ -9,6 +9,9 @@ import SnackbarAlert from "./SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import MyAccountDialog from "../shared/MyAccount";
 import InactivityDetector from "../shared/InactivityDetector";
+import VacationsRequest from "../shared/VacationsRequest";
+import Notifications from "../shared/Notifications";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import {
@@ -36,6 +39,7 @@ import {
     Collapse,
     TextField,
     Divider,
+    Badge,
 } from "@mui/material";
 
 // Icons
@@ -54,6 +58,9 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import DescriptionIcon from "@mui/icons-material/Description";
 import TopicIcon from "@mui/icons-material/Topic";
+import LuggageIcon from "@mui/icons-material/Luggage";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
@@ -83,35 +90,34 @@ const Navbar = () => {
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const currentEmail = JSON.parse(localStorage.getItem("email"));
     const bonusesInput = useRef(null);
-    const goalsStatsPermission = cedula === "1020780559" || cedula === "28172713" || cedula === "1001185389" || cedula === "25878771";
+    const [anchorNotification, setAnchorNotification] = useState(null);
+    const openNotification = Boolean(anchorNotification);
+    const [notifications, setNotifications] = useState([]);
+    const operationalRiskPermission = permissions && permissions.includes("operational_risk.view_events");
 
     const servicesPermission =
         permissions &&
         (permissions.includes("users.upload_robinson_list") ||
-            goalsStatsPermission ||
+            permissions.includes("goals.view_goals") ||
             permissions.includes("excels_processing.call_transfer") ||
             permissions.includes("contracts.view_contract") ||
             permissions.includes("operational_risk.view_events") ||
             permissions.includes("vacancy.view_reference") ||
             permissions.includes("payslip.add_payslip") ||
-            permissions.includes("employment_management.view_employmentcertification"));
+            permissions.includes("employment_management.view_employmentcertification") ||
+            permissions.includes("goals.add_goals") ||
+            permissions.includes("vacation.view_vacationrequest"));
 
     const refreshToken = async (refreshTimer) => {
         try {
-            const response = await fetch(`${getApiUrl()}token/refresh/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}token/refresh/`, {
                 method: "POST",
                 credentials: "include",
             });
 
-            const data = await response.json();
+            await handleError(response, showSnack);
 
-            if (!response.ok) {
-                if (refreshTimer) {
-                    localStorage.removeItem("refresh-timer-ls");
-                }
-                navigate("/", { replace: true });
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            if (response.status === 200) {
                 if (refreshTimer === null) {
                     localStorage.setItem(
                         "refresh-timer-ls",
@@ -128,7 +134,9 @@ const Navbar = () => {
                 }
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -175,6 +183,32 @@ const Navbar = () => {
         );
     }
 
+    const getNotifications = async () => {
+        try {
+            const response = await fetch(`${getApiUrl().apiUrl}notifications/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setNotifications(data);
+            }
+        } catch (error) {
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
+        }
+    };
+
+    if (getApiUrl().environment === "development") {
+        useEffect(() => {
+            getNotifications();
+        }, []);
+    }
+
     const handleCloseSnack = () => setOpenSnack(false);
 
     const handleOpenCertification = () => setOpenCertification(true);
@@ -205,6 +239,10 @@ const Navbar = () => {
         setAnchorEl(event.currentTarget);
     };
 
+    const handleOpenNotification = (event) => {
+        setAnchorNotification(event.currentTarget);
+    };
+
     const handleClickUtils = (event) => {
         setAnchorElUtils(event.currentTarget);
     };
@@ -226,32 +264,20 @@ const Navbar = () => {
         emailRef.current.value = "";
     };
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleLogout = async (inactivity) => {
         try {
-            const response = await fetch(`${getApiUrl()}token/destroy/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}token/destroy/`, {
                 method: "POST",
                 credentials: "include",
             });
 
-            if (!response.ok) {
-                localStorage.removeItem("refresh-timer-ls");
-                if (inactivity === true) {
-                    // Pass a parameter to the login component to show an alert
-                    const currentUrl = window.location.href;
-                    navigate("/", { state: { showAlert: true, lastLocation: currentUrl } });
-                } else {
-                    navigate("/");
-                }
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 localStorage.removeItem("refresh-timer-ls");
@@ -264,7 +290,9 @@ const Navbar = () => {
                 }
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -284,7 +312,7 @@ const Navbar = () => {
         }
 
         try {
-            const response = await fetch(`${getApiUrl()}employment-management/send-employment-certification/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}employment-management/send-employment-certification/`, {
                 method: "POST",
                 credentials: "include",
                 headers: {
@@ -293,20 +321,17 @@ const Navbar = () => {
                 body: JSON.stringify(body),
             });
 
-            const data = await response.json();
+            await handleError(response, showSnack);
 
-            if (!response.ok) {
-                if (response.status === 500) {
-                    showSnack("error", "Error en el servidor, por favor intente más tarde", true);
-                    throw new Error(data.detail);
-                }
-                showSnack("error", data.error, true);
-            } else if (response.status === 200) {
+            if (response.status === 200) {
+                const data = await response.json();
                 setOpenCertification(false);
                 showSnack("success", data.message + " correctamente al correo " + data.email.toLowerCase());
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         } finally {
             setOpenCollapse(false);
         }
@@ -321,7 +346,23 @@ const Navbar = () => {
 
     return (
         <>
-            <InactivityDetector handleLogout={handleLogout} />
+            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+
+            {getApiUrl().environment === "development" ? (
+                <>
+                    <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
+                    <Notifications
+                        notifications={notifications}
+                        setAnchorNotification={setAnchorNotification}
+                        anchorNotification={anchorNotification}
+                        openNotification={openNotification}
+                        getNotifications={getNotifications}
+                    />
+                </>
+            ) : (
+                <InactivityDetector handleLogout={handleLogout} />
+            )}
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>
@@ -339,7 +380,6 @@ const Navbar = () => {
                         <TextField inputRef={bonusesInput} sx={{ width: "100%" }} defaultValue="3" label="Seleccione los meses promediados de bonificaciones" select>
                             <MenuItem value={3}>Últimos 3 meses</MenuItem>
                             <MenuItem value={6}>Últimos 6 meses</MenuItem>
-                            <MenuItem value={12}>Últimos 12 meses</MenuItem>
                         </TextField>
                     </Collapse>
                     <Typography color="text.secondary">
@@ -403,9 +443,8 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/blog">Blog</CustomNavLink>
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
-
-                    {cedula === "1000065648" || cedula === "1001185389" ? <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> : null}
-                    {cedula === "19438555" || cedula === "1032495391" ? (
+                    {getApiUrl().environment === "development" ? <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> : null}
+                    {operationalRiskPermission && getApiUrl().environment === "production" ? (
                         <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
                     ) : servicesPermission ? (
                         <Button
@@ -434,7 +473,23 @@ const Navbar = () => {
                             Servicios
                         </Button>
                     ) : null}
-                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
+                        {getApiUrl().environment === "development" ? (
+                            <Tooltip title="Mis Notificaciones">
+                                <Badge badgeContent={notifications?.length || 0} color="primary" overlap="circular" variant="dot">
+                                    <IconButton
+                                        onClick={handleOpenNotification}
+                                        size="small"
+                                        sx={{ ml: 2 }}
+                                        aria-controls={openNotification ? "notification-menu" : undefined}
+                                        aria-haspopup="true"
+                                        aria-expanded={openNotification ? "true" : undefined}
+                                    >
+                                        <NotificationsIcon sx={{ width: 30, height: 30 }} />
+                                    </IconButton>
+                                </Badge>
+                            </Tooltip>
+                        ) : null}
                         <Tooltip title="Mi Cuenta">
                             <IconButton
                                 onClick={handleClick}
@@ -448,8 +503,6 @@ const Navbar = () => {
                             </IconButton>
                         </Tooltip>
                     </Box>
-                    {/* </>
-                    )} */}
                 </Box>
             </Box>
             <Menu
@@ -487,13 +540,16 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {/* <MenuItem onClick={handleOpenAccountDialog}>
-                    <ListItemIcon>
-                        <Avatar />
-                    </ListItemIcon>
-                    <ListItemText primary="Mi Cuenta" />
-                </MenuItem>
-                <Divider /> */}
+                {getApiUrl().environment === "development" ? (
+                    <MenuItem onClick={handleOpenAccountDialog}>
+                        <ListItemIcon>
+                            <Avatar />
+                        </ListItemIcon>
+                        <ListItemText primary="Mi Cuenta" />
+                        <Divider />
+                    </MenuItem>
+                ) : null}
+
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
@@ -558,7 +614,7 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {goalsStatsPermission ? (
+                {permissions && permissions.includes("goals.view_goals") ? (
                     <MenuItem onClick={() => navigate("/logged/goals-stats")}>
                         <ListItemIcon>
                             <FlagIcon fontSize="small" />
@@ -566,7 +622,7 @@ const Navbar = () => {
                         <ListItemText primary="Análisis de Metas" />
                     </MenuItem>
                 ) : null}
-                {permissions && permissions.includes("users.upload_robinson_list") ? (
+                {permissions && (permissions.includes("users.upload_robinson_list") || permissions.includes("goals.add_goals")) ? (
                     <MenuItem onClick={() => navigate("/logged/upload-files")}>
                         <ListItemIcon>
                             <UploadFileIcon fontSize="small" />
@@ -622,10 +678,15 @@ const Navbar = () => {
                         <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
                 ) : null}
+                {permissions && permissions.includes("vacation.view_vacationrequest") ? (
+                    <MenuItem onClick={() => navigate("/logged/vacations")}>
+                        <ListItemIcon>
+                            <BeachAccessIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Registros de vacaciones" />
+                    </MenuItem>
+                ) : null}
             </Menu>
-            {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
-            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
-            <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
         </>
     );
 };

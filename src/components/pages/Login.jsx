@@ -8,6 +8,7 @@ import * as Yup from "yup";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Box, Typography, Button, TextField, Link, Alert, Collapse, LinearProgress } from "@mui/material";
@@ -74,13 +75,10 @@ const Login = () => {
 
     const handleCloseSnack = () => setOpenSnack(false);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleSubmit = async (values) => {
@@ -88,7 +86,7 @@ const Login = () => {
         setLoadingBar(true);
 
         try {
-            const response = await fetch(`${getApiUrl()}token/obtain/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}token/obtain/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -126,6 +124,7 @@ const Login = () => {
                 localStorage.setItem("cedula", JSON.stringify(data.cedula));
                 localStorage.setItem("cargo", JSON.stringify(data.cargo));
                 localStorage.setItem("email", JSON.stringify(data.email));
+                localStorage.setItem("rango", JSON.stringify(data.rango));
                 if (lastLocation) {
                     navigate(lastLocation, { replace: true });
                 } else {

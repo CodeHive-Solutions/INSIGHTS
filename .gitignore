@@ -39,7 +39,6 @@ secure/
 INSIGHTSAPI/static/admin/
 INSIGHTSAPI/static/rest_framework/
 public/
-src/images/
 test.html
 test.pdf
 *.pdf

@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Container, Box, Typography, TextField, MenuItem, Button, LinearProgress } from "@mui/material";
-import { Formik, Form, useField, useFormikContext } from "formik";
+import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 import SendIcon from "@mui/icons-material/Send";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 const areas = [
-    { value: "test", label: "test" },
     { value: "EJECUTIVO", label: "Castañeda Camacho Pablo Cesar - Presidente" },
     { value: "GERENCIA GENERAL", label: "César Alberto Garzón Navas - Gerente General" },
     { value: "GERENCIA DE RIESGO Y CONTROL INTERNO", label: "Mario Ernesto Girón Salazar - Gerente Riesgo y Control Interno" },
     { value: "GERENCIA GESTIÓN HUMANA", label: "Jeanneth Pinzón - Gerente Gestión Humana" },
+    { value: "GERENCIA GESTIÓN HUMANA", label: "Lady Miranda - Directora de Seguridad y Salud en el Trabajo, Gestion Ambiental y Bienestar Integral" },
     { value: "GERENCIA DE PLANEACIÓN", label: "Angela Maria Durán Gutierrez - Gerente Planeación" },
     { value: "GERENCIA ADMINISTRATIVA", label: "Melida Sandoval Cabra - Gerente Administrativa" },
     { value: "GERENCIA DE LEGAL Y RIESGO", label: "Adriana Nataly Páez Castiblanco - Gerente Operaciones" },
     { value: "GERENCIA DE OPERACIONES", label: "Diego Fernando Gonzalez - Gerente de Legal y Riesgo" },
     { value: "GERENCIA DE MERCADEO", label: "Héctor Gabriel Sotelo - Gerente de Operaciones Ventas" },
+    { value: "GERENCIA DE RECURSOS FÍSICOS", label: "Harbey Franco - Director de Recursos Físicos" },
 ];
 
 const motivos = [
@@ -39,31 +40,20 @@ const Suggestions = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
-    const navigate = useNavigate();
-    const cedula = JSON.parse(localStorage.getItem("cedula"));
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        if (cedula !== "1001185389" && cedula !== "1000065648") {
-            navigate("/logged/home");
-        }
-    }, []);
 
     const handleCloseSnack = () => setOpenSnack(false);
-    const showSnack = (severity, message, error) => {
+
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleSubmit = async (values) => {
         setLoadingBar(true);
 
         try {
-            const response = await fetch(`${getApiUrl()}pqrs/complaints/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}pqrs/complaints/`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(values),
@@ -72,24 +62,11 @@ const Suggestions = () => {
 
             setLoadingBar(false);
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail);
-            }
-
-            if (response.status === 200) {
-            }
+            await handleError(response, showSnack);
         } catch (error) {
-            console.error(error);
-
-            if (error.message === "Unable to log in with provided credentials." || error.message === "No active account found with the given credentials") {
-                showSnack("error", "No se puede iniciar sesión con las credenciales proporcionadas.");
-            } else {
-                console.error(error.message);
-                showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
             }
-
             setLoadingBar(false);
         }
     };

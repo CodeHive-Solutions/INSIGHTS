@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 // Material-UI
 import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box, LinearProgress, Fade } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
+import { handleError } from "../../assets/handleError";
 
 // Icons
 import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
@@ -32,15 +33,15 @@ export const MyPayslips = () => {
 
     const getPayslips = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}payslips/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}payslips/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 if (permissions && permissions.includes("payslip.view_payslip")) {
                     const userPayslips = data.filter((payslip) => payslip.identification === cedula);
                     setRows(userPayslips);
@@ -49,8 +50,9 @@ export const MyPayslips = () => {
                 }
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -58,13 +60,10 @@ export const MyPayslips = () => {
         getPayslips();
     }, []);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCollapse = () => {
@@ -95,21 +94,15 @@ export const MyPayslips = () => {
         }
 
         try {
-            const response = await fetch(`${getApiUrl()}payslips/${paySlipId}/resend/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}payslips/${paySlipId}/resend/`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                if (response.status === 500) {
-                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
-                } else if (response.status === 400) {
-                    throw new Error(data.Error);
-                }
-                throw new Error(data.detail);
-            } else if (response.status === 201) {
+            await handleError(response, showSnack);
+
+            if (response.status === 201) {
                 showSnack("success", "Desprendible reenviado correctamente");
                 setPaySlipId(null);
                 setDisabled(false);
@@ -118,8 +111,9 @@ export const MyPayslips = () => {
                 setLoading(false);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setDisabled(false);
             setLoading(false);
         }

@@ -21,6 +21,7 @@ import {
 import SnackbarAlert from "../common/SnackBarAlert";
 import PayslipsPreview from "./PayslipsPreview.jsx";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Icons
 import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
@@ -56,20 +57,21 @@ export const Payslips = () => {
 
     const getPayslips = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}payslips/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}payslips/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 setRows(data);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -77,13 +79,10 @@ export const Payslips = () => {
         getPayslips();
     }, []);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
@@ -108,21 +107,15 @@ export const Payslips = () => {
         formData.append("email", emailRef.current.value);
 
         try {
-            const response = await fetch(`${getApiUrl()}payslips/${idPayslip}/resend/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}payslips/${idPayslip}/resend/`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                if (response.status === 500) {
-                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
-                } else if (response.status === 400) {
-                    throw new Error(data.Error);
-                }
-                throw new Error(data.detail);
-            } else if (response.status === 201) {
+            await handleError(response, showSnack);
+
+            if (response.status === 201) {
                 setLoading(false);
                 setDisabled(false);
                 getPayslips();
@@ -130,10 +123,11 @@ export const Payslips = () => {
                 handleCloseDialogPayslip();
             }
         } catch (error) {
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setLoading(false);
             setDisabled(false);
-            console.error(error);
-            showSnack("error", error.message);
         }
     };
 
@@ -259,8 +253,8 @@ export const Payslips = () => {
             "healthcare_contribution",
             "pension_contribution",
             "tax_withholding",
-            "apsalpen",
             "additional_deductions",
+            "apsalpen",
             "total_deductions",
             "net_pay",
         ];
@@ -304,33 +298,25 @@ export const Payslips = () => {
         try {
             const formData = new FormData();
             formData.append("file", payslipFile);
-            const response = await fetch(`${getApiUrl()}payslips/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}payslips/`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                if (response.status === 500) {
-                    throw new Error("Lo sentimos, se ha producido un error inesperado.");
-                } else if (response.status === 400) {
-                    if (data.Error === "No se encontró el usuario, asegúrate de que esta registrado en la intranet") {
-                        throw new Error(data.Error + ". Cedula: " + data.cedula);
-                    }
-                    throw new Error(data.Error);
-                }
-                throw new Error(data.detail);
-            } else if (response.status === 201) {
+            await handleError(response, showSnack);
+
+            if (response.status === 201) {
                 handleCloseDialog();
                 setLoadingPreview(false);
                 getPayslips();
                 showSnack("success", "Desprendibles cargados y enviados correctamente");
             }
         } catch (error) {
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setLoadingPreview(false);
-            console.error(error);
-            showSnack("error", error.message);
         }
     };
 

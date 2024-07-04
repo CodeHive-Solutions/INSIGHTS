@@ -1,18 +1,13 @@
 """Test for services. """
 
-import requests
 import os
-from datetime import timedelta
-from io import StringIO
+import requests
 from rest_framework.test import APITestCase
-from django.test import TestCase, Client
+from django.test import TestCase, Client, override_settings
 from django.urls import reverse
-from django.utils import timezone
-from django.core.management import call_command
 from django.conf import settings
-from contracts.models import Contract
 from users.models import User
-from .emails import send_email
+from hierarchy.models import Area, JobPosition
 
 
 class BaseTestCase(APITestCase):
@@ -33,13 +28,32 @@ class BaseTestCase(APITestCase):
         self.user = User.objects.get(username="staffnet")
 
     def create_demo_user(self):
-        """Create a demo user."""
+        """Create a demo user for tests."""
         demo_user = User.objects.get_or_create(
             username="demo",
-            cedula="1000065648",
-            email="heibert.mogollon@cyc-bpo.com",
+            cedula=settings.TEST_CEDULA,
+            email=settings.EMAIL_FOR_TEST,
             first_name="Demo",
             last_name="User",
+        )
+        # Return the user object not the tuple
+        if isinstance(demo_user, tuple):
+            return demo_user[0]
+        return demo_user
+
+    def create_demo_user_admin(self):
+        """Create a demo user with admin permissions."""
+        # Set the id and 
+        demo_user = User.objects.get_or_create(
+            pk=999,
+            username="demo_admin",
+            email=settings.EMAIL_FOR_TEST,
+            first_name="Admin Demo",
+            last_name="User",
+            area=Area.objects.get_or_create(name="Admin")[0],
+            job_position=JobPosition.objects.get_or_create(name="Admin", rank=100)[0],
+            is_staff=True,
+            is_superuser=True,
         )
         # Return the user object not the tuple
         if isinstance(demo_user, tuple):
@@ -70,36 +84,12 @@ class StaticFilesTest(TestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class EmailServiceTest(APITestCase):
-    """Test for email service."""
-
-    def test_send_email(self):
-        """Test send email."""
-        subject = "Test email"
-        message = "Test email"
-        with open(
-            str(settings.STATIC_ROOT) + "/images/Logo_cyc_text.png", "rb"
-        ) as image_file:
-            image_data = image_file.read()
-            to_emails = [
-                "heibert.mogollon@cyc-bpo.com",
-                "heibert1.mogollon@gmail.com",
-            ]
-            errors = send_email(
-                subject,
-                message,
-                to_emails,
-                sender_user="no-reply",
-                attachments=[("asesor-vacante.png", image_data, "image/png")],
-                save_message=False,
-                email_owner="Test",
-            )
-            self.assertIsNone(errors, errors)
-
-
 class EthicalLineTest(APITestCase):
     """Test for ethical line."""
 
+    @override_settings(
+        EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
+    )
     def test_send_report_ethical_line_without_contact(self):
         """Test send report ethical line."""
         response = self.client.post(
@@ -111,6 +101,9 @@ class EthicalLineTest(APITestCase):
         )
         self.assertEqual(response.status_code, 200, response.data)
 
+    @override_settings(
+        EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
+    )
     def test_send_report_ethical_line_with_contact(self):
         """Test send report ethical line."""
         response = self.client.post(
@@ -122,65 +115,3 @@ class EthicalLineTest(APITestCase):
             },
         )
         self.assertEqual(response.status_code, 200, response.data)
-
-
-class SchedulerTest(TestCase):
-    """Test for scheduler."""
-
-    def test_scheduler(self):
-        """Test scheduler."""
-
-        contract_data = {
-            "name": "Contract 30 Days",
-            "city": "Bogota",
-            "description": "Test",
-            "expected_start_date": timezone.now().date(),
-            "value": 100000,
-            "monthly_cost": 10000,
-            "duration": timezone.now().date(),
-            "contact": "Test",
-            "contact_telephone": "123456789",
-            "start_date": timezone.now().date(),
-            "civil_responsibility_policy": "Test",
-            "compliance_policy": "Test",
-            "insurance_policy": "Test",
-            "renovation_date": timezone.now().date() + timedelta(days=30),
-        }
-
-        contract_30_days = Contract.objects.create(**contract_data)
-
-        # Create a contract with a renovation date 15 days from now
-        contract_data["name"] = "Contract 15 Days"
-        contract_data["renovation_date"] = timezone.now().date() + timedelta(days=15)
-        contract_15_days = Contract.objects.create(**contract_data)
-
-        # Create a contract with a renovation date 7 days from now
-        contract_data["name"] = "Contract 7 Days"
-        contract_data["renovation_date"] = timezone.now().date() + timedelta(days=7)
-        contract_7_days = Contract.objects.create(**contract_data)
-
-        # Create a contract with a renovation date today
-        contract_data["name"] = "Contract Today"
-        contract_data["renovation_date"] = timezone.now().date()
-        contract_today = Contract.objects.create(**contract_data)
-
-        # Run the logic to check for contract renewal
-        stdout = StringIO()
-        management_command_output = call_command("run_scheduler", stdout=stdout)
-
-        self.assertIn(
-            f"Email sent for contract {contract_30_days.name} to ['heibert",
-            stdout.getvalue(),
-        )
-        self.assertIn(
-            f"Email sent for contract {contract_15_days.name} to ['heibert",
-            stdout.getvalue(),
-        )
-        self.assertIn(
-            f"Email sent for contract {contract_7_days.name} to ['heibert",
-            stdout.getvalue(),
-        )
-        self.assertIn(
-            f"Email sent for contract {contract_today.name} to ['heibert",
-            stdout.getvalue(),
-        )

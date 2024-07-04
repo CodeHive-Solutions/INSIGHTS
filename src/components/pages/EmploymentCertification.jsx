@@ -6,10 +6,12 @@ import { useNavigate } from "react-router-dom";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Container, Typography } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 
 export const EmploymentCertification = () => {
     const [rows, setRows] = useState([]);
@@ -31,20 +33,21 @@ export const EmploymentCertification = () => {
 
     const getEmploymentCertifications = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}employment-management/get-employment-certifications`, {
+            const response = await fetch(`${getApiUrl().apiUrl}employment-management/get-employment-certifications`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 setRows(data);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -52,13 +55,10 @@ export const EmploymentCertification = () => {
         getEmploymentCertifications();
     }, []);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
@@ -92,6 +92,14 @@ export const EmploymentCertification = () => {
                 }).format(params.value),
         },
         { field: "contract_type", headerName: "Contrato", width: 170, editable: false },
+        {
+            field: "created_at",
+            type: "dateTime",
+            headerName: "Fecha de Creación",
+            width: 170,
+            editable: false,
+            valueFormatter: (params) => new Date(params.value).toLocaleString(),
+        },
         { field: "start_date", headerName: "Fecha de Ingreso", width: 150, editable: false },
         { field: "expedition_city", headerName: "Lugar de Expedición", width: 180, editable: false },
     ];
@@ -111,6 +119,11 @@ export const EmploymentCertification = () => {
                     Certificaciones Laborales
                 </Typography>
                 <DataGrid
+                    initialState={{
+                        sorting: {
+                            sortModel: [{ field: "created_at", sort: "desc" }],
+                        },
+                    }}
                     sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
                     columns={columns}
                     rows={rows}

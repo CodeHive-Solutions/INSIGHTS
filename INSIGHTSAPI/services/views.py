@@ -3,13 +3,12 @@
 import logging
 import os
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django_sendfile import sendfile
 from django.shortcuts import get_object_or_404
 from django.conf import settings
-from .emails import send_email
+from django.core.mail import send_mail
 
 
 logger = logging.getLogger("requests")
@@ -37,12 +36,6 @@ class FileDownloadMixin(APIView):
         return response
 
 
-# class PayslipViewset(viewsets.GenericViewSet):
-#     def create(self, request):
-#         """Create a payslip."""
-#         pass
-
-
 @api_view(["POST"])
 def send_report_ethical_line(request):
     """Send a report from the ethical line."""
@@ -57,22 +50,22 @@ def send_report_ethical_line(request):
     if "contact_info" in request.data:
         contact_info = f"\nEl usuario desea ser contactado mediante:\n{request.data['contact_info']}"
     if settings.DEBUG or "test" in request.data["complaint"].lower():
-        to_emails = ["heibert.mogollon@cyc-bpo.com", "juan.carreno@cyc-bpo.com"]
+        to_emails = [settings.EMAIL_FOR_TEST]
     else:
-        to_emails = [
-            "cesar.garzon@cyc-bpo.com",
-            "mario.giron@cyc-bpo.com",
-            "jeanneth.pinzon@cyc-bpo.com",
-        ]
-    errors = send_email(
-        sender_user="mismetas",
-        subject=f"Denuncia de {request.data['complaint']}",
-        message=f"\n{request.data['description']}\n" + contact_info,
-        to_emails=to_emails,
-        html_content=True,
-        email_owner="Línea ética",
-        return_path="heibert.mogollon@cyc-bpo.com",
+        to_emails = settings.EMAILS_ETHICAL_LINE
+    send_mail(
+        f"Denuncia de {request.data['complaint']}",
+        f"\n{request.data['description']}\n" + contact_info,
+        None,
+        to_emails,
+        fail_silently=False,
+        html_message="True",
     )
-    if errors:
-        return Response({"error": "Hubo un error en el envió del correo"}, status=500)
+    # if errors:
+    #     return Response({"error": "Hubo un error en el envió del correo"}, status=500)
     return Response({"message": "Correo enviado correctamente"}, status=200)
+
+
+def trigger_error(request):
+    """Trigger an error for testing purposes."""
+    raise Exception("Test error")

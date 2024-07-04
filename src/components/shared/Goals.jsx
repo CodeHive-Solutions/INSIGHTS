@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 
-// Libraries
+// Custom Components
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import {
@@ -71,18 +72,15 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
 
     const getGoal = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/${cedula}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}goals/${cedula}/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail);
-            }
+            await handleError(response);
 
             if (response.status === 200) {
+                const data = await response.json();
                 if (data.accepted) {
                     setGoalAccepted(true);
                 } else if (data.accepted === 0) {
@@ -113,7 +111,9 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                 }
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -126,7 +126,7 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
             [goalType]: status,
         };
         try {
-            const response = await fetch(`${getApiUrl()}goals/${cedula}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}goals/${cedula}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -134,11 +134,9 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                 body: JSON.stringify(body),
                 credentials: "include",
             });
-            if (!response.ok) {
-                const data = await response.json();
-                console.error(data);
-                throw new Error(response.statusText);
-            }
+
+            await handleError(response, showSnack);
+
             if (response.status === 200) {
                 getGoal();
                 setOpenConfirmDialog(false);
@@ -146,7 +144,9 @@ const Goals = ({ openDialog, setOpenDialog, showSnack }) => {
                 showSnack("success", "La acción ha sido realizada con éxito");
             }
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 

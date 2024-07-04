@@ -2,12 +2,6 @@
 from django.db import models
 
 
-class Management(models.Model):
-    """Model for the management"""
-
-    name = models.CharField(max_length=100)
-
-
 class Area(models.Model):
     """Model for the area"""
 
@@ -15,4 +9,11 @@ class Area(models.Model):
 
     def __str__(self):
         """String representation of the model."""
+        return self.name
+
+class JobPosition(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    rank = models.PositiveIntegerField()
+
+    def __str__(self):
         return self.name

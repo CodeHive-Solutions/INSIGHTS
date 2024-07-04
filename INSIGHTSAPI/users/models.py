@@ -1,15 +1,14 @@
 """This file contains the custom user model for the users app."""
 
-from enum import unique
 import logging
-from math import e
-import os
 import sys
 from django.contrib.auth.models import AbstractUser
+from django.core.mail import mail_admins
 from django.db import connections
 from django.db import models
+from django.conf import settings
 from django.core.exceptions import ValidationError
-from hierarchy.models import Area
+from hierarchy.models import Area, JobPosition
 
 logger = logging.getLogger("exceptions")
 
@@ -42,7 +41,13 @@ class User(AbstractUser):
         blank=False,
         related_name="users",
     )
-    job_title = models.CharField(max_length=100, null=True, blank=True)
+    job_position = models.ForeignKey(
+        "hierarchy.JobPosition",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="users",
+    )
     date_joined = None
     last_login = None
 
@@ -60,19 +65,31 @@ class User(AbstractUser):
 
     def get_full_name(self) -> str:
         """Return the full name of the user."""
+
+        def capitalize_name(name: str) -> str:
+            return " ".join(part.capitalize() for part in name.split())
+
         if self.last_name:
-            return f"{self.first_name} {self.last_name}"
-        return self.first_name
+            return (
+                f"{capitalize_name(self.first_name)} {capitalize_name(self.last_name)}"
+            )
+        return capitalize_name(self.first_name)
 
     def get_full_name_reversed(self) -> str:
         """Return the full name of the user reversed."""
+
+        def capitalize_name(name: str) -> str:
+            return " ".join(part.capitalize() for part in name.split())
+
         if self.last_name:
-            return f"{self.last_name} {self.first_name} "
+            return (
+                f"{capitalize_name(self.last_name)} {capitalize_name(self.first_name)}"
+            )
         return self.first_name
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
-        if not self.pk or self.cedula:
+        if not self.pk or self.cedula != "":
             with connections["staffnet"].cursor() as db_connection:
                 if not self.cedula:
                     db_connection.execute(
@@ -90,10 +107,7 @@ class User(AbstractUser):
                     and not self.cedula
                 ) or self.cedula == "00000000":
                     result = ("00000000", "Administrador", "Administrador")
-                    self.email = "heibert.mogollon@cyc-bpo.com"
-                    # self.email = "heibert.mogollon@gmail.com"
-                    # self.email = "heibert203@hotmail.com"
-                    # self.email = "juan.carreno@cyc-bpo.com"
+                    self.email = settings.EMAIL_FOR_TEST
                 elif not result:
                     raise ValidationError(
                         "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
@@ -103,7 +117,24 @@ class User(AbstractUser):
                 user = User.objects.filter(cedula=self.cedula).first()
                 if user:
                     self.pk = user.pk
-                self.job_title = result[1]
+                job_position = JobPosition.objects.filter(name=result[1]).first()
+                if not job_position:
+                    if "gerente jr" in result[1].lower():
+                        rank = 5
+                    elif "gerente" in result[1].lower():
+                        rank = 6
+                    elif "director" in result[1].lower() or "jefe" in result[1].lower():
+                        rank = 4
+                    elif "coordinador" in result[1].lower():
+                        rank = 3
+                    else:
+                        mail_admins(
+                            "Cargo no encontrado",
+                            f"El cargo {result[1]} no fue encontrado en la base de datos de jerarquía.",
+                        )
+                        rank = 1
+                    job_position = JobPosition.objects.create(name=result[1], rank=rank)
+                self.job_position_id = job_position.id
                 area, _ = Area.objects.get_or_create(name=result[2])
                 self.area_id = area.id
                 if not self.is_superuser:
@@ -124,20 +155,15 @@ class User(AbstractUser):
                 isinstance(field, (models.CharField, models.TextField))
                 and field.name != "password"
                 and self.__dict__[field.name]
-                and type(getattr(self, field.attname)) == str
+                and isinstance(getattr(self, field.attname), str)
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
-        # print(User.objects.filter().first())
-        # print(User.objects.filter(cedula=self.cedula).first())
-        # print("GUARDANDO")
         super(User, self).save(*args, **kwargs)
 
-
-# @receiver(pre_save, sender=User)
-# def pre_save_user(sender, instance, **kwargs):
-#     print("PRE SAVE")
-#     print(sender.__dict__)
-#     print()
-#     print(instance.__dict__)
-#     print()
-#     print(kwargs)
+    def save_factory(self, *args, **kwargs):
+        """The most simple save method for the factory."""
+        area, _ = Area.objects.get_or_create(name="Factory")
+        self.area_id = area.id
+        job_position, _ = JobPosition.objects.get_or_create(name="Factory", rank=1)
+        self.job_position_id = job_position.id
+        super(User, self).save(*args, **kwargs)

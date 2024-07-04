@@ -1,4 +1,5 @@
 """This module contains the PQRS viewset."""
+
 import sys
 import logging
 from rest_framework import viewsets
@@ -44,9 +45,10 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
         if not "description" in self.request.data:
             return Response({"error": "La descripción es requerida"}, status=400)
         response = super().create(request, *args, **kwargs)
+        
         if response.status_code == status.HTTP_201_CREATED:
             options = {
-                "TEST": settings.EMAIL_TEST,
+                "TEST": settings.EMAIL_FOR_TEST,
                 "EJECUTIVO": "PABLO.CASTANEDA@CYC-BPO.COM",
                 "GERENCIA GENERAL": "CESAR.GARZON@CYC-BPO.COM",
                 "GERENCIA DE RIESGO Y CONTROL INTERNO": "MARIO.GIRON@CYC-BPO.COM",
@@ -63,7 +65,10 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                     "Error en PQRS",
                     f"El area {self.request.data['area']} no tiene un correo asociado.",
                 )
-                return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR, data=f"El area {self.request.data['area']} no tiene un correo asociado.")
+                return Response(
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    data=f"El area {self.request.data['area']} no tiene un correo asociado.",
+                )
             if settings.DEBUG or "test" in sys.argv:
                 cc_emails = ["juan.carreno@cyc-bpo.com"]
             else:
@@ -73,7 +78,7 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
                 f"Se ha creado una nueva PQRS: {request.data['description']}",
                 None,
                 [email],
-                cc=cc_emails,  
+                cc=cc_emails,
             )
             email.send()
         return response

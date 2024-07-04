@@ -1,4 +1,4 @@
-import { useEffect, useState, useLocation } from "react";
+import React, { useEffect, useState, useLocation } from "react";
 
 // Libraries and Hooks
 import { useInView } from "react-intersection-observer";
@@ -7,9 +7,10 @@ import { useInView } from "react-intersection-observer";
 import { getApiUrl } from "../../assets/getApi.js";
 import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
-import { Typography, Box, Container, useMediaQuery, Card } from "@mui/material";
+import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
 
 // Media
 import realBenefit2 from "../../images/benefits/benefit-1.png";
@@ -17,16 +18,30 @@ import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import prosecutor from "../../images/home-carousel/prosecutor.png";
-import Avatar from "../../images/home-carousel/avatar.jpg";
-import water from "../../images/home-carousel/water-webpage.png";
-import water2 from "../../images/home-carousel/water-2.png";
-import water3 from "../../images/home-carousel/water-3.png";
-import laborDay from "../../images/home-carousel/labor-day.png";
-import motherDay from "../../images/home-carousel/mother-day.png";
+import AvatarImage from "../../images/home-carousel/avatar.jpg";
+import securityPractices from "../../images/home-carousel/security-practices.png";
+import securityAdvices from "../../images/home-carousel/security-advices.png";
+import security from "../../images/home-carousel/security.png";
+import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
+import environment from "../../images/home-carousel/environment.png";
+import environment2 from "../../images/home-carousel/environment-2.png";
+import environment3 from "../../images/home-carousel/environment-3.png";
+import health from "../../images/home-carousel/health.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
-const homeImages = [{ image: motherDay }, { image: water3 }, { image: water2 }, { image: prosecutor }, { image: ceroDiscrimination }];
+const homeImages = [
+    { image: health },
+    { image: environment },
+    { image: environment2 },
+    { image: environment3 },
+    { image: socialSecurityCertificate },
+    { image: security },
+    { image: securityAdvices },
+    { image: securityPractices },
+    { image: prosecutor },
+    { image: ceroDiscrimination },
+];
 
 const Home = () => {
     const [openSnack, setOpenSnack] = useState(false);
@@ -39,24 +54,21 @@ const Home = () => {
 
     const handleCloseSnack = () => setOpenSnack(false);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const fetchImages = async (employees) => {
         const imagePromises = employees.map(async (employee) => {
             try {
-                const imageResponse = await fetch(`${getApiUrl(true)}profile-picture/${employee.cedula}`, {
+                const imageResponse = await fetch(`${getApiUrl(true).apiUrl}profile-picture/${employee.cedula}`, {
                     method: "GET",
                 });
 
                 const firstNames = employee.nombres;
-                const lastNames = employee.apellidos;
+                const lastNames = employee.apellidos || "";
 
                 const firstNamesParts = firstNames.split(" ");
                 const lastNamesParts = lastNames.split(" ");
@@ -72,7 +84,7 @@ const Home = () => {
 
                 if (imageResponse.status === 200) {
                     return {
-                        image: `${getApiUrl(true)}profile-picture/${employee.cedula}`,
+                        image: `${getApiUrl(true).apiUrl}profile-picture/${employee.cedula}`,
                         name: formattedName,
                         subtitle: employee.campana_general,
                     };
@@ -80,12 +92,14 @@ const Home = () => {
 
                 // If image not found, return null
                 return {
-                    image: Avatar,
+                    image: AvatarImage,
                     name: formattedName,
                     subtitle: employee.campana_general,
                 };
             } catch (error) {
-                return null; // Handle fetch errors by returning null
+                if (getApiUrl().environment === "development") {
+                    console.error(error);
+                }
             }
         });
 
@@ -94,20 +108,14 @@ const Home = () => {
 
     const getBirthdaysId = async () => {
         try {
-            const response = await fetch(`${getApiUrl(true)}profile-picture/birthday`, {
+            const response = await fetch(`${getApiUrl(true).apiUrl}profile-picture/birthday`, {
                 method: "GET",
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (response.status === 404) {
-                    return;
-                }
-                throw new Error(data.detail);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
+                const data = await response.json();
                 const yesterdayBirthdays = data.data.yesterday;
                 const todayBirthdays = data.data.today;
                 const tomorrowBirthdays = data.data.tomorrow;
@@ -121,8 +129,9 @@ const Home = () => {
                 setTomorrowBirthdays(tomorrowImages);
             }
         } catch (error) {
-            showSnack("error", error.message);
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -214,8 +223,8 @@ const Home = () => {
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {yesterdayBirthdays.length === 0 ? (
                         <>
-                            <img alt="imagen-pastel-cumpleaños" src={cake}></img>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}>
+                            <img style={{ borderRadius: "15px" }} width={350} height={465} alt="imagen-pastel-cumpleaños" src={cake}></img>
+                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", pt: "2rem" }}>
                                 <Typography variant="h6" color="gray">
                                     Ayer no hubo cumpleaños
                                 </Typography>
@@ -225,14 +234,14 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"500px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={yesterdayBirthdays} day={"Ayer"} height={"465px"} width={"100%"} />
                     )}
                 </Card>
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {todayBirthdays.length === 0 ? (
                         <>
-                            <img alt="imagen-pastel-cumpleaños" src={cake}></img>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}>
+                            <img style={{ borderRadius: "15px" }} width={350} height={465} alt="imagen-pastel-cumpleaños" src={cake}></img>
+                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", pt: "2rem" }}>
                                 <Typography variant="h6" color="gray">
                                     Hoy no hay cumpleaños
                                 </Typography>
@@ -242,14 +251,14 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"500px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={todayBirthdays} day={"Hoy"} height={"465px"} width={"100%"} />
                     )}
                 </Card>{" "}
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {tomorrowBirthdays.length === 0 ? (
                         <>
-                            <img alt="imagen-pastel-cumpleaños" src={cake}></img>
-                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", height: "50%" }}>
+                            <img style={{ borderRadius: "15px" }} width={350} height={465} alt="imagen-pastel-cumpleaños" src={cake}></img>
+                            <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", pt: "2rem" }}>
                                 <Typography variant="h6" color="gray">
                                     Mañana no hay cumpleaños
                                 </Typography>
@@ -259,7 +268,7 @@ const Home = () => {
                             </Box>
                         </>
                     ) : (
-                        <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"500px"} width={"100%"} />
+                        <CarouselComponent contain={true} items={tomorrowBirthdays} day={"Mañana"} height={"465px"} width={"100%"} />
                     )}
                 </Card>{" "}
             </Box>

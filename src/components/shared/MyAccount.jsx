@@ -1,48 +1,17 @@
 import { useState } from "react";
 
 // Material-UI
-import { Dialog, DialogContent, DialogActions, Button, TextField, Typography, MenuItem, Box } from "@mui/material";
+import { Dialog, DialogContent, DialogActions, Button, TextField, Typography, MenuItem, Box, DialogContentText } from "@mui/material";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
-const initialValues = {
-    cedula: "",
-    apellidos: "",
-    nombres: "",
-    estado_civil: "",
-    hijos: "",
-    personas_a_cargo: "",
-    estrato: "",
-    tel_fijo: "",
-    celular: "",
-    correo: "",
-    contacto_emergencia: "",
-    parentesco: "",
-    tel_contacto: "",
-    nivel_escolaridad: "",
-    profesion: "",
-    estudios_en_curso: "",
-};
+// Custom components and assets
+import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
+import SnackbarAlert from "../common/SnackBarAlert";
+1;
 
 const personalFields = [
-    {
-        id: "cedula",
-        label: "Cedula",
-        name: "cedula",
-        type: "text",
-    },
-    {
-        id: "apellidos",
-        label: "Apellidos",
-        name: "apellidos",
-        type: "text",
-    },
-    {
-        id: "nombres",
-        label: "Nombres",
-        name: "nombres",
-        type: "text",
-    },
     {
         id: "estado_civil",
         label: "Estado civil",
@@ -86,20 +55,6 @@ const personalFields = [
         ],
     },
     {
-        id: "estrato",
-        label: "Estrato",
-        name: "estrato",
-        type: "select",
-        options: [
-            { value: 1, label: "Estrato 1" },
-            { value: 2, label: "Estrato 2" },
-            { value: 3, label: "Estrato 3" },
-            { value: 4, label: "Estrato 4" },
-            { value: 5, label: "Estrato 5" },
-            { value: 6, label: "Estrato 6" },
-        ],
-    },
-    {
         id: "tel_fijo",
         label: "Teléfono fijo",
         name: "tel_fijo",
@@ -115,7 +70,7 @@ const personalFields = [
     },
     {
         id: "parentesco",
-        label: "Parentesco",
+        label: "Parentesco del contacto de emergencia",
         name: "parentesco",
         type: "select",
         options: [
@@ -135,57 +90,65 @@ const personalFields = [
     },
     {
         id: "tel_contacto",
-        label: "Teléfono de contacto",
+        label: "Teléfono de contacto de emergencia",
         name: "tel_contacto",
-        type: "text",
-    },
-    {
-        id: "nivel_escolaridad",
-        label: "Nivel de escolaridad",
-        name: "nivel_escolaridad",
-        type: "select",
-        options: [
-            { value: "PRIMARIA", label: "Primaria" },
-            { value: "BACHILLER", label: "Bachiller" },
-            { value: "TECNICO", label: "Tecnico" },
-            { value: "TECNOLOGO", label: "Tecnologo" },
-            { value: "AUXILIAR", label: "Auxiliar" },
-            { value: "UNIVERSITARIO(A)", label: "Universitario" },
-            { value: "PROFESIONAL", label: "Profesional" },
-            { value: "ESPECIALIZACION", label: "Especializacion" },
-        ],
-    },
-    {
-        id: "profesion",
-        label: "Profesión",
-        name: "profesion",
-        type: "text",
-    },
-    {
-        id: "estudios_en_curso",
-        label: "Estudios en curso",
-        name: "estudios_en_curso",
         type: "text",
     },
 ];
 
 const validationSchema = Yup.object().shape({
-    cedula: Yup.string(),
-    apellidos: Yup.string(),
-    nombres: Yup.string(),
-    estado_civil: Yup.string(),
-    hijos: Yup.number().typeError("Numero de teléfono incorrecto"),
-    personas_a_cargo: Yup.number().typeError("Numero incorrecto"),
-    estrato: Yup.number().typeError("Numero incorrecto"),
-    tel_fijo: Yup.number().typeError("Numero incorrecto"),
-    celular: Yup.string(),
-    correo: Yup.string().email("Correo inválido"),
-    contacto_emergencia: Yup.string(),
-    parentesco: Yup.string(),
-    tel_contacto: Yup.number().typeError("Numero incorrecto"),
+    estado_civil: Yup.string().required("Campo requerido").required("Campo requerido"),
+    hijos: Yup.number().typeError("Numero de teléfono incorrecto").required("Campo requerido"),
+    personas_a_cargo: Yup.number().typeError("Numero incorrecto").required("Campo requerido"),
+    tel_fijo: Yup.string().matches(/^[0-9]+$/, "Numero de teléfono incorrecto"),
+    celular: Yup.string().matches(/^[0-9]+$/, "Numero de celular incorrecto"),
+    correo: Yup.string().email("Correo inválido").required("Campo requerido"),
+    contacto_emergencia: Yup.string().required("Campo requerido"),
+    parentesco: Yup.string().required("Campo requerido"),
+    tel_contacto: Yup.string().matches(/^[0-9]+$/, "Numero de contacto incorrecto"),
 });
 
 const MyAccountDialog = ({ open, onClose }) => {
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+    const [openSnack, setOpenSnack] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("success");
+    const [initialValues, setInitialValues] = useState({});
+
+    const handleCloseSnack = () => {
+        setOpenSnack(false);
+    };
+
+    const showSnack = (severity, message) => {
+        setMessage(message);
+        setSeverity(severity);
+        setOpenSnack(true);
+    };
+
+    const getInitialValues = async () => {
+        try {
+            const response = await fetch(`${getApiUrl().apiUrl}users/get-profile/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setInitialValues(data.data);
+            }
+        } catch (error) {
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
+        }
+    };
+
+    useState(() => {
+        getInitialValues();
+    }, []);
+
     const MyTextFields = () => {
         return personalFields.map((myField) => {
             const [field, meta] = useField(myField);
@@ -199,7 +162,7 @@ const MyAccountDialog = ({ open, onClose }) => {
                     select={myField.type === "select"}
                     helperText={errorText}
                     error={!!errorText}
-                    {...field} 
+                    {...field}
                 >
                     {myField.options &&
                         myField.options.map((option) => (
@@ -212,46 +175,62 @@ const MyAccountDialog = ({ open, onClose }) => {
         });
     };
 
-    const handleSave = () => {
-        // Handle saving changes to the user's account
-        console.log("Saving changes...");
-        // Here you can make API calls to update the user's account details
-        // Remember to handle errors and success messages accordingly
-        onClose();
+    const handleSave = async (values) => {
+        try {
+            const response = await fetch(`${getApiUrl().apiUrl}users/update-profile/`, {
+                method: "PATCH",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(values),
+            });
+
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                showSnack("success", "Información actualizada");
+                onClose();
+                getInitialValues();
+            }
+        } catch (error) {
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
+        }
     };
 
     return (
-        <Dialog fullWidth={true} maxWidth={"lg"} open={open} onClose={onClose}>
-            <Formik
-                initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={(values) => {
-                    console.log(values);
-                }}
-            >
-                <Form>
-                    <DialogContent>
-                        <Typography variant="h2">Tu Cuenta</Typography>
-                        <Typography variant="subtitle1">Completa y actualiza tu información personal</Typography>
-                        <Box
-                            sx={{
-                                "& .MuiTextField-root": { m: 1, width: "25ch" },
-                            }}
-                        >
-                            <MyTextFields />
-                        </Box>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button variant="contained" onClick={onClose}>
-                            CAncelar
-                        </Button>
-                        <Button variant="contained" type="submit">
-                            Actualizar
-                        </Button>
-                    </DialogActions>
-                </Form>
-            </Formik>
-        </Dialog>
+        <>
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+            <Dialog open={open} onClose={onClose}>
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSave}>
+                    <Form>
+                        <DialogContent>
+                            <Typography variant="h4">Tu Cuenta</Typography>
+                            <DialogContentText sx={{ marginBottom: "1rem" }} id="alert-dialog-slide-description">
+                                Completa y actualiza tu información personal
+                            </DialogContentText>
+                            <Box
+                                sx={{
+                                    "& .MuiTextField-root": { m: 1, width: "25ch" },
+                                }}
+                            >
+                                <MyTextFields />
+                            </Box>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button variant="contained" onClick={onClose}>
+                                Cancelar
+                            </Button>
+                            <Button variant="contained" type="submit">
+                                Actualizar
+                            </Button>
+                        </DialogActions>
+                    </Form>
+                </Formik>
+            </Dialog>
+        </>
     );
 };
 

@@ -62,7 +62,7 @@ class ReferenceViewSet(viewsets.ModelViewSet):
                         <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
                         """
             if settings.DEBUG or "test" in sys.argv:
-                to_emails = ["heibert.mogollon@cyc-bpo.com"]
+                to_emails = [settings.EMAIL_FOR_TEST]
             else:
                 to_emails = ["contrataciones@cyc-bpo.com"]
             errors = send_email(
@@ -93,8 +93,8 @@ def send_vacancy_apply(request):
     subject = f"Aplicación a {vacancy}"
     user = User.objects.get(username=request.user)
     if user.cedula == 999999999 or settings.DEBUG or "test" in sys.argv:
-        cedula = "1000065648"
-        to_emails = ["heibert.mogollon@cyc-bpo.com"]
+        cedula = settings.TEST_CEDULA
+        to_emails = [settings.EMAIL_FOR_TEST]
     else:
         cedula = user.cedula
         to_emails = ["contrataciones@cyc-bpo.com"]

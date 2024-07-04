@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Container, Box, Typography } from "@mui/material";
@@ -39,20 +40,21 @@ export const VacanciesReferred = () => {
 
     const getVacanciesReferred = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}/vacancy/reference/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}/vacancy/reference/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 setRows(data);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -62,13 +64,10 @@ export const VacanciesReferred = () => {
 
     const handleOpenDialog = () => setOpenDialog(true);
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseSnack = () => setOpenSnack(false);

@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import {
@@ -54,23 +55,21 @@ const Vacancies = () => {
 
     const getVacancies = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}vacancy/vacancy/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacancy/vacancy/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
+                const data = await response.json();
                 setVacancies(data);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setOpenCollapse(false);
             setOpenVacancy(false);
         }
@@ -102,27 +101,23 @@ const Vacancies = () => {
         formData.append("phone_number", phoneNumberRef.current.value);
         formData.append("name", nameRef.current.value);
         try {
-            const response = await fetch(`${getApiUrl()}vacancy/reference/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacancy/reference/`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
             });
 
-            const data = await response.json();
+            await handleError(response, showSnack);
 
             if (response.status === 201) {
                 showSnack("success", "La información de la vacante ha sido enviada correctamente.");
-            } else if (response.status === 400) {
-                // return the message from the API that's in the first property of the response object
-                showSnack("info", data.non_field_errors);
-            } else {
-                throw new Error(data.error);
             }
             setOpenCollapse(false);
             setOpenVacancy(false);
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setOpenCollapse(false);
             setOpenVacancy(false);
         }
@@ -132,17 +127,13 @@ const Vacancies = () => {
         const formData = new FormData();
         formData.append("vacancy", vacancyId);
         try {
-            const response = await fetch(`${getApiUrl()}vacancy/apply/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacancy/apply/`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 showSnack("success", "Se ha enviado tu postulación correctamente.");
@@ -150,19 +141,17 @@ const Vacancies = () => {
                 setOpenVacancy(false);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setOpenVacancy(false);
         }
     };
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseVacancy = () => {
@@ -185,17 +174,13 @@ const Vacancies = () => {
         formData.append("image", fileImage);
 
         try {
-            const response = await fetch(`${getApiUrl()}vacancy/vacancy/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacancy/vacancy/`, {
                 method: "POST",
                 body: formData,
                 credentials: "include",
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 201) {
                 getVacancies();
@@ -205,8 +190,9 @@ const Vacancies = () => {
                 setImageName("Cargar Imagen");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setFileImage(null);
             setImageName("Cargar Imagen");
             setOpenAddVacancy(false);
@@ -243,18 +229,14 @@ const Vacancies = () => {
 
     const handleInactiveVacancy = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}vacancy/vacancy/${inactivateId}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacancy/vacancy/${inactivateId}/`, {
                 method: "PATCH",
                 credentials: "include",
                 body: JSON.stringify({ is_active: false }),
                 headers: { "Content-Type": "application/json" },
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error);
-            }
+            await handleError(response, showSnack);
 
             if (response.status === 200) {
                 getVacancies();
@@ -262,8 +244,9 @@ const Vacancies = () => {
                 setInactivateDialog(false);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
             setInactivateDialog(false);
         }
     };

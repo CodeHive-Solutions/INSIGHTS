@@ -1,17 +1,11 @@
 """Views for the payslip."""
 
-import pdfkit
 import base64
-from faker import Faker
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework.decorators import api_view
-
-# from services.emails import send_email
-from django.core import mail
 from users.models import User
-from django.template.loader import render_to_string
 from django.db import connections
 from django.conf import settings
 from .tasks import send_email_with_attachment
@@ -21,9 +15,10 @@ from .serializers import PayslipSerializer
 
 def convert_numeric_value(value):
     try:
-        return float(value.replace(',', '.'))
+        return float(value.replace(",", "."))
     except ValueError:
         return value
+
 
 def send_payslip(payslips):
     payslip_data = []
@@ -143,8 +138,12 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "transport_allowance": convert_numeric_value(data[8]),
                     "surcharge_night_shift_hours": convert_numeric_value(data[9]),
                     "surcharge_night_shift_allowance": convert_numeric_value(data[10]),
-                    "surcharge_night_shift_holiday_hours": convert_numeric_value(data[11]),
-                    "surcharge_night_shift_holiday_allowance": convert_numeric_value(data[12]),
+                    "surcharge_night_shift_holiday_hours": convert_numeric_value(
+                        data[11]
+                    ),
+                    "surcharge_night_shift_holiday_allowance": convert_numeric_value(
+                        data[12]
+                    ),
                     "surcharge_holiday_hours": convert_numeric_value(data[13]),
                     "surcharge_holiday_allowance": convert_numeric_value(data[14]),
                     "bonus_paycheck": convert_numeric_value(data[15]),

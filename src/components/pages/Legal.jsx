@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, IconButton, Tooltip, Divider, Chip } from "@mui/material";
@@ -251,20 +252,21 @@ export const Legal = () => {
 
     const getPolicies = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}contracts/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}contracts/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 setRows(data);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -274,21 +276,22 @@ export const Legal = () => {
 
     const getDetails = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}contracts/${id}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}contracts/${id}`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 setDetails(data);
                 handleOpenDialogEdit();
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -314,34 +317,32 @@ export const Legal = () => {
         setDisabled(!disabled);
     };
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
 
     const handleDeleteClick = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}contracts/${id}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}contracts/${id}`, {
                 method: "delete",
                 credentials: "include",
             });
+
+            await handleError(response, showSnack);
+
             if (response.status === 204) {
                 setRows(rows.filter((row) => row.id !== id));
                 getPolicies();
                 showSnack("success", "Se ha eliminado el registro correctamente.");
-            } else {
-                showSnack("error", "Error al eliminar el registro");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
-            setSnackbarMessage("Error al eliminar la meta: " + error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -388,23 +389,24 @@ export const Legal = () => {
         formatCOPFields(values);
 
         try {
-            const response = await fetch(`${getApiUrl()}contracts/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}contracts/`, {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify(values),
                 headers: { "Content-Type": "application/json" },
             });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 201) {
+
+            await handleError(response, showSnack);
+
+            if (response.status === 201) {
                 handleCloseDialog();
                 getPolicies();
                 showSnack("success", "Se ha creado el registro correctamente.");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -425,23 +427,24 @@ export const Legal = () => {
 
         formatCOPFields(values);
         try {
-            const response = await fetch(`${getApiUrl()}contracts/${values.id}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}contracts/${values.id}/`, {
                 method: "PATCH",
                 credentials: "include",
                 body: JSON.stringify(values),
                 headers: { "Content-Type": "application/json" },
             });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
                 handleCloseDialogEdit();
                 getPolicies();
                 showSnack("success", "Se ha actualizado el registro correctamente.");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 

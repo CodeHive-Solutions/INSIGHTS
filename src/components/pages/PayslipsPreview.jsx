@@ -178,7 +178,7 @@ const columns = [
     },
     {
         field: "apsalpen",
-        headerName: "Aporte a Salud y Pensión",
+        headerName: "Aporte a Salud y Pensión Sobre Incentivo",
         width: 130,
         type: "number",
         valueGetter: (params) => params.row.apsalpen * 1,
@@ -227,7 +227,6 @@ const columns = [
 ];
 
 const PayslipsPreview = ({ rows }) => {
-    console.log(rows);
     return (
         <div style={{ width: "100%", height: 400, boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
             <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />

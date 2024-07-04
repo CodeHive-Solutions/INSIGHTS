@@ -1,8 +1,9 @@
 """Tests for the users app."""
 
 import os
-from services.tests import BaseTestCase
 import ldap  # type: ignore
+import random
+from services.tests import BaseTestCase
 from users.models import User
 from django.test import TestCase
 from django.conf import settings
@@ -66,8 +67,6 @@ class LDAPAuthenticationTest(TestCase):
     def test_login_django(self, called=False):
         """Tests that the login endpoint works as expected."""
         if called:
-            # username = "david.alvarez"
-            # password = "asdf123.+"
             username = "staffnet"
             password = os.environ["StaffNetLDAP"]
             data = {
@@ -80,6 +79,18 @@ class LDAPAuthenticationTest(TestCase):
             refresh = self.client.cookies.get("refresh-token")
             self.assertIsNotNone(token, "No authentication token found in the response")
             self.assertIsNotNone(refresh, "No refresh token found in the response")
+            self.assertEqual(User.objects.count(), 1)
+            user = User.objects.first()
+            if user:
+                self.assertEqual(str(user.username).lower(), username)
+                self.assertEqual(user.email, settings.EMAIL_FOR_TEST)
+                self.assertEqual(user.first_name, "STAFFNET")
+                self.assertEqual(user.last_name, "LDAP")
+                self.assertEqual(user.cedula, "00000000")
+                self.assertEqual(user.job_position.name, "Administrador")
+                self.assertEqual(user.job_position.rank, 1)
+            else:
+                self.fail("User not created.")
             return response
 
     def test_login_update_user_without_windows_user(self):
@@ -124,14 +135,57 @@ class LDAPAuthenticationTest(TestCase):
         response = self.client.get("/goals/", cookies=self.client.cookies)  # type: ignore
         self.assertEqual(response.status_code, 401)
 
-# class UserTestCase(BaseTestCase):
 
-#     def test_user_update(self):
-#         """Tests the user update endpoint."""
-#         response = self.client.post(
-#             reverse("update_users"),
-#             {
-#                 "celular": "1234567890",
-#             },
-#         )
-#         self.assertEqual(response.status_code, 200, response.data)
+class UserTestCase(BaseTestCase):
+
+    def test_get_full_name(self):
+        """Tests that the full name is returned correctly."""
+        user = User(first_name="David", last_name="Alvarez")
+        self.assertEqual(user.get_full_name(), "David Alvarez")
+
+    def test_get_full_name_reversed(self):
+        """Tests that the full name is returned correctly."""
+        user = User(first_name="David", last_name="Alvarez")
+        self.assertEqual(user.get_full_name_reversed(), "Alvarez David")
+
+    def test_get_users(self):
+        """Tests that the get_users endpoint works as expected."""
+        demo_user = self.create_demo_user()
+        self.user.job_position.rank = 7
+        self.user.job_position.save()
+        response = self.client.get(reverse("get_subordinates"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}])
+
+    def test_get_user_higher_rank(self):
+        """Tests that the get_users endpoint works as expected."""
+        self.create_demo_user()
+        response = self.client.get(reverse("get_subordinates"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])
+
+    def test_get_user_profile(self):
+        """Tests that the get_user_profile endpoint works as expected."""
+        self.user.cedula = settings.TEST_CEDULA
+        self.user.save()
+        response = self.client.get(reverse("get_profile"))
+        self.assertEqual(response.status_code, 200, response.data)
+
+    def test_update_user(self):
+        """Tests that the update_user endpoint works as expected."""
+        # Create a random number for cell phone
+        data = {"estado_civil": "Soltero", "hijos": random.randint(0, 999999)}
+        self.user.cedula = settings.TEST_CEDULA
+        self.user.save()
+        response = self.client.patch(reverse("update_profile"), data)
+        self.assertEqual(response.status_code, 200, response.data)
+
+    def test_update_user_email(self):
+        """Tests that the update_user endpoint works as expected."""
+        data = {"correo": "test{}@cyc-bpo.com".format(random.randint(0, 999999))}
+        self.user.cedula = settings.TEST_CEDULA
+        self.user.save()
+        response = self.client.patch(reverse("update_profile"), data)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.user.refresh_from_db()
+        self.assertEqual(str(self.user.email).lower(), data["correo"])

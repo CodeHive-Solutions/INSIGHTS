@@ -12,12 +12,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from datetime import timedelta, datetime
 from pathlib import Path
+import sys
 import os
 import ssl
-import ldap  # type: ignore
-from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion  # type: ignore
+import ldap
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
 from dotenv import load_dotenv
-import sys
 
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
@@ -28,7 +28,9 @@ if not os.path.isfile(ENV_PATH):
 load_dotenv(ENV_PATH)
 
 # This allows to use the server with a self signed certificate
-ssl._create_default_https_context = ssl._create_unverified_context
+ssl._create_default_https_context = (
+    ssl._create_unverified_context
+)  # pylint: disable=protected-access
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,24 +40,27 @@ MEDIA_ROOT = BASE_DIR / "media"
 SENDFILE_ROOT = MEDIA_ROOT
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.getenv("DEBUG") is not None else False
-# DEBUG = False
+# don't run with debug turned on in production!
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
 
-if DEBUG:
-    ALLOWED_HOSTS = ["insights-api-dev.cyc-bpo.com"]
-else:
-    ALLOWED_HOSTS = ["insights-api.cyc-bpo.com"]
+def str_to_bool(value: str) -> bool:
+    """Convert a string to a boolean."""
+    return value.lower() in ("true", "t", "1")
+
+
+allowed_hosts_env = os.getenv("ALLOWED_HOSTS", "")
+
+# This is to avoid the error of having an empty string as an allowed host (This is a security risk)
+# If the environment variable is an empty string, return an empty list, otherwise split by comma
+ALLOWED_HOSTS = (
+    [host.strip() for host in allowed_hosts_env.split(",")] if allowed_hosts_env else []
+)
 
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -84,6 +89,8 @@ INSTALLED_APPS = [
     "operational_risk",
     "payslip",
     "employment_management",
+    "vacation",
+    "notifications",
 ]
 
 MIDDLEWARE = [
@@ -103,11 +110,8 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_JWT.CookieJWTAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_jwt.CookieJWTAuthentication",),
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
 }
 
 
@@ -125,10 +129,13 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 if not DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        "https://intranet.cyc-bpo.com",
-        "https://staffnet-api.cyc-bpo.com",
-    ]
+    cors_allowed_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
+    # This avoid the error of having an empty string as an allowed host (This is a security risk)
+    CORS_ALLOWED_ORIGINS = (
+        [cors.strip() for cors in cors_allowed_origins.split(",")]
+        if cors_allowed_origins
+        else []
+    )
 
 ROOT_URLCONF = "INSIGHTSAPI.urls"
 
@@ -148,21 +155,34 @@ TEMPLATES = [
     },
 ]
 
-ADMINS = [
-    ("Heibert Mogollon", "heibert203@hotmail.com"),
-    # ("Heibert Mogollon", "heibert.mogollon@gmail.com"),
-    ("Heibert Mogollon", "heibert.mogollon@cyc-bpo.com"),
-    ("Juan Carreño", "carrenosebastian54@gmail.com"),
-]
-SERVER_EMAIL = "no-reply@cyc-services.com.co"
+admins = os.getenv("ADMINS", "")
+
+if "test" in sys.argv or ALLOWED_HOSTS[0].find("-dev") != -1:
+    ADMINS = []
+else:
+    ADMINS = (
+        [tuple(admin.strip().split(":")) for admin in admins.split(",")]
+        if admins
+        else []
+    )
+
+SERVER_EMAIL = os.environ["SERVER_EMAIL"]
 EMAIL_BACKEND = "INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend"
-EMAIL_HOST = "mail.cyc-services.com.co"
-EMAIL_PORT = 587
+EMAIL_HOST = os.environ["EMAIL_HOST"]
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = "no-reply@cyc-services.com.co"
-EMAIL_HOST_USER = "no-reply@cyc-services.com.co"
-EMAIL_HOST_PASSWORD = os.environ["TecPlusLess"]
-EMAIL_TEST = "heibert.mogollon@cyc-bpo.com"
+DEFAULT_FROM_EMAIL = SERVER_EMAIL
+EMAIL_HOST_USER = SERVER_EMAIL
+EMAIL_HOST_PASSWORD = os.environ["EMAIL_HOST_PASSWORD"]
+EMAILS_ETHICAL_LINE = [
+    email.strip() for email in os.environ["EMAILS_ETHICAL_LINE"].split(",")
+]
+
+
+# This is the email where the test emails are going to be sent
+EMAIL_FOR_TEST = os.getenv("EMAIL_FOR_TEST", "").upper()
+# This cedula need to be in the StaffNet database it's used in many tests
+TEST_CEDULA = os.environ["TEST_CEDULA"]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -173,7 +193,7 @@ DATABASES = {
         "HOST": os.environ["SERVER_DB"],
         "PORT": "3306",
         "USER": "INSIGHTSUSER",
-        "PASSWORD": os.environ["INSIGHTSMYSQL"],
+        "PASSWORD": os.environ["INSIGHTS_DB_PASS"],
         "NAME": "insights",
     },
     "staffnet": {
@@ -181,7 +201,7 @@ DATABASES = {
         "HOST": os.environ["SERVER_DB"],
         "PORT": "3306",
         "USER": "INSIGHTSUSER",
-        "PASSWORD": os.environ["INSIGHTSMYSQL"],
+        "PASSWORD": os.environ["INSIGHTS_DB_PASS"],
         "NAME": "staffnet",
         "TEST": {"MIRROR": "staffnet"},
     },
@@ -239,7 +259,7 @@ USE_TZ = False
 
 AUTHENTICATION_BACKENDS = [
     "django_auth_ldap.backend.LDAPBackend",
-    "api_token.cookie_JWT.CustomAuthBackend",
+    "api_token.cookie_jwt.CustomAuthBackend",
     "django.contrib.auth.backends.ModelBackend",
 ]
 
@@ -297,6 +317,7 @@ LOGGING = {
         "mail_admins": {
             "level": "ERROR",
             "class": "django.utils.log.AdminEmailHandler",
+            "include_html": True,
         },
         "celery": {
             "level": "INFO",
@@ -307,7 +328,7 @@ LOGGING = {
     },
     "loggers": {
         "requests": {
-            "handlers": ["response_file", "exception_file"],
+            "handlers": ["response_file", "exception_file", "mail_admins"],
             "level": "DEBUG",
             "propagate": True,
         },
@@ -337,6 +358,10 @@ LOGGING = {
             "propagate": True,
         },
     },
+    "root": {
+        "handlers": ["exception_file", "mail_admins"],
+        "level": "ERROR",
+    },
 }
 
 AUTH_USER_MODEL = "users.User"
@@ -344,7 +369,7 @@ AUTH_USER_MODEL = "users.User"
 # LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldap://CYC-SERVICES.COM.CO:389"
 AUTH_LDAP_BIND_DN = "CN=StaffNet,OU=TECNOLOGÍA,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO"
-AUTH_LDAP_BIND_PASSWORD = os.getenv("Adminldap")
+AUTH_LDAP_BIND_PASSWORD = os.getenv("AdminLDAPPassword")
 
 # AUTH_LDAP_USER_SEARCH = LDAPSearch(
 #     "OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO",  # Search base
@@ -383,9 +408,11 @@ AUTH_LDAP_USER_ATTR_MAP = {
 AUTH_LDAP_ALWAYS_UPDATE_USER = False
 
 # This works faster in ldap but i don't know how implement it with the sAMAcountName
-# AUTH_LDAP_USER_DN_TEMPLATE = 'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
+# AUTH_LDAP_USER_DN_TEMPLATE =
+#'CN=Heibert Steven Mogollon Mahecha,OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
-# AUTH_LDAP_USER_DN_TEMPLATE = '(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
+# AUTH_LDAP_USER_DN_TEMPLATE =
+#'(sAMAccountName=%(user)s),OU=IT,OU=BOGOTA,DC=CYC-SERVICES,DC=COM,DC=CO'
 
 if DEBUG:
     SENDFILE_BACKEND = "django_sendfile.backends.development"
@@ -400,7 +427,7 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
     "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
     "AUTH_COOKIE": "access-token",
-    "USER_AUTHENTICATION_RULE": "api_token.cookie_JWT.always_true",
+    "USER_AUTHENTICATION_RULE": "api_token.cookie_jwt.always_true",
 }
 
 # Celery configuration for the tasks

@@ -46,8 +46,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             user = User.objects.get(username=username)
             response.data["permissions"] = user.get_all_permissions()
             response.data["cedula"] = user.cedula
-            response.data["cargo"] = user.job_title
+            response.data["cargo"] = user.job_position.name
             response.data["email"] = user.email
+            response.data["rango"] = user.job_position.rank
         return response
 
 

@@ -1,10 +1,8 @@
 """Test for payslip. """
 
-import pandas as pd
 from services.tests import BaseTestCase
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.core import mail
 from .models import Payslip
 
 
@@ -75,7 +73,7 @@ class PayslipTest(BaseTestCase):
     def test_get_payslip(self):
         """Test get payslip."""
         self.test_upload_payslip_file()
-        payslip = Payslip.objects.filter(identification="1000065648").first()
+        payslip = Payslip.objects.filter(identification=settings.TEST_CEDULA).first()
         if not payslip:
             self.fail("Payslip not found")
         get = Permission.objects.get(codename="view_payslip")
@@ -87,8 +85,8 @@ class PayslipTest(BaseTestCase):
             response.data,
         )
         self.assertEqual(response.data["title"], "SEGUNDA QUINCENA MES DE ENERO 2024")
-        self.assertEqual(response.data["identification"], "1000065648")
-        self.assertEqual(response.data["name"], "HEIBERT STEVEN MOGOLLON MAHECHA")
+        self.assertEqual(response.data["identification"], settings.TEST_CEDULA)
+        self.assertEqual(response.data["name"], payslip.name)
         self.assertEqual(response.data["area"], "Ejecutivo")
         self.assertEqual(response.data["job_title"], "Cargo #3")
         self.assertEqual(response.data["salary"], "28227321.00")
@@ -116,7 +114,7 @@ class PayslipTest(BaseTestCase):
     def test_get_another_person(self):
         """Test get payslip of another person."""
         self.test_upload_payslip_file()
-        payslip = Payslip.objects.filter(identification="1000065648").first()
+        payslip = Payslip.objects.filter(identification=settings.TEST_CEDULA).first()
         response = self.client.get(f"/payslips/{payslip.pk}/")
         self.assertEqual(
             response.status_code,
@@ -218,7 +216,7 @@ class PayslipTest(BaseTestCase):
     def test_resend_payslip(self):
         """Test resend payslip."""
         self.test_upload_payslip_file()
-        payslip = Payslip.objects.filter(identification="1000065648").first()
+        payslip = Payslip.objects.filter(identification=settings.TEST_CEDULA).first()
         if not payslip:
             self.fail("Payslip not found")
         response = self.client.post(

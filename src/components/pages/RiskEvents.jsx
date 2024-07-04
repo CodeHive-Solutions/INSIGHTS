@@ -9,6 +9,7 @@ import * as Yup from "yup";
 // Custom components
 import { getApiUrl } from "../../assets/getApi";
 import SnackbarAlert from "../common/SnackBarAlert";
+import { handleError } from "../../assets/handleError";
 
 // Material-UI
 import Container from "@mui/material/Container";
@@ -87,23 +88,21 @@ export const RiskEvent = () => {
 
     const getOperationalRisk = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}operational-risk/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}operational-risk/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 setRows(data);
-                // setAddPermission(data.permissions.add);
-                // setEditPermission(data.permissions.change);
-                // setDeletePermission(data.permissions.delete);
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -125,21 +124,22 @@ export const RiskEvent = () => {
 
     const getDetails = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}operational-risk/${id}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}operational-risk/${id}`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
                 cleanUpDetails(data);
                 handleOpenDialogEdit();
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -163,34 +163,32 @@ export const RiskEvent = () => {
         setDisabled(!disabled);
     };
 
-    const showSnack = (severity, message, error) => {
+    const showSnack = (severity, message) => {
         setSeverity(severity);
         setMessage(message);
         setOpenSnack(true);
-        if (error) {
-            console.error("error:", message);
-        }
     };
 
     const handleCloseSnack = () => setOpenSnack(false);
 
     const handleDeleteClick = async (id) => {
         try {
-            const response = await fetch(`${getApiUrl()}operational-risk/${id}`, {
+            const response = await fetch(`${getApiUrl().apiUrl}operational-risk/${id}`, {
                 method: "delete",
                 credentials: "include",
             });
+
+            await handleError(response, showSnack);
+
             if (response.status === 204) {
                 setRows(rows.filter((row) => row.id !== id));
                 getOperationalRisk();
                 showSnack("success", "Se ha eliminado el registro correctamente.");
-            } else {
-                showSnack("error", "Error al eliminar el registro");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
-            setSnackbarMessage("Error al eliminar la meta: " + error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
@@ -220,50 +218,51 @@ export const RiskEvent = () => {
 
     const handleSubmit = async (values) => {
         try {
-            const response = await fetch(`${getApiUrl()}operational-risk/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}operational-risk/`, {
                 method: "POST",
                 credentials: "include",
                 body: JSON.stringify(values),
                 headers: { "Content-Type": "application/json" },
             });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 201) {
+
+            await handleError(response, showSnack);
+
+            if (response.status === 201) {
                 handleCloseDialog();
                 getOperationalRisk();
                 showSnack("success", "Se ha creado el registro correctamente.");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
     const handleSubmitEdit = async (values) => {
         try {
-            const response = await fetch(`${getApiUrl()}operational-risk/${values.id}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}operational-risk/${values.id}/`, {
                 method: "PATCH",
                 credentials: "include",
                 body: JSON.stringify(values),
                 headers: { "Content-Type": "application/json" },
             });
-            const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.detail);
-            } else if (response.status === 200) {
+
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
                 handleCloseDialogEdit();
                 getOperationalRisk();
                 showSnack("success", "Se ha actualizado el registro correctamente.");
             }
         } catch (error) {
-            console.error(error);
-            showSnack("error", error.message);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
     const FormikTextField = ({ label, type, options, multiline, rows, ...props }) => {
-        console.log(props);
         const [field, meta] = useField(props);
         const errorText = meta.error && meta.touched ? meta.error : "";
         if (type === "select") {

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 // Custom Components
 import { getApiUrl } from "../../assets/getApi";
+import { handleError } from "../../assets/handleError";
 
 // Media
 import cycLogo from "../../images/cyc-logos/logotipo-navbar.png";
@@ -21,21 +22,16 @@ const PDFcomponent = () => {
     const [goalDate, setGoalDate] = useState();
     const getGoal = async () => {
         try {
-            const response = await fetch(`${getApiUrl()}goals/15225716/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}goals/15225716/`, {
                 method: "GET",
                 credentials: "include",
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail);
-            }
-
-            if (response.status === 200) {
-            }
+            await handleError(response, showSnack);
         } catch (error) {
-            console.error(error);
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
         }
     };
 
