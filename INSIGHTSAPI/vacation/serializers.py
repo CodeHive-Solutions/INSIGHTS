@@ -1,5 +1,6 @@
 """Serializers for the vacation app."""
 
+import datetime
 from rest_framework import serializers
 from users.models import User
 from .models import VacationRequest
@@ -55,15 +56,22 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         """Validate the dates of the vacation request."""
-        if "start_date" in attrs and "end_date" in attrs:
+        # Check if is a creation or an update
+        if not self.instance:
+            created_at = datetime.datetime.now()
+            if created_at.day >= 20:
+                raise serializers.ValidationError(
+                    "No puedes solicitar vacaciones después del día 20."
+                )
             if attrs["start_date"] > attrs["end_date"]:
                 raise serializers.ValidationError(
                     "La fecha de inicio no puede ser mayor a la fecha de fin."
                 )
-        uploaded_by = (
-            self.instance.uploaded_by if self.instance else self.context["request"].user
-        )
-        if "user" in attrs:
+            uploaded_by = (
+                self.instance.uploaded_by
+                if self.instance
+                else self.context["request"].user
+            )
             if attrs["user"] == uploaded_by:
                 raise serializers.ValidationError(
                     "No puedes subir solicitudes para ti mismo."
@@ -81,6 +89,11 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         validated_data.pop("payroll_approbation", None)
         validated_data.pop("manager_approbation", None)
         validated_data["uploaded_by"] = self.context["request"].user
+        created_at = datetime.datetime.now()
+        if created_at.day >= 20:
+            raise serializers.ValidationError(
+                "No puedes solicitar vacaciones después del día 20."
+            )
         vacation_request = super().create(validated_data)
         return vacation_request
 

@@ -69,8 +69,24 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         return response
                     create_notification(
                         "Una solicitud necesita tu aprobación",
-                        f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
+                        f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['user']}. 
+                        Ahora necesita tu aprobación.",
                         hr_user,
+                    )
+                    payroll_user = User.objects.filter(
+                        user_permissions__codename="payroll_approbation"
+                    ).first()
+                    if not payroll_user:
+                        mail_admins(
+                            "No hay usuarios con el permiso de payroll_approbation",
+                            "No hay usuarios con el permiso de payroll_approbation",
+                        )
+                        return response
+                    create_notification(
+                        "Una solicitud de vacaciones ha sido aprobada por un gerente",
+                        f"La solicitud de vacaciones de {response.data['user']} ha sido aprobada por {request.user.get_full_name()}. 
+                        Ahora sera revisada por la Gerencia de Recursos Humanos.",
+                        payroll_user,
                     )
                 return response
 
