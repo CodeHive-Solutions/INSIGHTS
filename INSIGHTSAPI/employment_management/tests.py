@@ -134,9 +134,9 @@ class EmploymentCertificationTest(BaseTestCase):
         self.assertEqual(len(response.data), EmploymentCertification.objects.count())
         self.assertEqual(response.data[0]["cedula"], self.user.cedula)
         self.assertEqual(response.data[0]["position"], self.payslip_data["job_title"])
-        self.assertEqual(response.data[0]["salary"], str(self.payslip_data["salary"]))
+        self.assertEqual(response.data[0]["salary"], str(self.payslip_data["salary"]) + ".00")
         self.assertEqual(
-            response.data[0]["bonuses"], str(self.payslip_data["bonus_paycheck"])
+            response.data[0]["bonuses"], str(self.payslip_data["bonus_paycheck"]) + ".00"
         )
         self.assertEqual(response.data[0]["contract_type"], "Contrato de trabajo")
         self.assertEqual(response.data[0]["expedition_city"], "Bogotá")

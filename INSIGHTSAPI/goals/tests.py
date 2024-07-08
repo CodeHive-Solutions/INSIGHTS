@@ -13,7 +13,7 @@ from users.models import User
 # from media.goals_templates.goals_delivery import get_template
 from .models import Goals, TableInfo
 
-
+# * Recuerda que cuando corres los tests, NO se envía un correo electrónico real.
 class GoalAPITestCase(BaseTestCase):
     """Test the Goal API."""
 
@@ -433,6 +433,7 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(
             response.data["message"], "La meta fue aceptada.", response.data
         )
+
 
     def test_patch_goal_execution(self):
         """Test the update-goal view."""

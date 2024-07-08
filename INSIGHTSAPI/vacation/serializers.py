@@ -58,14 +58,27 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         """Validate the dates of the vacation request."""
         # Check if is a creation or an update
         if not self.instance:
+            # Creation
             created_at = datetime.datetime.now()
             if created_at.day >= 20:
                 raise serializers.ValidationError(
                     "No puedes solicitar vacaciones después del día 20."
                 )
+            if (
+                attrs["start_date"].month == created_at.month
+                and attrs["start_date"].year == created_at.year
+            ):
+                raise serializers.ValidationError(
+                    "No puedes solicitar vacaciones para el mes actual."
+                )
+
             if attrs["start_date"] > attrs["end_date"]:
                 raise serializers.ValidationError(
                     "La fecha de inicio no puede ser mayor a la fecha de fin."
+                )
+            if (attrs["end_date"] - attrs["start_date"]).days > 30:
+                raise serializers.ValidationError(
+                    "Tu solicitud no puede ser mayor a 30 días."
                 )
             uploaded_by = (
                 self.instance.uploaded_by

@@ -12,6 +12,7 @@ from rest_framework import status as framework_status
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.core.mail import send_mail
+from django.core.mail import get_connection
 
 from services.permissions import CustomizableGetDjangoModelViewPermissions
 
@@ -68,6 +69,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                     """
                     table_data_plain += f"{table.fringe:<15} | {table.diary_goal:<10} | {table.days:<4} | {table.month_goal:<18} | {table.hours:<7} | {table.collection_account}\n"
                 if "CLARO" in instance.campaign_goal.upper():
+                    backend = get_connection()
                     send_mail(
                         f"Meta {month}",
                         f"""
@@ -88,7 +90,7 @@ class GoalsViewSet(viewsets.ModelViewSet):
                         """,
                         None,
                         [user.email],
-                        html_message="""
+                        html_message=f"""
                         <p style="text-align: start">
                         La meta fue <b>{accepted_state}</b>.<br>
                         
@@ -116,7 +118,9 @@ class GoalsViewSet(viewsets.ModelViewSet):
                             </tr>
                         </table>
                         """,
+                        connection=backend,
                     )
+                    print("correo enviado")
                     return Response(
                         {"message": f"La meta fue {accepted_state}."},
                         status=framework_status.HTTP_200_OK,
