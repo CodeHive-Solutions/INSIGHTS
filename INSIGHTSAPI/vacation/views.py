@@ -32,9 +32,9 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 Nos complace informarte que se ha creado una solicitud de vacaciones a tu nombre para las fechas del {datetime.datetime.strptime(response.data['start_date'], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data['end_date'], "%Y-%m-%d").strftime("%d de %B del %Y")}.
 
                 Información Adicional:
-                1. **Aprobación Pendiente**: Tu solicitud está pendiente de aprobación. Recibirás una notificación por correo electrónico una vez que tu solicitud sea aprobada o rechazada.
-                2. **Política de Vacaciones**: Recuerda que es tu responsabilidad familiarizarte con nuestra política de vacaciones. Puedes encontrar el documento completo en la intranet sección "Gestión documental" > "POLÍTICA DISFRUTE DE VACACIONES".
-                3. **Planificación de Proyectos**: Si tienes proyectos pendientes o tareas que necesitan seguimiento durante tu ausencia, por favor coordina con tu equipo para asegurar una transición sin problemas.
+                1. Aprobación Pendiente: Tu solicitud está pendiente de aprobación. Recibirás una notificación por correo electrónico una vez que tu solicitud sea aprobada o rechazada.
+                2. Política de Vacaciones: Recuerda que es tu responsabilidad familiarizarte con nuestra política de vacaciones. Puedes encontrar el documento completo en la intranet sección "Gestión documental" -> "POLÍTICA DISFRUTE DE VACACIONES".
+                3. Planificación de Proyectos: Si tienes proyectos pendientes o tareas que necesitan seguimiento durante tu ausencia, por favor coordina con tu equipo para asegurar una transición sin problemas.
 
                 Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en ponerte en contacto con la Gerencia de Recursos Humanos.
 
@@ -43,20 +43,10 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 Saludos cordiales,
                 """
             html_message = f"""
-                <!DOCTYPE html>
-                <html>
                 <head>
                     <style>
                         body {{
                             font-family: Arial, sans-serif;
-                        }}
-                        .container {{
-                            margin: 0 auto;
-                            padding: 20px;
-                            max-width: 600px;
-                            border: 1px solid #ccc;
-                            border-radius: 10px;
-                            background-color: #f9f9f9;
                         }}
                         h2 {{
                             color: #2c3e50;
@@ -87,27 +77,20 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     </style>
                 </head>
                 <body>
-                    <div class="container">
-                        <h2>Hola {response.data["user"]},</h2>
-                        <p>Nos complace informarte que se ha creado una solicitud de vacaciones a tu nombre para las fechas del <strong>{datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}</strong> al <strong>{datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}</strong>.</p>
-
-                        <h3>Información Adicional</h3>
-                        <ul>
-                            <li><strong>Aprobación Pendiente</strong>: Tu solicitud está pendiente de aprobación. Recibirás una notificación por correo electrónico una vez que tu solicitud sea aprobada o rechazada.</li>
-                            <li><strong>Política de Vacaciones</strong>: Recuerda que es tu responsabilidad familiarizarte con nuestra política de vacaciones. Puedes encontrar el documento completo en la intranet sección "Gestión documental" > "POLÍTICA DISFRUTE DE VACACIONES".</li>
-                            <li><strong>Planificación de Proyectos</strong>: Si tienes proyectos pendientes o tareas que necesitan seguimiento durante tu ausencia, por favor coordina con tu equipo para asegurar una transición sin problemas.</li>
-                        </ul>
-
-                        <p>Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en ponerte en contacto con la Gerencia de Recursos Humanos.</p>
-
-                        <p>¡Esperamos que tu solicitud sea aprobada y que disfrutes de unas vacaciones relajantes! ⛱</p>
-
-                        <div class="footer">
-                            <p>Saludos cordiales,</p>
-                        </div>
+                    <h2>Hola {response.data["user"]},</h2>
+                    <p>Nos complace informarte que se ha creado una solicitud de vacaciones a tu nombre para las fechas del <strong>{datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}</strong> al <strong>{datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}</strong>.</p>
+                    <h3>Información Adicional</h3>
+                    <ul>
+                        <li><strong>Aprobación Pendiente</strong>: Tu solicitud está pendiente de aprobación. Recibirás una notificación por correo electrónico una vez que tu solicitud sea aprobada o rechazada.</li>
+                        <li><strong>Política de Vacaciones</strong>: Recuerda que es tu responsabilidad familiarizarte con nuestra política de vacaciones. Puedes encontrar el documento completo en la intranet sección "Gestión documental" -> "POLÍTICA DISFRUTE DE VACACIONES".</li>
+                        <li><strong>Planificación de Proyectos</strong>: Si tienes proyectos pendientes o tareas que necesitan seguimiento durante tu ausencia, por favor coordina con tu equipo para asegurar una transición sin problemas.</li>
+                    </ul>
+                    <p>Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en ponerte en contacto con la Gerencia de Recursos Humanos.</p>
+                    <p>¡Esperamos que tu solicitud sea aprobada y que disfrutes de unas vacaciones relajantes! ⛱</p>
+                    <div class="footer">
+                        <p>Saludos cordiales,</p>
                     </div>
                 </body>
-                </html>
                 """
             send_mail(
                 "Solicitud de vacaciones",
@@ -168,6 +151,19 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
                         hr_user,
                     )
+                    hr_message = f"""
+                        Hola {hr_user.get_full_name()} 👋,
+
+                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+
+                        Ahora esta a la espera de tu aprobación. Por favor revisa la solicitud y apruébala si estas de acuerdo con las fechas solicitadas.
+                    """
+                    send_mail(
+                        "Solicitud de vacaciones aprobada por un gerente",
+                        hr_message,
+                        None,
+                        [str(hr_user.email)],
+                    )
                     payroll_user = User.objects.filter(
                         user_permissions__codename="payroll_approbation"
                     ).first()
@@ -181,6 +177,19 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         "Una solicitud de vacaciones ha sido aprobada por un gerente",
                         f"La solicitud de vacaciones de {response.data['user']} ha sido aprobada por {request.user.get_full_name()}. Ahora sera revisada por la Gerencia de Recursos Humanos.",
                         payroll_user,
+                    )
+                    payroll_message = f"""
+                        Hola {payroll_user.get_full_name()} 👋,
+
+                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+
+                        Ahora esta a la espera de la aprobación de la Gerencia de Recursos Humanos.
+                    """
+                    send_mail(
+                        "Una solicitud de vacaciones ha sido aprobada por un gerente",
+                        payroll_message,
+                        None,
+                        [str(payroll_user.email)],
                     )
                 return response
 
@@ -219,6 +228,19 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         "Una solicitud de vacaciones necesita tu aprobación",
                         f"La Gerencia de Recursos Humanos ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
                         payroll_user,
+                    )
+                    payroll_message = f"""
+                        Hola {payroll_user.get_full_name()} 👋,
+
+                        La Gerencia de Recursos Humanos ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+
+                        Ahora esta a la espera de tu aprobación final. Por favor revisa la solicitud y apruébala si estas de acuerdo con las fechas solicitadas.
+                    """
+                    send_mail(
+                        "Solicitud de vacaciones en espera de tu aprobación",
+                        payroll_message,
+                        None,
+                        [str(payroll_user.email)],
                     )
                 return response
             else:

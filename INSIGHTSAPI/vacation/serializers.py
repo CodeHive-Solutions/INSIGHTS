@@ -71,7 +71,6 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "No puedes solicitar vacaciones para el mes actual."
                 )
-
             if attrs["start_date"] > attrs["end_date"]:
                 raise serializers.ValidationError(
                     "La fecha de inicio no puede ser mayor a la fecha de fin."

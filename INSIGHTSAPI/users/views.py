@@ -1,7 +1,9 @@
 import os
 import logging
 import requests
+import sys
 from rest_framework.decorators import api_view
+from django.conf import settings
 from django.core.mail import mail_admins
 from rest_framework.response import Response
 from users.models import User
@@ -117,9 +119,13 @@ def update_profile(request):
             status=400,
         )
 
+    if "test" in sys.argv or settings.DEBUG:
+        url = "https://staffnet-api-dev.cyc-bpo.com/update"
+    else:
+        url = "https://staffnet-api.cyc-bpo.com/update"
     # Make the request
     response = requests.patch(
-        "https://staffnet-api-dev.cyc-bpo.com/update",
+        url,
         json=data,
         cookies={"StaffNet": os.environ["StaffNetToken"]},
     )
