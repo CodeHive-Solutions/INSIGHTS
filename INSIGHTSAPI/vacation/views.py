@@ -210,7 +210,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 response = super().partial_update(request, *args, **kwargs)
-                if (
+                if ( 
                     response.status_code == status.HTTP_200_OK
                     and response.data
                     and response.data["hr_approbation"]
