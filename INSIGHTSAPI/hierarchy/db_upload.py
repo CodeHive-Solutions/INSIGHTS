@@ -1,5 +1,11 @@
+import django
+
+django.setup()
+
+from django.db import connections
 from hierarchy.models import JobPosition
 from users.models import User
+
 
 positions = [
     ("PRESIDENTE", "8"),
@@ -84,12 +90,15 @@ positions = [
 ]
 
 for name, rank in positions:
-    JobPosition.objects.create(name=name, rank=rank)
+    JobPosition.objects.get_or_create(name=name, rank=rank)
 
-for user in User.objects.all():
-    try:
-        user.job_position = JobPosition.objects.get(name=user.job_title)
-        user.save()
-    except JobPosition.DoesNotExist:
-        print(f"Job position {user.job_title} for user {user.username} not found")
-        continue
+with connections["staffnet"].cursor() as cursor:
+    cursor.execute("SELECT cargo, cedula FROM employment_information")
+    for cargo, cedula in cursor.fetchall():
+        try:
+            user = User.objects.get(cedula=cedula)
+            user.job_title = cargo
+            user.save()
+        except User.DoesNotExist:
+            print(f"User with cedula {cedula} not found")
+            continue
