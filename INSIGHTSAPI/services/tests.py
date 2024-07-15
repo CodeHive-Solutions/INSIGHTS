@@ -2,6 +2,7 @@
 
 import os
 import requests
+import holidays
 from rest_framework.test import APITestCase
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
@@ -115,3 +116,21 @@ class EthicalLineTest(APITestCase):
             },
         )
         self.assertEqual(response.status_code, 200, response.data)
+
+class HolidayTest(TestCase):
+    """Test for holidays."""
+
+    def test_holiday(self):
+        """Test that the holiday is a holiday."""
+        self.assertTrue(holidays.Colombia().get("2022-01-01"))
+
+    def test_non_holiday(self):
+        """Test that the day is not a holiday."""
+        self.assertFalse(holidays.Colombia().get("2022-01-02"))
+
+    def test_get_holidays(self):
+        """Test that the holidays are retrieved."""
+        data = {"year": 2024}
+        response = self.client.get("/services/holidays/", data)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, holidays.CO(years=2024).items())
