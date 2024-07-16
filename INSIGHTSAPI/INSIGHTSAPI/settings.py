@@ -129,7 +129,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 if not DEBUG:
-    cors_allowed_origins = os.getenv("CORS_ALLOWED_ORIGINS", "")
+    cors_allowed_origins = os.environ["CORS_ALLOWED_ORIGINS"]
     # This avoid the error of having an empty string as an allowed host (This is a security risk)
     CORS_ALLOWED_ORIGINS = (
         [cors.strip() for cors in cors_allowed_origins.split(",")]

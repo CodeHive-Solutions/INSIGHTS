@@ -169,12 +169,12 @@ const router = createBrowserRouter([
                 path: "test",
                 element: <PowerBI />,
             },
-            getApiUrl().environment === "development"
-                ? {
-                      path: "pqrs",
-                      element: <Pqrs />,
-                  }
-                : null,
+            // getApiUrl().environment === "development"
+            //     ? {
+            //           path: "pqrs",
+            //           element: <Pqrs />,
+            //       }
+            //     : null,
         ],
     },
 ]);

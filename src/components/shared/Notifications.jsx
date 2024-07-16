@@ -6,14 +6,9 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { handleError } from "../../assets/handleError";
 
 // Material UI
-import { MenuItem, Menu, Box, Typography, ListItemIcon, ListItemText, Avatar, ListItemAvatar, List, ListItem, Divider, Button, IconButton } from "@mui/material";
+import { MenuItem, Menu, Box, Typography, ListItemIcon, ListItemText, Avatar, ListItemAvatar, List, ListItem, IconButton } from "@mui/material";
 
 // Icons
-import FlagIcon from "@mui/icons-material/Flag";
-import { color } from "framer-motion";
-import ClearIcon from "@mui/icons-material/Clear";
-import MarkChatReadIcon from "@mui/icons-material/MarkChatRead";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { MoreHoriz } from "@mui/icons-material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
@@ -51,7 +46,7 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
         setNotificationId(id);
         setAnchorElOptions(event.currentTarget);
         console.log(notificationStatusOptions);
-        setNotificationStatus(!notificationStatusOptions);
+        setNotificationStatus(notificationStatusOptions);
     };
 
     const handleMarkAs = async () => {
@@ -163,9 +158,23 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
                         </List>
                     ))
                 ) : (
-                    <List>
-                        <ListItem alignItems="center">
-                            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", gap: "1rem", p: "2rem" }}>
+                    <List
+                        sx={{
+                            width: 400,
+                        }}
+                    >
+                        <ListItem>
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    flexDirection: "column",
+                                    gap: "1rem",
+                                    p: "2rem",
+                                }}
+                            >
                                 <NotificationsNoneIcon sx={{ color: "gray", fontSize: "42px" }} />
                                 <ListItemText sx={{ color: "gray" }} primary="No tienes notificaciones" />
                             </Box>

@@ -1,7 +1,9 @@
 import os
 import logging
 import requests
+import sys
 from rest_framework.decorators import api_view
+from django.conf import settings
 from django.core.mail import mail_admins
 from rest_framework.response import Response
 from users.models import User
@@ -15,7 +17,11 @@ def login_staffnet():
         "user": "staffnet",
         "password": os.environ["StaffNetLDAP"],
     }
-    response = requests.post("https://staffnet-api-dev.cyc-bpo.com/login", json=data)
+    if "test" in sys.argv or settings.DEBUG:
+        url = "https://staffnet-api-dev.cyc-bpo.com/login"
+    else:
+        url = "https://staffnet-api.cyc-bpo.com/login"
+    response = requests.post(url, json=data)
     if response.status_code != 200:
         logger.error("Error logging in StaffNet: {}".format(response.text))
         mail_admins(
@@ -47,10 +53,12 @@ def get_profile(request):
                 status=500,
             )
     user = request.user
+    if "test" in sys.argv or settings.DEBUG:
+        url = "https://staffnet-api-dev.cyc-bpo.com/personal-information/{}"
+    else:
+        url = "https://staffnet-api.cyc-bpo.com/personal-information/{}"
     response = requests.get(
-        "https://staffnet-api-dev.cyc-bpo.com/personal-information/{}".format(
-            user.cedula
-        ),
+        url.format(user.cedula),
         cookies={"StaffNet": os.environ["StaffNetToken"]},
     )
     if response.status_code != 200:
@@ -117,9 +125,13 @@ def update_profile(request):
             status=400,
         )
 
+    if "test" in sys.argv or settings.DEBUG:
+        url = "https://staffnet-api-dev.cyc-bpo.com/update"
+    else:
+        url = "https://staffnet-api.cyc-bpo.com/update"
     # Make the request
     response = requests.patch(
-        "https://staffnet-api-dev.cyc-bpo.com/update",
+        url,
         json=data,
         cookies={"StaffNet": os.environ["StaffNetToken"]},
     )

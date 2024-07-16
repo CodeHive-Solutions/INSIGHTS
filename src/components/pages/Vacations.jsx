@@ -57,13 +57,6 @@ export const Vacations = () => {
     const [buttonType, setButtonType] = useState("button");
     const [approvalType, setApprovalType] = useState("");
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        if (!permissions || !permissions.includes("vacation.view_vacationrequest")) {
-            navigate("/logged/home");
-        }
-    }, []);
-
     const getVacations = async () => {
         try {
             const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
@@ -227,7 +220,7 @@ export const Vacations = () => {
             },
         },
         {
-            field: "hr",
+            field: "hr_approbation",
             headerName: "Aprobación RH",
             width: 150,
             type: "singleSelect",
@@ -243,11 +236,31 @@ export const Vacations = () => {
             },
             renderCell: (params) => {
                 if (params.value === "PENDIENTE") {
-                    return <Chip onClick={() => handleVacancyApproval(params.id, "hr_approbation")} icon={<PendingIcon />} label="Pendiente" />;
+                    return (
+                        <Chip
+                            onClick={params.row.manager_approbation === true ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
+                            icon={<PendingIcon />}
+                            label="Pendiente"
+                        />
+                    );
                 } else if (params.value === "APROBADA") {
-                    return <Chip onClick={() => handleVacancyApproval(params.id, "hr_approbation")} icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
+                    return (
+                        <Chip
+                            onClick={params.row.manager_approbation === true ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
+                            icon={<CheckCircleIcon />}
+                            label="Aprobada"
+                            color="success"
+                        />
+                    );
                 }
-                return <Chip onClick={() => handleVacancyApproval(params.id, "hr_approbation")} icon={<CancelIcon />} label="Rechazada" color="error" />;
+                return (
+                    <Chip
+                        onClick={params.row.manager_approbation === true ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
+                        icon={<CancelIcon />}
+                        label="Rechazada"
+                        color="error"
+                    />
+                );
             },
         },
         {
@@ -258,6 +271,7 @@ export const Vacations = () => {
             valueOptions: ["PENDIENTE", "APROBADA", "RECHAZADA"],
             // return a chip with the status
             valueGetter: (params) => {
+                console.log("params:" + params);
                 if (params.value === null) {
                     return "PENDIENTE";
                 } else if (params.value === true) {
@@ -267,11 +281,31 @@ export const Vacations = () => {
             },
             renderCell: (params) => {
                 if (params.value === "PENDIENTE") {
-                    return <Chip onClick={() => handleVacancyApproval(params.id, "payroll_approbation")} icon={<PendingIcon />} label="Pendiente" />;
+                    return (
+                        <Chip
+                            onClick={params.row.hr_approbation === true ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined}
+                            icon={<PendingIcon />}
+                            label="Pendiente"
+                        />
+                    );
                 } else if (params.value === "APROBADA") {
-                    return <Chip onClick={() => handleVacancyApproval(params.id, "payroll_approbation")} icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
+                    return (
+                        <Chip
+                            onClick={params.row.hr_approbation === true ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined}
+                            icon={<CheckCircleIcon />}
+                            label="Aprobada"
+                            color="success"
+                        />
+                    );
                 }
-                return <Chip onClick={() => handleVacancyApproval(params.id, "payroll_approbation")} icon={<CancelIcon />} label="Rechazada" color="error" />;
+                return (
+                    <Chip
+                        onClick={params.row.hr_approbation === true ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined}
+                        icon={<CancelIcon />}
+                        label="Rechazada"
+                        color="error"
+                    />
+                );
             },
         },
 
@@ -313,7 +347,7 @@ export const Vacations = () => {
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => handleOpenDialogPayslip(GridRowParams.id)}
+                            onClick={() => window.open(`${getApiUrl().apiUrl}${GridRowParams.row.request_file}`, "_blank")}
                         />
                     </Tooltip>,
                 ];
@@ -344,7 +378,7 @@ export const Vacations = () => {
                 />
                 {rank > 1 ? (
                     <Button size="small" onClick={handleOpenDialog} startIcon={<BeachAccessIcon />}>
-                        Solicitar vacaciones
+                        Crear solicitud
                     </Button>
                 ) : null}
                 <Box sx={{ textAlign: "end", flex: "1" }}>
@@ -414,6 +448,10 @@ export const Vacations = () => {
         setApprovalType(approvalType);
     };
 
+    useEffect(() => {
+        console.log(buttonType);
+    }, [buttonType]);
+
     return (
         <>
             <Dialog open={openDialogPayslip} onClose={handleCloseDialogPayslip} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
@@ -422,7 +460,7 @@ export const Vacations = () => {
                     <Typography color="text.secondary">
                         Si aprueba la solicitud de vacaciones, el empleado será notificado y se continuara con el proceso de aprobación de la solicitud.
                     </Typography>
-                    <Box component="form">
+                    <Box component="form" onSubmit={handleApproval}>
                         <Collapse in={openObservationsInput}>
                             <TextField
                                 inputRef={observationsRef}
@@ -448,13 +486,7 @@ export const Vacations = () => {
                                         Rechazar
                                     </Button>
                                 </Collapse>
-                                <Button
-                                    onClick={handleApproval}
-                                    type="submit"
-                                    disabled={disabled}
-                                    variant="contained"
-                                    color={buttonType === "submit" ? "error" : "primary"}
-                                >
+                                <Button type="submit" disabled={disabled} variant="contained" color={buttonType === "submit" ? "error" : "primary"}>
                                     {buttonType === "submit" ? "Rechazar" : "Aprobar"}
                                 </Button>
                             </Box>
@@ -492,7 +524,7 @@ export const Vacations = () => {
                     rows={rows}
                 ></DataGrid>
             </Container>
-            <VacationsRequest openVacation={openVacation} setOpenVacation={setOpenVacation} />
+            <VacationsRequest getVacations={getVacations} openVacation={openVacation} setOpenVacation={setOpenVacation} />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

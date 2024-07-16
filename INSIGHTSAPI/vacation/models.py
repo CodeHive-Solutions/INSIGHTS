@@ -1,6 +1,7 @@
 """This module contains the model for the vacation request """
 
 from django.db import models
+from django.core.mail import send_mail
 from users.models import User
 from notifications.utils import create_notification
 from django.utils import timezone
@@ -15,7 +16,6 @@ class VacationRequest(models.Model):
     start_date = models.DateField()
     end_date = models.DateField()
     request_file = models.FileField(upload_to="files/vacation_requests/")
-    uploaded_at = models.DateTimeField(auto_now_add=True)
     manager_approbation = models.BooleanField(null=True, blank=True)
     manager_approved_at = models.DateTimeField(null=True, blank=True)
     hr_approbation = models.BooleanField(null=True, blank=True)
@@ -27,7 +27,7 @@ class VacationRequest(models.Model):
             ("PENDIENTE", "PENDIENTE"),
             ("APROBADA", "APROBADA"),
             ("RECHAZADA", "RECHAZADA"),
-            ("CANCELADA", "CANCELADA"),
+            # ("CANCELADA", "CANCELADA"),
         ],
         max_length=100,
         default="PENDIENTE",
@@ -36,6 +36,7 @@ class VacationRequest(models.Model):
     uploaded_by = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="uploaded_requests"
     )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         """Meta class for the vacation request model."""
@@ -75,17 +76,65 @@ class VacationRequest(models.Model):
                 f"Tus vacaciones del {self.start_date} al {self.end_date} han sido aprobadas. Esperamos que las disfrutes ⛱!.",
                 self.user,
             )
+            message = f"""
+                Hola {self.user.get_full_name()} 👋,
+
+                Nos complace informarte que tu solicitud de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")} ha sido aprobada. 
+
+                Esperamos que disfrutes de este merecido descanso y que regreses con energías renovadas. Si necesitas alguna información adicional o asistencia durante tus vacaciones, no dudes en contactarnos.
+
+                ¡Te deseamos unas vacaciones maravillosas y relajantes! ⛱
+
+                Saludos cordiales,
+                """
+            send_mail(
+                "Vacaciones aprobadas",
+                message,
+                None,
+                [str(self.user.email)],
+            )
         elif self.status == "RECHAZADA":
+            message = f"""
+                Hola {self.user.get_full_name()} 👋,
+
+                Lamentamos informarte que tu solicitud de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")} ha sido rechazada.
+
+                Nos vimos en la necesidad de tomar esta difícil decisión debido a: {self.comment}.
+
+                Habla con tu gerente o con el departamento de Recursos Humanos si tienes alguna pregunta o necesitas más información. Recuerda que puedes volver a enviar tu solicitud en otro momento.
+
+                Saludos cordiales,
+                """
+            send_mail(
+                "Estado de tu solicitud de vacaciones",
+                message,
+                None,
+                [str(self.user.email)],
+            )
             create_notification(
                 f"Solicitud de vacaciones rechazada",
                 f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido rechazada.",
                 self.user,
             )
-        elif self.status == "CANCELADA":
-            create_notification(
-                f"Solicitud de vacaciones cancelada",
-                f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido cancelada.",
-                self.user,
-            )
-        super().save(*args, **kwargs)
+        # elif self.status == "CANCELADA":
+        #     message = f"""
+        #         Hola {self.user.get_full_name()} 👋,
 
+        #         Hemos recibido tu solicitud de cancelación de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")}.
+
+        #         Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
+
+        #         Saludos cordiales,
+        #         """
+        #     send_mail(
+        #         "Solicitud de cancelación de vacaciones",
+        #         message,
+        #         None,
+        #         [str(self.user.email)],
+        #     )
+        #     create_notification(
+        #         f"Solicitud de vacaciones cancelada",
+        #         f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido cancelada.",
+        #         self.user,
+        #     )
+        super().save(*args, **kwargs)

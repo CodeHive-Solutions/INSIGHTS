@@ -206,7 +206,7 @@ const Navbar = () => {
     if (getApiUrl().environment === "development") {
         useEffect(() => {
             getNotifications();
-        }, []);
+        }, [openNotification]);
     }
 
     const handleCloseSnack = () => setOpenSnack(false);
@@ -476,7 +476,8 @@ const Navbar = () => {
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
                         {getApiUrl().environment === "development" ? (
                             <Tooltip title="Mis Notificaciones">
-                                <Badge badgeContent={notifications?.length || 0} color="primary" overlap="circular" variant="dot">
+                                {/* badgeContent state based on if any notification have its read property in 0 */}
+                                <Badge badgeContent={notifications.filter((notification) => !notification.read).length} color="primary" overlap="circular">
                                     <IconButton
                                         onClick={handleOpenNotification}
                                         size="small"
@@ -678,14 +679,12 @@ const Navbar = () => {
                         <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
                 ) : null}
-                {permissions && permissions.includes("vacation.view_vacationrequest") ? (
-                    <MenuItem onClick={() => navigate("/logged/vacations")}>
-                        <ListItemIcon>
-                            <BeachAccessIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Registros de vacaciones" />
-                    </MenuItem>
-                ) : null}
+                <MenuItem onClick={() => navigate("/logged/vacations")}>
+                    <ListItemIcon>
+                        <BeachAccessIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Registros de vacaciones" />
+                </MenuItem>
             </Menu>
         </>
     );

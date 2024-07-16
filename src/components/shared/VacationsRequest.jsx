@@ -17,7 +17,6 @@ import {
     Collapse,
     IconButton,
     TextField,
-    MenuItem,
     Autocomplete,
 } from "@mui/material";
 
@@ -91,7 +90,7 @@ const Picker = ({ value, onChange }) => {
     );
 };
 
-const VacationsRequest = ({ openVacation, setOpenVacation }) => {
+const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
     const [value, setValue] = useState("");
     const [collapseDate, setCollapseDate] = useState(true);
     const [employeesInCharge, setEmployeesInCharge] = useState([]);
@@ -198,6 +197,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation }) => {
 
             if (response.status === 201) {
                 handleCloseVacationDialog();
+                getVacations();
                 showSnack("success", "Solicitud de vacaciones enviada correctamente.");
             }
         } catch (error) {

@@ -2,6 +2,7 @@
 
 import logging
 import os
+import holidays
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -69,3 +70,16 @@ def send_report_ethical_line(request):
 def trigger_error(request):
     """Trigger an error for testing purposes."""
     raise Exception("Test error")
+
+@api_view(["GET"])
+def get_holidays(request):
+    """Get the holidays of the year."""
+    year = request.GET.get("year", None)
+    if year is None:
+        return Response({"error": "El año es requerido"}, status=400)
+    try:
+        year = int(year)
+    except ValueError:
+        return Response({"error": "El año debe ser un número"}, status=400)
+    holidays_year = holidays.CO(years=year).items()
+    return Response(holidays_year, status=200)

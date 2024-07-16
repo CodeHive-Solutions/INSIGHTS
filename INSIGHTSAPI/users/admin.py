@@ -35,7 +35,7 @@ class CustomUserAdmin(UserAdmin):
         "user_permissions",
     )
     fieldsets = (
-        ("User info", {"fields": ("username", "area", "job_title")}),
+        ("User info", {"fields": ("username", "area")}),
         (
             "Información personal",
             {"fields": (("first_name", "last_name"), "email")},
