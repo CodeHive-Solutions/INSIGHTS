@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 // Material-UI
-import { Dialog, DialogContent, DialogActions, Button, TextField, Typography, MenuItem, Box, DialogContentText } from "@mui/material";
+import { Dialog, DialogContent, DialogActions, Button, TextField, Typography, MenuItem, Box, DialogContentText, LinearProgress, Fade } from "@mui/material";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
 
@@ -9,7 +9,6 @@ import * as Yup from "yup";
 import { getApiUrl } from "../../assets/getApi";
 import { handleError } from "../../assets/handleError";
 import SnackbarAlert from "../common/SnackBarAlert";
-1;
 
 const personalFields = [
     {
@@ -109,11 +108,11 @@ const validationSchema = Yup.object().shape({
 });
 
 const MyAccountDialog = ({ open, onClose }) => {
-    const cedula = JSON.parse(localStorage.getItem("cedula"));
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState("");
     const [severity, setSeverity] = useState("success");
     const [initialValues, setInitialValues] = useState({});
+    const [loadingBar, setLoadingBar] = useState(false);
 
     const handleCloseSnack = () => {
         setOpenSnack(false);
@@ -147,7 +146,7 @@ const MyAccountDialog = ({ open, onClose }) => {
 
     useState(() => {
         getInitialValues();
-    }, []);
+    }, [open]);
 
     const MyTextFields = () => {
         return personalFields.map((myField) => {
@@ -176,6 +175,7 @@ const MyAccountDialog = ({ open, onClose }) => {
     };
 
     const handleSave = async (values) => {
+        setLoadingBar(true);
         try {
             const response = await fetch(`${getApiUrl().apiUrl}users/update-profile/`, {
                 method: "PATCH",
@@ -197,11 +197,16 @@ const MyAccountDialog = ({ open, onClose }) => {
             if (getApiUrl().environment === "development") {
                 console.error(error);
             }
+        } finally {
+            setLoadingBar(false);
         }
     };
 
     return (
         <>
+            <Fade in={loadingBar}>
+                <LinearProgress sx={{ zIndex: "1301" }} color="secondary" />
+            </Fade>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog open={open} onClose={onClose}>
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSave}>

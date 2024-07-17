@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLocation } from "react";
+import React, { useEffect, useState, useLocation, useContext } from "react";
 
 // Libraries and Hooks
 import { useInView } from "react-intersection-observer";
@@ -8,6 +8,7 @@ import { getApiUrl } from "../../assets/getApi.js";
 import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { handleError } from "../../assets/handleError";
+import { PersonalInformationContext } from "../../context/PersonalInformation.jsx";
 
 // Material-UI
 import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
@@ -23,18 +24,10 @@ import securityPractices from "../../images/home-carousel/security-practices.png
 import securityAdvices from "../../images/home-carousel/security-advices.png";
 import security from "../../images/home-carousel/security.png";
 import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
-import environment from "../../images/home-carousel/environment.png";
-import environment2 from "../../images/home-carousel/environment-2.png";
-import environment3 from "../../images/home-carousel/environment-3.png";
-import health from "../../images/home-carousel/health.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
-    { image: health },
-    { image: environment },
-    { image: environment2 },
-    { image: environment3 },
     { image: socialSecurityCertificate },
     { image: security },
     { image: securityAdvices },
@@ -51,6 +44,7 @@ const Home = () => {
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
     const matches = useMediaQuery("(min-width:1025px)");
+    const { userInformation } = useContext(PersonalInformationContext);
 
     const handleCloseSnack = () => setOpenSnack(false);
 

@@ -45,7 +45,6 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
     const handleClickOptions = (event, id, notificationStatusOptions) => {
         setNotificationId(id);
         setAnchorElOptions(event.currentTarget);
-        console.log(notificationStatusOptions);
         setNotificationStatus(notificationStatusOptions);
     };
 

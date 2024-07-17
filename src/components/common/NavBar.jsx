@@ -40,6 +40,7 @@ import {
     TextField,
     Divider,
     Badge,
+    Alert,
 } from "@mui/material";
 
 // Icons
@@ -277,8 +278,6 @@ const Navbar = () => {
                 credentials: "include",
             });
 
-            await handleError(response, showSnack);
-
             if (response.status === 200) {
                 localStorage.removeItem("refresh-timer-ls");
                 if (inactivity === true) {
@@ -288,7 +287,12 @@ const Navbar = () => {
                 } else {
                     navigate("/");
                 }
+            } else {
+                localStorage.removeItem("refresh-timer-ls");
+                navigate("/");
             }
+
+            await handleError(response, showSnack);
         } catch (error) {
             if (getApiUrl().environment === "development") {
                 console.error(error);
@@ -348,10 +352,10 @@ const Navbar = () => {
         <>
             {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
+            <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
 
             {getApiUrl().environment === "development" ? (
                 <>
-                    <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
                     <Notifications
                         notifications={notifications}
                         setAnchorNotification={setAnchorNotification}
@@ -387,23 +391,15 @@ const Navbar = () => {
                         <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail.toLowerCase()}</span>
                     </Typography>
                     <Collapse in={!openCollapseEmail}>
-                        <Button variant="outlined" sx={{ mt: "1rem" }} onClick={handleOpenCollapseEmail}>
+                        <Button sx={{ mt: "1rem" }} onClick={handleOpenCollapseEmail}>
                             Ese no es mi correo
                         </Button>
                     </Collapse>
                     <Collapse in={openCollapseEmail}>
-                        <TextField
-                            sx={{ mt: "1rem" }}
-                            inputRef={emailRef}
-                            autoFocus
-                            margin="dense"
-                            id="email"
-                            label="Correo electrónico"
-                            type="email"
-                            name="email"
-                            fullWidth
-                            variant="standard"
-                        />
+                        <Alert sx={{ mt: "1rem" }} severity="info">
+                            Si este no es tu correo electrónico, por favor, ingresa al modulo de mi cuenta y actualiza tu correo electrónico. Recuerda cerrar sesión y
+                            volver a iniciar sesión para que los cambios surtan efecto.
+                        </Alert>
                     </Collapse>
                 </DialogContent>
                 <DialogActions sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -444,9 +440,8 @@ const Navbar = () => {
                     <CustomNavLink to="/logged/sgc">Gestión Documental</CustomNavLink>
                     <CustomNavLink to="/logged/vacancies">Vacantes</CustomNavLink>
                     {getApiUrl().environment === "development" ? <CustomNavLink to="/logged/pqrs">PQRS</CustomNavLink> : null}
-                    {operationalRiskPermission && getApiUrl().environment === "production" ? (
-                        <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink>
-                    ) : servicesPermission ? (
+                    {operationalRiskPermission ? <CustomNavLink to="/logged/risk-events">Eventos de Riesgo</CustomNavLink> : null}
+                    {servicesPermission ? (
                         <Button
                             id="button-utils"
                             endIcon={anchorElUtils ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
@@ -541,15 +536,13 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
-                {getApiUrl().environment === "development" ? (
-                    <MenuItem onClick={handleOpenAccountDialog}>
-                        <ListItemIcon>
-                            <Avatar />
-                        </ListItemIcon>
-                        <ListItemText primary="Mi Cuenta" />
-                        <Divider />
-                    </MenuItem>
-                ) : null}
+                <MenuItem onClick={handleOpenAccountDialog}>
+                    <ListItemIcon>
+                        <Avatar />
+                    </ListItemIcon>
+                    <ListItemText primary="Mi Cuenta" />
+                    <Divider />
+                </MenuItem>
 
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>

@@ -119,8 +119,7 @@ export const Sgc = () => {
     }, []);
 
     const handleDownloadFile = (file) => {
-        // open the link in other tab
-        window.location.href = file;
+        window.open(file, "_blank");
     };
 
     const handleCloseDialog = () => {
