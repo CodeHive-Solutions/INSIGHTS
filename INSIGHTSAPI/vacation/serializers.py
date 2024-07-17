@@ -1,8 +1,10 @@
 """Serializers for the vacation app."""
 
-import datetime
+from datetime import datetime
 from rest_framework import serializers
 from users.models import User
+from distutils.util import strtobool
+from .utils import is_working_day, get_working_days
 from .models import VacationRequest
 
 
@@ -59,10 +61,43 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         # Check if is a creation or an update
         if not self.instance:
             # Creation
-            created_at = datetime.datetime.now()
-            if created_at.day >= 20:
+            created_at = datetime.now()
+            request = self.context["request"]
+            if request.data.get("mon_to_sat") is None:
                 raise serializers.ValidationError(
-                    "No puedes solicitar vacaciones después del día 20."
+                    "Debes especificar si trabajas los sábados."
+                )
+            else:
+                try:
+                    mon_to_sat = bool(strtobool(request.data["mon_to_sat"]))
+                except ValueError:
+                    raise serializers.ValidationError(
+                        "Debes especificar si trabajas los sábados o no."
+                    )
+                
+            if not is_working_day(attrs["start_date"], mon_to_sat):
+                raise serializers.ValidationError(
+                    "No puedes iniciar tus vacaciones un día no laboral."
+                )
+            if not is_working_day(attrs["end_date"], mon_to_sat):
+                raise serializers.ValidationError(
+                    "No puedes terminar tus vacaciones un día no laboral."
+                )
+            if request.data["mon_to_sat"] == True:
+                if attrs["start_date"].weekday() == 5:
+                    raise serializers.ValidationError(
+                        "No puedes iniciar tus vacaciones un sábado."
+                    )
+            if get_working_days(attrs["start_date"], attrs["end_date"], mon_to_sat) > 15:
+                raise serializers.ValidationError(
+                    "No puedes solicitar más de 15 días de vacaciones."
+                )
+            if (
+                created_at.day >= 20
+                and created_at.month + 1 == attrs["start_date"].month
+            ):
+                raise serializers.ValidationError(
+                    "Después del día 20 no puedes solicitar vacaciones para el mes siguiente."
                 )
             if (
                 attrs["start_date"].month == created_at.month
@@ -75,15 +110,11 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "La fecha de inicio no puede ser mayor a la fecha de fin."
                 )
-            if (attrs["end_date"] - attrs["start_date"]).days > 30:
+            if attrs["end_date"].weekday() == 6:
                 raise serializers.ValidationError(
-                    "Tu solicitud no puede ser mayor a 30 días."
+                    "No puedes terminar tus vacaciones un domingo."
                 )
-            uploaded_by = (
-                self.instance.uploaded_by
-                if self.instance
-                else self.context["request"].user
-            )
+            uploaded_by = self.instance.uploaded_by if self.instance else request.user
             if attrs["user"] == uploaded_by:
                 raise serializers.ValidationError(
                     "No puedes subir solicitudes para ti mismo."
@@ -101,7 +132,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         validated_data.pop("payroll_approbation", None)
         validated_data.pop("manager_approbation", None)
         validated_data["uploaded_by"] = self.context["request"].user
-        created_at = datetime.datetime.now()
+        created_at = datetime.now()
         if created_at.day >= 20:
             raise serializers.ValidationError(
                 "No puedes solicitar vacaciones después del día 20."

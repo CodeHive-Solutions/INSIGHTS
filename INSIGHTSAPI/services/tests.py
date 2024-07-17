@@ -130,7 +130,6 @@ class HolidayTest(TestCase):
 
     def test_get_holidays(self):
         """Test that the holidays are retrieved."""
-        data = {"year": 2024}
-        response = self.client.get("/services/holidays/", data)
+        response = self.client.get("/services/holidays/2024/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, holidays.CO(years=2024).items())

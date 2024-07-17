@@ -72,11 +72,8 @@ def trigger_error(request):
     raise Exception("Test error")
 
 @api_view(["GET"])
-def get_holidays(request):
+def get_holidays(request, year):
     """Get the holidays of the year."""
-    year = request.GET.get("year", None)
-    if year is None:
-        return Response({"error": "El año es requerido"}, status=400)
     try:
         year = int(year)
     except ValueError:
