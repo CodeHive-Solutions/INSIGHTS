@@ -77,52 +77,16 @@ export const CalendarRange = forwardRef(function CalendarRange({ onChange, showO
             ref={ref}
             show-outside-days={showOutsideDays || undefined}
             first-day-of-week={0}
+            pageBy="single"
+            months={1} // Show two months at a time
             //
-            is-date-disallowed={(date) => date == ""}
             min={minDate.toISOString().split("T")[0]} // Format the date to YYYY-MM-DD
             {...props}
         />
     );
 });
 
-export const CalendarDate = forwardRef(function CalendarDate({ onChange, showOutsideDays, firstDayOfWeek, isDateDisallowed, ...props }, forwardedRef) {
-    const ref = useRef();
-    useImperativeHandle(forwardedRef, () => ref.current, []);
-    useListener(ref, "change", onChange);
-    useProperty(ref, "isDateDisallowed", isDateDisallowed);
-
-    return <calendar-date ref={ref} show-outside-days={showOutsideDays || undefined} first-day-of-week={0} {...props} />;
-});
-
-const Picker = ({ value, onChange, showSnack, isMondayToFriday }) => {
-    const [holidays, setHolidays] = useState([]);
-
-    const getHolidays = async () => {
-        const date = new Date();
-        try {
-            const response = await fetch(`${getApiUrl().apiUrl}services/holidays/${date.getFullYear()}/`, {
-                method: "GET",
-                credentials: "include",
-            });
-
-            await handleError(response, showSnack);
-
-            if (response.status === 200) {
-                const data = await response.json();
-
-                setHolidays(data);
-            }
-        } catch (error) {
-            if (getApiUrl().environment === "development") {
-                console.error(error);
-            }
-        }
-    };
-
-    useEffect(() => {
-        getHolidays();
-    }, []);
-
+const Picker = ({ value, onChange, showSnack, isMondayToFriday, holidays }) => {
     const isDateDisallowed = (date) => {
         if (holidays.map((holiday) => holiday[0]).includes(date.toISOString().split("T")[0]) || date.getDay() === 6 || (isMondayToFriday ? date.getDay() === 5 : null)) {
             return true;
@@ -162,6 +126,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
     const [isMondayToFriday, setIsMondayToFriday] = useState(false);
     const [openCalendar, setOpenCalendar] = useState(false);
     const [loadingBar, setLoadingBar] = useState(true);
+    const [holidays, setHolidays] = useState([]);
 
     const showSnack = (severity, message) => {
         setSeverity(severity);
@@ -221,28 +186,63 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         setSelectedFile(file);
     };
 
+    const getHolidays = async () => {
+        const date = new Date();
+        try {
+            const response = await fetch(`${getApiUrl().apiUrl}services/holidays/${date.getFullYear()}/`, {
+                method: "GET",
+                credentials: "include",
+            });
+
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
+                setHolidays(data);
+            }
+        } catch (error) {
+            if (getApiUrl().environment === "development") {
+                console.error(error);
+            }
+        }
+    };
+
+    useEffect(() => {
+        getHolidays();
+    }, []);
+
+    const checkAmountOfDays = (event) => {
+        const [startDate, endDate] = event.target.value.split("/");
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        let diffDays = 0;
+        for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
+            const dayOfWeek = date.getDay();
+            // exclude from the count the Sundays and the holidays and the Saturdays if the employee works from Monday to Friday
+            if (dayOfWeek !== 6 && !holidays.map((holiday) => holiday[0]).includes(date.toISOString().split("T")[0]) && (dayOfWeek !== 5 || !isMondayToFriday)) {
+                diffDays++;
+            }
+        }
+
+        if (diffDays > 15) {
+            setValue("");
+            showSnack("error", "El periodo de vacaciones seleccionado excede los 15 días hábiles permitidos.");
+        } else {
+            setValue(`${startDate} al ${endDate}`);
+        }
+    };
+
     const onChange = (event) => {
         if (value === "") {
-            setCollapseDate(true);
-            return setValue(event.target.value);
+            checkAmountOfDays(event);
+            return;
         }
 
         setCollapseDate(false);
         setTimeout(() => {
-            // format the value with the selected dates replacing the '/' with a "al" word current value is "2022-01-01/2022-01-02" and we want to show "01/01/2022 al 01/02/2022"
-
-            const [startDate, endDate] = event.target.value.split("/");
-
-            // Function to reformat a date from YYYY-MM-DD to DD/MM/YYYY
-            const reformatDate = (date) => {
-                const [year, month, day] = date.split("-");
-                return `${year}-${month}-${day}`;
-            };
-
-            // Reformat both dates and join with " al "
-            const formattedValue = `${reformatDate(startDate)} al ${reformatDate(endDate)}`;
-
-            setValue(formattedValue);
+            checkAmountOfDays(event);
         }, 200);
 
         setTimeout(() => {
@@ -273,15 +273,14 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
     const handleSubmitVacationRequest = async () => {
         setLoadingBar(true);
         const formData = new FormData();
-        console.log(value);
         formData.append("request_file", selectedFile);
         formData.append("mon_to_sat", !isMondayToFriday);
-        formData.append("start_date", value.split("/")[0]);
-        formData.append("end_date", value.split("/")[1]);
+        formData.append("start_date", value.split("al")[0].trim());
+        formData.append("end_date", value.split("al")[1].trim());
         formData.append("user", valueAutocomplete.id);
 
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/request/`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
@@ -352,7 +351,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
                             </TextField>
                         </Box>
                         <Collapse sx={{ margin: "auto" }} in={openCalendar}>
-                            <Picker value={value} onChange={onChange} showSnack={showSnack} isMondayToFriday={isMondayToFriday} />
+                            <Picker value={value} onChange={onChange} showSnack={showSnack} isMondayToFriday={isMondayToFriday} holidays={holidays} />
                         </Collapse>
                         <Collapse sx={{ margin: "auto" }} in={!!value}>
                             <Typography sx={{ pt: "1rem" }}>Periodo de vacaciones seleccionado: </Typography>

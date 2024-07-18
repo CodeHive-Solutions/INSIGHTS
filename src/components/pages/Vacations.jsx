@@ -59,7 +59,7 @@ export const Vacations = () => {
 
     const getVacations = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/request`, {
                 method: "GET",
                 credentials: "include",
             });

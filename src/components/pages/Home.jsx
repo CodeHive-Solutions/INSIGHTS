@@ -18,21 +18,23 @@ import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
-import prosecutor from "../../images/home-carousel/prosecutor.png";
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
 import securityPractices from "../../images/home-carousel/security-practices.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
+import july20 from "../../images/home-carousel/july-20.png";
 import security from "../../images/home-carousel/security.png";
-import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
+import dogsDay from "../../images/home-carousel/dogs-day.png";
+import womanAfroAmericanDay from "../../images/home-carousel/woman-afro-american-day.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
-    { image: socialSecurityCertificate },
+    { image: july20 },
+    { image: womanAfroAmericanDay },
+    { image: dogsDay },
     { image: security },
     { image: securityAdvices },
     { image: securityPractices },
-    { image: prosecutor },
     { image: ceroDiscrimination },
 ];
 
