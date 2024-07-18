@@ -4,13 +4,14 @@ from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from notifications.utils import create_notification
-from django.utils import timezone
 from django.core.mail import mail_admins
 from django.core.mail import send_mail
 from users.models import User
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
+from .utils import get_working_days
 
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
@@ -210,7 +211,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 response = super().partial_update(request, *args, **kwargs)
-                if ( 
+                if (
                     response.status_code == status.HTTP_200_OK
                     and response.data
                     and response.data["hr_approbation"]
@@ -269,3 +270,38 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             {"detail": "You do not have permission to perform this action."},
             status=status.HTTP_403_FORBIDDEN,
         )
+
+
+# @api_view(["GET"])
+# def get_working_days_view(request):
+#     start_date = request.query_params.get("start_date")
+#     end_date = request.query_params.get("end_date")
+#     mon_to_sat = request.query_params.get("mon_to_sat")
+#     if not start_date or not end_date or not mon_to_sat:
+#         return Response(
+#             {
+#                 "detail": "Por favor, proporciona una fecha de inicio, una fecha de finalización y un valor booleano para mon_to_sat."
+#             },
+#             status=status.HTTP_400_BAD_REQUEST,
+#         )
+#     try:
+#         mon_to_sat = bool(strtobool(mon_to_sat))
+#     except:
+#         return Response(
+#             {
+#                 "detail": "Por favor, proporciona un valor booleano para mon_to_sat."
+#             },
+#             status=status.HTTP_400_BAD_REQUEST,
+#         )
+#     try:
+#         start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
+#         end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
+#     except:
+#         return Response(
+#             {
+#                 "detail": "Por favor, proporciona una fecha válida en el formato YYYY-MM-DD."
+#             },
+#             status=status.HTTP_400_BAD_REQUEST,
+#         )
+#     working_days = get_working_days(start_date, end_date, mon_to_sat)
+#     return Response({"working_days": working_days})
