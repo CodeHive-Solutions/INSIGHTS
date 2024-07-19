@@ -76,17 +76,14 @@ export const CalendarRange = forwardRef(function CalendarRange({ onChange, showO
         <calendar-range
             ref={ref}
             show-outside-days={showOutsideDays || undefined}
-            first-day-of-week={0}
-            pageBy="single"
-            months={1} // Show two months at a time
-            //
+            first-day-of-week={1}
             min={minDate.toISOString().split("T")[0]} // Format the date to YYYY-MM-DD
             {...props}
         />
     );
 });
 
-const Picker = ({ value, onChange, showSnack, isMondayToFriday, holidays }) => {
+const Picker = ({ value, onChange, isMondayToFriday, holidays }) => {
     const isDateDisallowed = (date) => {
         if (holidays.map((holiday) => holiday[0]).includes(date.toISOString().split("T")[0]) || date.getDay() === 6 || (isMondayToFriday ? date.getDay() === 5 : null)) {
             return true;
@@ -115,6 +112,8 @@ const Picker = ({ value, onChange, showSnack, isMondayToFriday, holidays }) => {
 
 const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
     const [value, setValue] = useState("");
+    const [textDate, setTextDate] = useState("");
+    const [daysAmount, setDaysAmount] = useState("");
     const [collapseDate, setCollapseDate] = useState(true);
     const [employeesInCharge, setEmployeesInCharge] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -137,6 +136,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
     const handleSchedule = (event) => {
         setIsMondayToFriday(event.target.value);
         setOpenCalendar(true);
+        checkAmountOfDays({ target: { value: value } }, event.target.value);
     };
 
     const handleCloseSnack = () => {
@@ -211,7 +211,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         getHolidays();
     }, []);
 
-    const checkAmountOfDays = (event) => {
+    const checkAmountOfDays = (event, isMondayToFridayProp) => {
         const [startDate, endDate] = event.target.value.split("/");
 
         const start = new Date(startDate);
@@ -220,22 +220,27 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         let diffDays = 0;
         for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
             const dayOfWeek = date.getDay();
+            console.log(dayOfWeek + " " + date.toISOString().split("T")[0]);
             // exclude from the count the Sundays and the holidays and the Saturdays if the employee works from Monday to Friday
-            if (dayOfWeek !== 6 && !holidays.map((holiday) => holiday[0]).includes(date.toISOString().split("T")[0]) && (dayOfWeek !== 5 || !isMondayToFriday)) {
+            if (
+                dayOfWeek !== 6 &&
+                !holidays.map((holiday) => holiday[0]).includes(date.toISOString().split("T")[0]) &&
+                (dayOfWeek !== 5 || !isMondayToFriday || isMondayToFridayProp)
+            ) {
                 diffDays++;
             }
         }
 
+        setDaysAmount(diffDays);
+        setTextDate(`${startDate} al ${endDate}`);
+        setValue(event.target.value);
         if (diffDays > 15) {
-            setValue("");
             showSnack("error", "El periodo de vacaciones seleccionado excede los 15 días hábiles permitidos.");
-        } else {
-            setValue(`${startDate} al ${endDate}`);
         }
     };
 
     const onChange = (event) => {
-        if (value === "") {
+        if (textDate === "") {
             checkAmountOfDays(event);
             return;
         }
@@ -252,6 +257,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
 
     const handleCloseVacationDialog = () => {
         setOpenVacation(false);
+        setTextDate("");
         setValue("");
         setFileName("SUBIR CARTA DE SOLICITUD DE VACACIONES");
         setSelectedFile(null);
@@ -275,8 +281,8 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         const formData = new FormData();
         formData.append("request_file", selectedFile);
         formData.append("mon_to_sat", !isMondayToFriday);
-        formData.append("start_date", value.split("al")[0].trim());
-        formData.append("end_date", value.split("al")[1].trim());
+        formData.append("start_date", value.split("/")[0]);
+        formData.append("end_date", value.split("/")[1]);
         formData.append("user", valueAutocomplete.id);
 
         try {
@@ -353,10 +359,13 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
                         <Collapse sx={{ margin: "auto" }} in={openCalendar}>
                             <Picker value={value} onChange={onChange} showSnack={showSnack} isMondayToFriday={isMondayToFriday} holidays={holidays} />
                         </Collapse>
-                        <Collapse sx={{ margin: "auto" }} in={!!value}>
+                        <Collapse sx={{ margin: "auto" }} in={!!textDate}>
                             <Typography sx={{ pt: "1rem" }}>Periodo de vacaciones seleccionado: </Typography>
                             <Collapse sx={{ textAlign: "center" }} in={collapseDate}>
-                                <Typography style={{ fontWeight: 500 }}>{value}</Typography>
+                                <Typography style={{ fontWeight: 500 }}>{textDate}</Typography>
+                                <Typography>
+                                    Cantidad de días hábiles seleccionados: <b> {daysAmount} </b>
+                                </Typography>
                             </Collapse>
                         </Collapse>
                         <Box sx={{ textAlign: "center" }}>

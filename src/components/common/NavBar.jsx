@@ -307,11 +307,6 @@ const Navbar = () => {
         if (checked) {
             body = {
                 months: bonusesInput.current.value,
-                email: emailRef.current.value,
-            };
-        } else {
-            body = {
-                email: emailRef.current.value,
             };
         }
 
