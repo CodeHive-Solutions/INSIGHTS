@@ -62,8 +62,7 @@ def send_report_ethical_line(request):
         fail_silently=False,
         html_message="True",
     )
-    # if errors:
-    #     return Response({"error": "Hubo un error en el envió del correo"}, status=500)
+
     return Response({"message": "Correo enviado correctamente"}, status=200)
 
 
