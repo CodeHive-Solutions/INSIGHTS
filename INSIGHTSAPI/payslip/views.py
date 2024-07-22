@@ -1,5 +1,5 @@
 """Views for the payslip."""
-
+import logging
 import base64
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -11,6 +11,8 @@ from django.conf import settings
 from .tasks import send_email_with_attachment
 from .models import Payslip
 from .serializers import PayslipSerializer
+
+logger = logging.getLogger("requests")
 
 
 def convert_numeric_value(value):
@@ -27,6 +29,9 @@ def send_payslip(payslips):
         logo = base64.b64encode(logo).decode("utf-8")
 
     for payslip in payslips:
+        # iterate over the rows and multiply the values by 100 for the solidary_fund_percentage field
+        payslip.solidarity_fund_percentage = "{:.1f}%".format(payslip.solidarity_fund_percentage * 100)
+        logger.info(payslip.to_json())
         payslip_data.append(payslip.to_json())
     queued_task = send_email_with_attachment.delay(
         payslip_data, logo, settings.EMAIL_HOST_USER
@@ -83,10 +88,10 @@ class PayslipViewSet(viewsets.ModelViewSet):
             if line.startswith(";;") or line == "":
                 continue
             data = line.split(";")
-            if len(data) != 26:
+            if len(data) != 28:
                 return Response(
                     {
-                        "Error": f"El archivo no tiene la cantidad de columnas requeridas de 26, tiene {len(data)}",
+                        "Error": f"El archivo no tiene la cantidad de columnas requeridas de 28, tiene {len(data)}",
                     },
                     status=400,
                 )
@@ -155,8 +160,10 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "tax_withholding": convert_numeric_value(data[21]),
                     "additional_deductions": convert_numeric_value(data[22]),
                     "apsalpen": convert_numeric_value(data[23]),
-                    "total_deductions": convert_numeric_value(data[24]),
-                    "net_pay": convert_numeric_value(data[25]),
+                    "solidarity_fund_percentage": convert_numeric_value(data[24]),
+                    "solidarity_fund": convert_numeric_value(data[25]),
+                    "total_deductions": convert_numeric_value(data[26]),
+                    "net_pay": convert_numeric_value(data[27]),
                     "email": email,
                 }
             )
