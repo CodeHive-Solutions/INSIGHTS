@@ -536,10 +536,3 @@ class VacationRequestModelTestCase(BaseTestCase):
             response.data["non_field_errors"][0],
             "No puedes solicitar más de 15 días de vacaciones.",
         )
-
-    # def test_get_working_days_view(self):
-    #     """Test the get_working_days view."""
-    #     query_params = {"start_date": "2024-01-01", "end_date": "2024-01-31", "mon_to_sat": False}
-    #     response = self.client.get(reverse("get-working-days"), query_params)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-    #     self.assertEqual(response.data["working_days"], 21)

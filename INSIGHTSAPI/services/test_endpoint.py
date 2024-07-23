@@ -29,6 +29,8 @@ def test_endpoint(request):
         "transport_allowance": 100000,
         "bonus_paycheck": 100000,
         "apsalpen": 100000,
+        "solidarity_fund_percentage": '0,015',
+        "solidarity_fund": 150000,
     }
     return render(
         request,

@@ -38,6 +38,8 @@ class EmploymentCertificationTest(BaseTestCase):
             "tax_withholding": 150000,
             "additional_deductions": 150000,
             "apsalpen": 150000,
+            "solidarity_fund_percentage": 0.015,
+            "solidarity_fund": 150000,
             "total_deductions": 150000,
             "severance": 150000,
             "net_pay": 150000,
