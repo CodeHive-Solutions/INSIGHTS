@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 // Libraries
 import { useNavigate, useLocation } from "react-router-dom";
@@ -8,7 +8,7 @@ import * as Yup from "yup";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
-import { handleError } from "../../assets/handleError";
+import { PersonalInformationContext } from "../../context/PersonalInformation";
 
 // Material-UI
 import { Box, Typography, Button, TextField, Link, Alert, Collapse, LinearProgress } from "@mui/material";
@@ -54,6 +54,8 @@ const Login = () => {
     const showAlert = location.state?.showAlert;
     const lastLocationPath = location.state?.lastLocation ? new URL(location.state?.lastLocation).pathname : null;
     const [lastLocation, setLastLocation] = useState(null);
+    const { userInformation, updateUserInformation } = useContext(PersonalInformationContext);
+
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
@@ -113,6 +115,7 @@ const Login = () => {
             }
 
             if (response.status === 200) {
+                updateUserInformation({ permissions: data.permissions, cedula: data.cedula, cargo: data.cargo, email: data.email, rango: data.rango });
                 // Set the item in localStorage
                 localStorage.setItem(
                     "refresh-timer-ls",

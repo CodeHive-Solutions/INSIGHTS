@@ -1,5 +1,6 @@
 // Material-UI
 import { DataGrid } from "@mui/x-data-grid";
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 
 const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -13,20 +14,25 @@ const columns = [
         type: "number",
         headerName: "Salario",
         width: 130,
-        valueGetter: (params) => params.row.salary * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
                 currency: "COP",
             }).format(params.value),
     },
-    { field: "days", headerName: "Días", width: 130, valueFormatter: (params) => params.value + " DÍAS" },
+    {
+        field: "days",
+        headerName: "Días",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => parseFloat(params.value.replace(",", ".")),
+        valueFormatter: (params) => params.value + " DÍAS",
+    },
     {
         field: "biweekly_period",
         headerName: "Periodo Quincenal",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.biweekly_period * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -38,7 +44,6 @@ const columns = [
         headerName: "Auxilio de Transporte",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.transport_allowance * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -50,7 +55,7 @@ const columns = [
         headerName: "Horas Laboradas Recargo Nocturno",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
+        valueGetter: (params) => parseFloat(params.value.replace(",", ".")),
         valueFormatter: (params) => params.value + " HORAS",
     },
     {
@@ -58,7 +63,6 @@ const columns = [
         headerName: "Recargo Nocturno",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
         valueFormatter: (params) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(params.value),
     },
     {
@@ -66,7 +70,7 @@ const columns = [
         headerName: "Horas Laboradas Recargo Nocturno Festivo",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
+        valueGetter: (params) => parseFloat(params.value.replace(",", ".")),
         valueFormatter: (params) => params.value + " HORAS",
     },
     {
@@ -74,7 +78,6 @@ const columns = [
         headerName: "Recargo Nocturno Festivo",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
         valueFormatter: (params) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(params.value),
     },
     {
@@ -89,7 +92,6 @@ const columns = [
         headerName: "Recargo Dominical o Festivo",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.surcharge_night_shift_hours * 1,
         valueFormatter: (params) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP" }).format(params.value),
     },
     {
@@ -97,7 +99,6 @@ const columns = [
         headerName: "Bonificación",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.bonus_paycheck * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -109,7 +110,6 @@ const columns = [
         headerName: "Prima",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.biannual_bonus * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -121,7 +121,6 @@ const columns = [
         headerName: "Cesantías",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.severance * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -133,7 +132,6 @@ const columns = [
         headerName: "Total Devengado",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.gross_earnings * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -145,7 +143,6 @@ const columns = [
         headerName: "Aporte a Salud",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.healthcare_contribution * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -157,7 +154,6 @@ const columns = [
         headerName: "Aporte a Pensión",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.pension_contribution * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -169,19 +165,6 @@ const columns = [
         headerName: "Retención en la Fuente",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.tax_withholding * 1,
-        valueFormatter: (params) =>
-            new Intl.NumberFormat("es-CO", {
-                style: "currency",
-                currency: "COP",
-            }).format(params.value),
-    },
-    {
-        field: "apsalpen",
-        headerName: "Aporte a Salud y Pensión Sobre Incentivo",
-        width: 130,
-        type: "number",
-        valueGetter: (params) => params.row.apsalpen * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -193,7 +176,6 @@ const columns = [
         headerName: "Deducciones Adicionales",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.additional_deductions * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -201,11 +183,41 @@ const columns = [
             }).format(params.value),
     },
     {
+        field: "apsalpen",
+        headerName: "Aporte a Salud y Pensión Sobre Incentivo",
+        width: 130,
+        type: "number",
+        valueFormatter: (params) =>
+            new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+            }).format(params.value),
+    },
+    {
+        field: "solidarity_fund_percentage",
+        headerName: "Porcentaje de Fondo de Solidaridad",
+        width: 130,
+        type: "number",
+        valueGetter: (params) => parseFloat(params.value.replace(",", ".")),
+        valueFormatter: (params) => params.value * 100 + "%",
+    },
+    {
+        field: "solidarity_fund",
+        headerName: "Fondo de Solidaridad",
+        width: 130,
+        type: "number",
+        valueFormatter: (params) =>
+            new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+            }).format(params.value),
+    },
+
+    {
         field: "total_deductions",
         headerName: "Total Deducciones",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.total_deductions * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",
@@ -217,7 +229,6 @@ const columns = [
         headerName: "Total a Pagar",
         width: 130,
         type: "number",
-        valueGetter: (params) => params.row.net_pay * 1,
         valueFormatter: (params) =>
             new Intl.NumberFormat("es-CO", {
                 style: "currency",

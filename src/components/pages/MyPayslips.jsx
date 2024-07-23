@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // Material-UI
-import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box, LinearProgress, Fade } from "@mui/material";
+import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box, LinearProgress, Fade, Alert } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import { handleError } from "../../assets/handleError";
 
@@ -38,8 +38,6 @@ export const MyPayslips = () => {
                 credentials: "include",
             });
 
-            await handleError(response, showSnack);
-
             if (response.status === 200) {
                 const data = await response.json();
                 if (permissions && permissions.includes("payslip.view_payslip")) {
@@ -49,6 +47,8 @@ export const MyPayslips = () => {
                     setRows(data);
                 }
             }
+
+            await handleError(response, showSnack);
         } catch (error) {
             if (getApiUrl().environment === "development") {
                 console.error(error);
@@ -204,22 +204,15 @@ export const MyPayslips = () => {
                         <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail.toLowerCase()}</span>
                     </Typography>
                     <Collapse in={openCollapse}>
-                        <TextField
-                            sx={{ mt: "1rem" }}
-                            inputRef={emailRef}
-                            autoFocus
-                            margin="dense"
-                            id="email"
-                            label="Correo electrónico"
-                            type="email"
-                            fullWidth
-                            variant="standard"
-                        />
+                        <Alert severity="info" sx={{ mt: "1rem" }}>
+                            Si este no es tu correo electrónico, por favor, ingresa al modulo de mi cuenta y actualiza tu correo electrónico. Recuerda cerrar sesión y
+                            volver a iniciar sesión para que los cambios surtan efecto.
+                        </Alert>
                     </Collapse>
                     <Box sx={{ display: "flex", justifyContent: "space-between", mt: "1rem" }}>
                         <Box>
                             <Collapse in={!openCollapse}>
-                                <Button variant="outlined" sx={{ mt: "1rem" }} onClick={handleCollapse}>
+                                <Button sx={{ mt: "1rem" }} onClick={handleCollapse}>
                                     Ese no es mi correo
                                 </Button>
                             </Collapse>

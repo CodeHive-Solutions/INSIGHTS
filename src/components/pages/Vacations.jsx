@@ -59,7 +59,7 @@ export const Vacations = () => {
 
     const getVacations = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/request`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -271,7 +271,6 @@ export const Vacations = () => {
             valueOptions: ["PENDIENTE", "APROBADA", "RECHAZADA"],
             // return a chip with the status
             valueGetter: (params) => {
-                console.log("params:" + params);
                 if (params.value === null) {
                     return "PENDIENTE";
                 } else if (params.value === true) {
@@ -448,12 +447,10 @@ export const Vacations = () => {
         setApprovalType(approvalType);
     };
 
-    useEffect(() => {
-        console.log(buttonType);
-    }, [buttonType]);
-
     return (
         <>
+            <VacationsRequest getVacations={getVacations} openVacation={openVacation} setOpenVacation={setOpenVacation} />
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog open={openDialogPayslip} onClose={handleCloseDialogPayslip} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿ Aprobar solicitud de vacaciones?"}</DialogTitle>
                 <DialogContent>
@@ -524,8 +521,6 @@ export const Vacations = () => {
                     rows={rows}
                 ></DataGrid>
             </Container>
-            <VacationsRequest getVacations={getVacations} openVacation={openVacation} setOpenVacation={setOpenVacation} />
-            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
 };

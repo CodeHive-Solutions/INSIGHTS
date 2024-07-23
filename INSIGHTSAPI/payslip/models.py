@@ -31,6 +31,8 @@ class Payslip(models.Model):
     tax_withholding = models.DecimalField(max_digits=12, decimal_places=2)
     additional_deductions = models.DecimalField(max_digits=12, decimal_places=2)
     apsalpen = models.DecimalField(max_digits=12, decimal_places=2)
+    solidarity_fund_percentage = models.DecimalField(max_digits=3, decimal_places=3)
+    solidarity_fund = models.DecimalField(max_digits=12, decimal_places=2)
     total_deductions = models.DecimalField(max_digits=12, decimal_places=2)
     net_pay = models.DecimalField(max_digits=12, decimal_places=2)
     email = models.EmailField()

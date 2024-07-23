@@ -41,6 +41,7 @@ import Pqrs from "./components/pages/Pqrs";
 import Vacations from "./components/pages/Vacations";
 import PowerBI from "./components/pages/PowerBI";
 import { getApiUrl } from "./assets/getApi";
+import { PersonalInformationProvider } from "./context/PersonalInformation";
 
 const theme = createTheme({
     typography: {
@@ -195,15 +196,17 @@ function AnimatedRoutes() {
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <ThemeProvider theme={theme}>
-            <CssBaseline>
-                <RouterProvider router={router}>
-                    <AnimatePresence mode="wait">
-                        <AnimatedRoutes />
-                    </AnimatePresence>
-                </RouterProvider>
-            </CssBaseline>
-        </ThemeProvider>
-    </React.StrictMode>
+    <PersonalInformationProvider>
+        <React.StrictMode>
+            <ThemeProvider theme={theme}>
+                <CssBaseline>
+                    <RouterProvider router={router}>
+                        <AnimatePresence mode="wait">
+                            <AnimatedRoutes />
+                        </AnimatePresence>
+                    </RouterProvider>
+                </CssBaseline>
+            </ThemeProvider>
+        </React.StrictMode>
+    </PersonalInformationProvider>
 );

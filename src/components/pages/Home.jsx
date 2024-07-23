@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLocation } from "react";
+import React, { useEffect, useState, useLocation, useContext } from "react";
 
 // Libraries and Hooks
 import { useInView } from "react-intersection-observer";
@@ -8,6 +8,7 @@ import { getApiUrl } from "../../assets/getApi.js";
 import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { handleError } from "../../assets/handleError";
+import { PersonalInformationContext } from "../../context/PersonalInformation.jsx";
 
 // Material-UI
 import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
@@ -17,29 +18,23 @@ import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
-import prosecutor from "../../images/home-carousel/prosecutor.png";
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
 import securityPractices from "../../images/home-carousel/security-practices.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
+import july20 from "../../images/home-carousel/july-20.png";
 import security from "../../images/home-carousel/security.png";
-import socialSecurityCertificate from "../../images/home-carousel/social-security-certificate.png";
-import environment from "../../images/home-carousel/environment.png";
-import environment2 from "../../images/home-carousel/environment-2.png";
-import environment3 from "../../images/home-carousel/environment-3.png";
-import health from "../../images/home-carousel/health.png";
+import dogsDay from "../../images/home-carousel/dogs-day.png";
+import womanAfroAmericanDay from "../../images/home-carousel/woman-afro-american-day.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
-    { image: health },
-    { image: environment },
-    { image: environment2 },
-    { image: environment3 },
-    { image: socialSecurityCertificate },
+    { image: july20 },
+    { image: womanAfroAmericanDay },
+    { image: dogsDay },
     { image: security },
     { image: securityAdvices },
     { image: securityPractices },
-    { image: prosecutor },
     { image: ceroDiscrimination },
 ];
 
@@ -51,6 +46,7 @@ const Home = () => {
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
     const matches = useMediaQuery("(min-width:1025px)");
+    const { userInformation } = useContext(PersonalInformationContext);
 
     const handleCloseSnack = () => setOpenSnack(false);
 

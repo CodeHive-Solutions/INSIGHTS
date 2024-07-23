@@ -255,13 +255,37 @@ export const Payslips = () => {
             "tax_withholding",
             "additional_deductions",
             "apsalpen",
+            "solidarity_fund_percentage",
+            "solidarity_fund",
             "total_deductions",
             "net_pay",
         ];
 
+        const parseCSVRow = (row) => {
+            const result = [];
+            let inQuotes = false;
+            let value = "";
+
+            for (let char of row) {
+                if (char === '"' && inQuotes) {
+                    inQuotes = false;
+                } else if (char === '"' && !inQuotes) {
+                    inQuotes = true;
+                } else if (char === "," && !inQuotes) {
+                    result.push(value);
+                    value = "";
+                } else {
+                    value += char;
+                }
+            }
+
+            result.push(value);
+            return result;
+        };
+
         for (let i = 1; i < lines.length; i++) {
             const obj = { id: i }; // Add an id field
-            const row = lines[i].split(",");
+            const row = parseCSVRow(lines[i]);
 
             for (let j = 0; j < headers.length; j++) {
                 obj[headers[j]] = row[j];

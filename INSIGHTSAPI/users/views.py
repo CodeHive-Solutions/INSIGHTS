@@ -22,12 +22,14 @@ def login_staffnet():
     else:
         url = "https://staffnet-api.cyc-bpo.com/login"
     response = requests.post(url, json=data)
-    if response.status_code != 200:
+    if response.status_code != 200 or "StaffNet" not in response.cookies:
         logger.error("Error logging in StaffNet: {}".format(response.text))
         mail_admins(
             "Error logging in StaffNet",
             "Error logging in StaffNet: {}".format(response.text),
         )
+        # delete the token to try to login again
+        del os.environ["StaffNetToken"]
         return None
     os.environ["StaffNetToken"] = response.cookies["StaffNet"]
     return True
@@ -61,8 +63,10 @@ def get_profile(request):
         url.format(user.cedula),
         cookies={"StaffNet": os.environ["StaffNetToken"]},
     )
-    if response.status_code != 200:
+    if response.status_code != 200 or "error" in response.json():
         logger.error("Error getting user profile: {}".format(response.text))
+        # delete the token to try to login again
+        del os.environ["StaffNetToken"]
         return Response(
             {
                 "error": "Encontramos un error obteniendo tu perfil, por favor intenta más tarde."
@@ -143,8 +147,10 @@ def update_profile(request):
             },
             status=400,
         )
-    elif response.status_code != 200:
+    elif response.status_code != 200 or "error" in response.json():
         logger.error("Error updating user profile: {}".format(response.text))
+        # delete the token to try to login again
+        del os.environ["StaffNetToken"]
         return Response(
             {
                 "error": "Encontramos un error actualizando tu perfil, por favor intenta más tarde."
