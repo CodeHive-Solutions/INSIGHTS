@@ -74,7 +74,6 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError(
                         "Debes especificar si trabajas los sábados o no."
                     )
-                
             if not is_working_day(attrs["start_date"], mon_to_sat):
                 raise serializers.ValidationError(
                     "No puedes iniciar tus vacaciones un día no laboral."
@@ -132,11 +131,6 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         validated_data.pop("payroll_approbation", None)
         validated_data.pop("manager_approbation", None)
         validated_data["uploaded_by"] = self.context["request"].user
-        created_at = datetime.now()
-        if created_at.day >= 20:
-            raise serializers.ValidationError(
-                "No puedes solicitar vacaciones después del día 20."
-            )
         vacation_request = super().create(validated_data)
         return vacation_request
 

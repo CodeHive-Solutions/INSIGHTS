@@ -40,6 +40,8 @@ class PayslipTest(BaseTestCase):
             "tax_withholding": 150000,
             "additional_deductions": 150000,
             "apsalpen": 150000,
+            "solidarity_fund_percentage": 0.015,
+            "solidarity_fund": 150000,
             "total_deductions": 150000,
             "net_pay": 150000,
         }
@@ -90,12 +92,12 @@ class PayslipTest(BaseTestCase):
         self.assertEqual(response.data["area"], "Ejecutivo")
         self.assertEqual(response.data["job_title"], "Cargo #3")
         self.assertEqual(response.data["salary"], "28227321.00")
-        self.assertEqual(response.data["days"], 15)
+        self.assertEqual(response.data["days"], 16)
         self.assertEqual(response.data["biweekly_period"], "14113661.00")
         self.assertEqual(response.data["transport_allowance"], "22000.00")
         self.assertEqual(response.data["surcharge_night_shift_hours"], "15.0")
         self.assertEqual(response.data["surcharge_night_shift_allowance"], "140000.00")
-        self.assertEqual(response.data["surcharge_night_shift_holiday_hours"], "17.1")
+        self.assertEqual(response.data["surcharge_night_shift_holiday_hours"], "17.4")
         self.assertEqual(response.data["surcharge_night_shift_holiday_allowance"], "180000.00")
         self.assertEqual(response.data["surcharge_holiday_hours"], "20.0")
         self.assertEqual(response.data["surcharge_holiday_allowance"], "250000.00")
@@ -108,6 +110,8 @@ class PayslipTest(BaseTestCase):
         self.assertEqual(response.data["tax_withholding"], "1946500.00")
         self.assertEqual(response.data["additional_deductions"], "2225000.00")
         self.assertEqual(response.data["apsalpen"], "0.00")
+        self.assertEqual(response.data["solidarity_fund_percentage"], "0.015")
+        self.assertEqual(response.data["solidarity_fund"], "69000.00")
         self.assertEqual(response.data["total_deductions"], "5060661.00")
         self.assertEqual(response.data["net_pay"], "9053000.00")
 
@@ -151,7 +155,7 @@ class PayslipTest(BaseTestCase):
         )
         self.assertEqual(
             response.data,
-            {"Error": "El archivo no tiene la cantidad de columnas requeridas de 26, tiene 2"},
+            {"Error": "El archivo no tiene la cantidad de columnas requeridas de 28, tiene 2"},
         )
 
     def test_upload_without_permission(self):
