@@ -189,3 +189,4 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.user.refresh_from_db()
         self.assertEqual(str(self.user.email).lower(), data["correo"])
+
