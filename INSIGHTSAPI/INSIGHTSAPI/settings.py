@@ -14,7 +14,6 @@ import sys
 import os
 import ssl
 import ldap
-import sentry_sdk
 from datetime import timedelta, datetime
 from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
 from dotenv import load_dotenv
@@ -439,14 +438,3 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TIMEZONE = "UTC"
 CELERY_LOG_FILE = os.path.join(log_dir, "celery.log")
 CELERY_LOG_LEVEL = "INFO"
-
-sentry_sdk.init(
-    dsn="https://fbcfe406bcc4d87a1af58d548c5318fe@o4507662809432064.ingest.us.sentry.io/4507662840889344",
-    # Set traces_sample_rate to 1.0 to capture 100%
-    # of transactions for performance monitoring.
-    traces_sample_rate=1.0,
-    # Set profiles_sample_rate to 1.0 to profile 100%
-    # of sampled transactions.
-    # We recommend adjusting this value in production.
-    profiles_sample_rate=1.0,
-)
