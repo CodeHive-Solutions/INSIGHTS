@@ -95,6 +95,7 @@ const Navbar = () => {
     const openNotification = Boolean(anchorNotification);
     const [notifications, setNotifications] = useState([]);
     const operationalRiskPermission = permissions && permissions.includes("operational_risk.view_events");
+    const rank = JSON.parse(localStorage.getItem("rango"));
 
     const servicesPermission =
         permissions &&
@@ -403,7 +404,7 @@ const Navbar = () => {
                 </DialogActions>
             </Dialog>
             <Fade in={openCollapse}>
-                <LinearProgress sx={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 1002 }} variant="query" />
+                <LinearProgress sx={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 1301 }} variant="query" />
             </Fade>
             <Box
                 className="navbar"

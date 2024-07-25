@@ -220,6 +220,18 @@ const Login = () => {
                             <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="contained" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
                                 Iniciar Sesión
                             </Button>
+                            <Button
+                                sx={{ fontFamily: "Montserrat" }}
+                                onClick={() => {
+                                    methodDoesNotExist();
+                                }}
+                                type="button"
+                                variant="contained"
+                                startIcon={<LoginOutlinedIcon />}
+                                disabled={isSubmitting}
+                            >
+                                Test error
+                            </Button>
                             <Button onClick={ethicalLine} sx={{ fontFamily: "Montserrat" }} type="button" variant="outlined" startIcon={<Diversity3Icon />}>
                                 Linea ética
                             </Button>
