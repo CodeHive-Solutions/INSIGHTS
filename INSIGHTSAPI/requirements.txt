@@ -23,5 +23,5 @@ Pillow==10.4.0
 python-dotenv==1.0.1
 python_ldap==3.4.4
 python_magic==0.4.27
-Requests==2.32.3
+Requests==2.32.2
 redis==5.0.7
