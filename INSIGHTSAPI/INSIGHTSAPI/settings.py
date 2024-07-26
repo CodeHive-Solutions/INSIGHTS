@@ -22,6 +22,7 @@ from pathlib import Path
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
 
+print(ldap)
 if not os.path.isfile(ENV_PATH):
     raise FileNotFoundError("The env file was not found.")
 

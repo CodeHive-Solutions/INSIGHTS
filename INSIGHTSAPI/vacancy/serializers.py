@@ -2,7 +2,6 @@
 import logging
 from io import BytesIO
 from PIL import Image
-from numpy import source
 from rest_framework import serializers
 from django.core.exceptions import ValidationError
 from .models import Vacancy, Reference

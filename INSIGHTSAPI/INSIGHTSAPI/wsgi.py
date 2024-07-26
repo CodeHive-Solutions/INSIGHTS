@@ -11,7 +11,16 @@ import os
 import sys
 from django.core.wsgi import get_wsgi_application
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'INSIGHTSAPI.settings')
+
+# * Add the project to the sys.path double dirname because the wsgi.py is inside a folder
+path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+if path not in sys.path:
+    sys.path.append(path)
+
+sys.path.append(path + "/venv/lib/python3.12/site-packages")
+
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "INSIGHTSAPI.settings")
 
 application = get_wsgi_application()
