@@ -22,7 +22,6 @@ from pathlib import Path
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
 
-print(ldap)
 if not os.path.isfile(ENV_PATH):
     raise FileNotFoundError("The env file was not found.")
 
@@ -70,7 +69,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    "drf_spectacular",
+    # "drf_spectacular",
     "corsheaders",
     "django_auth_ldap",
     "simple_history",
@@ -112,7 +111,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_jwt.CookieJWTAuthentication",),
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
@@ -252,7 +251,7 @@ TIME_ZONE = "America/Bogota"
 
 USE_I18N = True
 
-USE_L10N = True
+# USE_L10N = True
 
 USE_THOUSAND_SEPARATOR = True
 

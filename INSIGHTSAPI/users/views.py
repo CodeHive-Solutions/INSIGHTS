@@ -141,6 +141,7 @@ def update_profile(request):
     )
     # Check the response
     if response.status_code == 400:
+        print(user)
         return Response(
             {
                 "error": "No se detectaron cambios en tu perfil, por favor verifica e intenta de nuevo."

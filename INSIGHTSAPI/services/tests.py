@@ -44,7 +44,7 @@ class BaseTestCase(APITestCase):
 
     def create_demo_user_admin(self):
         """Create a demo user with admin permissions."""
-        # Set the id and 
+        # Set the id and
         demo_user = User.objects.get_or_create(
             pk=999,
             username="demo_admin",
@@ -60,6 +60,22 @@ class BaseTestCase(APITestCase):
         if isinstance(demo_user, tuple):
             return demo_user[0]
         return demo_user
+
+    # def create_demo_user_staffnet(self):
+    #     """Create a demo user with staffnet permissions."""
+    #     demo_user = User.objects.get_or_create(
+    #         cedula="1001185389",
+    #         username="demo_staffnet",
+    #         email=settings.EMAIL_FOR_TEST,
+    #         first_name="Staffnet Demo",
+    #         last_name="User",
+    #         area=Area.objects.get_or_create(name="Staffnet")[0],
+    #         job_position=JobPosition.objects.get_or_create(name="Staffnet", rank=1)[0],
+    #     )
+    #     # Return the user object not the tuple
+    #     if isinstance(demo_user, tuple):
+    #         return demo_user[0]
+    #     return demo_user
 
     def tearDown(self):
         """Tear down the test case."""
@@ -116,6 +132,7 @@ class EthicalLineTest(APITestCase):
             },
         )
         self.assertEqual(response.status_code, 200, response.data)
+
 
 class HolidayTest(TestCase):
     """Test for holidays."""
