@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django_sendfile import sendfile
+from services.models import Question, Answer
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.core.mail import send_mail
@@ -70,6 +71,7 @@ def trigger_error(request):
     """Trigger an error for testing purposes."""
     raise Exception("Test error")
 
+
 @api_view(["GET"])
 def get_holidays(request, year):
     """Get the holidays of the year."""
@@ -79,3 +81,28 @@ def get_holidays(request, year):
         return Response({"error": "El año debe ser un número"}, status=400)
     holidays_year = holidays.CO(years=year).items()
     return Response(holidays_year, status=200)
+
+
+@api_view(["GET"])
+def get_questions(request):
+    """Get the questions."""
+    questions = Question.objects.all()
+    data = [
+        {"id": question.id, "question": question.question} for question in questions
+    ]
+    return Response(data, status=200)
+
+
+@api_view(["POST"])
+def save_answer(request):
+    """Save an answer."""
+    if not "question_id" in request.data:
+        return Response({"error": "El id de la pregunta es requerido"}, status=400)
+    if not "answer" in request.data:
+        return Response({"error": "La respuesta es requerida"}, status=400)
+
+    question = get_object_or_404(Question, pk=request.data["question_id"])
+    answer = Answer(question=question, answer=request.data["answer"])
+    answer.save()
+
+    return Response({"message": "Respuesta guardada correctamente"}, status=201)

@@ -190,4 +190,4 @@ class UserTestCase(BaseTestCase):
         response = self.client.patch(reverse("update_profile"), data)
         self.assertEqual(response.status_code, 200, response.data)
         self.user.refresh_from_db()
-        self.assertEqual(str(self.user.email).lower(), data["correo"])
+        self.assertEqual(self.user.email, str(data["correo"]).upper())

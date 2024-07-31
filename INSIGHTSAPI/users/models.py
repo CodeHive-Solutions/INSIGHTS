@@ -89,7 +89,7 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""
-        if not self.pk or self.cedula != "":
+        if not self.pk:
             with connections["staffnet"].cursor() as db_connection:
                 if not self.cedula:
                     db_connection.execute(
