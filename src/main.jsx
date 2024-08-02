@@ -196,10 +196,10 @@ const router = createBrowserRouter([
                 path: "certifications",
                 element: <EmploymentCertification />,
             },
-            {
-                path: "vacations",
-                element: <Vacations />,
-            },
+            // {
+            //     path: "vacations",
+            //     element: <Vacations />,
+            // },
             {
                 path: "test",
                 element: <PowerBI />,

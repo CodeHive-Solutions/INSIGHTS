@@ -8,13 +8,14 @@ import {
     Container,
     Box,
     Collapse,
-    Skeleton,
     Dialog,
     DialogTitle,
     DialogContent,
     DialogActions,
     DialogContentText,
     Alert,
+    LinearProgress,
+    Fade,
 } from "@mui/material";
 import { getApiUrl } from "../../assets/getApi";
 
@@ -23,7 +24,8 @@ import triviaImage from "../../images/trivia/trivia.svg";
 
 // custom components
 import { handleError } from "../../assets/handleError";
-
+import isSpecificHourColombia from "../../assets/isSpecificHourColombia";
+import SnackbarAlert from "../common/SnackBarAlert";
 // libraries
 import { useNavigate } from "react-router-dom";
 
@@ -35,13 +37,19 @@ const Trivia = () => {
     const [firstTry, setFirstTry] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const navigate = useNavigate();
+    const [openSnack, setOpenSnack] = useState(false);
+    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState("error");
+    const [disabled, setDisabled] = useState(false);
+    const [openCollapse, setOpenCollapse] = useState(false);
+
     const verifyFirstTry = async () => {
-        const response = await fetch(`${getApiUrl().apiUrl}/services/check-answered/`, {
+        const response = await fetch(`${getApiUrl().apiUrl}services/check-answered/`, {
             method: "GET",
             credentials: "include",
         });
 
-        await handleError(response);
+        await handleError(response, showSnack);
 
         if (response.status === 200) {
             const data = await response.json();
@@ -49,16 +57,11 @@ const Trivia = () => {
         }
     };
 
-    function isSpecificHourColombia(hour) {
-        // Get the current time in the Colombia timezone
-        const colombiaTime = new Date().toLocaleString("en-US", { timeZone: "America/Bogota" });
-        const currentTimeColombia = new Date(colombiaTime);
-
-        // Check if the current hour matches the specified hour
-        const isMatch = currentTimeColombia.getHours() >= hour;
-
-        return isMatch;
-    }
+    const showSnack = (severity, message) => {
+        setSeverity(severity);
+        setMessage(message);
+        setOpenSnack(true);
+    };
 
     const handleCloseDialog = () => {
         setOpenDialog(false);
@@ -79,25 +82,41 @@ const Trivia = () => {
     const [shuffledQuestions, setShuffledQuestions] = useState([]);
 
     useEffect(() => {
-        if (!isSpecificHourColombia(11)) {
-            navigate("/logged");
+        verifyFirstTry();
+        if (!isSpecificHourColombia(10)) {
+            navigate("/logged/home");
         }
 
         const questions = [
             {
                 id: 1,
-                text: "¿Cuál es la capital de Colombia?",
-                options: ["Bogotá", "Medellín", "Cali", "Barranquilla"],
+                text: "Confidencialidad se refiere a: ",
+                options: [
+                    "Garantizar que la información sea precisa y completa.",
+                    "Asegurar que la información sea accesible solo para aquellos autorizados.",
+                    "Mantener la disponibilidad de los sistemas de información.",
+                    "Proteger los sistemas contra amenazas externas.",
+                ],
             },
             {
                 id: 2,
-                text: "¿Cuál es el río más largo del mundo?",
-                options: ["Nilo", "Amazonas", "Yangtsé", "Misisipi"],
+                text: "¿Qué es ingeniería social? ",
+                options: [
+                    "Un tipo de software antivirus",
+                    "Un método de ataque que busca obtener información confidencial engañando a los usuarios",
+                    "Un programa de seguridad para proteger contraseñas",
+                    "Un sistema de protección del SGSI",
+                ],
             },
             {
                 id: 3,
-                text: "¿Quién escribió 'Cien años de soledad'?",
-                options: ["Gabriel García Márquez", "Mario Vargas Llosa", "Julio Cortázar", "Carlos Fuentes"],
+                text: "¿Cuál de las siguientes es una señal común de un intento de Smishing? ",
+                options: [
+                    "Un mensaje de texto solicitando una actualización de información bancaria",
+                    "Un mensaje de correo electrónico de una fuente conocida solicitando una reunión",
+                    "Un aviso en la pantalla de tu computadora que indica que el sistema está actualizado",
+                    "Un mensaje en una red social con una oferta de descuento para productos",
+                ],
             },
         ];
 
@@ -138,6 +157,8 @@ const Trivia = () => {
     };
 
     const handleSubmit = async (event) => {
+        setOpenCollapse(true);
+        setDisabled(true);
         event.preventDefault();
         setEndTime(Date.now());
         const formData = new FormData();
@@ -168,6 +189,9 @@ const Trivia = () => {
             if (getApiUrl().environment === "development") {
                 console.error(error);
             }
+        } finally {
+            setOpenCollapse(false);
+            setDisabled(false);
         }
     };
 
@@ -177,8 +201,16 @@ const Trivia = () => {
         return `${seconds}.${milliseconds.toFixed(1).slice(2)} seconds`;
     };
 
+    const handleCloseSnack = () => {
+        setOpenSnack(false);
+    };
+
     return (
         <>
+            <Fade in={openCollapse}>
+                <LinearProgress sx={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 1301 }} variant="query" />
+            </Fade>
+            <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog open={openDialog} onClose={handleCloseDialog} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"Resultados guardados"}</DialogTitle>
                 <DialogContent>
@@ -198,7 +230,7 @@ const Trivia = () => {
                     <Typography sx={{ textAlign: "center" }} variant="h3" component="h1" gutterBottom>
                         Trivia
                     </Typography>
-                    <Box sx={{ textAlign: "center" }}>
+                    <Box sx={{ textAlign: "center", mb: "1rem" }}>
                         <Collapse in={!openTrivia}>
                             {firstTry ? (
                                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -224,7 +256,7 @@ const Trivia = () => {
                         {shuffledQuestions.map((question) => (
                             <Box key={question.id}>
                                 <Typography variant="h6">{question.text}</Typography>
-                                <RadioGroup name={`question${question.id}`} value={selectedAnswers[`question${question.id}`]} onChange={handleChange}>
+                                <RadioGroup sx={{ mb: "2rem" }} name={`question${question.id}`} value={selectedAnswers[`question${question.id}`]} onChange={handleChange}>
                                     {question.options.map((option, index) => (
                                         <FormControlLabel required key={index} value={option} control={<Radio />} label={option} />
                                     ))}
@@ -232,7 +264,7 @@ const Trivia = () => {
                             </Box>
                         ))}
                         <Box sx={{ textAlign: "end" }}>
-                            <Button type="submit" variant="contained" color="primary">
+                            <Button disabled={disabled} type="submit" variant="contained" color="primary">
                                 Guardar
                             </Button>
                         </Box>
