@@ -185,12 +185,7 @@ def create_employment_certification(request):
     except Exception as e:
         logger.critical(f"Error creating PDF: {e}")
         return Response({"error": "No se pudo crear el archivo PDF"}, status=500)
-    if (
-        "email" in request.data and request.data["email"]
-    ):  # This is a going to be removed
-        email = request.data["email"]
-    else:
-        email = user.email
+    email = user.email
     email_content = EmailMessage(
         "Certificación laboral",
         "Adjunto se encuentra la certificación laboral solicitada.",

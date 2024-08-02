@@ -3,11 +3,15 @@
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.urls import reverse
+from django.test import override_settings
 from services.tests import BaseTestCase
 from payslip.models import Payslip
 from .models import EmploymentCertification
 
 
+@override_settings(
+    EMAIL_BACKEND="INSIGHTSAPI.custom.custom_email_backend.CustomEmailBackend",
+)
 class EmploymentCertificationTest(BaseTestCase):
     """Tests the employment certification views."""
 
@@ -73,7 +77,7 @@ class EmploymentCertificationTest(BaseTestCase):
         )
         self.assertEqual(response.status_code, 404, response.content)
 
-    def test_get_another_employment_certification_with_identification(self):
+    def test_create_and_send_another_employment_certification_with_identification(self):
         """Tests that the user can get another user's employment certification with identification."""
         self.create_demo_user()
         get_permission = Permission.objects.get(codename="get_employment_certification")
@@ -86,7 +90,7 @@ class EmploymentCertificationTest(BaseTestCase):
         self.assertEqual(response.status_code, 200, response.content)
         self.assertEqual(EmploymentCertification.objects.count(), 1)
 
-    def test_get_another_employment_certification_with_months_and_identification(self):
+    def test_create_and_send_another_employment_certification_with_months_and_identification(self):
         """Tests that the user can get the employment certification with months and identification."""
         get_permission = Permission.objects.get(codename="get_employment_certification")
         self.user.user_permissions.add(get_permission)

@@ -4,10 +4,12 @@ import os
 import requests
 import holidays
 from rest_framework.test import APITestCase
+from datetime import timedelta
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.conf import settings
 from users.models import User
+from services.models import Answer
 from hierarchy.models import Area, JobPosition
 
 
@@ -44,7 +46,7 @@ class BaseTestCase(APITestCase):
 
     def create_demo_user_admin(self):
         """Create a demo user with admin permissions."""
-        # Set the id and 
+        # Set the id and
         demo_user = User.objects.get_or_create(
             pk=999,
             username="demo_admin",
@@ -60,6 +62,22 @@ class BaseTestCase(APITestCase):
         if isinstance(demo_user, tuple):
             return demo_user[0]
         return demo_user
+
+    # def create_demo_user_staffnet(self):
+    #     """Create a demo user with staffnet permissions."""
+    #     demo_user = User.objects.get_or_create(
+    #         cedula="1001185389",
+    #         username="demo_staffnet",
+    #         email=settings.EMAIL_FOR_TEST,
+    #         first_name="Staffnet Demo",
+    #         last_name="User",
+    #         area=Area.objects.get_or_create(name="Staffnet")[0],
+    #         job_position=JobPosition.objects.get_or_create(name="Staffnet", rank=1)[0],
+    #     )
+    #     # Return the user object not the tuple
+    #     if isinstance(demo_user, tuple):
+    #         return demo_user[0]
+    #     return demo_user
 
     def tearDown(self):
         """Tear down the test case."""
@@ -117,6 +135,7 @@ class EthicalLineTest(APITestCase):
         )
         self.assertEqual(response.status_code, 200, response.data)
 
+
 class HolidayTest(TestCase):
     """Test for holidays."""
 
@@ -133,3 +152,40 @@ class HolidayTest(TestCase):
         response = self.client.get("/services/holidays/2024/")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, holidays.CO(years=2024).items())
+
+
+class QuestionTest(BaseTestCase):
+    """Test for questions."""
+
+    def test_save_answer(self):
+        """Test save answer."""
+        response = self.client.post(
+            reverse("save_answer"),
+            {
+                "question_1": "Test Question 1",
+                "question_2": "Test Question 2",
+                "question_3": "Test Question 3",
+                "duration": 1000000,
+            },
+        )
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(Answer.objects.count(), 1)
+
+    def test_check_answered(self):
+        """Test check answered."""
+        response = self.client.get(reverse("check_answered"))
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data, {"answered": False})
+
+    def test_check_answered_true(self):
+        """Test check answered."""
+        Answer.objects.create(
+            user=self.user,
+            question_1="Test Question 1",
+            question_2="Test Question 2",
+            question_3="Test Question 3",
+            duration=timedelta(microseconds=1000000),
+        )
+        response = self.client.get(reverse("check_answered"))
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data, {"answered": True})

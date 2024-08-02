@@ -10,14 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from datetime import timedelta, datetime
-from pathlib import Path
 import sys
 import os
 import ssl
 import ldap
+from datetime import timedelta, datetime
 from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
 from dotenv import load_dotenv
+from pathlib import Path
 
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
@@ -69,7 +69,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
-    "drf_spectacular",
+    # "drf_spectacular",
     "corsheaders",
     "django_auth_ldap",
     "simple_history",
@@ -111,7 +111,7 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": ("api_token.cookie_jwt.CookieJWTAuthentication",),
-    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 

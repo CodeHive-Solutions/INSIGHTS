@@ -2,5 +2,15 @@
 
 from django.db import models
 
+class Answer(models.Model):
+    """Model for an answer."""
 
-# Create your models here.
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    question_1 = models.CharField(max_length=255)
+    question_2 = models.CharField(max_length=255)
+    question_3 = models.CharField(max_length=255)
+    duration = models.DurationField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.answer

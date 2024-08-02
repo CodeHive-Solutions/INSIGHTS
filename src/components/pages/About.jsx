@@ -9,7 +9,7 @@ import yannethPinzon from "../../images/managers/yanneth-pinzon.webp";
 import angelaDuran from "../../images/managers/angela-duran.jpeg";
 import adrianaPaez from "../../images/managers/adriana-paez.jpg";
 import diegoGonzales from "../../images/managers/diego-gonzales.jpg";
-import marioGiron from "../../images/managers/mario-giron.jpg";
+import riskInterControl from "../../images/managers/risk-internal-control.jfif";
 import melidaSandoval from "../../images/managers/melida-sandoval.jpg";
 import hectorSotelo from "../../images/managers/hector-sotelo.png";
 import pablo from "../../images/managers/pablo.jpeg";
@@ -72,12 +72,12 @@ const managements = [
         description:
             "Proveer, mantener y desarrollar un recurso humano altamente calificado y motivado para alcanzar los objetivos de la organización a través de la aplicación de programas enfocados en conectar al Talento Humano con el propósito de la compañía desde sus habilidades, motivaciones, conocimientos y pasiones, para así apalancar efectivamente el éxito de los objetivos del negocio y a su vez velar por el cumplimiento de las normas y procedimientos vigentes",
     },
-    {
-        name: "Mario Giron",
-        management: "Gerente de Riesgo y Control Interno",
-        image: marioGiron,
-        description: `Resguardar los recursos de la empresa para evitar pérdidas o faltas que puedan afectar su rentabilidad en un marco de gestión de riesgos, donde son identificados, evaluados y controlados, los cuales son informados, comunicados y monitoreados, mediante procesos de auditoría. \n \nAtender procesos de auditoria externas periódicamente de los clientes, entes certificadores, entes de control y firmas evaluadoras de riesgos.`,
-    },
+    // {
+    //     name: "Angélica Rincón",
+    //     management: "Gerente de Riesgo y Control Interno",
+    //     image: riskInterControl,
+    //     description: ``,
+    // },
     {
         name: "Mélida Sandoval",
         management: "Gerente Administrativa",

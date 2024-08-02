@@ -155,7 +155,9 @@ class UserTestCase(BaseTestCase):
         self.user.job_position.save()
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}])
+        self.assertEqual(
+            response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}]
+        )
 
     def test_get_user_higher_rank(self):
         """Tests that the get_users endpoint works as expected."""
@@ -183,9 +185,9 @@ class UserTestCase(BaseTestCase):
     def test_update_user_email(self):
         """Tests that the update_user endpoint works as expected."""
         data = {"correo": "test{}@cyc-bpo.com".format(random.randint(0, 999999))}
-        self.user.cedula = settings.TEST_CEDULA
+        self.user.cedula = 1001185389
         self.user.save()
         response = self.client.patch(reverse("update_profile"), data)
         self.assertEqual(response.status_code, 200, response.data)
         self.user.refresh_from_db()
-        self.assertEqual(str(self.user.email).lower(), data["correo"])
+        self.assertEqual(self.user.email, str(data["correo"]).upper())

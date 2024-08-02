@@ -76,7 +76,7 @@ export const CalendarRange = forwardRef(function CalendarRange({ onChange, showO
         <calendar-range
             ref={ref}
             show-outside-days={showOutsideDays || undefined}
-            first-day-of-week={1}
+            first-day-of-week={0}
             min={minDate.toISOString().split("T")[0]} // Format the date to YYYY-MM-DD
             {...props}
         />
@@ -124,8 +124,12 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
     const [valueAutocomplete, setValueAutocomplete] = useState(null); // [value, setValue
     const [isMondayToFriday, setIsMondayToFriday] = useState(false);
     const [openCalendar, setOpenCalendar] = useState(false);
-    const [loadingBar, setLoadingBar] = useState(true);
+    const [loadingBar, setLoadingBar] = useState(false);
     const [holidays, setHolidays] = useState([]);
+
+    const getTextMonth = (month) => {
+        return new Date(new Date().setMonth(new Date().getMonth() + month)).toLocaleString("es-ES", { month: "long" });
+    };
 
     const showSnack = (severity, message) => {
         setSeverity(severity);
@@ -136,7 +140,9 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
     const handleSchedule = (event) => {
         setIsMondayToFriday(event.target.value);
         setOpenCalendar(true);
-        checkAmountOfDays({ target: { value: value } }, event.target.value);
+        if (value !== "") {
+            checkAmountOfDays({ target: { value: value } }, event.target.value);
+        }
     };
 
     const handleCloseSnack = () => {
@@ -211,7 +217,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         getHolidays();
     }, []);
 
-    const checkAmountOfDays = (event, isMondayToFridayProp) => {
+    const checkAmountOfDays = (event, isMondayToFridayProp = isMondayToFriday) => {
         const [startDate, endDate] = event.target.value.split("/");
 
         const start = new Date(startDate);
@@ -220,13 +226,8 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         let diffDays = 0;
         for (let date = start; date <= end; date.setDate(date.getDate() + 1)) {
             const dayOfWeek = date.getDay();
-            console.log(dayOfWeek + " " + date.toISOString().split("T")[0]);
             // exclude from the count the Sundays and the holidays and the Saturdays if the employee works from Monday to Friday
-            if (
-                dayOfWeek !== 6 &&
-                !holidays.map((holiday) => holiday[0]).includes(date.toISOString().split("T")[0]) &&
-                (dayOfWeek !== 5 || !isMondayToFriday || isMondayToFridayProp)
-            ) {
+            if (dayOfWeek !== 6 && !holidays.map((holiday) => holiday[0]).includes(date.toISOString().split("T")[0]) && (dayOfWeek !== 5 || !isMondayToFridayProp)) {
                 diffDays++;
             }
         }
@@ -304,15 +305,15 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
                 console.error(error);
             }
         } finally {
-            // setLoadingBar(false);
+            setLoadingBar(false);
         }
     };
 
     return (
         <>
-            {/* <Fade in={loadingBar}>
-                <LinearProgress sx={{ zIndex: "1301" }} color="secondary" />
-            </Fade> */}
+            <Fade in={loadingBar}>
+                <LinearProgress sx={{ position: "absolute", top: 0, width: "100%", zIndex: "1301" }} color="secondary" />
+            </Fade>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog
                 maxWidth={"lg"}
@@ -329,14 +330,25 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
                         <Typography id="alert-dialog-description" component="div" sx={{ width: 700 }}>
                             Antes de crear una solicitud de vacaciones, ten en cuenta los siguientes datos:
                             <ul>
+                                <li>Ten en cuenta que no puedes solicitar vacaciones para el mes actual.</li>
+                                <br />
+                                <li>
+                                    Puedes solicitar vacaciones para <b>{getTextMonth(1)}</b> si haces tu solicitud antes del día 20 del <b>mes actual.</b>
+                                    <i>
+                                        {" "}
+                                        Si no lo haces en ese periodo, el proximo mes disponible para la solicitud sera <b>{getTextMonth(2)}</b>.
+                                    </i>
+                                </li>
+                                <br />
                                 <li>
                                     Asegúrate de seleccionar la cantidad de días correctos. Recuerda que son máximo <b>15 días hábiles vigentes</b> por solicitud, así que
                                     ten en cuenta si tu empleado tiene un horario de <b>lunes a viernes o de lunes a sábado</b>, y también considera los{" "}
                                     <b>días festivos</b>.
                                 </li>
-                                <li>Selecciona las fechas de inicio y fin de las vacaciones en el calendario.</li>
-                                <li>Verifica que el periodo de vacaciones seleccionado sea correcto.</li>
+                                <br />
                                 <li>Sube el archivo de solicitud de vacaciones en formato PDF.</li>
+                                <br />
+                                <li>Las restricciones mencionadas ya están implementadas en el calendario al seleccionar el rango de fechas para las vacaciones.</li>
                             </ul>
                         </Typography>
 
