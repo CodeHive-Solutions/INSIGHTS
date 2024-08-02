@@ -7,7 +7,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from django_sendfile import sendfile
-from services.models import Question, Answer
+from services.models import Answer
+from datetime import timedelta
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 from django.core.mail import send_mail
@@ -83,26 +84,38 @@ def get_holidays(request, year):
     return Response(holidays_year, status=200)
 
 
-@api_view(["GET"])
-def get_questions(request):
-    """Get the questions."""
-    questions = Question.objects.all()
-    data = [
-        {"id": question.id, "question": question.question} for question in questions
-    ]
-    return Response(data, status=200)
-
-
 @api_view(["POST"])
 def save_answer(request):
     """Save an answer."""
-    if not "question_id" in request.data:
-        return Response({"error": "El id de la pregunta es requerido"}, status=400)
-    if not "answer" in request.data:
-        return Response({"error": "La respuesta es requerida"}, status=400)
 
-    question = get_object_or_404(Question, pk=request.data["question_id"])
-    answer = Answer(question=question, answer=request.data["answer"])
+    if not "duration" in request.data:
+        return Response({"error": "La duración es requerida"}, status=400)
+    if not "question_1" in request.data:
+        return Response({"error": "La pregunta 1 es requerida"}, status=400)
+    if not "question_2" in request.data:
+        return Response({"error": "La pregunta 2 es requerida"}, status=400)
+    if not "question_3" in request.data:
+        return Response({"error": "La pregunta 3 es requerida"}, status=400)
+
+    try:
+        duration = timedelta(microseconds=int(request.data["duration"]))
+    except ValueError:
+        return Response({"error": "La duración debe ser un número"}, status=400)
+
+    answer = Answer(
+        user=request.user,
+        question_1=request.data["question_1"],
+        question_2=request.data["question_2"],
+        question_3=request.data["question_3"],
+        duration=duration,
+    )
     answer.save()
 
     return Response({"message": "Respuesta guardada correctamente"}, status=201)
+
+@api_view(["GET"])
+def check_answered(request):
+    """Check if the user has answered the questions."""
+    if Answer.objects.filter(user=request.user).exists():
+        return Response({"answered": True}, status=200)
+    return Response({"answered": False}, status=200)
