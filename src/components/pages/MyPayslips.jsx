@@ -23,7 +23,6 @@ export const MyPayslips = () => {
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
     const currentEmail = JSON.parse(localStorage.getItem("email"));
-    const emailRef = useRef(null);
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const cedula = JSON.parse(localStorage.getItem("cedula"));
 
@@ -68,7 +67,6 @@ export const MyPayslips = () => {
 
     const handleCollapse = () => {
         setOpenCollapse(!openCollapse);
-        emailRef.current.value = "";
     };
 
     const handleOpenDialog = (id) => {
@@ -87,17 +85,11 @@ export const MyPayslips = () => {
     const handleResend = async () => {
         setDisabled(true);
         setLoading(true);
-        const formData = new FormData();
-
-        if (emailRef.current && emailRef.current.value) {
-            formData.append("email", emailRef.current.value);
-        }
 
         try {
             const response = await fetch(`${getApiUrl().apiUrl}payslips/${paySlipId}/resend/`, {
                 method: "POST",
                 credentials: "include",
-                body: formData,
             });
 
             await handleError(response, showSnack);
@@ -201,7 +193,7 @@ export const MyPayslips = () => {
                 <DialogContent>
                     <Typography color="text.secondary">
                         El desprendible de nomina sera reenviado al correo electrónico:{" "}
-                        <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail.toLowerCase()}</span>
+                        <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail?.toLowerCase()}</span>
                     </Typography>
                     <Collapse in={openCollapse}>
                         <Alert severity="info" sx={{ mt: "1rem" }}>

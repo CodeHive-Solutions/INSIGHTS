@@ -72,12 +72,12 @@ const managements = [
         description:
             "Proveer, mantener y desarrollar un recurso humano altamente calificado y motivado para alcanzar los objetivos de la organización a través de la aplicación de programas enfocados en conectar al Talento Humano con el propósito de la compañía desde sus habilidades, motivaciones, conocimientos y pasiones, para así apalancar efectivamente el éxito de los objetivos del negocio y a su vez velar por el cumplimiento de las normas y procedimientos vigentes",
     },
-    {
-        name: "Angélica Rincón",
-        management: "Gerente de Riesgo y Control Interno",
-        image: riskInterControl,
-        description: ``,
-    },
+    // {
+    //     name: "Angélica Rincón",
+    //     management: "Gerente de Riesgo y Control Interno",
+    //     image: riskInterControl,
+    //     description: ``,
+    // },
     {
         name: "Mélida Sandoval",
         management: "Gerente Administrativa",

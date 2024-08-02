@@ -30,30 +30,64 @@ import PendingIcon from "@mui/icons-material/Pending";
 import CancelIcon from "@mui/icons-material/Cancel";
 import EventBusyIcon from "@mui/icons-material/EventBusy";
 
+const StyledGridOverlay = styled("div")(({ theme }) => ({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "100%",
+    "& .no-rows-primary": {
+        fill: theme.palette.mode === "light" ? "#AEB8C2" : "#3D4751",
+    },
+    "& .no-rows-secondary": {
+        fill: theme.palette.mode === "light" ? "#E8EAED" : "#1D2126",
+    },
+}));
+
+const CustomNoRowsOverlay = () => {
+    return (
+        <StyledGridOverlay>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" width={96} viewBox="0 0 452 257" aria-hidden focusable="false">
+                <path
+                    className="no-rows-primary"
+                    d="M348 69c-46.392 0-84 37.608-84 84s37.608 84 84 84 84-37.608 84-84-37.608-84-84-84Zm-104 84c0-57.438 46.562-104 104-104s104 46.562 104 104-46.562 104-104 104-104-46.562-104-104Z"
+                />
+                <path
+                    className="no-rows-primary"
+                    d="M308.929 113.929c3.905-3.905 10.237-3.905 14.142 0l63.64 63.64c3.905 3.905 3.905 10.236 0 14.142-3.906 3.905-10.237 3.905-14.142 0l-63.64-63.64c-3.905-3.905-3.905-10.237 0-14.142Z"
+                />
+                <path
+                    className="no-rows-primary"
+                    d="M308.929 191.711c-3.905-3.906-3.905-10.237 0-14.142l63.64-63.64c3.905-3.905 10.236-3.905 14.142 0 3.905 3.905 3.905 10.237 0 14.142l-63.64 63.64c-3.905 3.905-10.237 3.905-14.142 0Z"
+                />
+                <path
+                    className="no-rows-secondary"
+                    d="M0 10C0 4.477 4.477 0 10 0h380c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 20 0 15.523 0 10ZM0 59c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 69 0 64.523 0 59ZM0 106c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 153c0-5.523 4.477-10 10-10h195.5c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 200c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 247c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10Z"
+                />
+            </svg>
+            <Box sx={{ mt: 2, color: "gray" }}>Sin resultados</Box>
+        </StyledGridOverlay>
+    );
+};
+
 export const Vacations = () => {
     const [rows, setRows] = useState([]);
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
-    const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const [openVacation, setOpenVacation] = useState(false);
-    const [fileName, setFileName] = useState("Subir archivo");
-    const [payslipFile, setPayslipFile] = useState(null);
-    const [previewRows, setPreviewRows] = useState([]);
-    const [loadingPreview, setLoadingPreview] = useState(false);
     const [loading, setLoading] = useState(false);
     const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
-    const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
     const [vacationId, setVacationId] = useState();
     const [disabled, setDisabled] = useState(false);
     const [openObservationsInput, setOpenObservationsInput] = useState(false);
     const observationsRef = useRef();
     const cargo = localStorage.getItem("cargo");
     const rank = JSON.parse(localStorage.getItem("rango"));
-    const managerApprovalPermission = cargo.includes("ANALISTA");
-    const hrApprovalPermission = cargo === "GERENTE DE GESTION HUMANA";
-    const payrollApprovalPermission = permissions.includes("vacation.payroll_aprobbation");
+    const managerApprovalPermission = cargo.includes("GERENTE");
+    const hrApprovalPermission = cargo === `"GERENTE DE GESTION HUMANA"`;
+    const payrollApprovalPermission = permissions.includes("vacation.payroll_approbation");
     const [buttonType, setButtonType] = useState("button");
     const [approvalType, setApprovalType] = useState("");
 
@@ -89,18 +123,6 @@ export const Vacations = () => {
 
     const handleCloseSnack = () => setOpenSnack(false);
 
-    const VisuallyHiddenInput = styled("input")({
-        clip: "rect(0 0 0 0)",
-        clipPath: "inset(50%)",
-        height: 1,
-        overflow: "hidden",
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        whiteSpace: "nowrap",
-        width: 1,
-    });
-
     const handleApproval = async (event) => {
         event.preventDefault();
         setDisabled(true);
@@ -116,7 +138,7 @@ export const Vacations = () => {
         }
 
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacation/${vacationId}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/request/${vacationId}/`, {
                 method: "PATCH",
                 credentials: "include",
                 body: formData,
@@ -212,11 +234,31 @@ export const Vacations = () => {
             },
             renderCell: (params) => {
                 if (params.value === "PENDIENTE") {
-                    return <Chip onClick={() => handleVacancyApproval(params.id, "manager_approbation")} icon={<PendingIcon />} label="Pendiente" />;
+                    return (
+                        <Chip
+                            onClick={managerApprovalPermission ? () => handleVacancyApproval(params.id, "manager_approbation") : undefined}
+                            icon={<PendingIcon />}
+                            label="Pendiente"
+                        />
+                    );
                 } else if (params.value === "APROBADA") {
-                    return <Chip onClick={() => handleVacancyApproval(params.id, "manager_approbation")} icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
+                    return (
+                        <Chip
+                            onClick={managerApprovalPermission ? () => handleVacancyApproval(params.id, "manager_approbation") : undefined}
+                            icon={<CheckCircleIcon />}
+                            label="Aprobada"
+                            color="success"
+                        />
+                    );
                 }
-                return <Chip onClick={() => handleVacancyApproval(params.id, "manager_approbation")} icon={<CancelIcon />} label="Rechazado" color="error" />;
+                return (
+                    <Chip
+                        onClick={managerApprovalPermission ? () => handleVacancyApproval(params.id, "manager_approbation") : undefined}
+                        icon={<CancelIcon />}
+                        label="Rechazado"
+                        color="error"
+                    />
+                );
             },
         },
         {
@@ -238,7 +280,9 @@ export const Vacations = () => {
                 if (params.value === "PENDIENTE") {
                     return (
                         <Chip
-                            onClick={params.row.manager_approbation === true ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
+                            onClick={
+                                params.row.manager_approbation === true && hrApprovalPermission ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined
+                            }
                             icon={<PendingIcon />}
                             label="Pendiente"
                         />
@@ -246,7 +290,7 @@ export const Vacations = () => {
                 } else if (params.value === "APROBADA") {
                     return (
                         <Chip
-                            onClick={params.row.manager_approbation === true ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
+                            onClick={hrApprovalPermission ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
                             icon={<CheckCircleIcon />}
                             label="Aprobada"
                             color="success"
@@ -255,7 +299,7 @@ export const Vacations = () => {
                 }
                 return (
                     <Chip
-                        onClick={params.row.manager_approbation === true ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
+                        onClick={params.row.manager_approbation === true && hrApprovalPermission ? () => handleVacancyApproval(params.id, "hr_approbation") : undefined}
                         icon={<CancelIcon />}
                         label="Rechazada"
                         color="error"
@@ -282,7 +326,11 @@ export const Vacations = () => {
                 if (params.value === "PENDIENTE") {
                     return (
                         <Chip
-                            onClick={params.row.hr_approbation === true ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined}
+                            onClick={
+                                params.row.hr_approbation === true && payrollApprovalPermission
+                                    ? () => handleVacancyApproval(params.id, "payroll_approbation")
+                                    : undefined
+                            }
                             icon={<PendingIcon />}
                             label="Pendiente"
                         />
@@ -290,7 +338,11 @@ export const Vacations = () => {
                 } else if (params.value === "APROBADA") {
                     return (
                         <Chip
-                            onClick={params.row.hr_approbation === true ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined}
+                            onClick={
+                                params.row.hr_approbation === true && payrollApprovalPermission
+                                    ? () => handleVacancyApproval(params.id, "payroll_approbation")
+                                    : undefined
+                            }
                             icon={<CheckCircleIcon />}
                             label="Aprobada"
                             color="success"
@@ -299,7 +351,9 @@ export const Vacations = () => {
                 }
                 return (
                     <Chip
-                        onClick={params.row.hr_approbation === true ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined}
+                        onClick={
+                            params.row.hr_approbation === true && payrollApprovalPermission ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined
+                        }
                         icon={<CancelIcon />}
                         label="Rechazada"
                         color="error"
@@ -355,12 +409,6 @@ export const Vacations = () => {
     ];
 
     const handleOpenDialog = () => setOpenVacation(true);
-    const handleCloseDialog = () => {
-        setOpenDialog(false);
-        setFileName("Subir archivo");
-        setPayslipFile(null);
-        setPreviewRows([]);
-    };
 
     const CustomToolbar = () => {
         return (
@@ -387,43 +435,6 @@ export const Vacations = () => {
         );
     };
 
-    const handleFileInputChange = (event) => {
-        setFileName(event.target.files[0].name);
-        setPayslipFile(event.target.files[0]);
-    };
-
-    const submitPayslipFile = async () => {
-        setLoadingPreview(true);
-
-        try {
-            const formData = new FormData();
-            formData.append("file", payslipFile);
-            const response = await fetch(`${getApiUrl().apiUrl}payslips/`, {
-                method: "POST",
-                credentials: "include",
-                body: formData,
-            });
-
-            await handleError(response, showSnack);
-
-            if (response.status === 201) {
-                handleCloseDialog();
-                setLoadingPreview(false);
-                getPayslips();
-                showSnack("success", "Desprendibles cargados y enviados correctamente");
-            }
-        } catch (error) {
-            if (getApiUrl().environment === "development") {
-                console.error(error);
-            }
-            setLoadingPreview(false);
-        }
-    };
-
-    const handleCollapseEmail = () => {
-        setOpenCollapseEmail(!openCollapseEmail);
-    };
-
     const handleCloseDialogPayslip = () => {
         setOpenDialogPayslip(false);
         setDisabled(false);
@@ -435,10 +446,6 @@ export const Vacations = () => {
     const handleDecline = async () => {
         setOpenObservationsInput(true);
         setButtonType("submit");
-    };
-
-    const handleOpenDialogPayslip = (id) => {
-        setIdPayslip(id);
     };
 
     const handleVacancyApproval = (id, approvalType) => {
@@ -506,20 +513,22 @@ export const Vacations = () => {
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Registro de vacaciones
                 </Typography>
-                <DataGrid
-                    initialState={{
-                        sorting: {
-                            sortModel: [{ field: "created_at", sort: "desc" }],
-                        },
-                    }}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    toolbar
-                    rows={rows}
-                ></DataGrid>
+                <Box sx={{ width: "100%", height: "80vh" }}>
+                    <DataGrid
+                        initialState={{
+                            sorting: {
+                                sortModel: [{ field: "created_at", sort: "desc" }],
+                            },
+                        }}
+                        slots={{
+                            toolbar: CustomToolbar,
+                            noRowsOverlay: CustomNoRowsOverlay,
+                        }}
+                        sx={{ boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
+                        columns={columns}
+                        rows={rows}
+                    ></DataGrid>
+                </Box>
             </Container>
         </>
     );

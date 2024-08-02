@@ -21,17 +21,19 @@ import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.p
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
 import securityPractices from "../../images/home-carousel/security-practices.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
-import july20 from "../../images/home-carousel/july-20.png";
+import July20 from "../../images/home-carousel/July-20.png";
 import security from "../../images/home-carousel/security.png";
-import dogsDay from "../../images/home-carousel/dogs-day.png";
-import womanAfroAmericanDay from "../../images/home-carousel/woman-afro-american-day.png";
+import differentiationMatrices from "../../images/home-carousel/differentiation-matrices.png";
+import principles from "../../images/home-carousel/principles.png";
+import trivia from "../../images/home-carousel/trivia.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
-    { image: july20 },
-    { image: womanAfroAmericanDay },
-    { image: dogsDay },
+    { image: trivia },
+    { image: principles },
+    { image: differentiationMatrices },
+    { image: July20 },
     { image: security },
     { image: securityAdvices },
     { image: securityPractices },

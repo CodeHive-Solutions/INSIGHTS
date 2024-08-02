@@ -62,6 +62,7 @@ import TopicIcon from "@mui/icons-material/Topic";
 import LuggageIcon from "@mui/icons-material/Luggage";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import BeachAccessIcon from "@mui/icons-material/BeachAccess";
+import ExtensionIcon from "@mui/icons-material/Extension";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
@@ -85,7 +86,6 @@ const Navbar = () => {
     const [openCertification, setOpenCertification] = useState(false);
     const [openCollapseBonuses, setOpenCollapseBonuses] = useState(false);
     const [checked, setChecked] = useState(false);
-    const emailRef = useRef(null);
     const cargoItem = localStorage.getItem("cargo");
     const isAdvisor = cargoItem && JSON.parse(cargoItem).includes("ASESOR");
     const permissions = JSON.parse(localStorage.getItem("permissions"));
@@ -263,7 +263,6 @@ const Navbar = () => {
 
     const handleOpenCollapseEmail = () => {
         setOpenCollapseEmail(!openCollapseEmail);
-        emailRef.current.value = "";
     };
 
     const showSnack = (severity, message) => {
@@ -344,12 +343,15 @@ const Navbar = () => {
 
     const isMobile = useMediaQuery("(max-width: 600px)");
 
+    const is11amColombiaTime = () => {
+         
+    };
+
     return (
         <>
             {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
-
             {getApiUrl().environment === "development" ? (
                 <>
                     <Notifications
@@ -384,7 +386,7 @@ const Navbar = () => {
                     </Collapse>
                     <Typography color="text.secondary">
                         La certificación laboral sera enviada al correo electrónico:{" "}
-                        <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail.toLowerCase()}</span>
+                        <span style={{ fontWeight: 500, color: "rgb(0,0,0,0.8)" }}>{currentEmail?.toLowerCase()}</span>
                     </Typography>
                     <Collapse in={!openCollapseEmail}>
                         <Button sx={{ mt: "1rem" }} onClick={handleOpenCollapseEmail}>
@@ -559,6 +561,20 @@ const Navbar = () => {
                         <DescriptionIcon fontSize="small" />
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
+                </MenuItem>
+                {rank === 1 ? (
+                    <MenuItem onClick={() => navigate("/logged/vacations")}>
+                        <ListItemIcon>
+                            <BeachAccessIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Mis Vacaciones" />
+                    </MenuItem>
+                ) : null}
+                <MenuItem onClick={() => navigate("/logged/trivia")}>
+                    <ListItemIcon>
+                        <ExtensionIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Trivia!" />
                 </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>

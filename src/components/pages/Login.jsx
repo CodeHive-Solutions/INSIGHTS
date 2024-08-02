@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
+import * as Sentry from "@sentry/react";
 
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
@@ -58,6 +59,7 @@ const Login = () => {
 
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
+        Sentry.init({ environment: getApiUrl().environment });
         let refreshTimer = JSON.parse(localStorage.getItem("refresh-timer-ls"));
 
         if (refreshTimer !== null && refreshTimer.expiry > new Date().getTime()) {
@@ -123,11 +125,12 @@ const Login = () => {
                         expiry: new Date().getTime() + 15 * 60 * 60 * 1000, // 24 hours from now
                     })
                 );
-                localStorage.setItem("permissions", JSON.stringify(data.permissions));
-                localStorage.setItem("cedula", JSON.stringify(data.cedula));
-                localStorage.setItem("cargo", JSON.stringify(data.cargo));
-                localStorage.setItem("email", JSON.stringify(data.email));
-                localStorage.setItem("rango", JSON.stringify(data.rango));
+                localStorage?.setItem("permissions", JSON.stringify(data.permissions));
+                localStorage?.setItem("cedula", JSON.stringify(data.cedula));
+                localStorage?.setItem("cargo", JSON.stringify(data.cargo));
+                localStorage?.setItem("email", JSON.stringify(data.email));
+                localStorage?.setItem("rango", JSON.stringify(data.rango));
+                Sentry.setUser({ id: data.cedula, email: data.email, username: values.username });
                 if (lastLocation) {
                     navigate(lastLocation, { replace: true });
                 } else {
@@ -219,18 +222,6 @@ const Login = () => {
                             </Box>
                             <Button sx={{ fontFamily: "Montserrat" }} type="submit" variant="contained" startIcon={<LoginOutlinedIcon />} disabled={isSubmitting}>
                                 Iniciar Sesión
-                            </Button>
-                            <Button
-                                sx={{ fontFamily: "Montserrat" }}
-                                onClick={() => {
-                                    methodDoesNotExist();
-                                }}
-                                type="button"
-                                variant="contained"
-                                startIcon={<LoginOutlinedIcon />}
-                                disabled={isSubmitting}
-                            >
-                                Test error
                             </Button>
                             <Button onClick={ethicalLine} sx={{ fontFamily: "Montserrat" }} type="button" variant="outlined" startIcon={<Diversity3Icon />}>
                                 Linea ética
