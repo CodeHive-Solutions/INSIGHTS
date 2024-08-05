@@ -5,6 +5,7 @@ import ldap  # type: ignore
 import random
 from services.tests import BaseTestCase
 from users.models import User
+from hierarchy.models import Area
 from django.test import TestCase
 from django.conf import settings
 from django.urls import reverse
@@ -86,9 +87,8 @@ class LDAPAuthenticationTest(TestCase):
                 self.assertEqual(user.email, settings.EMAIL_FOR_TEST)
                 self.assertEqual(user.first_name, "STAFFNET")
                 self.assertEqual(user.last_name, "LDAP")
-                self.assertEqual(user.cedula, "00000000")
                 self.assertEqual(user.job_position.name, "Administrador")
-                self.assertEqual(user.job_position.rank, 1)
+                self.assertEqual(user.job_position.rank, 9)
             else:
                 self.fail("User not created.")
             return response
@@ -148,23 +148,57 @@ class UserTestCase(BaseTestCase):
         user = User(first_name="David", last_name="Alvarez")
         self.assertEqual(user.get_full_name_reversed(), "Alvarez David")
 
-    def test_get_users(self):
-        """Tests that the get_users endpoint works as expected."""
+    def test_get_subordinates_same_area(self):
+        """Tests that the get_users endpoint can return users from the same area."""
         demo_user = self.create_demo_user()
-        self.user.job_position.rank = 7
-        self.user.job_position.save()
+        demo_user.area = self.user.area
+        demo_user.save()
+        print(demo_user.job_position)
+        print(demo_user.job_position.rank)
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}]
         )
 
-    def test_get_user_higher_rank(self):
-        """Tests that the get_users endpoint works as expected."""
-        self.create_demo_user()
+    def test_get_subordinates_multiple_area(self):
+        """Tests that the get_users endpoint can return users from multiple areas if the user is the manager."""
+        demo_user_1 = self.create_demo_user()
+        demo_user_1.area = Area.objects.get_or_create(name="Demo")[0]
+        demo_user_1.area.manager = self.user
+        demo_user_1.area.save()
+        demo_user_1.save()
+        demo_user_2 = self.create_demo_user()
+        demo_user_2.area = Area.objects.get_or_create(name="Demo")[0]
+        demo_user_2.save()
+        # print(User.objects.filter(area__manager=self.user))
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [])
+        self.assertEqual(
+            response.data,
+            [
+                {"id": demo_user_1.pk, "name": demo_user_1.get_full_name()},
+                {"id": demo_user_2.pk, "name": demo_user_2.get_full_name()},
+            ],
+        )
+
+    def test_get_subordinates_area_no_manager(self):
+        """Tests that the get_users endpoint does not return users from areas that the user does not manage."""
+        demo_user = self.create_demo_user()
+        demo_user.area = Area.objects.get_or_create(name="Demo")[0]
+        demo_user.save()
+        response = self.client.get(reverse("get_subordinates"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
+
+    def test_get_subordinates_higher_rank(self):
+        """Tests that the get_users endpoint does not return users with a higher rank."""
+        boss = self.create_demo_user()
+        boss.job_position.rank = 100
+        boss.job_position.save()
+        response = self.client.get(reverse("get_subordinates"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
 
     def test_get_user_profile(self):
         """Tests that the get_user_profile endpoint works as expected."""

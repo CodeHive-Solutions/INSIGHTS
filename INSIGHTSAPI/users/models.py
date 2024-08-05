@@ -1,7 +1,7 @@
 """This file contains the custom user model for the users app."""
 
 import logging
-import sys
+import random
 from django.contrib.auth.models import AbstractUser
 from django.core.mail import mail_admins
 from django.db import connections
@@ -44,8 +44,8 @@ class User(AbstractUser):
     job_position = models.ForeignKey(
         "hierarchy.JobPosition",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         related_name="users",
     )
     date_joined = None
@@ -104,49 +104,53 @@ class User(AbstractUser):
                 result = db_connection.fetchone()
                 if (
                     str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}
-                    and not self.cedula
+                    or str(self.username).startswith("test_user_")
                 ) or self.cedula == "00000000":
-                    result = ("00000000", "Administrador", "Administrador")
+                    result = (
+                        str(random.randint(0, 99999999)),
+                        "Administrador",
+                        "Administrador",
+                    )
                     self.email = settings.EMAIL_FOR_TEST
                 elif not result:
                     raise ValidationError(
                         "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
                     )
-                    # super(User, self).save(*args, **kwargs)
                 self.cedula = result[0]
+                job_title = result[1]
                 user = User.objects.filter(cedula=self.cedula).first()
                 if user:
                     self.pk = user.pk
-                job_position = JobPosition.objects.filter(name=result[1]).first()
+                job_position = JobPosition.objects.filter(name=job_title).first()
                 if not job_position:
-                    if "gerente jr" in result[1].lower():
+                    if "gerente jr" in job_title.lower():
                         rank = 5
-                    elif "gerente" in result[1].lower():
+                    elif "gerente" in job_title.lower():
                         rank = 6
-                    elif "director" in result[1].lower() or "jefe" in result[1].lower():
+                    elif "director" in job_title.lower() or "jefe" in job_title.lower():
                         rank = 4
-                    elif "coordinador" in result[1].lower():
+                    elif "coordinador" in job_title.lower():
                         rank = 3
+                    elif str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
+                        rank = 9
                     else:
                         mail_admins(
                             "Cargo no encontrado",
-                            f"El cargo {result[1]} no fue encontrado en la base de datos de jerarquía.",
+                            f"El cargo {job_title} no fue encontrado en la base de datos de jerarquía.",
                         )
                         rank = 1
-                    job_position = JobPosition.objects.create(name=result[1], rank=rank)
+                    job_position = JobPosition.objects.create(name=job_title, rank=rank)
                 self.job_position_id = job_position.id
                 area, _ = Area.objects.get_or_create(name=result[2])
                 self.area_id = area.id
                 if not self.is_superuser:
                     self.set_unusable_password()
                 db_connection.execute(
-                    "SELECT correo,correo_corporativo FROM personal_information WHERE cedula = %s",
+                    "SELECT correo FROM personal_information WHERE cedula = %s",
                     [self.cedula],
                 )
                 mails = db_connection.fetchone()
-                if mails and "test" in sys.argv:
-                    self.email = mails[1] or mails[0]
-                elif mails:
+                if mails:
                     self.email = mails[0]
         # Iterate through all fields in the model
         for field in self._meta.fields:
@@ -159,6 +163,11 @@ class User(AbstractUser):
             ):
                 setattr(self, field.attname, getattr(self, field.attname).upper())
         super(User, self).save(*args, **kwargs)
+
+        # This may be a signal but the Django documentation does not recommend use them
+        if self.job_position.rank >= 5 and not self.area.manager:
+            self.area.manager = self
+            self.area.save()
 
     def save_factory(self, *args, **kwargs):
         """The most simple save method for the factory."""

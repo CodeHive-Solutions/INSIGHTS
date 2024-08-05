@@ -3,6 +3,7 @@ import logging
 import requests
 import sys
 from rest_framework.decorators import api_view
+from django.db.models import Q
 from django.conf import settings
 from django.core.mail import mail_admins
 from rest_framework.response import Response
@@ -166,14 +167,11 @@ def update_profile(request):
 @api_view(["GET"])
 def get_subordinates(request):
     user_rank = request.user.job_position.rank
-    if user_rank >= 6:
-        # Get all users that have a lower rank than the current user
-        users = User.objects.filter(job_position__rank__lt=user_rank)
-    else:
-        # Get all users that have a lower rank than the current user and are in the same area
-        users = User.objects.filter(
-            job_position__rank__lt=user_rank, area=request.user.area
-        )
+    # Get all users that have a lower rank than the current user and are in the same area
+    users = User.objects.filter(
+        Q(area=request.user.area) | Q(area__manager=request.user),
+        Q(job_position__rank__lt=user_rank)
+    )
     # Serialize the users
     data = [{"id": user.id, "name": user.get_full_name()} for user in users]
     return Response(data)
