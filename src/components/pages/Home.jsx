@@ -24,14 +24,12 @@ import securityAdvices from "../../images/home-carousel/security-advices.png";
 import security from "../../images/home-carousel/security.png";
 import differentiationMatrices from "../../images/home-carousel/differentiation-matrices.png";
 import principles from "../../images/home-carousel/principles.png";
-import trivia from "../../images/home-carousel/trivia.png";
 import hacienda from "../../images/home-carousel/hacienda.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
     { image: hacienda },
-    { image: trivia },
     { image: principles },
     { image: differentiationMatrices },
     { image: security },

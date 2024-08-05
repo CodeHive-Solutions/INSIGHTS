@@ -44,7 +44,6 @@ import Vacations from "./components/pages/Vacations";
 import PowerBI from "./components/pages/PowerBI";
 import { getApiUrl } from "./assets/getApi";
 import { PersonalInformationProvider } from "./context/PersonalInformation";
-import Trivia from "./components/pages/Trivia";
 
 Sentry.init({
     dsn: "https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840",
@@ -196,17 +195,13 @@ const router = createBrowserRouter([
                 path: "certifications",
                 element: <EmploymentCertification />,
             },
-            // {
-            //     path: "vacations",
-            //     element: <Vacations />,
-            // },
+            {
+                path: "vacations",
+                element: <Vacations />,
+            },
             {
                 path: "test",
                 element: <PowerBI />,
-            },
-            {
-                path: "trivia",
-                element: <Trivia />,
             },
             // getApiUrl().environment === "development"
             //     ? {

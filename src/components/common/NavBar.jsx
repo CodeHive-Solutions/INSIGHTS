@@ -11,7 +11,6 @@ import MyAccountDialog from "../shared/MyAccount";
 import InactivityDetector from "../shared/InactivityDetector";
 import VacationsRequest from "../shared/VacationsRequest";
 import Notifications from "../shared/Notifications";
-import isSpecificHourColombia from "../../assets/isSpecificHourColombia";
 import { handleError } from "../../assets/handleError";
 
 // Material-UI
@@ -564,14 +563,6 @@ const Navbar = () => {
                             <BeachAccessIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Mis Vacaciones" />
-                    </MenuItem>
-                ) : null}
-                {isSpecificHourColombia(10) ? (
-                    <MenuItem onClick={() => navigate("/logged/trivia")}>
-                        <ListItemIcon>
-                            <ExtensionIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Trivia!" />
                     </MenuItem>
                 ) : null}
                 <MenuItem onClick={handleLogout}>

@@ -131,7 +131,7 @@ const Notifications = ({ anchorNotification, openNotification, setAnchorNotifica
                         <List
                             key={notification.id}
                             sx={{
-                                backgroundColor: notification.read ? "#f5fafc" : "#e3f5fd",
+                                backgroundColor: notification.read ? "#f5fafc" : "#fff",
                                 width: "100%",
                                 maxWidth: 400,
                             }}
