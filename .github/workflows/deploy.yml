@@ -25,6 +25,8 @@ jobs:
               run: pnpm install
 
             - name: Build project
+              env:
+                  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
               run: NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
 
             - name: Postbuild project
