@@ -2,10 +2,7 @@
 import os
 import logging
 from operational_risk.models import Events, EventClass, Level, Process, LostType, ProductLine
-from sgc.models import SGCFile, SGCArea
 from django.core.management.base import BaseCommand
-from django.core.files.base import ContentFile
-from rest_framework.response import Response
 from ftfy import fix_text
 import mysql.connector
 

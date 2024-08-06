@@ -26,3 +26,5 @@ python_magic==0.4.27
 Requests==2.32.3
 redis==5.0.8
 mod_wsgi==5.0.0
+gunicorn==22.0.0
+locust==2.31.1

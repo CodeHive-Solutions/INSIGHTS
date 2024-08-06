@@ -108,8 +108,8 @@ class User(AbstractUser):
                 ) or self.cedula == "00000000":
                     result = (
                         str(random.randint(0, 99999999)),
-                        "Administrador",
-                        "Administrador",
+                        "Administrador" if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"} else "Test",
+                        "Administrador" if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"} else "Test",
                     )
                     self.email = settings.EMAIL_FOR_TEST
                 elif not result:

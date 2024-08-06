@@ -153,8 +153,6 @@ class UserTestCase(BaseTestCase):
         demo_user = self.create_demo_user()
         demo_user.area = self.user.area
         demo_user.save()
-        print(demo_user.job_position)
-        print(demo_user.job_position.rank)
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(

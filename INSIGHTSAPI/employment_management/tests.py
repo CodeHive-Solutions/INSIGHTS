@@ -79,7 +79,9 @@ class EmploymentCertificationTest(BaseTestCase):
 
     def test_create_and_send_another_employment_certification_with_identification(self):
         """Tests that the user can get another user's employment certification with identification."""
-        self.create_demo_user()
+        demo_user = self.create_demo_user()
+        demo_user.cedula = self.payslip_data["identification"]
+        demo_user.save()
         get_permission = Permission.objects.get(codename="get_employment_certification")
         self.user.user_permissions.add(get_permission)
         self.user.save()
@@ -95,7 +97,9 @@ class EmploymentCertificationTest(BaseTestCase):
         get_permission = Permission.objects.get(codename="get_employment_certification")
         self.user.user_permissions.add(get_permission)
         self.user.save()
-        self.create_demo_user()
+        demo_user = self.create_demo_user()
+        demo_user.cedula = self.payslip_data["identification"]
+        demo_user.save()
         for _ in range(6):
             Payslip.objects.create(**self.payslip_data)
         response = self.client.post(
