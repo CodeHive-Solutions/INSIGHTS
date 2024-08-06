@@ -33,4 +33,4 @@ jobs:
             - name: Deploy to server
               run: |
                   rm -rf /var/www/INSIGHTS/dist
-                  scp -r ./build/* user@host:/var/www/INSIGHTS/
+                  scp -r ./dist/* /var/www/INSIGHTS/
