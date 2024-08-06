@@ -21,19 +21,19 @@ import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.p
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
 import securityPractices from "../../images/home-carousel/security-practices.png";
 import securityAdvices from "../../images/home-carousel/security-advices.png";
-import July20 from "../../images/home-carousel/July-20.png";
 import security from "../../images/home-carousel/security.png";
 import differentiationMatrices from "../../images/home-carousel/differentiation-matrices.png";
 import principles from "../../images/home-carousel/principles.png";
-import trivia from "../../images/home-carousel/trivia.png";
+import hacienda from "../../images/home-carousel/hacienda.png";
+import battle from "../../images/home-carousel/battle.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
-    { image: trivia },
+    { image: battle },
+    { image: hacienda },
     { image: principles },
     { image: differentiationMatrices },
-    { image: July20 },
     { image: security },
     { image: securityAdvices },
     { image: securityPractices },
@@ -176,21 +176,21 @@ const Home = () => {
                     variant="h4"
                     sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
                 >
-                    ¡C&C Apoyando el deporte!
+                    ¡Tenemos una super noticia para compartir!
                 </Typography>
                 <Typography variant="body1" sx={{ textAlign: "center" }}>
-                    En C&C respaldamos con entusiasmo el deporte y en particular el fútbol femenino. A través de nuestro patrocinio, hemos contribuido al éxito de nuestro
-                    equipo Future Soccer, que recientemente se destacó al ganar el torneo de la copa Nottingham. Este logro no solo refuerza nuestro compromiso con la
-                    comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir respaldando y empoderando a
-                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas.
-                    <br /> ¡En C&C Services creemos en el poder transformador del deporte para construir un futuro más sólido y unido!
+                    Hemos lanzado un nuevo plan de reconocimiento "puntos de excelencia C&C", diseñado para motivarlos y recompensar su esfuerzo y dedicación.
+                </Typography>
+                <Typography color="primary" id="section1" variant="h6" sx={{ textAlign: "center" }}>
+                    Conoce mas en el siguiente video
                 </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <video style={{ borderRadius: "8px", width: "100%" }} controls>
-                        <source src={video} type="video/mp4" />
+                        <source src={"https://insights-api-dev.cyc-bpo.com/static/videos/points.mp4"} type="video/mp4" />
                     </video>
                 </Box>
             </Container>
+
             <Box
                 sx={{
                     display: "flex",
@@ -284,6 +284,28 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"960px"} width={"540px"} />
                 </Box>
             </Box>
+            <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
+                <Typography
+                    color="primary"
+                    id="section1"
+                    variant="h4"
+                    sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
+                >
+                    ¡C&C Apoyando el deporte!
+                </Typography>
+                <Typography variant="body1" sx={{ textAlign: "center" }}>
+                    En C&C respaldamos con entusiasmo el deporte y en particular el fútbol femenino. A través de nuestro patrocinio, hemos contribuido al éxito de nuestro
+                    equipo Future Soccer, que recientemente se destacó al ganar el torneo de la copa Nottingham. Este logro no solo refuerza nuestro compromiso con la
+                    comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir respaldando y empoderando a
+                    nuestras talentosas atletas mientras continúan alcanzando nuevas metas.
+                    <br /> ¡En C&C Services creemos en el poder transformador del deporte para construir un futuro más sólido y unido!
+                </Typography>
+                <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <video style={{ borderRadius: "8px", width: "100%" }} controls>
+                        <source src={video} type="video/mp4" />
+                    </video>
+                </Box>
+            </Container>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );

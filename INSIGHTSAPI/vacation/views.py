@@ -4,14 +4,12 @@ from django.db.models import Q
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from notifications.utils import create_notification
 from django.core.mail import mail_admins
 from django.core.mail import send_mail
 from users.models import User
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
-from .utils import get_working_days
 
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
@@ -105,16 +103,20 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
             queryset = self.queryset.all()
+        # Check if the user is a manager
         elif request.user.job_position.rank >= 5:
             queryset = self.queryset.filter(
                 (Q(uploaded_by=request.user) | Q(user=request.user))
+                | (Q(user__area__manager=request.user))
                 | (
                     Q(user__job_position__rank__lt=request.user.job_position.rank)
                     & Q(user__area=request.user.area)
                 )
             )
+        # Check if the user is in payroll
         elif request.user.has_perm("vacation.payroll_approbation"):
             queryset = self.queryset.all()
+        # The user is a regular employee
         else:
             queryset = self.queryset.filter(
                 Q(uploaded_by=request.user) | Q(user=request.user)

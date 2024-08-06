@@ -343,10 +343,6 @@ const Navbar = () => {
 
     const isMobile = useMediaQuery("(max-width: 600px)");
 
-    const is11amColombiaTime = () => {
-         
-    };
-
     return (
         <>
             {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
@@ -541,7 +537,6 @@ const Navbar = () => {
                     <ListItemText primary="Mi Cuenta" />
                     <Divider />
                 </MenuItem>
-
                 {isAdvisor ? (
                     <MenuItem onClick={handleOpenDialog}>
                         <ListItemIcon>
@@ -562,7 +557,7 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
                 </MenuItem>
-                {rank === 1 ? (
+                {rank === 1 && getApiUrl().environment === "development" ? (
                     <MenuItem onClick={() => navigate("/logged/vacations")}>
                         <ListItemIcon>
                             <BeachAccessIcon fontSize="small" />
@@ -570,12 +565,6 @@ const Navbar = () => {
                         <ListItemText primary="Mis Vacaciones" />
                     </MenuItem>
                 ) : null}
-                <MenuItem onClick={() => navigate("/logged/trivia")}>
-                    <ListItemIcon>
-                        <ExtensionIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Trivia!" />
-                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />
@@ -684,12 +673,14 @@ const Navbar = () => {
                         <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
                 ) : null}
-                <MenuItem onClick={() => navigate("/logged/vacations")}>
-                    <ListItemIcon>
-                        <BeachAccessIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText primary="Registros de vacaciones" />
-                </MenuItem>
+                {getApiUrl().environment === "development" ? (
+                    <MenuItem onClick={() => navigate("/logged/vacations")}>
+                        <ListItemIcon>
+                            <BeachAccessIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Registros de vacaciones" />
+                    </MenuItem>
+                ) : null}
             </Menu>
         </>
     );

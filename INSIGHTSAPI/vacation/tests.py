@@ -1,9 +1,10 @@
 """This file contains the tests for the vacation model."""
 
-from django.test import TestCase
+from hierarchy.models import Area
 from freezegun import freeze_time
 from services.tests import BaseTestCase
 from rest_framework import status
+from django.test import TestCase
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
@@ -165,6 +166,23 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3, response.data)
+
+    def test_vacation_list_manager_multiple_areas(self):
+        """Test listing all vacations endpoint for a manager with multiple areas."""
+        self.test_user.area.manager = self.user
+        self.test_user.area.save()
+        # Check that the user has a different area than the manager
+        self.assertNotEqual(self.test_user.area, self.user.area)
+        self.vacation_request["user"] = self.test_user
+        self.vacation_request["uploaded_by"] = self.user
+        VacationRequest.objects.create(**self.vacation_request)
+        demo_user = self.create_demo_user()
+        Area.objects.create(name="Test Area", manager=self.user)
+        self.vacation_request["user"] = demo_user
+        VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.get(reverse("vacation-request-list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
 
     def test_vacation_retrieve(self):
         """Test retrieving a vacation endpoint."""

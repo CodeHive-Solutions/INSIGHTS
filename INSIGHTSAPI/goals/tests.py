@@ -1,5 +1,6 @@
 """This module contains the tests for the goals app."""
 
+import openpyxl
 from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -12,6 +13,7 @@ from users.models import User
 
 # from media.goals_templates.goals_delivery import get_template
 from .models import Goals, TableInfo
+
 
 # * Recuerda que cuando corres los tests, NO se envía un correo electrónico real.
 class GoalAPITestCase(BaseTestCase):
@@ -44,7 +46,7 @@ class GoalAPITestCase(BaseTestCase):
         self.user.user_permissions.clear()
         # Create a goal object
         Goals.objects.create(
-            cedula="00000000",
+            cedula=self.user.cedula,
             name="Heibert",
             campaign_goal="Base Test Goal",
             result="50",
@@ -67,6 +69,14 @@ class GoalAPITestCase(BaseTestCase):
         """Test the upload-excel view."""
 
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
+        # Add the user cedula to the file
+        wb = openpyxl.load_workbook(filename=file_path)
+        ws = wb.active
+        if not ws:
+            self.fail("No active sheet found")
+        ws["B21"] = self.user.cedula
+        wb.save(file_path)
+        # Create a SimpleUploadedFile instance from the Excel file
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile(
@@ -105,6 +115,14 @@ class GoalAPITestCase(BaseTestCase):
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
             file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Ejecución de metas-enerO-2022.xlsx"
+            # Add the user cedula to the file
+            wb = openpyxl.load_workbook(filename=file_path, data_only=True)
+            ws = wb.active
+            if not ws:
+                self.fail("No active sheet found")
+            ws["B340"] = self.user.cedula
+            wb.save(file_path)
+            # Create a SimpleUploadedFile instance from the Excel file
             with open(file_path, "rb") as file_obj:
                 file_data = file_obj.read()
             excel_file = SimpleUploadedFile(
@@ -123,7 +141,14 @@ class GoalAPITestCase(BaseTestCase):
         """Test the upload-excel view."""
         delete = Permission.objects.get(codename="delete_goals")
         self.user.user_permissions.add(delete)
-        # Sube registros que después borrara
+        # Invoke the test_metas_upload() method to have data in the database and some goals like accepted
+        self.test_metas_upload(called=True)
+        # See if there are goals created
+        number_goals = Goals.objects.all().count()
+        self.assertTrue(number_goals > 0)
+        # put accepted to True and accepted_at to now() to Goals
+        Goals.objects.all().update(accepted=True, accepted_at=timezone.now())
+        # Read the file again and upload it
         file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()
@@ -132,13 +157,6 @@ class GoalAPITestCase(BaseTestCase):
             file_data,
             content_type="application/vnd.ms-excel",
         )
-        # Invoke the test_metas_upload() method to have data in the database and some goals like accepted
-        self.test_metas_upload(called=True)
-        # See if there are goals created
-        number_goals = Goals.objects.all().count()
-        self.assertTrue(number_goals > 0)
-        # put accepted to True and accepted_at to now() to Goals
-        Goals.objects.all().update(accepted=True, accepted_at=timezone.now())
         # Send the POST request to the upload-excel URL with the Excel file data
         response = self.client.post(reverse("goal-list"), {"file": excel_file})
         self.assertEqual(response.status_code, 201)
@@ -269,7 +287,9 @@ class GoalAPITestCase(BaseTestCase):
             "accepted": True,
         }
         # Send a PATCH request to the update-goal view
-        response = self.client.patch("/goals/" + str(settings.TEST_CEDULA) +"/", data=payload)
+        response = self.client.patch(
+            "/goals/" + str(settings.TEST_CEDULA) + "/", data=payload
+        )
         # Assert the response status code and content
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         # Assert that the goal was updated with the new data
@@ -433,7 +453,6 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(
             response.data["message"], "La meta fue aceptada.", response.data
         )
-
 
     def test_patch_goal_execution(self):
         """Test the update-goal view."""
