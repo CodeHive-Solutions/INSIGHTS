@@ -16,7 +16,6 @@ import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListIt
 // Media
 import realBenefit2 from "../../images/benefits/benefit-1.png";
 import video from "../../videos/futbol.mp4";
-import videoPoints from "../../videos/points.mp4";
 import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
@@ -187,7 +186,7 @@ const Home = () => {
                 </Typography>
                 <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                     <video style={{ borderRadius: "8px", width: "100%" }} controls>
-                        <source src={videoPoints} type="video/mp4" />
+                        <source src={"https://insights-api-dev.cyc-bpo.com/static/videos/points.mp4"} type="video/mp4" />
                     </video>
                 </Box>
             </Container>
