@@ -33,4 +33,4 @@ jobs:
             - name: Deploy to server
               run: |
                   rm -rf /var/www/INSIGHTS/dist
-                  cp -r ./dist/* /var/www/INSIGHTS/
+                  cp -r ./dist/* /var/www/INSIGHTS/dist

@@ -25,10 +25,12 @@ import security from "../../images/home-carousel/security.png";
 import differentiationMatrices from "../../images/home-carousel/differentiation-matrices.png";
 import principles from "../../images/home-carousel/principles.png";
 import hacienda from "../../images/home-carousel/hacienda.png";
+import battle from "../../images/home-carousel/battle.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: battle },
     { image: hacienda },
     { image: principles },
     { image: differentiationMatrices },
