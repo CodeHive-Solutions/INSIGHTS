@@ -3,7 +3,7 @@ name: Deploy React App to Production
 on:
     push:
         branches:
-            - production # Adjust this to your main branch
+            - Production-version # Adjust this to your main branch
 
 jobs:
     deploy:
