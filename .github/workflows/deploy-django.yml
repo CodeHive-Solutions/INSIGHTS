@@ -38,7 +38,7 @@ jobs:
 
             - name: Sync "static" Directory
               run: |
-                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/static/ ./INSIGHTSAPI/utils/static/
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/static/ ./INSIGHTSAPI/static/
 
             - name: Run Tests
               run: |
