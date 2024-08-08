@@ -23,7 +23,7 @@ jobs:
               run: |
                   mkdir -p ./INSIGHTSAPI/utils
                   python -m venv ./INSIGHTSAPI/utils/venv
-                  source ./INSIGHTSAPI/utils/venv/activate
+                  source ./INSIGHTSAPI/utils/venv/bin/activate
                   pip install -r ./INSIGHTS/requirements.txt
 
             - name: Run Migrations
