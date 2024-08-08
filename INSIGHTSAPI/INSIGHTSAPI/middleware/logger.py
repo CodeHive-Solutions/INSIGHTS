@@ -1,4 +1,5 @@
 """Logging Middleware for the Insights API"""
+
 import logging
 
 logger = logging.getLogger("requests")
@@ -20,7 +21,7 @@ class LoggingMiddleware:
     def log_request_info(self, request, response, log_info):
         """Log the request info"""
         if response.status_code >= 400:
-            if hasattr(response,"data"):
+            if hasattr(response, "data"):
                 log_info["Response Content"] = response.data
         if response.status_code >= 500:
             logger.error(
@@ -49,7 +50,11 @@ class LoggingMiddleware:
         log_info = {
             "Request": request,
             "Response": response,
-            "User": request.user,
+            "User": (
+                f"{request.user}:{request.user.cedula}"
+                if request.user.is_authenticated
+                else "Anonymous"
+            ),
         }
 
         if request_file:

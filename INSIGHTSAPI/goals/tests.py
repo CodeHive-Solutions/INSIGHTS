@@ -68,7 +68,7 @@ class GoalAPITestCase(BaseTestCase):
     def test_metas_upload(self, called=False):
         """Test the upload-excel view."""
 
-        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
+        file_path = "./utils/excels/Entrega de metas-ENERO-2018.xlsx"
         # Add the user cedula to the file
         wb = openpyxl.load_workbook(filename=file_path)
         ws = wb.active
