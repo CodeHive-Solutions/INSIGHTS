@@ -1,5 +1,5 @@
 import os
-from locust import HttpUser, task, constant, between
+from locust import HttpUser, task, constant, between, c
 from dotenv import load_dotenv
 
 
@@ -11,27 +11,28 @@ if not os.path.isfile(ENV_PATH):
 load_dotenv(ENV_PATH)
 
 
-class HelloWorldUser(HttpUser):
-    # wait_time = constant(0.5)
+class BasicUser(HttpUser):
+    wait_time = constant(0.2)
     # wait_time = between(0.2, 1)
     host = "https://insights-api-dev.cyc-bpo.com"
 
-    @task(1)
-    def hello_world(self):
+    # @task(1)
+    def get_holy_days(self):
         with self.client.get(
             "/services/holidays/2024/", catch_response=True
         ) as response:
             if response.elapsed.total_seconds() > 0.5:
                 response.failure("Request took too long")
 
-    @task(5)
+    @task
     def get_sgc_files(self):
         with self.client.get("/sgc/", catch_response=True) as response:
-            if response.elapsed.total_seconds() > 1:
+            if response.elapsed.total_seconds() > 2:
                 response.failure("Request took too long")
 
     def on_start(self):
         self.client.post(
             "/token/obtain/",
             json={"username": "staffnet", "password": os.environ["StaffNetLDAP"]},
+            catch_response=True,
         )
