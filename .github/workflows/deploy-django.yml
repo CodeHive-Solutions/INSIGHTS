@@ -38,6 +38,7 @@ jobs:
             - name: Run Tests
               run: |
                   source ./INSIGHTSAPI/utils/venv/bin/activate
+                  cd ./INSIGHTSAPI
                   python ./INSIGHTSAPI/manage.py test
 
             - name: Restart Celery Service
