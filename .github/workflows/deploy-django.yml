@@ -21,7 +21,7 @@ jobs:
 
             - name: Install Dependencies
               run: |
-                  source ./INSIGHTSAPI/utils/venv
+                  source ./INSIGHTSAPI/utils/venv/bin/activate
                   pip install -r ./INSIGHTS/requirements.txt
 
             - name: Run Migrations
