@@ -30,9 +30,11 @@ jobs:
               run: |
                   source ./INSIGHTSAPI/utils/venv/bin/activate
                   python ./INSIGHTSAPI/manage.py migrate
+
             - name: Sync "excels" Directory
               run: |
-                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/utils/excels/ /home/ares/actions-runner_work/INSIGHTS/INSIGHTS/utils/excels/
+                  mkdir -p ./INSIGHTSAPI/utils/excels
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/utils/excels/ ./INSIGHTSAPI/utils/excels/
             - name: Run Tests
               run: |
                   source ./INSIGHTSAPI/utils/venv/bin/activate
