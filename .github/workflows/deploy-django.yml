@@ -1,0 +1,47 @@
+name: Deploy Django Project
+
+on:
+    push:
+        branches:
+            - dev # Trigger the workflow on push to the production branch
+
+jobs:
+    deploy:
+        name: Deploy to Server
+        runs-on: dev # This tells GitHub Actions to use the local runner
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.12.4" # Adjust the Python version according to your project
+
+            - name: Install Dependencies
+              run: |
+                  mkdir -p ./INSIGHTSAPI/utils
+                  python -m venv ./INSIGHTSAPI/utils/venv
+                  source ./INSIGHTSAPI/utils/venv/bin/activate
+                  pip install -r ./INSIGHTSAPI/requirements.txt
+
+            - name: Run Migrations
+              run: |
+                  source ./INSIGHTSAPI/utils/venv/bin/activate
+                  python ./INSIGHTSAPI/manage.py migrate
+            - name: Sync "excels" Directory
+              run: |
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/utils/excels/ /home/ares/actions-runner_work/INSIGHTS/INSIGHTS/utils/excels/
+            - name: Run Tests
+              run: |
+                  source ./INSIGHTSAPI/utils/venv/bin/activate
+                  python ./INSIGHTSAPI/manage.py test
+
+            - name: Restart Celery Service
+              run: |
+                  sudo systemctl restart celery
+
+            - name: Restart Nginx Service
+              run: |
+                  sudo systemctl restart Nginx

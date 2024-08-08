@@ -26,11 +26,12 @@ import differentiationMatrices from "../../images/home-carousel/differentiation-
 import principles from "../../images/home-carousel/principles.png";
 import hacienda from "../../images/home-carousel/hacienda.png";
 import battle from "../../images/home-carousel/battle.png";
+import points from "../../images/home-carousel/points.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
-    { image: battle },
+    { image: points },
     { image: hacienda },
     { image: principles },
     { image: differentiationMatrices },
@@ -170,7 +171,7 @@ const Home = () => {
             </Box>
 
             <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
-                {/* <Typography
+                <Typography
                     color="primary"
                     id="section1"
                     variant="h4"
@@ -188,29 +189,7 @@ const Home = () => {
                     <video style={{ borderRadius: "8px", width: "100%" }} controls>
                         <source src={"https://insights-api-dev.cyc-bpo.com/static/videos/points.mp4"} type="video/mp4" />
                     </video>
-                </Box> */}
-                <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
-                    <Typography
-                        color="primary"
-                        id="section1"
-                        variant="h4"
-                        sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
-                    >
-                        ¡C&C Apoyando el deporte!
-                    </Typography>
-                    <Typography variant="body1" sx={{ textAlign: "center" }}>
-                        En C&C respaldamos con entusiasmo el deporte y en particular el fútbol femenino. A través de nuestro patrocinio, hemos contribuido al éxito de
-                        nuestro equipo Future Soccer, que recientemente se destacó al ganar el torneo de la copa Nottingham. Este logro no solo refuerza nuestro
-                        compromiso con la comunidad, sino que también subraya nuestro apoyo a la equidad de género en el deporte. Estamos emocionados de seguir
-                        respaldando y empoderando a nuestras talentosas atletas mientras continúan alcanzando nuevas metas.
-                        <br /> ¡En C&C Services creemos en el poder transformador del deporte para construir un futuro más sólido y unido!
-                    </Typography>
-                    <Box display={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                        <video style={{ borderRadius: "8px", width: "100%" }} controls>
-                            <source src={video} type="video/mp4" />
-                        </video>
-                    </Box>
-                </Container>
+                </Box>
             </Container>
 
             <Box
@@ -306,7 +285,7 @@ const Home = () => {
                     <CarouselComponent items={benefits} height={"960px"} width={"540px"} />
                 </Box>
             </Box>
-            {/* <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
+            <Container sx={{ display: "flex", flexDirection: "column", pb: "2rem", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"
                     id="section1"
@@ -327,7 +306,7 @@ const Home = () => {
                         <source src={video} type="video/mp4" />
                     </video>
                 </Box>
-            </Container> */}
+            </Container>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
