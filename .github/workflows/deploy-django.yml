@@ -24,7 +24,7 @@ jobs:
                   mkdir -p ./INSIGHTSAPI/utils
                   python -m venv ./INSIGHTSAPI/utils/venv
                   source ./INSIGHTSAPI/utils/venv/bin/activate
-                  pip install -r ./INSIGHTS/requirements.txt
+                  pip install -r ./INSIGHTSAPI/requirements.txt
 
             - name: Run Migrations
               run: |
