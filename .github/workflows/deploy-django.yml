@@ -35,6 +35,11 @@ jobs:
               run: |
                   mkdir -p ./INSIGHTSAPI/utils/excels
                   rsync -av /var/www/INSIGHTS/INSIGHTSAPI/utils/excels/ ./INSIGHTSAPI/utils/excels/
+
+            - name: Sync "static" Directory
+              run: |
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/static/ ./INSIGHTSAPI/utils/static/
+
             - name: Run Tests
               run: |
                   source ./INSIGHTSAPI/utils/venv/bin/activate
