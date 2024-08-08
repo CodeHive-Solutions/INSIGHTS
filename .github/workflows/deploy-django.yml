@@ -21,14 +21,18 @@ jobs:
 
             - name: Install Dependencies
               run: |
-                  source ./INSIGHTSAPI/utils/venv/bin/activate
+                  mkdir -p ./INSIGHTSAPI/utils
+                  python -m venv ./INSIGHTSAPI/utils/venv
+                  source ./INSIGHTSAPI/utils/venv
                   pip install -r ./INSIGHTS/requirements.txt
 
             - name: Run Migrations
               run: |
                   source ./INSIGHTSAPI/utils/venv
                   python ./INSIGHTSAPI/manage.py migrate
-
+            - name: Sync "excels" Directory
+              run: |
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/utils/excels/ /home/ares/actions-runner_work/INSIGHTS/INSIGHTS/utils/excels/
             - name: Run Tests
               run: |
                   source ./INSIGHTSAPI/utils/venv
