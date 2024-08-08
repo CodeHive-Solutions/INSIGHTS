@@ -1,0 +1,44 @@
+name: Deploy Django Project
+
+on:
+    push:
+        branches:
+            - dev # Trigger the workflow on push to the production branch
+
+jobs:
+    deploy:
+        name: Deploy to Server
+        runs-on: dev # This tells GitHub Actions to use the local runner
+
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v3
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.10.12" # Adjust the Python version according to your project
+
+            - name: Install Dependencies
+              run: |
+                  python -m venv ./INSIGHTSAPI/utils/venv
+                  source ./INSIGHTSAPI/utils/venv
+                  pip install -r ./INSIGHTS/requirements.txt
+
+            - name: Run Migrations
+              run: |
+                  source ./INSIGHTSAPI/utils/venv
+                  python ./INSIGHTSAPI/manage.py migrate
+
+            - name: Run Tests
+              run: |
+                  source ./INSIGHTSAPI/utils/venv
+                  python ./INSIGHTSAPI/manage.py test
+
+            - name: Restart Celery Service
+              run: |
+                  sudo systemctl restart celery
+
+            - name: Restart Apache Service
+              run: |
+                  sudo systemctl restart apache2
