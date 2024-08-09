@@ -123,9 +123,10 @@ def create_employment_certification(request):
         os.path.join(settings.BASE_DIR, "secure", "images", "payroll_signature.png")
     )
     if not logo or not logo_bpo or not payroll_signature or not logo_vertical:
+        # print the variables
         return Response(
             {
-                "error": "No se encontró una o más imágenes necesarias, por favor avisa a tecnología."
+                "error": f"No se encontró una o más imágenes necesarias, por favor avisa a tecnología.{logo} {logo_bpo} {payroll_signature} {logo_vertical}"
             },
             status=500,
         )
