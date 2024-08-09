@@ -51,6 +51,10 @@ jobs:
                   cd INSIGHTSAPI
                   python manage.py test
 
+            - name: Deploy to production directory
+              run: |
+                  sudo rsync -av --delete --exclude 'media/' --exclude 'logs/' ./INSIGHTSAPI/ /var/www/INSIGHTS/INSIGHTSAPI/
+
             - name: Restart Celery Service
               run: |
                   sudo systemctl restart celery
