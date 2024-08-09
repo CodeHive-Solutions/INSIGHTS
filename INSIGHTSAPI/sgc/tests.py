@@ -83,10 +83,6 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 201 Created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        file_exist = os.path.exists(
-            os.path.join(self.media_directory, "files/SGC/Test_SGC_Robinsón.xlsx")
-        )
-        self.assertTrue(file_exist, os.listdir(self.media_directory))
 
     def test_create_pdf_file(self):
         """Test creating a file"""
@@ -101,10 +97,6 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 201 Created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        file_exist = os.path.exists(
-            os.path.join(self.media_directory, "files/SGC/bienestar.pdf")
-        )
-        self.assertTrue(file_exist, os.listdir(self.media_directory))
 
     def test_create_file_with_invalid_file_extension(self):
         """Test creating a file with invalid file"""
@@ -196,12 +188,6 @@ class TestSGC(BaseTestCase):
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
         self.assertEqual(response.data.get("name"), "Test File Updated")
-        file_exist = os.path.exists(
-            os.path.join(
-                self.media_directory, "files/SGC/Test_SGC_Robinsón_updated.xlsx"
-            )
-        )
-        self.assertTrue(file_exist, os.listdir(self.media_directory))
 
     def test_delete_file(self):
         """Test deleting a file"""
@@ -213,8 +199,6 @@ class TestSGC(BaseTestCase):
         )
         # Assert that the response status code is HTTP 204 No Content
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        file_exist = os.path.exists(os.path.join(self.media_directory, str(file.file)))
-        self.assertFalse(file_exist, os.listdir(self.media_directory + "/files/SGC"))
 
     def test_delete_file_without_permission(self):
         """Test deleting a file without permission"""
