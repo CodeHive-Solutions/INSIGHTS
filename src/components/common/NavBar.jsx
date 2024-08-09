@@ -108,7 +108,8 @@ const Navbar = () => {
             permissions.includes("payslip.add_payslip") ||
             permissions.includes("employment_management.view_employmentcertification") ||
             permissions.includes("goals.add_goals") ||
-            permissions.includes("vacation.view_vacationrequest"));
+            permissions.includes("vacation.view_vacationrequest") ||
+            rank > 1);
 
     const refreshToken = async (refreshTimer) => {
         try {
