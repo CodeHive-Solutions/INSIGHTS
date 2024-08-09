@@ -97,7 +97,7 @@ class GoalAPITestCase(BaseTestCase):
     def test_metas_upload_without_permission(self):
         """Test the upload-excel view."""
         self.user.user_permissions.clear()
-        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
+        file_path = "utils/excels/Entrega de metas-ENERO-2018.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile(
@@ -114,7 +114,7 @@ class GoalAPITestCase(BaseTestCase):
         """Test the upload-excel view."""
         if called:
             # Create a SimpleUploadedFile instance from the Excel file
-            file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Ejecución de metas-enerO-2022.xlsx"
+            file_path = "utils/excels/Ejecución de metas-enerO-2022.xlsx"
             # Add the user cedula to the file
             wb = openpyxl.load_workbook(filename=file_path, data_only=True)
             ws = wb.active
@@ -149,7 +149,7 @@ class GoalAPITestCase(BaseTestCase):
         # put accepted to True and accepted_at to now() to Goals
         Goals.objects.all().update(accepted=True, accepted_at=timezone.now())
         # Read the file again and upload it
-        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas-ENERO-2018.xlsx"
+        file_path = "utils/excels/Entrega de metas-ENERO-2018.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile(
@@ -162,7 +162,7 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(response.status_code, 201)
         # See if the accepted goals were deleted
         first_goal = Goals.objects.exclude(accepted_at=None).first()
-        self.assertIsNone(first_goal, first_goal)
+        self.assertIsNone(first_goal)
         count = Goals.objects.exclude(Q(accepted__isnull=True) | Q(accepted="")).count()
         count_at = Goals.objects.exclude(accepted_at=None).count()
         self.assertEqual((count, count_at), (0, 0))
@@ -182,7 +182,7 @@ class GoalAPITestCase(BaseTestCase):
     def test_claro_upload(self):
         """Test the upload-excel view."""
         # Create a SimpleUploadedFile instance from the Excel file
-        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx"
+        file_path = "utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile(
@@ -216,7 +216,7 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 339)  # type: ignore
         # Upload a file to test if the same month distinct between delivery and execution
-        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx"
+        file_path = "utils/excels/Entrega de metas ejemplo Claro-ENERO-2028.xlsx"
         with open(file_path, "rb") as file_obj:
             file_data = file_obj.read()
         excel_file = SimpleUploadedFile(

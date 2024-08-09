@@ -38,7 +38,7 @@ class RobinsonTestCase(APITestCase):
         permission = Permission.objects.get(codename="upload_robinson_list")
         user.user_permissions.add(permission)
         user.save()
-        file_path = "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Lista_Robinsón.xlsx"
+        file_path = "utils/excels/Lista_Robinsón.xlsx"
         with open(file_path, "rb") as file_obj:
             response = self.client.post(reverse("robinson-list"), {"file": file_obj}, cookies=self.client.cookies)  # type: ignore
             self.assertEqual(response.status_code, 201, response.data)
@@ -111,7 +111,7 @@ class RobinsonTestCase(APITestCase):
 #             self.assertTrue(os.path.exists(file_obj.name), file_obj.name)
 #         # Open the file to upload
 #         with open(
-#             "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Call_transfer_list.csv",
+#             "utils/excels/Call_transfer_list.csv",
 #             "r",
 #             encoding="utf-8",
 #         ) as file_obj:
@@ -143,7 +143,7 @@ class RobinsonTestCase(APITestCase):
 #             file_obj.close()
 #         # Open the file to upload
 #         with open(
-#             "/var/www/INSIGHTS/INSIGHTSAPI/utils/excels/Call_transfer_list_banco_agrario.csv",
+#             "utils/excels/Call_transfer_list_banco_agrario.csv",
 #             "r",
 #             encoding="utf-8",
 #         ) as file_obj:
