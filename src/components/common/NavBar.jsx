@@ -348,19 +348,14 @@ const Navbar = () => {
             {isAdvisor ? <Goals openDialog={openDialog} setOpenDialog={setOpenDialog} showSnack={showSnack} /> : null}
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <MyAccountDialog open={openAccountDialog} onClose={handleCloseAccountDialog} />
-            {getApiUrl().environment === "development" ? (
-                <>
-                    <Notifications
-                        notifications={notifications}
-                        setAnchorNotification={setAnchorNotification}
-                        anchorNotification={anchorNotification}
-                        openNotification={openNotification}
-                        getNotifications={getNotifications}
-                    />
-                </>
-            ) : (
-                <InactivityDetector handleLogout={handleLogout} />
-            )}
+            <Notifications
+                notifications={notifications}
+                setAnchorNotification={setAnchorNotification}
+                anchorNotification={anchorNotification}
+                openNotification={openNotification}
+                getNotifications={getNotifications}
+            />
+            <InactivityDetector handleLogout={handleLogout} />
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>
@@ -557,7 +552,7 @@ const Navbar = () => {
                     </ListItemIcon>
                     <ListItemText primary="Certificación Laboral" />
                 </MenuItem>
-                {rank === 1 && getApiUrl().environment === "development" ? (
+                {rank === 1 ? (
                     <MenuItem onClick={() => navigate("/logged/vacations")}>
                         <ListItemIcon>
                             <BeachAccessIcon fontSize="small" />
@@ -673,7 +668,7 @@ const Navbar = () => {
                         <ListItemText primary="Certificados Laborales" />
                     </MenuItem>
                 ) : null}
-                {getApiUrl().environment === "development" ? (
+                {rank > 1 ? (
                     <MenuItem onClick={() => navigate("/logged/vacations")}>
                         <ListItemIcon>
                             <BeachAccessIcon fontSize="small" />

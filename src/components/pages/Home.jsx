@@ -27,6 +27,9 @@ import principles from "../../images/home-carousel/principles.png";
 import hacienda from "../../images/home-carousel/hacienda.png";
 import battle from "../../images/home-carousel/battle.png";
 import points from "../../images/home-carousel/points.png";
+import water from "../../images/home-carousel/water.png";
+import waterConsumed from "../../images/home-carousel/water-consumed.png";
+import socialMedia from "../../images/home-carousel/social-media.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 

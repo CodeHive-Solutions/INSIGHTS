@@ -11,6 +11,8 @@ node_modules
 .pnpm-store
 dist
 dist-bu
+dist-bu-test
+dist_bu
 dist-ssr
 *.local
 __pycache__
