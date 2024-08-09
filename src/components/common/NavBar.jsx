@@ -458,23 +458,21 @@ const Navbar = () => {
                         </Button>
                     ) : null}
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
-                        {getApiUrl().environment === "development" ? (
-                            <Tooltip title="Mis Notificaciones">
-                                {/* badgeContent state based on if any notification have its read property in 0 */}
-                                <Badge badgeContent={notifications.filter((notification) => !notification.read).length} color="primary" overlap="circular">
-                                    <IconButton
-                                        onClick={handleOpenNotification}
-                                        size="small"
-                                        sx={{ ml: 2 }}
-                                        aria-controls={openNotification ? "notification-menu" : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={openNotification ? "true" : undefined}
-                                    >
-                                        <NotificationsIcon sx={{ width: 30, height: 30 }} />
-                                    </IconButton>
-                                </Badge>
-                            </Tooltip>
-                        ) : null}
+                        <Tooltip title="Mis Notificaciones">
+                            {/* badgeContent state based on if any notification have its read property in 0 */}
+                            <Badge badgeContent={notifications.filter((notification) => !notification.read).length} color="primary" overlap="circular">
+                                <IconButton
+                                    onClick={handleOpenNotification}
+                                    size="small"
+                                    sx={{ ml: 2 }}
+                                    aria-controls={openNotification ? "notification-menu" : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={openNotification ? "true" : undefined}
+                                >
+                                    <NotificationsIcon sx={{ width: 30, height: 30 }} />
+                                </IconButton>
+                            </Badge>
+                        </Tooltip>
                         <Tooltip title="Mi Cuenta">
                             <IconButton
                                 onClick={handleClick}
