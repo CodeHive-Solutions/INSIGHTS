@@ -2,6 +2,7 @@ import os
 import logging
 import requests
 import sys
+from django.db import connections
 from rest_framework.decorators import api_view
 from django.db.models import Q
 from django.conf import settings
@@ -170,8 +171,26 @@ def get_subordinates(request):
     # Get all users that have a lower rank than the current user and are in the same area
     users = User.objects.filter(
         Q(area=request.user.area) | Q(area__manager=request.user),
-        Q(job_position__rank__lt=user_rank)
+        Q(job_position__rank__lt=user_rank),
     )
+    # TODO: Refactor this when the migration of StaffNet is done
+    # Check if each user is active in StaffNet
+    if "test" not in sys.argv:
+        with connections["staffnet"].cursor() as cursor:
+            cursor.execute(
+                f"""
+                SELECT DISTINCT 
+                    `cedula`
+                FROM
+                    `leave_information`
+                WHERE
+                    `cedula` IN ({",".join([str(user.cedula) for user in users])})
+                    AND `estado` = TRUE
+            """
+            )
+            active_users = cursor.fetchall()
+            active_users = [user[0] for user in active_users]
+        users = [user for user in users if int(user.cedula) in active_users]
     # Serialize the users
     data = [{"id": user.id, "name": user.get_full_name()} for user in users]
     return Response(data)

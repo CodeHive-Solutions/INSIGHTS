@@ -9,7 +9,11 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 
 import os
 import sys
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module='openpyxl')
 from django.core.wsgi import get_wsgi_application
+
+
 
 
 # * Add the project to the sys.path double dirname because the wsgi.py is inside a folder
