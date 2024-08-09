@@ -42,8 +42,8 @@ jobs:
 
             - name: Sync "secure/image" Directory
               run: |
-                  mkdir -p ./INSIGHTSAPI/secure/image
-                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/secure/image ./INSIGHTSAPI/secure/image
+                  mkdir -p ./INSIGHTSAPI/secure/images
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/secure/images ./INSIGHTSAPI/secure/images
 
             - name: Run Tests
               run: |
