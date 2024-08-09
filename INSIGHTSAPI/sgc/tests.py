@@ -1,7 +1,6 @@
 """Test module for SGC"""
 
 import os
-import shutil
 import tempfile
 from services.tests import BaseTestCase
 from rest_framework import status
@@ -14,7 +13,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from .models import SGCFile, SGCArea
 
 
-@override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+@override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
 class TestSGC(BaseTestCase):
     """Test module for SGC"""
 
@@ -42,11 +41,6 @@ class TestSGC(BaseTestCase):
         permission_delete = Permission.objects.get(codename="delete_sgcfile")
         user.user_permissions.add(permission_delete)
         user.save()
-        # temp_folder = tempfile.mkdtemp()
-        # print(settings.MEDIA_ROOT)
-        self.media_directory = settings.MEDIA_ROOT
-        # settings.MEDIA_ROOT = self.media_directory
-        # print(self.media_directory)
 
     def test_get_file(self):
         """Test getting a file"""
@@ -247,13 +241,3 @@ class TestSGC(BaseTestCase):
     #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
     #     self.assertGreater(SGCFile.objects.count(), 0)
     #     self.assertEqual(response.data["message"], "Archivos creados")
-
-    @classmethod
-    def tearDownClass(cls):
-        """Tear down for the test"""
-        if str(settings.MEDIA_ROOT).startswith("/tmp"):
-            shutil.rmtree(settings.MEDIA_ROOT)
-            # pass
-        else:
-            print(f"Not removing {settings.MEDIA_ROOT}")
-        super().tearDownClass()
