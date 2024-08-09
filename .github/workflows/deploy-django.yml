@@ -40,6 +40,11 @@ jobs:
               run: |
                   rsync -av /var/www/INSIGHTS/INSIGHTSAPI/static/ ./INSIGHTSAPI/static/
 
+            - name: Sync "secure/image" Directory
+              run: |
+                  mkdir -p ./INSIGHTSAPI/secure/image
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/secure/image ./INSIGHTSAPI/secure/image
+
             - name: Run Tests
               run: |
                   source ./INSIGHTSAPI/utils/venv/bin/activate
