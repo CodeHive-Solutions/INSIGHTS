@@ -1,5 +1,5 @@
 import os
-from locust import HttpUser, task, constant, between, c
+from locust import HttpUser, task, constant, between
 from dotenv import load_dotenv
 
 
