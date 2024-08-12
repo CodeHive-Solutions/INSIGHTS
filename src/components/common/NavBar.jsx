@@ -206,11 +206,9 @@ const Navbar = () => {
         }
     };
 
-    if (getApiUrl().environment === "development") {
-        useEffect(() => {
-            getNotifications();
-        }, [openNotification]);
-    }
+    useEffect(() => {
+        getNotifications();
+    }, [openNotification]);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
