@@ -55,3 +55,5 @@ dist-bu/
 
 # Sentry Config File
 .env.sentry-build-plugin
+
+backup*

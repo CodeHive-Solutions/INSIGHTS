@@ -40,11 +40,20 @@ jobs:
               run: |
                   rsync -av /var/www/INSIGHTS/INSIGHTSAPI/static/ ./INSIGHTSAPI/static/
 
+            - name: Sync "secure/image" Directory
+              run: |
+                  mkdir -p ./INSIGHTSAPI/secure/images
+                  rsync -av /var/www/INSIGHTS/INSIGHTSAPI/secure/images/ ./INSIGHTSAPI/secure/images/
+
             - name: Run Tests
               run: |
                   source ./INSIGHTSAPI/utils/venv/bin/activate
                   cd INSIGHTSAPI
                   python manage.py test
+
+            - name: Deploy to production directory
+              run: |
+                  sudo rsync -av --delete --exclude 'media/' --exclude 'logs/' ./INSIGHTSAPI/ /var/www/INSIGHTS/INSIGHTSAPI/
 
             - name: Restart Celery Service
               run: |
@@ -52,4 +61,4 @@ jobs:
 
             - name: Restart Nginx Service
               run: |
-                  sudo systemctl restart Nginx
+                  sudo systemctl restart nginx

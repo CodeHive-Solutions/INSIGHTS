@@ -35,6 +35,9 @@ const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
     { image: points },
+    { image: water },
+    { image: waterConsumed },
+    { image: socialMedia },
     { image: hacienda },
     { image: principles },
     { image: differentiationMatrices },

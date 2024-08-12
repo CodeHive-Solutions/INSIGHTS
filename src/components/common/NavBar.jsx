@@ -108,7 +108,8 @@ const Navbar = () => {
             permissions.includes("payslip.add_payslip") ||
             permissions.includes("employment_management.view_employmentcertification") ||
             permissions.includes("goals.add_goals") ||
-            permissions.includes("vacation.view_vacationrequest"));
+            permissions.includes("vacation.view_vacationrequest") ||
+            rank > 1);
 
     const refreshToken = async (refreshTimer) => {
         try {
@@ -205,11 +206,9 @@ const Navbar = () => {
         }
     };
 
-    if (getApiUrl().environment === "development") {
-        useEffect(() => {
-            getNotifications();
-        }, [openNotification]);
-    }
+    useEffect(() => {
+        getNotifications();
+    }, [openNotification]);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
@@ -458,23 +457,21 @@ const Navbar = () => {
                         </Button>
                     ) : null}
                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
-                        {getApiUrl().environment === "development" ? (
-                            <Tooltip title="Mis Notificaciones">
-                                {/* badgeContent state based on if any notification have its read property in 0 */}
-                                <Badge badgeContent={notifications.filter((notification) => !notification.read).length} color="primary" overlap="circular">
-                                    <IconButton
-                                        onClick={handleOpenNotification}
-                                        size="small"
-                                        sx={{ ml: 2 }}
-                                        aria-controls={openNotification ? "notification-menu" : undefined}
-                                        aria-haspopup="true"
-                                        aria-expanded={openNotification ? "true" : undefined}
-                                    >
-                                        <NotificationsIcon sx={{ width: 30, height: 30 }} />
-                                    </IconButton>
-                                </Badge>
-                            </Tooltip>
-                        ) : null}
+                        <Tooltip title="Mis Notificaciones">
+                            {/* badgeContent state based on if any notification have its read property in 0 */}
+                            <Badge badgeContent={notifications.filter((notification) => !notification.read).length} color="primary" overlap="circular">
+                                <IconButton
+                                    onClick={handleOpenNotification}
+                                    size="small"
+                                    sx={{ ml: 2 }}
+                                    aria-controls={openNotification ? "notification-menu" : undefined}
+                                    aria-haspopup="true"
+                                    aria-expanded={openNotification ? "true" : undefined}
+                                >
+                                    <NotificationsIcon sx={{ width: 30, height: 30 }} />
+                                </IconButton>
+                            </Badge>
+                        </Tooltip>
                         <Tooltip title="Mi Cuenta">
                             <IconButton
                                 onClick={handleClick}

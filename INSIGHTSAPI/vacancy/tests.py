@@ -1,17 +1,15 @@
 """Test for vacancy."""
 
-import os
-import tempfile
-import shutil
 from services.tests import BaseTestCase
 from users.models import User
+from django.test import override_settings
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import Permission
-from django.conf import settings
 from .models import Vacancy, Reference
 
 
+@override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
 class VacancyTest(BaseTestCase):
     """Test for vacancy email."""
 
@@ -25,9 +23,6 @@ class VacancyTest(BaseTestCase):
         self.user.user_permissions.add(permission)
         permission_update = Permission.objects.get(name="Can change vacancy")
         self.user.user_permissions.add(permission_update)
-        temp_folder = tempfile.mkdtemp()
-        self.media_directory = temp_folder
-        settings.MEDIA_ROOT = self.media_directory
         with open("static/vacancy/asesor-vacante.png", "rb") as image_data:
             image = SimpleUploadedFile(
                 "asesor-vacante.png", image_data.read(), content_type="image/png"
@@ -126,15 +121,8 @@ class VacancyTest(BaseTestCase):
         response = self.client.delete(reverse("vacancy-detail", args=[vacancy.id]))
         self.assertEqual(response.status_code, 405, response.data)
 
-    def tearDown(self):
-        super().tearDown()
-        if self.media_directory.startswith("/tmp"):
-            shutil.rmtree(self.media_directory)
-            # pass
-        else:
-            print(f"Not removing {self.media_directory}")
 
-
+@override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
 class ReferenceTest(BaseTestCase):
     """Test for reference."""
 
@@ -216,6 +204,7 @@ class ReferenceTest(BaseTestCase):
         )
 
 
+@override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
 class VacancyApplyTest(BaseTestCase):
     """Test for vacancy apply."""
 
@@ -241,6 +230,8 @@ class VacancyApplyTest(BaseTestCase):
         self.assertEqual(
             response.data,
             {
-                "message": 'Correo enviado correctamente a "' + str(self.user.email) + '"',
+                "message": 'Correo enviado correctamente a "'
+                + str(self.user.email)
+                + '"',
             },
         )
