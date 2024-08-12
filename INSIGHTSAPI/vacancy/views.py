@@ -53,8 +53,7 @@ class ReferenceViewSet(viewsets.ModelViewSet):
             reference = Reference.objects.get(id=response.data["id"])
             vacancy = Vacancy.objects.get(id=reference.vacancy.id)
             name = request.user.get_full_name().title()
-            with open(vacancy.image.path, "rb") as image_file:
-                encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
+            encoded_image = base64.b64encode(vacancy.image.read()).decode("utf-8")
             subject = f"Se registro una referencia para {vacancy}"
             message = f"""
                         <h2>{name} ha recomendado a nuestro proximo {vacancy}</h2>
@@ -111,18 +110,17 @@ def send_vacancy_apply(request):
         email = user_info[0][1]
     email = str(email).lower()
     celular = user_info[0][0]
-    with open(vacancy.image.path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
-        message = f"""
-                <h2>Aplicación a {vacancy}</h2>
-                <p>{name} aplico para {vacancy}</p>
-                <p>Información del usuario:</p>
-                <p>Nombre: {name}</p>
-                <p>Cédula: {user.cedula}</p>
-                <p>Correo: {email}</p>
-                <p>Celular: {celular}</p>
-                <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
-                """
+    encoded_image = base64.b64encode(vacancy.image.read()).decode("utf-8")
+    message = f"""
+            <h2>Aplicación a {vacancy}</h2>
+            <p>{name} aplico para {vacancy}</p>
+            <p>Información del usuario:</p>
+            <p>Nombre: {name}</p>
+            <p>Cédula: {user.cedula}</p>
+            <p>Correo: {email}</p>
+            <p>Celular: {celular}</p>
+            <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
+            """
 
     errors = send_email(
         subject=subject,
