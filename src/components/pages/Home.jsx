@@ -30,10 +30,12 @@ import points from "../../images/home-carousel/points.png";
 import water from "../../images/home-carousel/water.png";
 import waterConsumed from "../../images/home-carousel/water-consumed.png";
 import socialMedia from "../../images/home-carousel/social-media.png";
+import certification from "../../images/home-carousel/certification.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: certification },
     { image: points },
     { image: water },
     { image: waterConsumed },
