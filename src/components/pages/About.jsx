@@ -31,7 +31,7 @@ const managements = [
             "Soy el fundador de C&C, desde muy joven soñaba con crear una empresa que pudiera impulsar el crecimiento económico de nuestro país y al mismo tiempo crear empleos de calidad para la gente que compartiera esta visión. Mis amigos más cercanos me definen como una persona emprendedora y visionaria.",
     },
     {
-        name: "Cesar Garzón",
+        name: "César Garzón",
         management: "Gerente General",
         image: cesarGarzon,
         description:
@@ -45,7 +45,7 @@ const managements = [
             "LEGAL: Prestar asesorías y representación judicial de los clientes internos y externos. \n \nRIESGO: Ejecutar procesos de Investigación y análisis mediante la implementación y desarrollo de estrategias que garanticen la mitigación del riesgo.",
     },
     {
-        name: "Angela Durán",
+        name: "Ángela Durán",
         management: "Gerente de Planeación",
         image: angelaDuran,
         description:
