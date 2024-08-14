@@ -4,7 +4,8 @@ import logging
 import os
 import holidays
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from django_sendfile import sendfile
 from services.models import Answer
@@ -72,10 +73,11 @@ def trigger_error(request):
     """Trigger an error for testing purposes."""
     raise Exception("Test error")
 
-
 @api_view(["GET"])
+@permission_classes([AllowAny])
 def get_holidays(request, year):
     """Get the holidays of the year."""
+    print("holi")
     try:
         year = int(year)
     except ValueError:
