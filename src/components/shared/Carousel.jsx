@@ -40,6 +40,8 @@ function Item(props) {
             setIsVacancy(true);
         } else if (props.item.image.includes("water-webpage")) {
             setIsVacancy(true);
+        } else if (props.item.image.includes("certification")) {
+            setIsVacancy(true);
         }
     }, []);
 
@@ -57,6 +59,10 @@ function Item(props) {
         } else if (isVacancy && props.item.image.includes("water-webpage")) {
             window.open(
                 "https://www.acueducto.com.co/wps/portal/EAB2/Home/inicio/!ut/p/z1/hY5BC4JAEIV_iwevzrRLYt22DoJEshJkewm1TQ11ZV3177fQKdjowRzmzfeGBwJyEEOxtHVhWjUUnd1vIryH_IibCMkZeYbI-S6lMb2QOKFw_QcIe8YfYmjzwoEwPGTkQBHjlDiBrx8JiLpT5acuG0oa1SC0fEotdTBrazfGjNPeRx_XdQ2KapaPuTIqqFRvx0dXsFGTgdzFw9jn-Np2y4l53hvtB_OW/dz/d5/L2dBISEvZ0FBIS9nQSEh/"
+            );
+        } else if (isVacancy && props.item.image.includes("certification")) {
+            window.open(
+                "https://forms.office.com/Pages/ResponsePage.aspx?id=rzX48YdyU0SlZPyn7p-_Nk_7TEIRbNJJngg-c4MRdAFUNUg5RjdaRjRMTFA2WllINTJHS1ZWTFBCVS4u&origin=QRCode"
             );
         } else if (isVacancy) {
             navigate("/logged/vacancies/");
