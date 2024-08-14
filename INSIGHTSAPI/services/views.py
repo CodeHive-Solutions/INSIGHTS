@@ -41,6 +41,7 @@ class FileDownloadMixin(APIView):
 
 
 @api_view(["POST"])
+@permission_classes([AllowAny])
 def send_report_ethical_line(request):
     """Send a report from the ethical line."""
     if not "complaint" in request.data:
@@ -77,7 +78,6 @@ def trigger_error(request):
 @permission_classes([AllowAny])
 def get_holidays(request, year):
     """Get the holidays of the year."""
-    print("holi")
     try:
         year = int(year)
     except ValueError:

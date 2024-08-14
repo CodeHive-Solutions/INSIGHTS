@@ -13,7 +13,7 @@ def upper_case_name(obj):
 class CustomUserAdmin(UserAdmin):
     """Custom user admin."""
 
-    readonly_fields = ["username", "area"]
+    readonly_fields = ["username"]
 
     list_display = (
         "username",
@@ -35,7 +35,7 @@ class CustomUserAdmin(UserAdmin):
         "user_permissions",
     )
     fieldsets = (
-        ("User info", {"fields": ("username", "area")}),
+        ("User info", {"fields": ("username", ("area", "job_position"))}),
         (
             "Información personal",
             {"fields": (("first_name", "last_name"), "email")},
