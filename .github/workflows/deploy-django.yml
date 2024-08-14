@@ -53,7 +53,23 @@ jobs:
 
             - name: Deploy to production directory
               run: |
-                  sudo rsync -av --delete --exclude 'media/' --exclude 'logs/' ./INSIGHTSAPI/ /var/www/INSIGHTS/INSIGHTSAPI/
+                  sudo rsync -av --delete --exclude 'media/' --exclude 'logs/' --exclude='venv/' ./INSIGHTSAPI/ /var/www/INSIGHTS/INSIGHTSAPI/
+
+            # Step 2: Remove existing `venv` and recreate it
+            - name: Recreate Virtual Environment
+              run: |
+                  cd /var/www/INSIGHTS/INSIGHTSAPI/
+                  if [ -d "utils/venv" ]; then
+                    rm -rf utils/venv
+                  fi
+                  python3 -m venv utils/venv
+
+            # Step 3: Install Python dependencies using the tested `requirements.txt`
+            - name: Install Dependencies
+              run: |
+                  cd /var/www/INSIGHTS/INSIGHTSAPI/
+                  source utils/venv/bin/activate
+                  pip install -r /home/runner/_work/INSIGHTS/INSIGHTS/INSIGHTSAPI/requirements.txt
 
             - name: Restart Celery Service
               run: |

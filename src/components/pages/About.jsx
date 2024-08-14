@@ -18,6 +18,8 @@ import organigrama from "../../images/about/organigrama.png";
 import imgVision from "../../images/about/image-vision.jpg";
 import mission2 from "../../images/about/image-mission-2.jpg";
 import value1 from "../../images/about/corporative-values.jpg";
+import qualityObjectives from "../../images/about/quality-objectives.jpg";
+import qualityPolicies from "../../images/about/quality-policies.jpg";
 
 // Custom components
 import SwiperSlider from "../shared/SwiperSlider";
@@ -196,6 +198,36 @@ const About = () => {
                             <li>Innovación</li>
                             <li>Impacto Social</li>
                             <li>Excelencia</li>
+                        </Typography>
+                    </Box>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
+                    <Box sx={{ width: "550px" }}>
+                        <Typography color="primary" sx={{ fontFamily: "Poppins" }} variant="h3">
+                            Políticas de Calidad
+                        </Typography>
+
+                        <Typography variant="body2" sx={{ fontSize: "16px", color: "gray" }}>
+                            Nuestro compromiso esta basado en garantizar la excelencia en servicios de Contact Center, recuperación de cartera, gestión jurídica, estudios
+                            de riesgo e investigación, para ello, contamos con personal capacitado y en formación permanente, que nos permite tener procesos basados en
+                            una cultura de calidad y de mejora continua, que busca fortalecer el sostenimiento financiero de la organización.
+                        </Typography>
+                    </Box>
+                    <img style={{ borderRadius: "8px" }} src={qualityPolicies} height={300} alt="imagen-valores-corporativos-cyc" />
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "2rem" }}>
+                    <img style={{ borderRadius: "8px" }} src={qualityObjectives} height={300} alt="imagen-valores-corporativos-cyc" />
+                    <Box sx={{ width: "550px" }}>
+                        <Typography color="primary" sx={{ fontFamily: "Poppins" }} variant="h3">
+                            Objetivos de Calidad
+                        </Typography>
+
+                        <Typography variant="body2" sx={{ fontSize: "16px", color: "gray" }}>
+                            <li>Buscar la satisfacción de nuestros clientes para asegurar la generación de nuevos negocios. </li>
+                            <li>Cumplir con los tiempos y especificaciones acordadas con nuestros clientes. </li>
+                            <li>Capacitar al personal para asegurar el desempeño de sus competencias. </li>
+                            <li>Evaluar continuamente los procesos buscando su mejora continua. </li>
+                            <li>Asegurar la rentabilidad y sostenibilidad de la organización.</li>
                         </Typography>
                     </Box>
                 </Box>
