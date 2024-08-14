@@ -33,6 +33,7 @@ import socialMedia from "../../images/home-carousel/social-media.png";
 import certification from "../../images/home-carousel/certification.png";
 import politicsObjectivesQuality from "../../images/home-carousel/politics-objectives-quality.png";
 
+
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
