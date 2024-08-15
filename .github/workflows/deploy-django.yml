@@ -55,7 +55,6 @@ jobs:
               run: |
                   sudo rsync -av --delete --exclude 'media/' --exclude 'logs/' --exclude='venv/' ./INSIGHTSAPI/ /var/www/INSIGHTS/INSIGHTSAPI/
 
-            # Step 2: Remove existing `venv` and recreate it
             - name: Recreate Virtual Environment
               run: |
                   cd /var/www/INSIGHTS/INSIGHTSAPI/
@@ -64,12 +63,18 @@ jobs:
                   fi
                   python3 -m venv utils/venv
 
-            # Step 3: Install Python dependencies using the tested `requirements.txt`
             - name: Install Dependencies
               run: |
                   cd /var/www/INSIGHTS/INSIGHTSAPI/
                   source utils/venv/bin/activate
                   pip install -r /home/ares/_work/INSIGHTS/INSIGHTS/INSIGHTSAPI/requirements.txt
+
+                  # Step 3: Install Python dependencies using the tested `requirements.txt`
+
+            - name: Grant Permissions to the Samba user to edit the files
+              run: |
+                  sudo chown -R athena:www-data /var/www/INSIGHTS/INSIGHTSAPI/
+                  sudo chmod -R 775 /var/www/INSIGHTS/INSIGHTSAPI/
 
             - name: Restart Celery Service
               run: |
