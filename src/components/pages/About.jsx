@@ -74,12 +74,13 @@ const managements = [
         description:
             "Proveer, mantener y desarrollar un recurso humano altamente calificado y motivado para alcanzar los objetivos de la organización a través de la aplicación de programas enfocados en conectar al Talento Humano con el propósito de la compañía desde sus habilidades, motivaciones, conocimientos y pasiones, para así apalancar efectivamente el éxito de los objetivos del negocio y a su vez velar por el cumplimiento de las normas y procedimientos vigentes",
     },
-    // {
-    //     name: "Angélica Rincón",
-    //     management: "Gerente de Riesgo y Control Interno",
-    //     image: riskInterControl,
-    //     description: ``,
-    // },
+    {
+        name: "Angélica Rincón",
+        management: "Gerente de Riesgo y Control Interno",
+        image: riskInterControl,
+        description:
+            "Resguardar los recursos de la empresa es clave para evitar pérdidas o faltantes que puedan impactar su rentabilidad. Esto se logra dentro de un marco de gestión de riesgos, donde los riesgos son identificados, evaluados, controlados y constantemente monitoreados a través de procesos de auditoría. Además, estos procesos permiten que la información relevante sea adecuadamente comunicada a todas las partes involucradas. Asimismo, es esencial atender las auditorías externas periódicas realizadas por clientes, entes certificadores, organismos de control y firmas evaluadoras de riesgos, asegurando el cumplimiento de las normativas y estándares que garantizan la estabilidad y éxito de la empresa.",
+    },
     {
         name: "Mélida Sandoval",
         management: "Gerente Administrativa",
