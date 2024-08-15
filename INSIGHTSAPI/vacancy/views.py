@@ -90,7 +90,7 @@ def send_vacancy_apply(request):
         return Response({"error": "No se encontró la vacante"}, status=400)
     name = request.user.get_full_name().title()
     subject = f"Aplicación a {vacancy}"
-    user = User.objects.get(username=request.user)
+    user = User.objects.get(pk=request.user.id)
     if user.cedula == 999999999 or settings.DEBUG or "test" in sys.argv:
         cedula = settings.TEST_CEDULA
         to_emails = [settings.EMAIL_FOR_TEST]

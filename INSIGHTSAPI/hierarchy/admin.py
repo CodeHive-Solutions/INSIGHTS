@@ -1,4 +1,5 @@
 from django.contrib import admin
+from users.models import User
 from .models import Area, JobPosition
 
 
@@ -24,6 +25,15 @@ class AreaAdmin(admin.ModelAdmin):
         "manager__last_name",
     )
     ordering = ("manager",)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        """Customize the queryset for the manager field."""
+        if db_field.name == "manager":
+            # Customizing the queryset to show only users with a rank >= 4
+            kwargs["queryset"] = User.objects.filter(
+                job_position__rank__gte=4
+            ).order_by("first_name")
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 @admin.register(JobPosition)
