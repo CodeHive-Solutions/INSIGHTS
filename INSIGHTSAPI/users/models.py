@@ -108,8 +108,18 @@ class User(AbstractUser):
                 ) or self.cedula == "00000000":
                     result = (
                         str(random.randint(0, 99999999)),
-                        "Administrador" if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"} else "Test",
-                        "Administrador" if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"} else "Test",
+                        (
+                            "Administrador"
+                            if str(self.username).upper()
+                            in {"ZEUS", "ADMIN", "STAFFNET"}
+                            else "Test"
+                        ),
+                        (
+                            "Administrador"
+                            if str(self.username).upper()
+                            in {"ZEUS", "ADMIN", "STAFFNET"}
+                            else "Test"
+                        ),
                     )
                     self.email = settings.EMAIL_FOR_TEST
                 elif not result:
@@ -176,3 +186,7 @@ class User(AbstractUser):
         job_position, _ = JobPosition.objects.get_or_create(name="Factory", rank=1)
         self.job_position_id = job_position.id
         super(User, self).save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        """Return the string representation of the user."""
+        return self.get_full_name()

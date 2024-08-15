@@ -175,7 +175,7 @@ def get_subordinates(request):
     )
     # TODO: Refactor this when the migration of StaffNet is done
     # Check if each user is active in StaffNet
-    if "test" not in sys.argv:
+    if "test" not in sys.argv and len(users) > 0:
         with connections["staffnet"].cursor() as cursor:
             cursor.execute(
                 f"""
