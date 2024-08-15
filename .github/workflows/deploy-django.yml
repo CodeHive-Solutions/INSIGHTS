@@ -73,8 +73,8 @@ jobs:
 
             - name: Grant Permissions to the Samba user to edit the files
               run: |
-                  chown -R athena:www-data /var/www/INSIGHTS/INSIGHTSAPI/
-                  chmod -R 775 /var/www/INSIGHTS/INSIGHTSAPI/
+                  chgrp -R www-data /var/www/INSIGIHTS/INSIGHTSAPI/
+                  chmod -R g+rwx /var/www/INSIGHTS/INSIGHTSAPI/
 
             - name: Restart Celery Service
               run: |

@@ -16,8 +16,9 @@ class CustomUserAdmin(UserAdmin):
     readonly_fields = ["username"]
 
     list_display = (
-        "username",
         upper_case_name,
+        "job_position",
+        "area",
     )
     list_filter = (
         "is_staff",
@@ -29,7 +30,7 @@ class CustomUserAdmin(UserAdmin):
         "first_name",
         "last_name",
     )
-    ordering = ("username",)
+    ordering = ("first_name", "area", "job_position")
     filter_horizontal = (
         "groups",
         "user_permissions",
