@@ -3,12 +3,12 @@ name: Deploy Django Project
 on:
     push:
         branches:
-            - dev # Trigger the workflow on push to the production branch
+            - Production-version # Trigger the workflow on push to the production branch
 
 jobs:
     deploy:
         name: Deploy to Server
-        runs-on: dev # This tells GitHub Actions to use the local runner
+        runs-on: production # This tells GitHub Actions to use the local runner
 
         steps:
             - name: Checkout Code
@@ -17,7 +17,7 @@ jobs:
             - name: Set up Python
               uses: actions/setup-python@v4
               with:
-                  python-version: "3.12.4" # Adjust the Python version according to your project
+                  python-version: "3.10.12" # Adjust the Python version according to your project
 
             - name: Install Dependencies
               run: |
@@ -76,10 +76,6 @@ jobs:
                   chgrp -R www-data /var/www/INSIGHTS/INSIGHTSAPI/
                   chmod -R g+rwx /var/www/INSIGHTS/INSIGHTSAPI/
 
-            - name: Restart Celery Service
-              run: |
-                  sudo systemctl restart celery
-
             - name: Restart Nginx Service
               run: |
-                  sudo systemctl restart nginx
+                  sudo systemctl restart apache
