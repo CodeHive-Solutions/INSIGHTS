@@ -216,13 +216,14 @@ export const Sgc = () => {
             }
         } else {
             try {
-                const response = await fetch(`${getApiUrl().apiUrl}sgc/${newRow.id}/`, {
+                const { file, ...updatedRow } = newRow;
+                const response = await fetch(`${getApiUrl().apiUrl}sgc/${updatedRow.id}/`, {
                     method: "PATCH",
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(newRow),
+                    body: JSON.stringify(updatedRow),
                 });
 
                 await handleError(response, showSnack);
