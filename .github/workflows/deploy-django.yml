@@ -67,7 +67,7 @@ jobs:
               run: |
                   cd /var/www/INSIGHTS/INSIGHTSAPI/
                   source utils/venv/bin/activate
-                  pip install -r /home/ares/_work/INSIGHTS/INSIGHTS/INSIGHTSAPI/requirements.txt
+                  pip install -r /home/ares/actions-runner/_work/INSIGHTS/INSIGHTS/INSIGHTSAPI/requirements.txt
 
                   # Step 3: Install Python dependencies using the tested `requirements.txt`
 
