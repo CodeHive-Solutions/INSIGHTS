@@ -223,3 +223,18 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, str(data["correo"]).upper())
+
+    def test_user_creation(self):
+        """Tests that the user creation works as expected."""
+        user = User.objects.create(
+            username="user_test".format(random.randint(0, 999999)),
+            cedula=os.environ["TEST_CEDULA"],
+            first_name="Test",
+            last_name="User",
+        )
+        self.assertEqual(User.objects.count(), 2)
+        print(User.objects.filter(pk=user.pk).first())
+        self.assertEqual(
+            User.objects.get(pk=user.pk).company_mail,
+            os.environ["EMAIL_FOR_TEST"].upper(),
+        )

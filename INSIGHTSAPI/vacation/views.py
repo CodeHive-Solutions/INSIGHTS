@@ -32,6 +32,13 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     f"Se ha creado una nueva solicitud de vacaciones para {user_request.get_full_name()} del {response.data['start_date']} al {response.data['end_date']}.",
                     user_request.area.manager,
                 )
+                if user_request.area.manager.company_mail:
+                    send_mail(
+                        "Nueva solicitud de vacaciones",
+                        f"Se ha creado una nueva solicitud de vacaciones para {user_request.get_full_name()} del {response.data['start_date']} al {response.data['end_date']}. Por favor revisa la solicitud en la intranet.",
+                        None,
+                        [str(user_request.area.manager.company_mail)],
+                    )
             email_message = f"""
                 Hola {response.data['user']},
 
@@ -45,8 +52,6 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en ponerte en contacto con la Gerencia de Recursos Humanos.
 
                 ¡Esperamos que tu solicitud sea aprobada y que disfrutes de unas vacaciones relajantes! ⛱
-
-                Saludos cordiales,
                 """
             html_message = f"""
                 <head>

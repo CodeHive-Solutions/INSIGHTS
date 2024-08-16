@@ -7,7 +7,6 @@ from .views import SGCFileViewSet, SGCFileDownloadViewSet
 
 router = DefaultRouter()
 router.register("", SGCFileViewSet, basename="SGCFile")
-# router.register("areas", SGCFileViewSet, basename="SGCArea")
 
 
 urlpatterns = [
@@ -17,5 +16,4 @@ urlpatterns = [
         SGCFileDownloadViewSet.as_view({"get": "get"}),
         name="sgc_file_download",
     ),
-    # path("massive-update/", massive_update, name="massive-update"),
 ]

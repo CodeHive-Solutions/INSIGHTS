@@ -1,7 +1,5 @@
 """This file contains the models for the SGC app."""
-import magic
 from django.db import models
-from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 
 
