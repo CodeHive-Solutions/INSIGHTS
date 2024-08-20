@@ -85,7 +85,8 @@ export const Vacations = () => {
     const observationsRef = useRef();
     const cargo = localStorage.getItem("cargo");
     const rank = JSON.parse(localStorage.getItem("rango"));
-    const managerApprovalPermission = cargo.includes("GERENTE");
+    const cedula = JSON.parse(localStorage.getItem("cedula"));
+    const managerApprovalPermission = cargo.includes("GERENTE") || cedula === "1022370826";
     const hrApprovalPermission = cargo === `"GERENTE DE GESTION HUMANA"`;
     const payrollApprovalPermission = permissions.includes("vacation.payroll_approbation");
     const [buttonType, setButtonType] = useState("button");
@@ -517,7 +518,12 @@ export const Vacations = () => {
                     <DataGrid
                         initialState={{
                             sorting: {
-                                sortModel: [{ field: "created_at", sort: "desc" }],
+                                sortModel: [{ field: "id", sort: "desc" }],
+                            },
+                            columns: {
+                                columnVisibilityModel: {
+                                    id: false,
+                                },
                             },
                         }}
                         slots={{
