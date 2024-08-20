@@ -90,8 +90,7 @@ def send_vacancy_apply(request):
     user = User.objects.get(pk=request.user.id)
     if user.cedula == 999999999 or settings.DEBUG or "test" in sys.argv:
         cedula = settings.TEST_CEDULA
-        # to_emails = [settings.EMAIL_FOR_TEST]
-        to_emails = ["heibert203@hotmail.com"]
+        to_emails = [settings.EMAIL_FOR_TEST]
     else:
         cedula = user.cedula
         to_emails = ["contrataciones@cyc-bpo.com"]

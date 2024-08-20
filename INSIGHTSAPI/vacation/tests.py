@@ -42,7 +42,6 @@ class WorkingDayTestCase(TestCase):
         self.assertEqual(get_working_days("2024-01-01", "2024-01-19", True), 15)
 
 
-
 class VacationRequestModelTestCase(BaseTestCase):
     """Test module for VacationRequest model."""
 
@@ -231,7 +230,7 @@ class VacationRequestModelTestCase(BaseTestCase):
             "No puedes crear una solicitud para este usuario.",
         )
 
-    def test_vacation_create_invalid_user(self):
+    def test_vacation_create_same_user_rank_lte_3(self):
         """Test creating a vacation for the same user."""
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["user"] = self.user.pk
@@ -245,6 +244,18 @@ class VacationRequestModelTestCase(BaseTestCase):
             "No puedes subir solicitudes para ti mismo.",
             response.data,
         )
+
+    def test_vacation_create_same_user_rank_gte_4(self):
+        """Test creating a vacation for the same user with rank greater than 3."""
+        self.vacation_request["mon_to_sat"] = False
+        self.vacation_request["user"] = self.user.pk
+        self.user.job_position.rank = 4
+        self.user.job_position.save()
+        response = self.client.post(
+            reverse("vacation-request-list"),
+            self.vacation_request,
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     # def test_vacation_owner_cancel(self):
     #     """Test the owner cancelling a vacation."""
@@ -489,9 +500,7 @@ class VacationRequestModelTestCase(BaseTestCase):
             reverse("vacation-request-list"),
             self.vacation_request,
         )
-        self.assertEqual(
-            response.status_code, status.HTTP_201_CREATED, response.data
-        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
 
     def test_validate_vacation_request_not_working_day_end(self):
         """Test the validation of a vacation request on a non-working day."""
@@ -535,9 +544,7 @@ class VacationRequestModelTestCase(BaseTestCase):
             reverse("vacation-request-list"),
             self.vacation_request,
         )
-        self.assertEqual(
-            response.status_code, status.HTTP_201_CREATED, response.data
-        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
 
     def test_validate_vacation_request_more_than_15_days(self):
         """Test the validation of a vacation request with more than 15 days."""
