@@ -11,7 +11,6 @@ from services.tests import BaseTestCase
 from rest_framework import status
 from users.models import User
 
-# from media.goals_templates.goals_delivery import get_template
 from .models import Goals, TableInfo
 
 

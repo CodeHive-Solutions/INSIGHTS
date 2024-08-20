@@ -40,8 +40,8 @@ class CustomEmailBackendTestCase(TestCase):
         """Test the send_messages method."""
         backend = get_connection()
         email = EmailMessage(
-            "Send mail class",
-            "Here is the message.",
+            "Test Send mail class",
+            "This is a test message if you receive this email, the test was successful.",
             None,
             [settings.EMAIL_FOR_TEST],
             connection=backend,

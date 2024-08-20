@@ -1,11 +1,14 @@
 """Views for the vacancy app."""
+
+from django.core.mail import EmailMultiAlternatives
+from email.mime.image import MIMEImage
 import sys
 import base64
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
-from services.emails import send_email
+from django.core.mail import send_mail
 from services.permissions import (
     DjangoModelViewPermissionsNotDelete,
     DjangoModelViewPermissionsAllowAllCreate,
@@ -35,9 +38,8 @@ class VacancyViewSet(viewsets.ModelViewSet):
         """Update a vacancy."""
         if len(request.data) == 1 and "is_active" in request.data:
             return super().update(request, *args, **kwargs)
-        return Response(
-            {"error": "No se puede modificar la vacante"}, status=400
-        )
+        return Response({"error": "No se puede modificar la vacante"}, status=400)
+
 
 class ReferenceViewSet(viewsets.ModelViewSet):
     """ViewSet for the Reference model"""
@@ -64,18 +66,13 @@ class ReferenceViewSet(viewsets.ModelViewSet):
                 to_emails = [settings.EMAIL_FOR_TEST]
             else:
                 to_emails = ["contrataciones@cyc-bpo.com"]
-            errors = send_email(
-                subject=subject,
-                message=message,
-                to_emails=to_emails,
-                save_message=True,
-                email_owner="Vacantes",
-                safe_mode=False,
+            send_mail(
+                subject,
+                message,
+                None,
+                to_emails,
+                html_message=message,
             )
-            if errors:
-                return Response(
-                    {"error": "Hubo un error en el envió del correo"}, status=500
-                )
         return response
 
 
@@ -93,7 +90,8 @@ def send_vacancy_apply(request):
     user = User.objects.get(pk=request.user.id)
     if user.cedula == 999999999 or settings.DEBUG or "test" in sys.argv:
         cedula = settings.TEST_CEDULA
-        to_emails = [settings.EMAIL_FOR_TEST]
+        # to_emails = [settings.EMAIL_FOR_TEST]
+        to_emails = ["heibert203@hotmail.com"]
     else:
         cedula = user.cedula
         to_emails = ["contrataciones@cyc-bpo.com"]
@@ -110,28 +108,37 @@ def send_vacancy_apply(request):
         email = user_info[0][1]
     email = str(email).lower()
     celular = user_info[0][0]
-    encoded_image = base64.b64encode(vacancy.image.read()).decode("utf-8")
     message = f"""
-            <h2>Aplicación a {vacancy}</h2>
-            <p>{name} aplico para {vacancy}</p>
-            <p>Información del usuario:</p>
-            <p>Nombre: {name}</p>
-            <p>Cédula: {user.cedula}</p>
-            <p>Correo: {email}</p>
-            <p>Celular: {celular}</p>
-            <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
+                <html>
+              <body>
+                <h2>Aplicación a {vacancy}</h2>
+                <p>{name} aplicó para {vacancy}</p>
+                <p>Información del usuario:</p>
+                <p>Nombre: {name}</p>
+                <p>Cédula: {user.cedula}</p>
+                <p>Correo: {email}</p>
+                <p>Celular: {celular}</p>
+                <img src="cid:image1" alt="imagen_vacante.png" width="99%"/>
+              </body>
+            </html>
             """
+    msg = EmailMultiAlternatives(subject, message, None, to_emails)
+    with open(vacancy.image.path, "rb") as img_file:
+        img = MIMEImage(img_file.read())
+        img.add_header("Content-ID", "<image1>")
+        img.add_header("Content-Disposition", "inline", filename="imagen_vacante.png")
+        msg.attach(img)
+    msg.send()
+    # <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
 
-    errors = send_email(
-        subject=subject,
-        message=message,
-        to_emails=to_emails,
-        save_message=True,
-        email_owner="Vacantes",
-        safe_mode=False,
-    )
-    if errors:
-        return Response({"error": "Hubo un error en el envió del correo"}, status=500)
+    # send_mail(
+    #     subject,
+    #     message,
+    #     None,
+    #     to_emails,
+    #     html_message=message,
+    # )
+
     return Response(
         {"message": f'Correo enviado correctamente a "{to_emails[0]}"'},
         status=200,

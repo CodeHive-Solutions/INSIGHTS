@@ -32,6 +32,13 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     f"Se ha creado una nueva solicitud de vacaciones para {user_request.get_full_name()} del {response.data['start_date']} al {response.data['end_date']}.",
                     user_request.area.manager,
                 )
+                if user_request.area.manager.company_mail:
+                    send_mail(
+                        "Nueva solicitud de vacaciones",
+                        f"Se ha creado una nueva solicitud de vacaciones para {user_request.get_full_name()} del {response.data['start_date']} al {response.data['end_date']}. Por favor revisa la solicitud en la intranet.",
+                        None,
+                        [str(user_request.area.manager.company_mail)],
+                    )
             email_message = f"""
                 Hola {response.data['user']},
 
@@ -45,8 +52,6 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en ponerte en contacto con la Gerencia de Recursos Humanos.
 
                 ¡Esperamos que tu solicitud sea aprobada y que disfrutes de unas vacaciones relajantes! ⛱
-
-                Saludos cordiales,
                 """
             html_message = f"""
                 <head>
@@ -110,8 +115,8 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
             queryset = self.queryset.all()
-        # Check if the user is a manager
-        elif request.user.job_position.rank >= 5:
+        # Check if the user has employee management permissions
+        elif request.user.job_position.rank >= 2:
             queryset = self.queryset.filter(
                 (Q(uploaded_by=request.user) | Q(user=request.user))
                 | (Q(user__area__manager=request.user))
@@ -279,38 +284,3 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             {"detail": "You do not have permission to perform this action."},
             status=status.HTTP_403_FORBIDDEN,
         )
-
-
-# @api_view(["GET"])
-# def get_working_days_view(request):
-#     start_date = request.query_params.get("start_date")
-#     end_date = request.query_params.get("end_date")
-#     mon_to_sat = request.query_params.get("mon_to_sat")
-#     if not start_date or not end_date or not mon_to_sat:
-#         return Response(
-#             {
-#                 "detail": "Por favor, proporciona una fecha de inicio, una fecha de finalización y un valor booleano para mon_to_sat."
-#             },
-#             status=status.HTTP_400_BAD_REQUEST,
-#         )
-#     try:
-#         mon_to_sat = bool(strtobool(mon_to_sat))
-#     except:
-#         return Response(
-#             {
-#                 "detail": "Por favor, proporciona un valor booleano para mon_to_sat."
-#             },
-#             status=status.HTTP_400_BAD_REQUEST,
-#         )
-#     try:
-#         start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d")
-#         end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d")
-#     except:
-#         return Response(
-#             {
-#                 "detail": "Por favor, proporciona una fecha válida en el formato YYYY-MM-DD."
-#             },
-#             status=status.HTTP_400_BAD_REQUEST,
-#         )
-#     working_days = get_working_days(start_date, end_date, mon_to_sat)
-#     return Response({"working_days": working_days})

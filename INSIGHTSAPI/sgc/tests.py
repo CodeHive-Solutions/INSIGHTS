@@ -167,7 +167,7 @@ class TestSGC(BaseTestCase):
         # Assert that the response status code is HTTP 403 Forbidden
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_update_file(self):
+    def test_update_file_put(self):
         """Test updating a file"""
         self.file_data["area"] = SGCArea.objects.first()
         file = SGCFile.objects.create(**self.file_data)
@@ -183,6 +183,20 @@ class TestSGC(BaseTestCase):
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
             self.file_data,
             format="multipart",
+            cookies=self.client.cookies,
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data.get("name"), "Test File Updated")
+
+    def test_update_file_patch(self):
+        """Test updating the name of a file"""
+        self.file_data["area"] = SGCArea.objects.first()
+        file = SGCFile.objects.create(**self.file_data)
+        response = self.client.patch(
+            reverse("SGCFile-detail", kwargs={"pk":file.id}),
+            {"name": "Test File Updated"},
+            format="json",
             cookies=self.client.cookies,
         )
         # Assert that the response status code is HTTP 200 OK

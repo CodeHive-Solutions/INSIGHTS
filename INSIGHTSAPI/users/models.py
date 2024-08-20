@@ -31,9 +31,8 @@ class User(AbstractUser):
     # profile_picture = models.ImageField(
     #     upload_to="images/pictures/", validators=[validate_file_extension]
     # )
-    # This field cannot be used because RH does not have the company email
     email = models.EmailField(null=True, blank=True)
-    # email = None
+    company_mail = models.EmailField(null=True, blank=True)
     area = models.ForeignKey(
         "hierarchy.Area",
         on_delete=models.CASCADE,
@@ -156,12 +155,13 @@ class User(AbstractUser):
                 if not self.is_superuser:
                     self.set_unusable_password()
                 db_connection.execute(
-                    "SELECT correo FROM personal_information WHERE cedula = %s",
+                    "SELECT correo, correo_corporativo FROM personal_information WHERE cedula = %s",
                     [self.cedula],
                 )
                 mails = db_connection.fetchone()
                 if mails:
                     self.email = mails[0]
+                    self.company_mail = mails[1] if mails[1] else None
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField

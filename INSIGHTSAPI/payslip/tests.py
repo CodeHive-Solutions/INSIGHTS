@@ -224,7 +224,7 @@ class PayslipTest(BaseTestCase):
         if not payslip:
             self.fail("Payslip not found")
         response = self.client.post(
-            f"/payslips/{payslip.pk}/resend/", {"email": "heibert.mogollon12@gmail.com"}
+            f"/payslips/{payslip.pk}/resend/", {"email": "another_mail@cyc-bpo.com"}
         )
         self.assertEqual(
             response.status_code,

@@ -18,14 +18,8 @@ class SGCFileViewSet(viewsets.ModelViewSet):
     serializer_class = SGCFileSerializer
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
-    # Send the permissions of the user when listing the objects
     def list(self, request, *args, **kwargs):
         """List the objects"""
-        # if not request.user.has_perm("sgc.view_sgcfile"):
-        # return Response(
-        # {"detail": "No tienes permiso para ver los archivos del SGC"},
-        # status=403,
-        # )
         response = super().list(request, *args, **kwargs)
         data_list = list(response.data)
         permissions = {
@@ -38,7 +32,6 @@ class SGCFileViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create a new object"""
-        # return {"detail": str(request.data)}, 500
         return super().create(request, *args, **kwargs)
 
 
