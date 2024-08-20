@@ -87,12 +87,15 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                     raise serializers.ValidationError(
                         "No puedes iniciar tus vacaciones un sábado."
                     )
-            if get_working_days(attrs["start_date"], attrs["end_date"], mon_to_sat) > 15:
+            if (
+                get_working_days(attrs["start_date"], attrs["end_date"], mon_to_sat)
+                > 15
+            ):
                 raise serializers.ValidationError(
                     "No puedes solicitar más de 15 días de vacaciones."
                 )
             if (
-                created_at.day >= 20
+                created_at.day > 20
                 and created_at.month + 1 == attrs["start_date"].month
             ):
                 raise serializers.ValidationError(
@@ -114,7 +117,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                     "No puedes terminar tus vacaciones un domingo."
                 )
             uploaded_by = self.instance.uploaded_by if self.instance else request.user
-            if attrs["user"] == uploaded_by:
+            if attrs["user"] == uploaded_by and attrs["user"].job_position.rank <= 3:
                 raise serializers.ValidationError(
                     "No puedes subir solicitudes para ti mismo."
                 )

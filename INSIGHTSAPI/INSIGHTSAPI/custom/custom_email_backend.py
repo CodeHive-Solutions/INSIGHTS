@@ -120,15 +120,15 @@ class CustomEmailBackend(EmailBackend):
 
             num_sent = 0
             for message in email_messages:
-                # if ("test" in sys.argv or settings.DEBUG) and not (
-                #     all(
-                #         "heibert" in str(email).lower()
-                #         or "carreno" in str(email).lower()
-                #         or "diego.martinez.p@cyc-bpo.com" in str(email).lower()
-                #         for email in message.to
-                #     )
-                # ):
-                #     raise Exception(f"Email {message.to} not allowed in test mode")
+                if ("test" in sys.argv or settings.DEBUG) and not (
+                    all(
+                        "heibert" in str(email).lower()
+                        or "carreno" in str(email).lower()
+                        or "diego.martinez.p@cyc-bpo.com" in str(email).lower()
+                        for email in message.to
+                    )
+                ):
+                    raise Exception(f"Email {message.to} not allowed in test mode")
                 self.add_signature(message)
 
                 message.from_email = formataddr((self.display_name, self.username))

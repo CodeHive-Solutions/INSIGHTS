@@ -169,10 +169,17 @@ def update_profile(request):
 def get_subordinates(request):
     user_rank = request.user.job_position.rank
     # Get all users that have a lower rank than the current user and are in the same area
-    users = User.objects.filter(
-        Q(area=request.user.area) | Q(area__manager=request.user),
-        Q(job_position__rank__lt=user_rank),
-    )
+    if user_rank >= 4:
+        users = User.objects.filter(
+            (Q(area=request.user.area) | Q(area__manager=request.user))
+            & Q(job_position__rank__lt=user_rank)
+            | Q(pk=request.user.pk)
+        )
+    else:
+        users = User.objects.filter(
+            Q(area=request.user.area) | Q(area__manager=request.user),
+            Q(job_position__rank__lt=user_rank),
+        )
     # TODO: Refactor this when the migration of StaffNet is done
     # Check if each user is active in StaffNet
     if "test" not in sys.argv and len(users) > 0:

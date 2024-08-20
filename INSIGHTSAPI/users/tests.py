@@ -150,17 +150,24 @@ class UserTestCase(BaseTestCase):
 
     def test_get_subordinates_same_area(self):
         """Tests that the get_users endpoint can return users from the same area."""
+        self.user.job_position.rank = 3
+        self.user.job_position.save()
         demo_user = self.create_demo_user()
         demo_user.area = self.user.area
         demo_user.save()
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.data, [{"id": demo_user.pk, "name": demo_user.get_full_name()}]
+            response.data,
+            [
+                {"id": demo_user.pk, "name": demo_user.get_full_name()},
+            ],
         )
 
     def test_get_subordinates_multiple_area(self):
         """Tests that the get_users endpoint can return users from multiple areas if the user is the manager."""
+        self.user.job_position.rank = 3
+        self.user.job_position.save()
         demo_user_1 = self.create_demo_user()
         demo_user_1.area = Area.objects.get_or_create(name="Demo")[0]
         demo_user_1.area.manager = self.user
@@ -187,7 +194,8 @@ class UserTestCase(BaseTestCase):
         demo_user.save()
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        # response.data should be 1 that is the user itself
+        self.assertEqual(len(response.data), 1)
 
     def test_get_subordinates_higher_rank(self):
         """Tests that the get_users endpoint does not return users with a higher rank."""
@@ -196,7 +204,25 @@ class UserTestCase(BaseTestCase):
         boss.job_position.save()
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        # response.data should be 1 that is the user itself
+        self.assertEqual(len(response.data), 1)
+
+    def test_get_subordinates_manager(self):
+        """Tests that the get_users endpoint returns the manager of the user."""
+        self.user.job_position.rank = 4
+        response = self.client.get(reverse("get_subordinates"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data, [{"id": self.user.pk, "name": self.user.get_full_name()}]
+        )
+
+    def test_get_subordinates_no_manager(self):
+        """Tests that the get_users endpoint returns an empty list if the user does not have a manager."""
+        self.user.job_position.rank = 1
+        self.user.job_position.save()
+        response = self.client.get(reverse("get_subordinates"))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, [])
 
     def test_get_user_profile(self):
         """Tests that the get_user_profile endpoint works as expected."""
@@ -233,7 +259,6 @@ class UserTestCase(BaseTestCase):
             last_name="User",
         )
         self.assertEqual(User.objects.count(), 2)
-        print(User.objects.filter(pk=user.pk).first())
         self.assertEqual(
             User.objects.get(pk=user.pk).company_mail,
             os.environ["EMAIL_FOR_TEST"].upper(),
