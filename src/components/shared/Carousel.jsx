@@ -42,6 +42,8 @@ function Item(props) {
             setIsVacancy(true);
         } else if (props.item.image.includes("certification")) {
             setIsVacancy(true);
+        } else if (props.item.image.includes("voting")) {
+            setIsVacancy(true);
         }
     }, []);
 
@@ -64,6 +66,8 @@ function Item(props) {
             window.open(
                 "https://forms.office.com/Pages/ResponsePage.aspx?id=rzX48YdyU0SlZPyn7p-_Nk_7TEIRbNJJngg-c4MRdAFUNUg5RjdaRjRMTFA2WllINTJHS1ZWTFBCVS4u&origin=QRCode"
             );
+        } else if (isVacancy && props.item.image.includes("voting")) {
+            window.open("https://forms.office.com/r/wBgswxvUbH?origin=lprLink");
         } else if (isVacancy) {
             navigate("/logged/vacancies/");
         }
