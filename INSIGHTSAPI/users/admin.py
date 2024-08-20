@@ -36,10 +36,13 @@ class CustomUserAdmin(UserAdmin):
         "user_permissions",
     )
     fieldsets = (
-        ("User info", {"fields": ("username", ("area", "job_position"))}),
         (
             "Información personal",
             {"fields": (("first_name", "last_name"), "email")},
+        ),
+        (
+            "Información corporativa",
+            {"fields": ("username", ("area", "company_email"), "job_position")},
         ),
         (
             "Permisos",

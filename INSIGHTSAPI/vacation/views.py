@@ -32,12 +32,12 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     f"Se ha creado una nueva solicitud de vacaciones para {user_request.get_full_name()} del {response.data['start_date']} al {response.data['end_date']}.",
                     user_request.area.manager,
                 )
-                if user_request.area.manager.company_mail:
+                if user_request.area.manager.company_email:
                     send_mail(
                         "Nueva solicitud de vacaciones",
                         f"Se ha creado una nueva solicitud de vacaciones para {user_request.get_full_name()} del {response.data['start_date']} al {response.data['end_date']}. Por favor revisa la solicitud en la intranet.",
                         None,
-                        [str(user_request.area.manager.company_mail)],
+                        [str(user_request.area.manager.company_email)],
                     )
             email_message = f"""
                 Hola {response.data['user']},
@@ -115,6 +115,9 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
             queryset = self.queryset.all()
+        # Check if the user is in payroll
+        elif request.user.has_perm("vacation.payroll_approbation"):
+            queryset = self.queryset.all()
         # Check if the user has employee management permissions
         elif request.user.job_position.rank >= 2:
             queryset = self.queryset.filter(
@@ -125,9 +128,6 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     & Q(user__area=request.user.area)
                 )
             )
-        # Check if the user is in payroll
-        elif request.user.has_perm("vacation.payroll_approbation"):
-            queryset = self.queryset.all()
         # The user is a regular employee
         else:
             queryset = self.queryset.filter(
@@ -177,7 +177,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         "Solicitud de vacaciones aprobada por un gerente",
                         hr_message,
                         None,
-                        [str(hr_user.email)],
+                        [str(hr_user.company_email)],
                     )
                     payroll_user = User.objects.filter(
                         user_permissions__codename="payroll_approbation"
@@ -204,7 +204,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         "Una solicitud de vacaciones ha sido aprobada por un gerente",
                         payroll_message,
                         None,
-                        [str(payroll_user.email)],
+                        [str(payroll_user.company_email)],
                     )
                 return response
 
@@ -255,7 +255,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         "Solicitud de vacaciones en espera de tu aprobación",
                         payroll_message,
                         None,
-                        [str(payroll_user.email)],
+                        [str(payroll_user.company_email)],
                     )
                 return response
             else:
@@ -277,9 +277,6 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 return super().partial_update(request, *args, **kwargs)
-        # Just allow the owner of the request to update the status
-        # elif "status" in request.data and request.user == self.get_object().uploaded_by:
-        #     return super().partial_update(request, *args, **kwargs)
         return Response(
             {"detail": "You do not have permission to perform this action."},
             status=status.HTTP_403_FORBIDDEN,

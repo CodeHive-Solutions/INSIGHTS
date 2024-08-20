@@ -121,7 +121,10 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "No puedes subir solicitudes para ti mismo."
                 )
-            if attrs["user"].job_position.rank >= uploaded_by.job_position.rank:
+            if (
+                attrs["user"].job_position.rank >= uploaded_by.job_position.rank
+                and uploaded_by != attrs["user"]
+            ):
                 raise serializers.ValidationError(
                     "No puedes crear una solicitud para este usuario."
                 )

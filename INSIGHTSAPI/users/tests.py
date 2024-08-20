@@ -260,6 +260,6 @@ class UserTestCase(BaseTestCase):
         )
         self.assertEqual(User.objects.count(), 2)
         self.assertEqual(
-            User.objects.get(pk=user.pk).company_mail,
+            User.objects.get(pk=user.pk).company_email,
             os.environ["EMAIL_FOR_TEST"].upper(),
         )

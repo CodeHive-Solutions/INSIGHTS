@@ -32,7 +32,7 @@ class User(AbstractUser):
     #     upload_to="images/pictures/", validators=[validate_file_extension]
     # )
     email = models.EmailField(null=True, blank=True)
-    company_mail = models.EmailField(null=True, blank=True)
+    company_email = models.EmailField(null=True, blank=True)
     area = models.ForeignKey(
         "hierarchy.Area",
         on_delete=models.CASCADE,
@@ -161,7 +161,7 @@ class User(AbstractUser):
                 mails = db_connection.fetchone()
                 if mails:
                     self.email = mails[0]
-                    self.company_mail = mails[1] if mails[1] else None
+                    self.company_email = mails[1] if mails[1] else None
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField
