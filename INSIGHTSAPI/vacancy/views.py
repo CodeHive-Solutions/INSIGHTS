@@ -1,7 +1,5 @@
 """Views for the vacancy app."""
 
-from django.core.mail import EmailMultiAlternatives
-from email.mime.image import MIMEImage
 import sys
 import base64
 from rest_framework.response import Response
@@ -107,6 +105,7 @@ def send_vacancy_apply(request):
         email = user_info[0][1]
     email = str(email).lower()
     celular = user_info[0][0]
+    encoded_image = base64.b64encode(vacancy.image.read()).decode("utf-8")
     message = f"""
                 <html>
               <body>
@@ -117,26 +116,18 @@ def send_vacancy_apply(request):
                 <p>Cédula: {user.cedula}</p>
                 <p>Correo: {email}</p>
                 <p>Celular: {celular}</p>
-                <img src="cid:image1" alt="imagen_vacante.png" width="99%"/>
+                <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
               </body>
             </html>
             """
-    msg = EmailMultiAlternatives(subject, message, None, to_emails)
-    with open(vacancy.image.path, "rb") as img_file:
-        img = MIMEImage(img_file.read())
-        img.add_header("Content-ID", "<image1>")
-        img.add_header("Content-Disposition", "inline", filename="imagen_vacante.png")
-        msg.attach(img)
-    msg.send()
-    # <img src="data:image/png;base64,{encoded_image}" alt="imagen_vacante.png" width="99%"/>
 
-    # send_mail(
-    #     subject,
-    #     message,
-    #     None,
-    #     to_emails,
-    #     html_message=message,
-    # )
+    send_mail(
+        subject,
+        message,
+        None,
+        to_emails,
+        html_message=message,
+    )
 
     return Response(
         {"message": f'Correo enviado correctamente a "{to_emails[0]}"'},
