@@ -75,9 +75,11 @@ const Quality = () => {
 
     const handleFileInputChange = (event) => {
         const file = event.target.files[0];
-        setFileName(file.name);
-        setSelectedFile(file);
-        setOpenCollapse(false);
+        if (file) {
+            setFileName(file.name);
+            setSelectedFile(file);
+            setOpenCollapse(false);
+        }
     };
 
     const showSnack = (severity, message) => {
@@ -109,8 +111,6 @@ const Quality = () => {
                     credentials: "include",
                 });
 
-                setLoading(false);
-
                 await handleError(response, showSnack);
 
                 if (response.status === 200) {
@@ -126,7 +126,12 @@ const Quality = () => {
                 if (getApiUrl().environment === "development") {
                     console.error(error);
                 }
+            } finally {
+                setLoading(false);
             }
+        } else {
+            showSnack("error", "No se ha seleccionado un archivo.");
+            setLoading(false);
         }
     };
 
@@ -136,7 +141,7 @@ const Quality = () => {
                 className="waveWrapper"
                 sx={{
                     width: "100%",
-                    height: "50vh",
+                    height: "49vh",
                     backgroundImage: `url(${quality})`,
                     backgroundSize: "cover",
                     backgroundColor: "#f0f0f0",
@@ -152,7 +157,7 @@ const Quality = () => {
                 <Box className="wave wave4"></Box>
             </Box>
 
-            <Container sx={{ display: "flex", justifyContent: "start", alignItems: "center", flexDirection: "column", height: "100%", minHeight: "50vh" }}>
+            <Container sx={{ display: "flex", justifyContent: "start", alignItems: "center", flexDirection: "column", height: "100%", minHeight: "51vh" }}>
                 <Box sx={{ display: "flex", gap: "1rem", flexDirection: "column", justifyContent: "center", alignItems: "center", mt: "2rem" }}>
                     <TextField sx={{ width: "600px" }} value={selectedCampaign.value} onChange={handleCampaignChange} label="Campaña" select>
                         {campaigns.map((option) => (
