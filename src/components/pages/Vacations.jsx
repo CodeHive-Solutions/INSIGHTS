@@ -516,6 +516,7 @@ export const Vacations = () => {
                 </Typography>
                 <Box sx={{ width: "100%", height: "80vh" }}>
                     <DataGrid
+                        loading={rows.length === 0}
                         initialState={{
                             sorting: {
                                 sortModel: [{ field: "id", sort: "desc" }],
