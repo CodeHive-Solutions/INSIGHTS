@@ -3,7 +3,7 @@ from users.models import User
 from .models import Area, JobPosition
 
 
-@admin.display(description="Name")
+@admin.display(description="Manager", ordering="manager__first_name")
 def upper_case_name(obj):
     """Display the user's name in uppercase."""
     if obj.manager:
@@ -15,16 +15,13 @@ def upper_case_name(obj):
 class AreaAdmin(admin.ModelAdmin):
     """Area admin."""
 
-    list_display = (
-        "name",
-        upper_case_name,
-    )
+    list_display = ("name", upper_case_name, "parent")
     search_fields = (
         "name",
         "manager__first_name",
         "manager__last_name",
     )
-    ordering = ("manager",)
+    ordering = ("name",)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """Customize the queryset for the manager field."""

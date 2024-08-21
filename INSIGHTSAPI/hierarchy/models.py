@@ -7,6 +7,9 @@ class Area(models.Model):
     """Model for the area"""
 
     name = models.CharField(max_length=100, unique=True)
+    parent = models.ForeignKey(
+        "self", on_delete=models.SET_NULL, null=True, related_name="children"
+    )
     manager = models.ForeignKey(
         "users.User", on_delete=models.SET_NULL, null=True, related_name="managed_areas"
     )
