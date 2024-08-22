@@ -122,7 +122,7 @@ calendar-month {
 
     &::part(range-inner) {
         border-radius: 0;
-        background-color: #0076A8;
+        background-color: #0076a8;
     }
 
     &::part(range-start) {

@@ -354,7 +354,7 @@ const Navbar = () => {
                 openNotification={openNotification}
                 getNotifications={getNotifications}
             />
-            <InactivityDetector handleLogout={handleLogout} />
+            {getApiUrl().environment === "production" ? <InactivityDetector handleLogout={handleLogout} /> : null}
             <Dialog open={openCertification} onClose={handleCloseCertification} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
                 <DialogTitle id="alert-dialog-title">{"¿Enviar Certificación Laboral?"}</DialogTitle>
                 <DialogContent sx={{ paddingBottom: 0 }}>
