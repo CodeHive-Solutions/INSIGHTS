@@ -13,7 +13,7 @@ from .serializers import VacationRequestSerializer
 
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
-    queryset = VacationRequest.objects.all()
+    queryset = VacationRequest.objects.all().select_related("user", "uploaded_by")
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
 

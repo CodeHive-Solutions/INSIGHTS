@@ -1,4 +1,5 @@
 """Views for the payslip."""
+
 import logging
 import base64
 from rest_framework import viewsets
@@ -30,7 +31,9 @@ def send_payslip(payslips):
 
     for payslip in payslips:
         # iterate over the rows and multiply the values by 100 for the solidary_fund_percentage field
-        payslip.solidarity_fund_percentage = "{:.1f}%".format(payslip.solidarity_fund_percentage * 100)
+        payslip.solidarity_fund_percentage = "{:.1f}%".format(
+            payslip.solidarity_fund_percentage * 100
+        )
         payslip_data.append(payslip.to_json())
     queued_task = send_email_with_attachment.delay(
         payslip_data, logo, settings.EMAIL_HOST_USER

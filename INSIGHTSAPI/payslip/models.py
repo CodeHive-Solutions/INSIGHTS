@@ -8,6 +8,7 @@ class Payslip(models.Model):
     """Model for the payslip."""
 
     title = models.CharField(max_length=100)
+    # * The identification field can't be a foreign key because there are employees outside the company
     identification = models.CharField(max_length=20)
     name = models.CharField(max_length=100)
     area = models.CharField(max_length=100)

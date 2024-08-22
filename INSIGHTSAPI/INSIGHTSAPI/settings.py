@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     # "drf_spectacular",
+    "debug_toolbar",
     "corsheaders",
     "django_auth_ldap",
     "simple_history",
@@ -94,6 +95,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
@@ -106,8 +108,25 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+DEBUG_TOOLBAR_PANELS = [
+    "debug_toolbar.panels.timer.TimerPanel",
+    "debug_toolbar.panels.sql.SQLPanel",
+    "debug_toolbar.panels.cache.CachePanel",
+    "debug_toolbar.panels.headers.HeadersPanel",
+    "debug_toolbar.panels.request.RequestPanel",
+    "debug_toolbar.panels.templates.TemplatesPanel",
+    "debug_toolbar.panels.staticfiles.StaticFilesPanel",
+    "debug_toolbar.panels.signals.SignalsPanel",
+    "debug_toolbar.panels.logging.LoggingPanel",
+    "debug_toolbar.panels.redirects.RedirectsPanel",
+    "debug_toolbar.panels.profiling.ProfilingPanel",
+]
+
+INTERNAL_IPS = ["127.0.0.1"]
+
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
+        # "rest_framework.renderers.BrowsableAPIRenderer",
         "rest_framework.renderers.JSONRenderer",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -435,9 +454,21 @@ SIMPLE_JWT = {
 
 # Celery configuration for the tasks
 CELERY_HIJACK_ROOT_LOGGER = False
-CELERY_BROKER_URL = "redis://localhost:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
+CELERY_BROKER_URL = "redis://localhost:6379/1"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/1"
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_TIMEZONE = "UTC"
 CELERY_LOG_FILE = os.path.join(log_dir, "celery.log")
 CELERY_LOG_LEVEL = "INFO"
+CELERY_BEAT_HEARTBEAT = 10  # How often the scheduler checks if a task is due
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}

@@ -27,3 +27,5 @@ Requests==2.32.3
 redis==5.0.8
 gunicorn==22.0.0
 locust==2.31.1
+django-redis==5.4.0
+django-debug-toolbar==4.4.6
