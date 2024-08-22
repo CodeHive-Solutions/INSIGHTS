@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 
 // Libraries
-import { motion, useIsPresent } from "framer-motion";
 import * as Yup from "yup";
 import { Formik, Form, useField } from "formik";
 
@@ -78,7 +77,6 @@ export const Sgc = () => {
     const hiddenFileInput = useRef(null);
     const [rowModesModel, setRowModesModel] = useState({});
     const [rows, setRows] = useState([]);
-    const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
@@ -521,13 +519,6 @@ export const Sgc = () => {
                     onProcessRowUpdateError={handleProcessRowUpdateError}
                 ></DataGrid>
             </Container>
-            <motion.div
-                initial={{ scaleX: 1 }}
-                animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
-                exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
-                style={{ originX: isPresent ? 0 : 1 }}
-                className="privacy-screen"
-            />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog fullWidth={true} maxWidth="md" open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Cargar nuevo archivo</DialogTitle>

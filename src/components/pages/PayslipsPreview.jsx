@@ -1,6 +1,5 @@
 // Material-UI
 import { DataGrid } from "@mui/x-data-grid";
-import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 
 const columns = [
     { field: "id", headerName: "ID", width: 70 },

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 // Libraries
-import { motion, useIsPresent } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
@@ -68,7 +67,6 @@ const validationSchema = Yup.object().shape({
 
 export const RiskEvent = () => {
     const [rows, setRows] = useState([]);
-    const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [details, setDetails] = useState({});
@@ -661,13 +659,6 @@ export const RiskEvent = () => {
                     }}
                 ></DataGrid>
             </Container>
-            <motion.div
-                initial={{ scaleX: 1 }}
-                animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
-                exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
-                style={{ originX: isPresent ? 0 : 1 }}
-                className="privacy-screen"
-            />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog maxWidth={"md"} open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Añadir un nuevo registro</DialogTitle>

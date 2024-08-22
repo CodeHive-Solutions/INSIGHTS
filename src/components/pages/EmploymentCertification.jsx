@@ -11,7 +11,6 @@ import { handleError } from "../../assets/handleError";
 // Material-UI
 import { Container, Typography } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 
 export const EmploymentCertification = () => {
     const [rows, setRows] = useState([]);

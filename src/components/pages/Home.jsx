@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useLocation, useContext } from "react";
 
-// Libraries and Hooks
-import { useInView } from "react-intersection-observer";
-
 // Custom Components
 import { getApiUrl } from "../../assets/getApi.js";
 import CarouselComponent from "../shared/Carousel";
@@ -146,11 +143,6 @@ const Home = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const [ref, inView] = useInView({
-        triggerOnce: true,
-        threshold: 0.5,
-    });
-
     const noBirthdays = (message) => {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
@@ -225,7 +217,7 @@ const Home = () => {
                 </Typography>
             </Box>
             {/* <Grow in={inView}> */}
-            <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+            <Box sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {yesterdayBirthdays.length === 0 ? (
                         <>
