@@ -82,10 +82,8 @@ class NotificationTests(BaseTestCase):
         self.assertEqual(response.data[9]["message"], "Notification 3")
 
     def test_delete_notification(self):
-        print("Este")
         url = reverse("notifications-detail", args=[self.notification.id])
         response = self.client.delete(url)
-        print(response.data)
         self.assertEqual(
             response.status_code, status.HTTP_204_NO_CONTENT, response.data
         )

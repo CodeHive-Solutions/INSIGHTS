@@ -10,6 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from users.models import User
 
 
+# This have to be done with cookies because the token can't be stored in the session due to security reasons
 class CustomTokenObtainPairView(TokenObtainPairView):
     """Custom token obtain view modified to send the token info in cookies."""
 
@@ -35,7 +36,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.set_cookie(
                 "refresh-token",
                 str(response.data["refresh"]),
-                max_age=60 * 60 * 30,
+                max_age=settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].seconds,
                 httponly=True,
                 secure=True,
                 domain=".cyc-bpo.com",

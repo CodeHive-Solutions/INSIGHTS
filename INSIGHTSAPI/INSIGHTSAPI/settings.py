@@ -267,7 +267,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "es-CO"
+LANGUAGE_CODE = "es-co"
 
 TIME_ZONE = "America/Bogota"
 
@@ -442,14 +442,17 @@ else:
     SENDFILE_BACKEND = "django_sendfile.backends.simple"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=15),
-    # "ACCESS_TOKEN_LIFETIME": timedelta(seconds=10),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
-    "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
-    "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
-    "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
-    "AUTH_COOKIE": "access-token",
-    "USER_AUTHENTICATION_RULE": "api_token.cookie_jwt.always_true",
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+    # "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+    # "SLIDING_TOKEN_LIFETIME": timedelta(days=30),
+    # "SLIDING_TOKEN_REFRESH_ON_LOGIN": True,
+    # "SLIDING_TOKEN_REFRESH_ON_REFRESH": True,
+    # "AUTH_COOKIE": "access-token",
+    # "USER_AUTHENTICATION_RULE": "api_token.cookie_jwt.always_true",
 }
 
 # Celery configuration for the tasks
@@ -470,5 +473,6 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },
+        "KEY_PREFIX": "insights",
     }
 }

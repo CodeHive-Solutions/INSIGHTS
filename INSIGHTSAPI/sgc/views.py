@@ -1,10 +1,11 @@
 """Views for the SGC app"""
 
 import logging
-from rest_framework import renderers
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
+from django.utils.cache import get_cache_key
 from django.views.decorators.cache import cache_page
+from rest_framework import renderers
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework import viewsets
 from services.views import FileDownloadMixin
@@ -23,12 +24,11 @@ class SGCFileViewSet(viewsets.ModelViewSet):
     # renderer_classes = [renderers.BrowsableAPIRenderer, renderers.JSONRenderer]
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
-    @cache_response(timeout=60 * 15)
+    @method_decorator(cache_page(60 * 15, key_prefix="sgc"))
     def list(self, request, *args, **kwargs):
         """List the objects"""
         response = super().list(request, *args, **kwargs)
         data_list = list(response.data)
-        # response["Cache-Control"] = "private, max-age=900"  # Cache for 15 minutes
         permissions = {
             "add": request.user.has_perm("sgc.add_sgcfile"),
             "change": request.user.has_perm("sgc.change_sgcfile"),
@@ -39,8 +39,30 @@ class SGCFileViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         """Create a new object"""
-        cache.delete_pattern("sgc*")
-        return super().create(request, *args, **kwargs)
+        response = super().create(request, *args, **kwargs)
+        # Generate the cache key based on the request
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        if cache_key:
+            cache.delete(cache_key)  # Delete the specific cache key
+        return response
+
+    def update(self, request, *args, **kwargs):
+        """Update an object"""
+        response = super().update(request, *args, **kwargs)
+        # Generate the cache key based on the request
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        if cache_key:
+            cache.delete(cache_key)
+        return response
+
+    def destroy(self, request, *args, **kwargs):
+        """Destroy an object"""
+        response = super().destroy(request, *args, **kwargs)
+        # Generate the cache key based on the request
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        if cache_key:
+            cache.delete(cache_key)
+        return response
 
 
 class SGCFileDownloadViewSet(FileDownloadMixin, viewsets.ReadOnlyModelViewSet):
