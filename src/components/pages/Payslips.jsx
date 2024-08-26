@@ -158,12 +158,11 @@ export const Payslips = () => {
             headerName: "Quincena",
             width: 150,
             editable: false,
-            valueGetter: (params) => params.row.biweekly_period * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         {
             field: "created_at",
@@ -171,7 +170,7 @@ export const Payslips = () => {
             headerName: "Fecha de envió",
             width: 100,
             editable: false,
-            valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+            valueFormatter: (value) => new Date(value).toLocaleDateString(),
         },
         {
             field: "resend",

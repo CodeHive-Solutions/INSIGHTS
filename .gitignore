@@ -40,6 +40,7 @@ media/
 secure/
 INSIGHTSAPI/static/admin/
 INSIGHTSAPI/static/rest_framework/
+INSIGHTSAPI/static/debug_toolbar/
 public/
 test.html
 test.pdf

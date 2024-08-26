@@ -12,10 +12,10 @@ export default defineConfig({
     plugins: [react(), sentryVitePlugin({
         org: "cc-services-sas",
         project: "javascript-react",
-        sourcemaps: {
-            // delete the sourcemaps after the build
-            filesToDeleteAfterUpload: "./dist/**/*.map",
-        }
+        // sourcemaps: {
+        //     // delete the sourcemaps after the build
+        //     filesToDeleteAfterUpload: "./dist/**/*.map",
+        // }
     })],
 
     build: {

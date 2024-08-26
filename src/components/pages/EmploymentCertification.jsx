@@ -69,26 +69,25 @@ export const EmploymentCertification = () => {
         {
             field: "salary",
             headerName: "Salario",
+            type: "number",
             width: 125,
             editable: false,
-            valueGetter: (params) => params.row.salary * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         {
             field: "bonuses",
             headerName: "Bonificación",
             width: 125,
             editable: false,
-            valueGetter: (params) => params.row.bonuses * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         { field: "contract_type", headerName: "Contrato", width: 170, editable: false },
         {
@@ -97,7 +96,7 @@ export const EmploymentCertification = () => {
             headerName: "Fecha de Creación",
             width: 170,
             editable: false,
-            valueFormatter: (params) => new Date(params.value).toLocaleString(),
+            valueFormatter: (value) => new Date(value).toLocaleString(),
         },
         { field: "start_date", headerName: "Fecha de Ingreso", width: 150, editable: false },
         { field: "expedition_city", headerName: "Lugar de Expedición", width: 180, editable: false },

@@ -15,7 +15,7 @@
         "@mui/icons-material": "^5.16.7",
         "@mui/lab": "5.0.0-alpha.173",
         "@mui/material": "^5.16.7",
-        "@mui/x-data-grid": "^6.20.4",
+        "@mui/x-data-grid": "^7.14.0",
         "@sentry/react": "^8.26.0",
         "@sentry/vite-plugin": "^2.22.2",
         "cally": "^0.7.1",

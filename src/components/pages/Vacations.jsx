@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Box, Button, Typography, styled, LinearProgress, Fade, Tooltip, Dialog, DialogTitle, DialogContent, TextField, Chip, Collapse } from "@mui/material";
 import {
     DataGrid,
+    gridClasses,
     GridActionsCellItem,
     GridToolbarColumnsButton,
     GridToolbarFilterButton,
@@ -126,7 +127,7 @@ export const Vacations = () => {
 
     const getVacations = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacation/request`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -171,7 +172,7 @@ export const Vacations = () => {
         }
 
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacation/request/${vacationId}/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/${vacationId}/`, {
                 method: "PATCH",
                 credentials: "include",
                 body: formData,
@@ -202,9 +203,9 @@ export const Vacations = () => {
             headerName: "Fecha inicio",
             width: 110,
             type: "date",
-            valueGetter: (params) => {
-                if (params.value) {
-                    const date = new Date(params.value + "T00:00:00");
+            valueGetter: (value) => {
+                if (value) {
+                    const date = new Date(value + "T00:00:00");
                     return date;
                 } else {
                     return "";
@@ -216,9 +217,9 @@ export const Vacations = () => {
             headerName: "Fecha fin",
             type: "date",
             width: 110,
-            valueGetter: (params) => {
-                if (params.value) {
-                    const date = new Date(params.value + "T00:00:00");
+            valueGetter: (value) => {
+                if (value) {
+                    const date = new Date(value + "T00:00:00");
                     return date;
                 } else {
                     return "";
@@ -226,13 +227,13 @@ export const Vacations = () => {
             },
         },
         {
-            field: "uploaded_at",
+            field: "created_at",
             headerName: "Fecha de solicitud",
             width: 150,
             type: "date",
-            valueGetter: (params) => {
-                if (params.value) {
-                    let dateWithoutTime = params.value.split("T")[0];
+            valueGetter: (value) => {
+                if (value) {
+                    let dateWithoutTime = value.split("T")[0];
                     const date = new Date(dateWithoutTime + "T00:00:00");
                     return date;
                 } else {
@@ -301,10 +302,10 @@ export const Vacations = () => {
             type: "singleSelect",
             valueOptions: ["PENDIENTE", "APROBADA", "RECHAZADA"],
             // return a chip with the status
-            valueGetter: (params) => {
-                if (params.value === null) {
+            valueGetter: (value) => {
+                if (value === null) {
                     return "PENDIENTE";
-                } else if (params.value === true) {
+                } else if (value === true) {
                     return "APROBADA";
                 }
                 return "RECHAZADA";
@@ -347,10 +348,10 @@ export const Vacations = () => {
             type: "singleSelect",
             valueOptions: ["PENDIENTE", "APROBADA", "RECHAZADA"],
             // return a chip with the status
-            valueGetter: (params) => {
-                if (params.value === null) {
+            valueGetter: (value) => {
+                if (value === null) {
                     return "PENDIENTE";
-                } else if (params.value === true) {
+                } else if (value === true) {
                     return "APROBADA";
                 }
                 return "RECHAZADA";
@@ -385,7 +386,9 @@ export const Vacations = () => {
                 return (
                     <Chip
                         onClick={
-                            params.row.hr_approbation === true && payrollApprovalPermission ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined
+                            params.row.hr_approbation === true && payrollApprovalPermission
+                                ? () => handleVacancyApproval(params.id, "payroll_approbation")
+                                : undefined
                         }
                         icon={<CancelIcon />}
                         label="Rechazada"
@@ -407,12 +410,12 @@ export const Vacations = () => {
             type: "singleSelect",
             valueOptions: ["PENDIENTE", "APROBADA", "RECHAZADA", "CANCELADA"],
             // return a chip with the status
-            renderCell: (params) => {
-                if (params.value === "PENDIENTE") {
+            renderCell: (value) => {
+                if (value === "PENDIENTE") {
                     return <Chip icon={<PendingIcon />} label="Pendiente" />;
-                } else if (params.value === "APROBADA") {
+                } else if (value === "APROBADA") {
                     return <Chip icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
-                } else if (params.value === "RECHAZADA") {
+                } else if (value === "RECHAZADA") {
                     return <Chip icon={<CancelIcon />} label="Rechazada" color="error" />;
                 }
                 return <Chip icon={<EventBusyIcon />} label="Cancelado" color="warning" />;
@@ -424,7 +427,7 @@ export const Vacations = () => {
             width: 150,
             type: "actions",
             cellClassName: "actions",
-            getActions: (GridRowParams) => {
+            getActions: (row) => {
                 return [
                     <Tooltip title="Ver carta de solicitud de vacaciones" arrow>
                         <GridActionsCellItem
@@ -433,7 +436,7 @@ export const Vacations = () => {
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => window.open(`${getApiUrl().apiUrl}${GridRowParams.row.request_file}`, "_blank")}
+                            onClick={() => window.open(`${getApiUrl().apiUrl}${row.request_file}`, "_blank")}
                         />
                     </Tooltip>,
                 ];
@@ -548,6 +551,7 @@ export const Vacations = () => {
                 </Typography>
                 <Box sx={{ width: "100%", height: "80vh" }}>
                     <DataGrid
+                        getRowHeight={() => "auto"}
                         initialState={{
                             sorting: {
                                 sortModel: [{ field: "id", sort: "desc" }],
@@ -563,7 +567,13 @@ export const Vacations = () => {
                             noRowsOverlay: CustomNoRowsOverlay,
                             noResultsOverlay: CustomNoResultsOverlay,
                         }}
-                        sx={{ boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
+                        sx={{
+                            boxShadow: "0px 0px 5px 0px #e0e0e0",
+                            borderRadius: "10px",
+                            [`& .${gridClasses.cell}`]: {
+                                py: 1,
+                            },
+                        }}
                         columns={columns}
                         rows={rows}
                     ></DataGrid>
