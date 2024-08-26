@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Vacaciones</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            /* Import the logo from static */
+            background: linear-gradient(rgba(255, 255, 255, 0.8),
+                    rgba(255, 255, 255, 0.8)), url('https://insights-api.cyc-bpo.com/static/images/just_logo.png');
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            border-radius: 10px;
+            width: 90%;
+            max-width: 85%;
+            height: auto;
+            padding: 30px;
+            margin: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            margin: 35px 0px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            color: #0056b3;
+            letter-spacing: 1px;
+        }
+
+        .content p {
+            margin: 0;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .signature {
+            margin-top: 40px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 14px;
+            text-align: center;
+            color: #777;
+        }
+
+        @media print {
+            body {
+                padding: 0;
+                margin: 0;
+                height: auto;
+            }
+
+            .card {
+                margin: 0;
+                padding: 20px;
+                box-shadow: none;
+                width: 100%;
+                height: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="header">
+            <h1>Solicitud de Vacaciones</h1>
+        </div>
+        <div class="content">
+            <p>{{ vacation.created_at }}</p>
+            <p>A quien corresponda:</p>
+            <p>
+                Por medio de la presente, me dirijo a usted para solicitar un período de vacaciones
+                desde el <strong>{{ vacation.start_date }}</strong> hasta el <strong>{{ vacation.end_date }}</strong>.
+            </p>
+            <p>
+                He asegurado que todas mis tareas y responsabilidades estarán debidamente gestionadas
+                durante mi ausencia. También estoy disponible para brindar cualquier asistencia adicional
+                que sea necesaria para garantizar una transición sin problemas antes de mi salida.
+            </p>
+            <p>
+                Agradezco de antemano su atención a esta solicitud y quedo a la espera de su aprobación.
+            </p>
+            <div class="signature">
+                <p>Atentamente,</p>
+                <p><strong>{{ vacation.user }}</strong></p>
+                <p>{{ vacation.user.job_title }}</p>
+            </div>
+        </div>
+        <div class="footer">
+            <p>© {{ vacation.created_at|date:"Y" }} C&C Services S.A.S. - Todos los derechos reservados</p>
+        </div>
+    </div>
+</body>
+
+</html>

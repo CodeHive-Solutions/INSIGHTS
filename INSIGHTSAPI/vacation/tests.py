@@ -65,7 +65,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["hr_approbation"] = True  # This is just a check
         self.vacation_request["mon_to_sat"] = False
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
@@ -74,7 +74,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     def test_vacation_create_no_mon_to_sat(self):
         """Test creating a vacation without mon_to_sat."""
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -92,7 +92,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["start_date"] = "2024-07-22"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -111,7 +111,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["user"] = self.user
         self.vacation_request["uploaded_by"] = self.test_user
         VacationRequest.objects.create(**self.vacation_request)
-        response = self.client.get(reverse("vacation-request-list"))
+        response = self.client.get(reverse("vacation-list"))
         vacation_requests = VacationRequest.objects.filter(user=self.user)
         serializer = VacationRequestSerializer(vacation_requests, many=True)
         self.assertEqual(
@@ -128,7 +128,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["user"] = self.test_user
         self.vacation_request["uploaded_by"] = self.test_user
         VacationRequest.objects.create(**self.vacation_request)
-        response = self.client.get(reverse("vacation-request-list"))
+        response = self.client.get(reverse("vacation-list"))
         vacation_requests = VacationRequest.objects.all()
         serializer = VacationRequestSerializer(vacation_requests, many=True)
         self.assertEqual(response.data, serializer.data)
@@ -153,7 +153,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["user"] = demo_user_admin
         self.vacation_request["uploaded_by"] = self.test_user
         VacationRequest.objects.create(**self.vacation_request)
-        response = self.client.get(reverse("vacation-request-list"))
+        response = self.client.get(reverse("vacation-list"))
         vacation_requests = VacationRequest.objects.filter(
             (Q(uploaded_by=self.user) | Q(user=self.user))
             | (
@@ -179,7 +179,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         Area.objects.create(name="Test Area", manager=self.user)
         self.vacation_request["user"] = demo_user
         VacationRequest.objects.create(**self.vacation_request)
-        response = self.client.get(reverse("vacation-request-list"))
+        response = self.client.get(reverse("vacation-list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
@@ -189,7 +189,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.get(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk})
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk})
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
@@ -205,7 +205,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["end_date"] = "2021-01-04"
         self.vacation_request["mon_to_sat"] = False
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -221,7 +221,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         demo_user.job_position.rank = 8
         demo_user.job_position.save()
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -235,7 +235,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["user"] = self.user.pk
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -252,7 +252,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.user.job_position.rank = 4
         self.user.job_position.save()
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -263,7 +263,7 @@ class VacationRequestModelTestCase(BaseTestCase):
     #     self.vacation_request["uploaded_by"] = self.user
     #     vacation_object = VacationRequest.objects.create(**self.vacation_request)
     #     response = self.client.patch(
-    #         reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+    #         reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
     #         {"status": "CANCELADA"},
     #     )
     #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -275,7 +275,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.test_user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"status": "CANCELADA"},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -288,7 +288,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"manager_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -304,7 +304,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"manager_approbation": False},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -319,7 +319,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"manager_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -334,7 +334,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["manager_approbation"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"hr_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -351,7 +351,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["manager_approbation"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"hr_approbation": False},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -368,7 +368,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"hr_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -379,7 +379,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"hr_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -392,7 +392,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["hr_approbation"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"payroll_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -408,7 +408,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["hr_approbation"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"payroll_approbation": False},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -424,7 +424,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"payroll_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -435,7 +435,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["uploaded_by"] = self.user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
-            reverse("vacation-request-detail", kwargs={"pk": vacation_object.pk}),
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"payroll_approbation": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
@@ -447,7 +447,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["start_date"] = "2024-08-12"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -463,7 +463,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["start_date"] = "2024-01-01"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -479,7 +479,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["start_date"] = "2024-05-04"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -497,7 +497,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["start_date"] = "2024-05-04"
         self.vacation_request["end_date"] = "2024-05-06"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
@@ -507,7 +507,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["end_date"] = "2024-01-01"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -523,7 +523,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["end_date"] = "2024-05-04"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -541,7 +541,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["start_date"] = "2024-05-03"
         self.vacation_request["end_date"] = "2024-05-04"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
@@ -551,7 +551,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["mon_to_sat"] = False
         self.vacation_request["end_date"] = "2024-01-24"
         response = self.client.post(
-            reverse("vacation-request-list"),
+            reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(
@@ -561,3 +561,14 @@ class VacationRequestModelTestCase(BaseTestCase):
             response.data["non_field_errors"][0],
             "No puedes solicitar más de 15 días de vacaciones.",
         )
+
+    def test_get_vacation_pdf(self):
+        """Test getting the vacation request PDF."""
+        self.vacation_request["user"] = self.test_user
+        self.vacation_request["uploaded_by"] = self.user
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.get(
+            reverse("vacation-get-pdf", kwargs={"pk": vacation_object.pk})
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response["Content-Type"], "application/pdf")

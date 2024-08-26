@@ -36,7 +36,7 @@ class VacationRequest(models.Model):
     uploaded_by = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="uploaded_requests"
     )
-    uploaded_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         """Meta class for the vacation request model."""

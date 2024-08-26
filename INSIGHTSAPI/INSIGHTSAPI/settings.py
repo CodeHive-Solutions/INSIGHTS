@@ -442,7 +442,7 @@ else:
     SENDFILE_BACKEND = "django_sendfile.backends.simple"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15) if not DEBUG else timedelta(hours=8),
     "REFRESH_TOKEN_LIFETIME": timedelta(hours=1),
     "ROTATE_REFRESH_TOKENS": True,
     "ALGORITHM": "HS256",
