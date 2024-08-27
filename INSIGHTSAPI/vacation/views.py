@@ -317,7 +317,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         pdf = pdfkit.from_string(rendered_template, False, options=options)
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = (
-            'attachment; filename="Solicitud de vacaciones - {}.pdf"'.format(
+            'inline; filename="Solicitud de vacaciones - {}.pdf"'.format(
                 self.get_object().user.get_full_name()
             )
         )

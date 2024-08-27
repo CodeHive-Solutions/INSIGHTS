@@ -11,53 +11,53 @@
             height: 100%;
             margin: 0;
             padding: 0;
-        }
-
-        body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
-            /* Import the logo from static */
-            background: linear-gradient(rgba(255, 255, 255, 0.8),
-                    rgba(255, 255, 255, 0.8)), url('https://insights-api.cyc-bpo.com/static/images/just_logo.png');
-            background-size: cover;
-            background-position: center;
             color: #333;
             line-height: 1.6;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)),
+                url('https://insights-api.cyc-bpo.com/static/images/just_logo.png') no-repeat center center;
+            background-size: cover;
             display: flex;
             justify-content: center;
-            align-items: center;
         }
 
-        .card {
-            border-radius: 10px;
-            width: 90%;
-            max-width: 85%;
-            height: auto;
-            padding: 30px;
-            margin: 40px;
-            display: flex;
-            flex-direction: column;
+        #signature-rh {
+            padding-left:200px;
         }
 
         .header {
-            margin: 35px 0px;
             text-align: center;
+            margin-top: 80px;
+            margin-bottom: 40px;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 32px;
+            font-size: 28px;
             color: #0056b3;
             letter-spacing: 1px;
         }
 
         .content p {
-            margin: 0;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 18px;
+            text-align: justify;
         }
 
         .signature {
-            margin-top: 40px;
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .signature p {
+            margin: 5px 0;
+        }
+
+        .signature-line {
+            margin: 150px 0 10px 0;
+            padding-top: 10px;
+            font-size: 18px;
+            font-style: italic;
         }
 
         .footer {
@@ -72,6 +72,7 @@
                 padding: 0;
                 margin: 0;
                 height: auto;
+                background: none;
             }
 
             .card {
@@ -91,7 +92,7 @@
             <h1>Solicitud de Vacaciones</h1>
         </div>
         <div class="content">
-            <p>{{ vacation.created_at }}</p>
+            <p>{{ vacation.created_at|date }}</p>
             <p>A quien corresponda:</p>
             <p>
                 Por medio de la presente, me dirijo a usted para solicitar un período de vacaciones
@@ -110,9 +111,23 @@
                 <p><strong>{{ vacation.user }}</strong></p>
                 <p>{{ vacation.user.job_title }}</p>
             </div>
+            <div class="signature-line">
+                <table>
+                    <td>
+                        _____________________________________<br>
+                        GARZON NAVAS CESAR ALBERTO <br>
+                        <i>Gerente General</i>
+                    </td>
+                    <td id="signature-rh">
+                        _____________________________________<br>
+                        PINZON MARTINEZ JEANNETH OTILIA<br>
+                        <i>Gerente de Gestión Humana</i>
+                    </td>
+                </table>
+            </div>
         </div>
         <div class="footer">
-            <p>© {{ vacation.created_at|date:"Y" }} C&C Services S.A.S. - Todos los derechos reservados</p>
+            <p>Este documento es confidencial y para uso exclusivo del destinatario.</p>
         </div>
     </div>
 </body>
