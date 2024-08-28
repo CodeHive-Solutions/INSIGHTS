@@ -47,6 +47,7 @@ class User(AbstractUser):
         blank=False,
         related_name="users",
     )
+    points = models.IntegerField(default=0)
     date_joined = None
     last_login = None
 
@@ -60,6 +61,7 @@ class User(AbstractUser):
 
         permissions = [
             ("upload_robinson_list", "Can upload robinson list"),
+            ("upload_points", "Can upload points"),
         ]
 
     def get_full_name(self) -> str:
@@ -89,79 +91,81 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         """Create a user in the database."""
         if not self.pk:
-            with connections["staffnet"].cursor() as db_connection:
-                if not self.cedula:
-                    db_connection.execute(
-                        "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
-                        [self.username],
-                    )
-                else:
-                    db_connection.execute(
-                        "SELECT cedula, cargo,campana_general FROM employment_information WHERE cedula = %s",
-                        [self.cedula],
-                    )
-                result = db_connection.fetchone()
-                if (
-                    str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}
-                    or str(self.username).startswith("test_user_")
-                ) or self.cedula == "00000000":
-                    result = (
-                        str(random.randint(0, 99999999)),
-                        (
-                            "Administrador"
-                            if str(self.username).upper()
-                            in {"ZEUS", "ADMIN", "STAFFNET"}
-                            else "Test"
-                        ),
-                        (
-                            "Administrador"
-                            if str(self.username).upper()
-                            in {"ZEUS", "ADMIN", "STAFFNET"}
-                            else "Test"
-                        ),
-                    )
-                    self.email = settings.EMAIL_FOR_TEST
-                elif not result:
-                    raise ValidationError(
-                        "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
-                    )
-                self.cedula = result[0]
-                job_title = result[1]
-                user = User.objects.filter(cedula=self.cedula).first()
-                if user:
-                    self.pk = user.pk
-                job_position = JobPosition.objects.filter(name=job_title).first()
-                if not job_position:
-                    if "gerente jr" in job_title.lower():
-                        rank = 5
-                    elif "gerente" in job_title.lower():
-                        rank = 6
-                    elif "director" in job_title.lower() or "jefe" in job_title.lower():
-                        rank = 4
-                    elif "coordinador" in job_title.lower():
-                        rank = 3
-                    elif str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
-                        rank = 9
-                    else:
-                        mail_admins(
-                            "Cargo no encontrado",
-                            f"El cargo {job_title} no fue encontrado en la base de datos de jerarquía.",
+            if (
+                str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}
+                or str(self.username).startswith("test_user_")
+            ) or self.cedula == "00000000":
+                result = [
+                    str(random.randint(0, 99999999)),
+                    (
+                        "Administrador"
+                        if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}
+                        else "Test"
+                    ),
+                    (
+                        "Administrador"
+                        if str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}
+                        else "Test"
+                    ),
+                ]
+                if self.cedula:
+                    result[0] = self.cedula
+                mails = [settings.EMAIL_FOR_TEST]
+            else:
+                with connections["staffnet"].cursor() as db_connection:
+                    if not self.cedula:
+                        db_connection.execute(
+                            "SELECT cedula, cargo,campana_general FROM employment_information WHERE usuario_windows = %s",
+                            [self.username],
                         )
-                        rank = 1
-                    job_position = JobPosition.objects.create(name=job_title, rank=rank)
-                self.job_position_id = job_position.id
-                area, _ = Area.objects.get_or_create(name=result[2])
-                self.area_id = area.id
-                if not self.is_superuser:
-                    self.set_unusable_password()
-                db_connection.execute(
-                    "SELECT correo, correo_corporativo FROM personal_information WHERE cedula = %s",
-                    [self.cedula],
-                )
-                mails = db_connection.fetchone()
-                if mails:
-                    self.email = mails[0]
-                    self.company_email = mails[1] if mails[1] else None
+                    else:
+                        db_connection.execute(
+                            "SELECT cedula, cargo,campana_general FROM employment_information WHERE cedula = %s",
+                            [self.cedula],
+                        )
+                    result = db_connection.fetchone()
+
+                    if not result:
+                        raise ValidationError(
+                            "Este usuario de windows no esta registrado en StaffNet contacta a tecnología para mas información."
+                        )
+                    db_connection.execute(
+                        "SELECT correo, correo_corporativo FROM personal_information WHERE cedula = %s",
+                        [result[0]],
+                    )
+                    mails = db_connection.fetchone()
+            self.cedula = result[0]
+            if mails:
+                self.email = mails[0]
+                self.company_email = mails[1] if len(mails) > 1 else None
+            job_title = result[1]
+            user = User.objects.filter(cedula=self.cedula).first()
+            if user:
+                self.pk = user.pk
+            job_position = JobPosition.objects.filter(name=job_title).first()
+            if not job_position:
+                if "gerente jr" in job_title.lower():
+                    rank = 5
+                elif "gerente" in job_title.lower():
+                    rank = 6
+                elif "director" in job_title.lower() or "jefe" in job_title.lower():
+                    rank = 4
+                elif "coordinador" in job_title.lower():
+                    rank = 3
+                elif str(self.username).upper() in {"ZEUS", "ADMIN", "STAFFNET"}:
+                    rank = 9
+                else:
+                    mail_admins(
+                        "Cargo no encontrado",
+                        f"El cargo {job_title} no fue encontrado en la base de datos de jerarquía.",
+                    )
+                    rank = 1
+                job_position = JobPosition.objects.create(name=job_title, rank=rank)
+            self.job_position_id = job_position.id
+            area, _ = Area.objects.get_or_create(name=result[2])
+            self.area_id = area.id
+            if not self.is_superuser:
+                self.set_unusable_password()
         # Iterate through all fields in the model
         for field in self._meta.fields:
             # Check if the field is a CharField or TextField

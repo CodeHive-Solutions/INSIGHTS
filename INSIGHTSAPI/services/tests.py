@@ -3,6 +3,7 @@
 import os
 import requests
 import holidays
+from typing import Optional
 from rest_framework.test import APITestCase
 from datetime import timedelta
 from django.test import TestCase, Client, override_settings
@@ -30,9 +31,10 @@ class BaseTestCase(APITestCase):
         )
         self.user = User.objects.get(username="staffnet")
 
-    def create_demo_user(self):
+    def create_demo_user(self, cedula: Optional[int] = None):
         """Create a demo user for tests."""
         demo_user = User.objects.create(
+            cedula=cedula,
             username="test_user_" + str(User.objects.count() + 1),
             email=settings.EMAIL_FOR_TEST,
             first_name="Demo",

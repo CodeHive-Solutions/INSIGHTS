@@ -1,12 +1,15 @@
 import os
+import csv
 import logging
 import requests
 import sys
+from notifications.utils import create_notification
 from django.db import connections
 from rest_framework.decorators import api_view
 from django.db.models import Q
 from django.conf import settings
 from django.core.mail import mail_admins
+from django.contrib.auth.decorators import permission_required
 from rest_framework.response import Response
 from users.models import User
 
@@ -200,4 +203,85 @@ def get_subordinates(request):
         users = [user for user in users if int(user.cedula) in active_users]
     # Serialize the users
     data = [{"id": user.id, "name": user.get_full_name()} for user in users]
+    return Response(data)
+
+
+@api_view(["POST"])
+@permission_required("users.upload_points", raise_exception=True)
+def upload_points(request):
+    """Upload the user points in the database using a CSV file."""
+    if not request.user.has_perm("users.upload_points"):
+        return Response(
+            {
+                "error": "No tienes permisos para realizar esta acción, por favor contacta a un administrador."
+            },
+            status=403,
+        )
+    file = request.FILES.get("file")
+    if not file:
+        return Response(
+            {
+                "error": "No se ha encontrado el archivo, por favor verifica e intenta de nuevo."
+            },
+            status=400,
+        )
+    if not file.name.endswith(".csv"):
+        return Response(
+            {
+                "error": "El archivo debe ser un archivo CSV, por favor verifica e intenta de nuevo."
+            },
+            status=400,
+        )
+    # Read the file using csv module
+    file_data = file.read().decode("utf-8-sig").splitlines()
+    lines = csv.reader(file_data, delimiter=";")
+    # Check the header
+    header = next(lines)
+    if len(header) != 2:
+        lines = csv.reader(file_data.splitlines(), delimiter=",")
+        header = next(lines)
+    if header != ["cedula", "puntos"]:
+        return Response(
+            {
+                "error": "El archivo debe tener dos columnas llamadas 'cedula' y 'puntos', por favor verifica e intenta de nuevo."
+            },
+            status=400,
+        )
+    # Update the points
+    errors = []
+    for line in lines:
+        cedula = line[0]
+        points = line[1]
+        user = User.objects.filter(cedula=cedula).first()
+        if user:
+            user.points = points
+            user.save()
+        else:
+            errors.append(cedula)
+    if errors:
+        create_notification(
+            "Error actualizando puntos",
+            f"Algunos usuarios no fueron encontrados: {', '.join(errors)}",
+            request.user,
+        )
+        return Response(
+            {"error": "Algunos usuarios no fueron encontrados", "errors": errors},
+            status=400,
+        )
+    return Response({"message": "User points updated"})
+
+
+@api_view(["GET"])
+def get_points(request):
+    """Check the user points in the database."""
+    users = User.objects.all().order_by("-points")
+    data = [
+        {
+            "cedula": user.cedula if user.cedula == request.user.cedula else None,
+            "area": user.area.name,
+            "name": user.get_full_name(),
+            "points": user.points,
+        }
+        for user in users
+    ]
     return Response(data)
