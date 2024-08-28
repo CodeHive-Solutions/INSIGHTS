@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 
 // Libraries
-import { motion, useIsPresent } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, useField } from "formik";
 import * as Yup from "yup";
@@ -68,7 +67,6 @@ const validationSchema = Yup.object().shape({
 
 export const RiskEvent = () => {
     const [rows, setRows] = useState([]);
-    const isPresent = useIsPresent();
     const [severity, setSeverity] = useState("success");
     const [message, setMessage] = useState();
     const [details, setDetails] = useState({});
@@ -343,9 +341,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Inicio",
             hidden: true,
             width: 200,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -357,9 +355,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Fin",
             width: 200,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -371,9 +369,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Descubrimiento",
             width: 200,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -385,9 +383,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Atención",
             width: 200,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -523,10 +521,10 @@ export const RiskEvent = () => {
             headerName: "Estado Actual",
             width: 100,
             editable: false,
-            valueFormatter: (params) => {
-                if (params.value == false) {
+            valueFormatter: (value) => {
+                if (value == false) {
                     return "CERRADO";
-                } else if (params.value == true) {
+                } else if (value == true) {
                     return "ABIERTO";
                 } else {
                     return "";
@@ -543,9 +541,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Cierre",
             width: 100,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -557,10 +555,10 @@ export const RiskEvent = () => {
             type: "singleSelect",
             headerName: "Clasificación",
             width: 100,
-            valueFormatter: (params) => {
-                if (params.value == false) {
+            valueFormatter: (value) => {
+                if (value == false) {
                     return "NO CRITICO";
-                } else if (params.value == true) {
+                } else if (value == true) {
                     return "CRITICO";
                 } else {
                     return "";
@@ -632,42 +630,32 @@ export const RiskEvent = () => {
         <>
             <Container
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Eventos de Riesgo Operativo
                 </Typography>
-                <DataGrid
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    rows={rows}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                    initialState={{
-                        sorting: {
-                            sortModel: [{ field: "start_date", sort: "desc" }],
-                        },
-                        columns: {
-                            columnVisibilityModel: {
-                                id: false,
+                <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                    <DataGrid
+                        columns={columns}
+                        rows={rows}
+                        slots={{
+                            toolbar: CustomToolbar,
+                        }}
+                        initialState={{
+                            sorting: {
+                                sortModel: [{ field: "start_date", sort: "desc" }],
                             },
-                        },
-                    }}
-                ></DataGrid>
+                            columns: {
+                                columnVisibilityModel: {
+                                    id: false,
+                                },
+                            },
+                        }}
+                    ></DataGrid>
+                </Box>
             </Container>
-            <motion.div
-                initial={{ scaleX: 1 }}
-                animate={{ scaleX: 0, transition: { duration: 0.5, ease: "circOut" } }}
-                exit={{ scaleX: 1, transition: { duration: 0.5, ease: "circIn" } }}
-                style={{ originX: isPresent ? 0 : 1 }}
-                className="privacy-screen"
-            />
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog maxWidth={"md"} open={openDialog} onClose={handleCloseDialog}>
                 <DialogTitle>Añadir un nuevo registro</DialogTitle>

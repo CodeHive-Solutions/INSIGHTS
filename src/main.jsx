@@ -4,9 +4,6 @@ import React, { useEffect } from "react";
 // Libraries
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ReactDOM from "react-dom/client";
-import { AnimatePresence } from "framer-motion";
-import { motion } from "framer-motion";
-import { useOutlet } from "react-router-dom";
 import * as Sentry from "@sentry/react";
 import { useLocation, useNavigationType, createRoutesFromChildren, matchRoutes } from "react-router-dom";
 
@@ -26,7 +23,6 @@ import GoalsStats from "./components/pages/GoalsStats";
 import Sgc from "./components/pages/Sgc";
 import UploadFiles from "./components/pages/UploadFiles";
 import EthicalLine from "./components/pages/EthicalLine";
-import BasicDocument from "./components/shared/GoalsPDF";
 import Quality from "./components/pages/Quality";
 import Legal from "./components/pages/Legal";
 import Vacancies from "./components/pages/Vacancies";
@@ -35,14 +31,11 @@ import RiskEvents from "./components/pages/RiskEvents";
 import Promotions from "./components/pages/Promotions";
 import Payslips from "./components/pages/Payslips";
 import MyPayslips from "./components/pages/MyPayslips";
-import SwiperSlider from "./components/shared/SwiperSlider";
 import EmploymentCertification from "./components/pages/EmploymentCertification";
-import ImageMagnifier from "./components/pages/ImageMagnifier";
 import InactivityDetector from "./components/shared/InactivityDetector";
-import Pqrs from "./components/pages/Pqrs";
 import Vacations from "./components/pages/Vacations";
 import PowerBI from "./components/pages/PowerBI";
-import { getApiUrl } from "./assets/getApi";
+import Points from "./components/pages/Points";
 import { PersonalInformationProvider } from "./context/PersonalInformation";
 
 Sentry.init({
@@ -117,10 +110,6 @@ const router = createBrowserRouter([
     {
         path: "ethical-line",
         element: <EthicalLine />,
-    },
-    {
-        path: "goal-pdf",
-        element: <BasicDocument />,
     },
     {
         path: "test",
@@ -203,12 +192,6 @@ const router = createBrowserRouter([
                 path: "test",
                 element: <PowerBI />,
             },
-            // getApiUrl().environment === "development"
-            //     ? {
-            //           path: "pqrs",
-            //           element: <Pqrs />,
-            //       }
-            //     : null,
         ],
     },
 ]);
@@ -217,27 +200,12 @@ if ("scrollRestoration" in history) {
     history.scrollRestoration = "manual";
 }
 
-function AnimatedRoutes() {
-    const outlet = useOutlet();
-    const key = outlet ? outlet.key : "";
-
-    return (
-        <motion.div key={key} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {outlet}
-        </motion.div>
-    );
-}
-
 ReactDOM.createRoot(document.getElementById("root")).render(
     <PersonalInformationProvider>
         <React.StrictMode>
             <ThemeProvider theme={theme}>
                 <CssBaseline>
-                    <RouterProvider router={router}>
-                        <AnimatePresence mode="wait">
-                            <AnimatedRoutes />
-                        </AnimatePresence>
-                    </RouterProvider>
+                    <RouterProvider router={router} />
                 </CssBaseline>
             </ThemeProvider>
         </React.StrictMode>

@@ -27,7 +27,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "start_date",
             "end_date",
             "request_file",
-            "uploaded_at",
+            "created_at",
             "manager_approbation",
             "manager_approved_at",
             "hr_approbation",
@@ -43,7 +43,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "hr_approved_at",
             "payroll_approved_at",
             "uploaded_by",
-            "uploaded_at",
+            "created_at",
         ]
 
     def to_representation(self, instance):

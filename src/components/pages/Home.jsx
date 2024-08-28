@@ -1,8 +1,5 @@
 import React, { useEffect, useState, useLocation, useContext } from "react";
 
-// Libraries and Hooks
-import { useInView } from "react-intersection-observer";
-
 // Custom Components
 import { getApiUrl } from "../../assets/getApi.js";
 import CarouselComponent from "../shared/Carousel";
@@ -27,17 +24,17 @@ import points from "../../images/home-carousel/points.png";
 import water from "../../images/home-carousel/water.png";
 import waterConsumed from "../../images/home-carousel/water-consumed.png";
 import socialMedia from "../../images/home-carousel/social-media.png";
-import certification from "../../images/home-carousel/certification.png";
-import voting from "../../images/home-carousel/voting.png";
 import mapProcess from "../../images/home-carousel/process-map.png";
+import coexistence from "../../images/home-carousel/coexistence.png";
+import trivia from "../../images/home-carousel/trivia.png";
 
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: coexistence },
+    { image: trivia },
     { image: mapProcess },
-    { image: voting },
-    { image: certification },
     { image: points },
     { image: water },
     { image: waterConsumed },
@@ -147,11 +144,6 @@ const Home = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const [ref, inView] = useInView({
-        triggerOnce: true,
-        threshold: 0.5,
-    });
-
     const noBirthdays = (message) => {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100%" }}>
@@ -226,7 +218,7 @@ const Home = () => {
                 </Typography>
             </Box>
             {/* <Grow in={inView}> */}
-            <Box ref={ref} sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
+            <Box sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {yesterdayBirthdays.length === 0 ? (
                         <>

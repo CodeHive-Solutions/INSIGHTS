@@ -9,9 +9,8 @@ import { getApiUrl } from "../../assets/getApi";
 import { handleError } from "../../assets/handleError";
 
 // Material-UI
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
-import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 
 export const EmploymentCertification = () => {
     const [rows, setRows] = useState([]);
@@ -64,32 +63,30 @@ export const EmploymentCertification = () => {
     const handleCloseSnack = () => setOpenSnack(false);
 
     const columns = [
-        { field: "id", headerName: "ID", width: 70 },
         { field: "cedula", headerName: "Cedula", width: 100 },
         { field: "position", headerName: "Cargo", width: 360, editable: false },
         {
             field: "salary",
             headerName: "Salario",
+            type: "number",
             width: 125,
             editable: false,
-            valueGetter: (params) => params.row.salary * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         {
             field: "bonuses",
             headerName: "Bonificación",
             width: 125,
             editable: false,
-            valueGetter: (params) => params.row.bonuses * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         { field: "contract_type", headerName: "Contrato", width: 170, editable: false },
         {
@@ -98,7 +95,7 @@ export const EmploymentCertification = () => {
             headerName: "Fecha de Creación",
             width: 170,
             editable: false,
-            valueFormatter: (params) => new Date(params.value).toLocaleString(),
+            valueFormatter: (value) => new Date(value).toLocaleString(),
         },
         { field: "start_date", headerName: "Fecha de Ingreso", width: 150, editable: false },
         { field: "expedition_city", headerName: "Lugar de Expedición", width: 180, editable: false },
@@ -108,36 +105,33 @@ export const EmploymentCertification = () => {
         <>
             <Container
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Certificaciones Laborales
                 </Typography>
-                <DataGrid
-                    initialState={{
-                        sorting: {
-                            sortModel: [{ field: "created_at", sort: "desc" }],
-                        },
-                    }}
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    rows={rows}
-                    slotProps={{
-                        toolbar: {
-                            csvOptions: {
-                                fileName: "employment-certifications",
-                                delimiter: ";",
-                                utf8WithBom: true,
+                <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                    <DataGrid
+                        initialState={{
+                            sorting: {
+                                sortModel: [{ field: "created_at", sort: "desc" }],
                             },
-                        },
-                    }}
-                    slots={{ toolbar: GridToolbar }}
-                ></DataGrid>
+                        }}
+                        columns={columns}
+                        rows={rows}
+                        slotProps={{
+                            toolbar: {
+                                csvOptions: {
+                                    fileName: "employment-certifications",
+                                    delimiter: ";",
+                                    utf8WithBom: true,
+                                },
+                            },
+                        }}
+                        slots={{ toolbar: GridToolbar }}
+                    ></DataGrid>
+                </Box>
             </Container>
 
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />

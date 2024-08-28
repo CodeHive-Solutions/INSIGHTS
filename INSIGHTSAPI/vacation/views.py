@@ -1,19 +1,25 @@
+import base64
+import pdfkit
 import datetime
+from django.utils import timezone
 from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.decorators import action
 from notifications.utils import create_notification
+from django.http import HttpResponse
 from django.db.models import Q
 from django.core.mail import mail_admins
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from users.models import User
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
 
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
-    queryset = VacationRequest.objects.all()
+    queryset = VacationRequest.objects.all().select_related("user", "uploaded_by")
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
 
@@ -284,3 +290,35 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             {"detail": "You do not have permission to perform this action."},
             status=status.HTTP_403_FORBIDDEN,
         )
+
+    @action(detail=True, methods=["get"], url_path="get-pdf", url_name="get-pdf")
+    def generate_pdf(self, request, pk=None):
+        context = {
+            "vacation": self.get_object(),
+            "current_date": timezone.now().strftime("%Y-%m-%d"),
+            "company_logo": base64.b64encode(
+                open("static/images/just_logo.png", "rb").read()
+            ).decode("utf-8"),
+        }
+        # Import the html template
+        rendered_template = render_to_string(
+            "vacation_request.html",
+            context,
+        )
+        # PDF options
+        options = {
+            "page-size": "Letter",
+            "encoding": "UTF-8",
+            "margin-top": "0mm",
+            "margin-right": "0mm",
+            "margin-bottom": "0mm",
+            "margin-left": "0mm",
+        }
+        pdf = pdfkit.from_string(rendered_template, False, options=options)
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = (
+            'inline; filename="Solicitud de vacaciones - {}.pdf"'.format(
+                self.get_object().user.get_full_name()
+            )
+        )
+        return response

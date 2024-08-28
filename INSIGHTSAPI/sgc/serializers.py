@@ -54,3 +54,4 @@ class SGCFileSerializer(serializers.ModelSerializer):
                 "Formato de archivo no válido. Se aceptan los siguientes tipos: .docx, .pdf, .pptx, .xlsx, .doc"
             )
         return value
+    

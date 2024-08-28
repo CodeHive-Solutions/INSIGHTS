@@ -119,7 +119,9 @@ export const MyPayslips = () => {
             headerName: "Fecha de Envió",
             width: 150,
             editable: false,
-            valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+            valueGetter: (value) => {
+                return new Date(value);
+            },
         },
         {
             field: "gross_earnings",
@@ -127,12 +129,11 @@ export const MyPayslips = () => {
             headerName: "Total Devengado",
             width: 150,
             editable: false,
-            valueGetter: (params) => params.row.gross_earnings * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         {
             field: "total_deductions",
@@ -140,12 +141,11 @@ export const MyPayslips = () => {
             headerName: "Total Deducciones",
             width: 150,
             editable: false,
-            valueGetter: (params) => params.row.total_deductions * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         {
             field: "net_pay",
@@ -153,12 +153,11 @@ export const MyPayslips = () => {
             headerName: "Pago Neto",
             width: 150,
             editable: false,
-            valueGetter: (params) => params.row.net_pay * 1,
-            valueFormatter: (params) =>
+            valueFormatter: (value) =>
                 new Intl.NumberFormat("es-CO", {
                     style: "currency",
                     currency: "COP",
-                }).format(params.value),
+                }).format(value),
         },
         {
             field: "reenviar",
@@ -225,33 +224,30 @@ export const MyPayslips = () => {
 
             <Container
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Mis desprendibles de nomina
                 </Typography>
-                <DataGrid
-                    initialState={{
-                        sorting: {
-                            sortModel: [{ field: "created_at", sort: "desc" }],
-                        },
-                    }}
-                    slots={{ toolbar: GridToolbar }}
-                    slotProps={{
-                        toolbar: {
-                            showQuickFilter: true,
-                        },
-                    }}
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    toolbar
-                    rows={rows}
-                ></DataGrid>
+                <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                    <DataGrid
+                        initialState={{
+                            sorting: {
+                                sortModel: [{ field: "created_at", sort: "desc" }],
+                            },
+                        }}
+                        slots={{ toolbar: GridToolbar }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                            },
+                        }}
+                        columns={columns}
+                        toolbar
+                        rows={rows}
+                    ></DataGrid>
+                </Box>
             </Container>
         </>
     );

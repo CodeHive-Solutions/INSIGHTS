@@ -27,10 +27,10 @@ const UploadFiles = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const permissions = JSON.parse(localStorage.getItem("permissions"));
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         window.scrollTo(0, 0);
-        if (!permissions || !permissions.includes("users.upload_robinson_list") ) {
+        if (!permissions || !permissions.includes("users.upload_robinson_list")) {
             navigate("/logged/home");
         }
     }, []);
@@ -46,7 +46,7 @@ const UploadFiles = () => {
     }, []);
 
     const { getRootProps, acceptedFiles, getInputProps, isDragActive } = useDropzone({
-        accept: { "application/csv": [".xlsx"] },
+        accept: { "application/csv": [".xlsx", ".csv"] },
         onDrop,
     });
 
@@ -80,6 +80,8 @@ const UploadFiles = () => {
                 path = `${getApiUrl().apiUrl}files/robinson-list/`;
             } else if (selectedFile.name.toUpperCase().includes("BIRTHDAYS")) {
                 path = `${getApiUrl(true).apiUrl}massive-update`;
+                // } else if (selectedFile.name.toUpperCase().includes("PUNTOS-CYC")) {
+                //     path = `${getApiUrl().apiUrl}users/upload-points/`;
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");
                 setLoading(false);

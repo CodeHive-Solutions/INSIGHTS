@@ -42,7 +42,7 @@ class VacancyViewSet(viewsets.ModelViewSet):
 class ReferenceViewSet(viewsets.ModelViewSet):
     """ViewSet for the Reference model"""
 
-    queryset = Reference.objects.all()
+    queryset = Reference.objects.all().select_related("made_by")
     serializer_class = ReferenceSerializer
     permission_classes = [IsAuthenticated, DjangoModelViewPermissionsAllowAllCreate]
 
