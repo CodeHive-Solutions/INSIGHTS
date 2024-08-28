@@ -257,10 +257,10 @@ export const Vacations = () => {
             type: "singleSelect",
             valueOptions: ["PENDIENTE", "APROBADA", "RECHAZADA"],
             // return a chip with the status
-            valueGetter: (params) => {
-                if (params.value === null) {
+            valueGetter: (value) => {
+                if (value === null) {
                     return "PENDIENTE";
-                } else if (params.value === true) {
+                } else if (value === true) {
                     return "APROBADA";
                 }
                 return "RECHAZADA";
