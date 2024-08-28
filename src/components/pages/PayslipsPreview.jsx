@@ -1,5 +1,6 @@
 // Material-UI
 import { DataGrid } from "@mui/x-data-grid";
+import { Box } from "@mui/material";
 
 const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -261,9 +262,9 @@ const columns = [
 
 const PayslipsPreview = ({ rows }) => {
     return (
-        <div style={{ width: "100%", height: 400, boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+        <Box style={{ width: "100%", height: 400, boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
             <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
-        </div>
+        </Box>
     );
 };
 

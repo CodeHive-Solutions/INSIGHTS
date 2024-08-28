@@ -40,7 +40,7 @@ export const VacanciesReferred = () => {
 
     const getVacanciesReferred = async () => {
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}/vacancy/reference/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacancy/reference/`, {
                 method: "GET",
                 credentials: "include",
             });
@@ -104,24 +104,21 @@ export const VacanciesReferred = () => {
         <>
             <Container
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Vacantes referidas
                 </Typography>
-                <DataGrid
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    rows={rows}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                ></DataGrid>
+                <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                    <DataGrid
+                        columns={columns}
+                        rows={rows}
+                        slots={{
+                            toolbar: CustomToolbar, 
+                        }}
+                    ></DataGrid>
+                </Box>
             </Container>
 
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />

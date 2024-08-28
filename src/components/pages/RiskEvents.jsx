@@ -341,9 +341,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Inicio",
             hidden: true,
             width: 200,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -355,9 +355,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Fin",
             width: 200,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -369,9 +369,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Descubrimiento",
             width: 200,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -383,9 +383,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Atención",
             width: 200,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -521,10 +521,10 @@ export const RiskEvent = () => {
             headerName: "Estado Actual",
             width: 100,
             editable: false,
-            valueFormatter: (params) => {
-                if (params.value == false) {
+            valueFormatter: (value) => {
+                if (value == false) {
                     return "CERRADO";
-                } else if (params.value == true) {
+                } else if (value == true) {
                     return "ABIERTO";
                 } else {
                     return "";
@@ -541,9 +541,9 @@ export const RiskEvent = () => {
             headerName: "Fecha de Cierre",
             width: 100,
             editable: false,
-            valueGetter: (params) => {
-                if (params.value) {
-                    return new Date(params.value);
+            valueGetter: (value) => {
+                if (value) {
+                    return new Date(value);
                 } else {
                     return "";
                 }
@@ -555,10 +555,10 @@ export const RiskEvent = () => {
             type: "singleSelect",
             headerName: "Clasificación",
             width: 100,
-            valueFormatter: (params) => {
-                if (params.value == false) {
+            valueFormatter: (value) => {
+                if (value == false) {
                     return "NO CRITICO";
-                } else if (params.value == true) {
+                } else if (value == true) {
                     return "CRITICO";
                 } else {
                     return "";
@@ -630,34 +630,31 @@ export const RiskEvent = () => {
         <>
             <Container
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Eventos de Riesgo Operativo
                 </Typography>
-                <DataGrid
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    rows={rows}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                    initialState={{
-                        sorting: {
-                            sortModel: [{ field: "start_date", sort: "desc" }],
-                        },
-                        columns: {
-                            columnVisibilityModel: {
-                                id: false,
+                <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                    <DataGrid
+                        columns={columns}
+                        rows={rows}
+                        slots={{
+                            toolbar: CustomToolbar,
+                        }}
+                        initialState={{
+                            sorting: {
+                                sortModel: [{ field: "start_date", sort: "desc" }],
                             },
-                        },
-                    }}
-                ></DataGrid>
+                            columns: {
+                                columnVisibilityModel: {
+                                    id: false,
+                                },
+                            },
+                        }}
+                    ></DataGrid>
+                </Box>
             </Container>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog maxWidth={"md"} open={openDialog} onClose={handleCloseDialog}>

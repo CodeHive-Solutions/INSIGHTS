@@ -345,7 +345,6 @@ export const Sgc = () => {
     ];
 
     const columns = [
-        { field: "id", headerName: "ID", width: 70 },
         {
             field: "area",
             headerName: "Area",
@@ -357,7 +356,7 @@ export const Sgc = () => {
 
         { field: "type", headerName: "Tipo", width: 70, type: "singleSelect", editable: editPermission, valueOptions: ["CR", "IN", "MA", "P", "PL", "PR", "RG"] },
         { field: "sub_type", headerName: "Subtipo", width: 100, editable: editPermission },
-        { field: "name", headerName: "Nombre", width: editPermission ? 550 : 600, editable: editPermission },
+        { field: "name", headerName: "Nombre", width: editPermission ? 630 : 680, editable: editPermission },
         { field: "version", headerName: "Version", width: 70, editable: editPermission },
         {
             field: "file",
@@ -493,31 +492,27 @@ export const Sgc = () => {
         <>
             <Container
                 sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Gestión Documental
                 </Typography>
-                <DataGrid
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    rows={rows}
-                    editMode="row"
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                    rowModesModel={rowModesModel}
-                    onRowEditStop={handleRowEditStop}
-                    onRowModesModelChange={handleRowModesModelChange}
-                    processRowUpdate={processRowUpdate}
-                    onProcessRowUpdateError={handleProcessRowUpdateError}
-                ></DataGrid>
+                <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                    <DataGrid
+                        columns={columns}
+                        rows={rows}
+                        editMode="row"
+                        slots={{
+                            toolbar: CustomToolbar,
+                        }}
+                        rowModesModel={rowModesModel}
+                        onRowEditStop={handleRowEditStop}
+                        onRowModesModelChange={handleRowModesModelChange}
+                        processRowUpdate={processRowUpdate}
+                        onProcessRowUpdateError={handleProcessRowUpdateError}
+                    ></DataGrid>
+                </Box>
             </Container>
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
             <Dialog fullWidth={true} maxWidth="md" open={openDialog} onClose={handleCloseDialog}>

@@ -320,11 +320,7 @@ const AnalisisMetas = () => {
     return (
         <Container
             sx={{
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                marginTop: "1rem",
-                pt: "5rem",
+                mt: "6rem",
             }}
         >
             <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
@@ -367,20 +363,21 @@ const AnalisisMetas = () => {
                     </Button>
                 </Box>
             </Box>
-            <DataGrid
-                sx={{ width: "100%", minHeight: "75vh", maxHeight: "75vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                rows={rows}
-                columns={columns}
-                csvOptions={{
-                    fileName: "Metas",
-                    delimiter: ";",
-                    utf8WithBom: true,
-                }}
-                slots={{
-                    toolbar: CustomToolbar,
-                }}
-                getRowId={(row) => row.cedula}
-            />
+            <Box sx={{ height: "70vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    csvOptions={{
+                        fileName: "Metas",
+                        delimiter: ";",
+                        utf8WithBom: true,
+                    }}
+                    slots={{
+                        toolbar: CustomToolbar,
+                    }}
+                    getRowId={(row) => row.cedula}
+                />
+            </Box>
             <SnackbarAlert open={openSnack} onClose={handleCloseSnackbar} severity={severity} message={message} />
         </Container>
     );

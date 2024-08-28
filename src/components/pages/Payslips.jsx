@@ -395,30 +395,28 @@ export const Payslips = () => {
             </Fade>
             <Container
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Registro de desprendibles de nomina
                 </Typography>
-                <DataGrid
-                    initialState={{
-                        sorting: {
-                            sortModel: [{ field: "created_at", sort: "desc" }],
-                        },
-                    }}
-                    slots={{
-                        toolbar: CustomToolbar,
-                    }}
-                    sx={{ width: "100%", minHeight: "83vh", maxHeight: "83vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}
-                    columns={columns}
-                    toolbar
-                    rows={rows}
-                ></DataGrid>
+
+                <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+                    <DataGrid
+                        initialState={{
+                            sorting: {
+                                sortModel: [{ field: "created_at", sort: "desc" }],
+                            },
+                        }}
+                        slots={{
+                            toolbar: CustomToolbar,
+                        }}
+                        columns={columns}
+                        toolbar
+                        rows={rows}
+                    ></DataGrid>
+                </Box>
             </Container>
             <Dialog fullWidth={true} maxWidth="xl" open={openDialog} onClose={handleCloseDialog}>
                 <Fade

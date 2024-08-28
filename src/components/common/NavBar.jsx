@@ -63,6 +63,7 @@ import LuggageIcon from "@mui/icons-material/Luggage";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import BeachAccessIcon from "@mui/icons-material/BeachAccess";
 import ExtensionIcon from "@mui/icons-material/Extension";
+import SportsScoreIcon from "@mui/icons-material/SportsScore";
 
 // Media
 import logotipo from "../../images/cyc-logos/logo-navbar.webp";
@@ -557,6 +558,14 @@ const Navbar = () => {
                         <ListItemText primary="Mis Vacaciones" />
                     </MenuItem>
                 ) : null}
+                {getApiUrl().environment === "development" ? (
+                <MenuItem onClick={() => navigate("/logged/points")}>
+                    <ListItemIcon>
+                        <SportsScoreIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Puntos C&C" />
+                </MenuItem>
+                ) : null}    
                 <MenuItem onClick={handleLogout}>
                     <ListItemIcon>
                         <Logout fontSize="small" />

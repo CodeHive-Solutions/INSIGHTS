@@ -35,6 +35,7 @@ import EmploymentCertification from "./components/pages/EmploymentCertification"
 import InactivityDetector from "./components/shared/InactivityDetector";
 import Vacations from "./components/pages/Vacations";
 import PowerBI from "./components/pages/PowerBI";
+import Points from "./components/pages/Points";
 import { PersonalInformationProvider } from "./context/PersonalInformation";
 
 Sentry.init({

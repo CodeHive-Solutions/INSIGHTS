@@ -197,7 +197,6 @@ export const Vacations = () => {
     };
 
     const columns = [
-        { field: "id", headerName: "ID", width: 50, editable: false },
         {
             field: "start_date",
             headerName: "Fecha inicio",
@@ -386,9 +385,7 @@ export const Vacations = () => {
                 return (
                     <Chip
                         onClick={
-                            params.row.hr_approbation === true && payrollApprovalPermission
-                                ? () => handleVacancyApproval(params.id, "payroll_approbation")
-                                : undefined
+                            params.row.hr_approbation === true && payrollApprovalPermission ? () => handleVacancyApproval(params.id, "payroll_approbation") : undefined
                         }
                         icon={<CancelIcon />}
                         label="Rechazada"
@@ -539,27 +536,18 @@ export const Vacations = () => {
             </Fade>
             <Container
                 sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
                     marginTop: "6rem",
                 }}
             >
                 <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
                     Registro de vacaciones
                 </Typography>
-                <Box sx={{ width: "100%", height: "80vh" }}>
+                <Box sx={{ height: "80vh" }}>
                     <DataGrid
                         getRowHeight={() => "auto"}
                         initialState={{
                             sorting: {
-                                sortModel: [{ field: "id", sort: "desc" }],
-                            },
-                            columns: {
-                                columnVisibilityModel: {
-                                    id: false,
-                                },
+                                sortModel: [{ field: "created_at", sort: "desc" }],
                             },
                         }}
                         slots={{
