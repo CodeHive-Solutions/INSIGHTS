@@ -5,6 +5,7 @@ import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import { useNavigate } from "react-router-dom";
 import { handleError } from "../../assets/handleError";
+import { CustomNoResultsOverlay } from "../../assets/CustomNoResultsOverlay";
 
 // Material-UI
 import { Container, Typography, Box, TextField, MenuItem, Button } from "@mui/material";
@@ -365,6 +366,7 @@ const AnalisisMetas = () => {
             </Box>
             <Box sx={{ height: "70vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
                 <DataGrid
+                    loading={rows.length === 0}
                     rows={rows}
                     columns={columns}
                     csvOptions={{
@@ -374,6 +376,13 @@ const AnalisisMetas = () => {
                     }}
                     slots={{
                         toolbar: CustomToolbar,
+                        noResultsOverlay: CustomNoResultsOverlay,
+                    }}
+                    slotProps={{
+                        loadingOverlay: {
+                            variant: "skeleton",
+                            noRowsVariant: "skeleton",
+                        },
                     }}
                     getRowId={(row) => row.cedula}
                 />

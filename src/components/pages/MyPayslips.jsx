@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
 // Material-UI
-import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box, LinearProgress, Fade, Alert } from "@mui/material";
+import { Tooltip, Container, Typography, Dialog, DialogTitle, DialogContent, TextField, Button, Collapse, Box, LinearProgress, Fade, Alert, styled } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import { handleError } from "../../assets/handleError";
 
@@ -11,6 +11,7 @@ import ForwardToInboxIcon from "@mui/icons-material/ForwardToInbox";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
+import { CustomNoResultsOverlay } from "../../assets/CustomNoResultsOverlay";
 
 export const MyPayslips = () => {
     const [rows, setRows] = useState([]);
@@ -232,15 +233,20 @@ export const MyPayslips = () => {
                 </Typography>
                 <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
                     <DataGrid
+                        loading={rows.length === 0}
                         initialState={{
                             sorting: {
                                 sortModel: [{ field: "created_at", sort: "desc" }],
                             },
                         }}
-                        slots={{ toolbar: GridToolbar }}
+                        slots={{ toolbar: GridToolbar, noResultsOverlay: CustomNoResultsOverlay }}
                         slotProps={{
                             toolbar: {
                                 showQuickFilter: true,
+                            },
+                            loadingOverlay: {
+                                variant: "skeleton",
+                                noRowsVariant: "skeleton",
                             },
                         }}
                         columns={columns}

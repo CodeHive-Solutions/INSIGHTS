@@ -189,6 +189,10 @@ const router = createBrowserRouter([
                 element: <Vacations />,
             },
             {
+                path: "points",
+                element: <Points />,
+            },
+            {
                 path: "test",
                 element: <PowerBI />,
             },

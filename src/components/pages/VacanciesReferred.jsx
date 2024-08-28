@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import { handleError } from "../../assets/handleError";
+import { CustomNoResultsOverlay } from "../../assets/CustomNoResultsOverlay";
 
 // Material-UI
 import { Container, Box, Typography } from "@mui/material";
@@ -112,10 +113,18 @@ export const VacanciesReferred = () => {
                 </Typography>
                 <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
                     <DataGrid
+                        loading={rows.length === 0}
                         columns={columns}
                         rows={rows}
                         slots={{
-                            toolbar: CustomToolbar, 
+                            toolbar: CustomToolbar,
+                            noResultsOverlay: CustomNoResultsOverlay,
+                        }}
+                        slotProps={{
+                            loadingOverlay: {
+                                variant: "skeleton",
+                                noRowsVariant: "skeleton",
+                            },
                         }}
                     ></DataGrid>
                 </Box>
