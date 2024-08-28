@@ -206,7 +206,7 @@ const AnalisisMetas = () => {
         if (reason === "clickaway") {
             return;
         }
-        setOpenSnackbar(false);
+        setOpenSnack(false);
     };
 
     function CustomToolbar() {
