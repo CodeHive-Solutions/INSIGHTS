@@ -69,9 +69,15 @@ def get_profile(request):
         cookies={"StaffNet": os.environ["StaffNetToken"]},
     )
     if response.status_code != 200 or "error" in response.json():
-        logger.error("Error getting user profile: {}".format(response.text))
         # delete the token to try to login again
         del os.environ["StaffNetToken"]
+        login_staffnet()
+        response = requests.get(
+            url.format(user.cedula),
+            cookies={"StaffNet": os.environ["StaffNetToken"]},
+        )
+    if response.status_code != 200 or "error" in response.json():
+        logger.error("Error getting user profile: {}".format(response.text))
         return Response(
             {
                 "error": "Encontramos un error obteniendo tu perfil, por favor intenta más tarde."
@@ -202,7 +208,10 @@ def get_subordinates(request):
             active_users = [user[0] for user in active_users]
         users = [user for user in users if int(user.cedula) in active_users]
     # Serialize the users
-    data = [{"id": user.id, "name": user.get_full_name()} for user in users]
+    data = [
+        {"id": user.id, "name": user.get_full_name()}
+        for user in users.order_by("first_name", "id")
+    ]
     return Response(data)
 
 

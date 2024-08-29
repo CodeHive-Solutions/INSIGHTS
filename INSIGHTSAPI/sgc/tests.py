@@ -2,9 +2,11 @@
 
 import os
 import tempfile
+from django.core.cache import cache
 from services.tests import BaseTestCase
 from rest_framework import status
 from users.models import User
+from django.utils.cache import get_cache_key
 from django.contrib.auth.models import Permission
 from django.urls import reverse
 from django.test import override_settings
@@ -22,6 +24,7 @@ class TestSGC(BaseTestCase):
     def setUp(self):
         """Set up for the test"""
         super().setUp()
+        cache.clear()
         with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
             file_content = file.read()
         area = SGCArea.objects.create(short_name="SGC", name="SistemaGC")
@@ -48,7 +51,7 @@ class TestSGC(BaseTestCase):
         file = SGCFile.objects.create(**self.file_data)
         response = self.client.get(
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -65,7 +68,7 @@ class TestSGC(BaseTestCase):
         SGCFile.objects.create(**self.file_data)
         response = self.client.get(
             reverse("SGCFile-list"),
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -79,7 +82,7 @@ class TestSGC(BaseTestCase):
             reverse("SGCFile-list"),
             self.file_data,
             format="multipart",
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 201 Created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
@@ -93,7 +96,7 @@ class TestSGC(BaseTestCase):
             reverse("SGCFile-list"),
             self.file_data,
             format="multipart",
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 201 Created
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
@@ -111,7 +114,7 @@ class TestSGC(BaseTestCase):
             reverse("SGCFile-list"),
             self.file_data,
             format="multipart",
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         self.assertEqual(
             response.status_code, status.HTTP_400_BAD_REQUEST, response.data
@@ -125,7 +128,7 @@ class TestSGC(BaseTestCase):
             reverse("SGCFile-list"),
             self.file_data,
             format="multipart",
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Formato de archivo no válido", response.data["file"][0])
@@ -143,7 +146,7 @@ class TestSGC(BaseTestCase):
                 reverse("SGCFile-list"),
                 self.file_data,
                 format="multipart",
-                cookies=self.client.cookies,
+                cookies=str(self.client.cookies),
             )
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertIn(
@@ -162,7 +165,7 @@ class TestSGC(BaseTestCase):
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
             self.file_data,
             format="multipart",
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 403 Forbidden
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -183,7 +186,7 @@ class TestSGC(BaseTestCase):
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
             self.file_data,
             format="multipart",
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -194,10 +197,10 @@ class TestSGC(BaseTestCase):
         self.file_data["area"] = SGCArea.objects.first()
         file = SGCFile.objects.create(**self.file_data)
         response = self.client.patch(
-            reverse("SGCFile-detail", kwargs={"pk":file.id}),
+            reverse("SGCFile-detail", kwargs={"pk": file.id}),
             {"name": "Test File Updated"},
             format="json",
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
@@ -209,7 +212,7 @@ class TestSGC(BaseTestCase):
         file = SGCFile.objects.create(**self.file_data)
         response = self.client.delete(
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 204 No Content
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -223,19 +226,108 @@ class TestSGC(BaseTestCase):
         file = SGCFile.objects.create(**self.file_data)
         response = self.client.delete(
             reverse("SGCFile-detail", kwargs={"pk": file.id}),
-            cookies=self.client.cookies,
+            cookies=str(self.client.cookies),
         )
         # Assert that the response status code is HTTP 403 Forbidden
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    # def test_massive_update(self):
-    #     """Test massive update"""
-    #     SGCArea.objects.first().delete()
-    #     response = self.client.get(
-    #         reverse("massive-update"),
-    #         format="multipart",
-    #         cookies=self.client.cookies,
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-    #     self.assertGreater(SGCFile.objects.count(), 0)
-    #     self.assertEqual(response.data["message"], "Archivos creados")
+    def test_cache_file(self):
+        """Test caching a file"""
+        url = reverse("SGCFile-list")
+        self.file_data["area"] = SGCArea.objects.first()
+        SGCFile.objects.create(**self.file_data)
+        response = self.client.get(
+            url,
+            cookies=str(self.client.cookies),
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        # Check that have the correct data
+        self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
+        # Check that the cache is working
+        request = self.client.get(url).wsgi_request
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        self.assertEqual(cache.get(cache_key).data, response.data)
+
+    def test_cache_refresh(self):
+        """Test refresh the cache"""
+        url = reverse("SGCFile-list")
+        self.file_data["area"] = SGCArea.objects.first()
+        SGCFile.objects.create(**self.file_data)
+        response = self.client.get(
+            url,
+            cookies=str(self.client.cookies),
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        # Check that have the correct data
+        self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
+        # Check that the cache is working
+        request = self.client.get(url).wsgi_request
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        self.assertEqual(cache.get(cache_key).data, response.data)
+        self.assertEqual(len(response.data["objects"]), 1)
+        # Refresh the file_data to avoid conflicts using a docx encode
+        with open("utils/excels/Lista_Robinsón.xlsx", "rb") as file:
+            file_content = file.read()
+        self.file_data["file"] = SimpleUploadedFile(
+            "Test_SGC_Robinsón.xlsx", file_content
+        )
+        response = self.client.post(
+            reverse("SGCFile-list"),
+            self.file_data,
+            format="multipart",
+            cookies=str(self.client.cookies),
+        )
+        # Assert that the response status code is HTTP 201 Created
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
+        # Check that the cache was deleted
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        self.assertIsNone(cache.get(cache_key))
+        # Now check that the cache is working again
+        response = self.client.get(
+            url,
+            cookies=str(self.client.cookies),
+        )
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        self.assertEqual(cache.get(cache_key).data, response.data)
+        self.assertEqual(len(response.data["objects"]), 2)
+
+    def test_cache_refresh_on_update(self):
+        """Test refresh the cache on update"""
+        url = reverse("SGCFile-list")
+        self.file_data["area"] = SGCArea.objects.first()
+        file = SGCFile.objects.create(**self.file_data)
+        response = self.client.get(
+            url,
+            cookies=str(self.client.cookies),
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        # Check that have the correct data
+        self.assertEqual(response.data["objects"][0].get("name"), "Test Filé")
+        # Check that the cache is working
+        request = self.client.patch(url).wsgi_request
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        self.assertEqual(cache.get(cache_key).data, response.data)
+        # Refresh the file_data to avoid conflicts using a docx encode
+        self.file_data["name"] = "Test File Updated"
+        response = self.client.patch(
+            reverse("SGCFile-detail", kwargs={"pk": file.id}),
+            {"name": "Test File Updated"},
+            format="json",
+            cookies=str(self.client.cookies),
+        )
+        # Assert that the response status code is HTTP 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        # Check that the cache was deleted
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        self.assertIsNone(cache.get(cache_key))
+        # Now check that the cache is working again
+        response = self.client.get(
+            url,
+            cookies=str(self.client.cookies),
+        )
+        cache_key = get_cache_key(request, key_prefix="sgc")
+        self.assertEqual(cache.get(cache_key).data, response.data)
+        self.assertEqual(response.data["objects"][0].get("name"), "Test File Updated")

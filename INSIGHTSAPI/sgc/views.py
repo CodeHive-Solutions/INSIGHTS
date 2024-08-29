@@ -21,7 +21,7 @@ class SGCFileViewSet(viewsets.ModelViewSet):
 
     queryset = SGCFile.objects.all().select_related("area")
     serializer_class = SGCFileSerializer
-    # renderer_classes = [renderers.BrowsableAPIRenderer, renderers.JSONRenderer]
+    # renderer_classes = [renderers.BrowsableAPIRenderer]
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
     @method_decorator(cache_page(60 * 15, key_prefix="sgc"))
@@ -40,28 +40,19 @@ class SGCFileViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Create a new object"""
         response = super().create(request, *args, **kwargs)
-        # Generate the cache key based on the request
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        if cache_key:
-            cache.delete(cache_key)  # Delete the specific cache key
+        cache.delete_pattern("*sgc*")  # Delete all cache keys with "sgc"
         return response
 
     def update(self, request, *args, **kwargs):
         """Update an object"""
         response = super().update(request, *args, **kwargs)
-        # Generate the cache key based on the request
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        if cache_key:
-            cache.delete(cache_key)
+        cache.delete_pattern("*sgc*")  # Delete all cache keys with "sgc"
         return response
 
     def destroy(self, request, *args, **kwargs):
         """Destroy an object"""
         response = super().destroy(request, *args, **kwargs)
-        # Generate the cache key based on the request
-        cache_key = get_cache_key(request, key_prefix="sgc")
-        if cache_key:
-            cache.delete(cache_key)
+        cache.delete_pattern("*sgc*")  # Delete all cache keys with "sgc"
         return response
 
 
