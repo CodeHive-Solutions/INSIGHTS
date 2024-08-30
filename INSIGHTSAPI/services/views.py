@@ -4,6 +4,7 @@ import logging
 import os
 import holidays
 from rest_framework.response import Response
+from django.views.decorators.cache import cache_page, cache_control
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -16,6 +17,8 @@ from django.core.mail import send_mail
 
 
 logger = logging.getLogger("requests")
+
+CACHE_DURATION = 60 * 60 * 24 * 30  # 30 days
 
 
 class FileDownloadMixin(APIView):
@@ -74,15 +77,19 @@ def trigger_error(request):
     """Trigger an error for testing purposes."""
     raise Exception("Test error")
 
+
 @api_view(["GET"])
 @permission_classes([AllowAny])
+@cache_page(60 * 60 * 24, key_prefix="holidays")
+@cache_control(private=True, max_age=60 * 60 * 24)
 def get_holidays(request, year):
     """Get the holidays of the year."""
     try:
         year = int(year)
     except ValueError:
         return Response({"error": "El año debe ser un número"}, status=400)
-    holidays_year = holidays.CO(years=year).items()
+    # Get the holidays of the year and the next year
+    holidays_year = holidays.CO(years=range(year, year + 2)).items()
     return Response(holidays_year, status=200)
 
 
@@ -114,6 +121,7 @@ def save_answer(request):
     answer.save()
 
     return Response({"message": "Respuesta guardada correctamente"}, status=201)
+
 
 @api_view(["GET"])
 def check_answered(request):

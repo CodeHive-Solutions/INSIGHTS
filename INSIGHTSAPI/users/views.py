@@ -188,7 +188,7 @@ def get_subordinates(request):
         users = User.objects.filter(
             Q(area=request.user.area) | Q(area__manager=request.user),
             Q(job_position__rank__lt=user_rank),
-        )
+        ).order_by("first_name", "last_name", "cedula")
     # TODO: Refactor this when the migration of StaffNet is done
     # Check if each user is active in StaffNet
     if "test" not in sys.argv and len(users) > 0:
@@ -208,10 +208,7 @@ def get_subordinates(request):
             active_users = [user[0] for user in active_users]
         users = [user for user in users if int(user.cedula) in active_users]
     # Serialize the users
-    data = [
-        {"id": user.id, "name": user.get_full_name()}
-        for user in users.order_by("first_name", "id")
-    ]
+    data = [{"id": user.id, "name": user.get_full_name()} for user in users]
     return Response(data)
 
 

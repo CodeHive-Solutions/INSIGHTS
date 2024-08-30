@@ -152,7 +152,7 @@ class HolidayTest(TestCase):
         """Test that the holidays are retrieved."""
         response = self.client.get("/services/holidays/2024/")
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.data, holidays.CO(years=2024).items())
+        self.assertEqual(response.data, holidays.CO(years=range(2024, 2026)).items())
 
 
 class QuestionTest(BaseTestCase):

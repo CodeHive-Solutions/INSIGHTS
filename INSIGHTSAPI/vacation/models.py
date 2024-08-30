@@ -4,6 +4,7 @@ from django.db import models
 from django.core.mail import send_mail
 from users.models import User
 from notifications.utils import create_notification
+from vacation.utils import get_return_date
 from django.utils import timezone
 
 
@@ -15,6 +16,7 @@ class VacationRequest(models.Model):
     )
     start_date = models.DateField()
     end_date = models.DateField()
+    sat_is_working = models.BooleanField(default=True)
     request_file = models.FileField(upload_to="files/vacation_requests/")
     manager_approbation = models.BooleanField(null=True, blank=True)
     manager_approved_at = models.DateTimeField(null=True, blank=True)
@@ -49,6 +51,11 @@ class VacationRequest(models.Model):
     def duration(self):
         """Return the duration of the vacation request."""
         return (self.end_date - self.start_date).days
+
+    @property
+    def return_date(self):
+        """Return the return date of the vacation request."""
+        return get_return_date(self.end_date, self.sat_is_working)
 
     def __str__(self):
         return f"{self.user} - {self.start_date} - {self.end_date}"

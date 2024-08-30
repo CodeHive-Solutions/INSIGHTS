@@ -22,7 +22,7 @@
         }
 
         #signature-rh {
-            padding-left:200px;
+            padding-left: 200px;
         }
 
         .header {
@@ -88,20 +88,17 @@
 
 <body>
     <div class="card">
-        <div class="header">
-            <h1>Solicitud de Vacaciones</h1>
-        </div>
         <div class="content">
             <p>{{ vacation.created_at|date }}</p>
-            <p>A quien corresponda:</p>
+            <p>Estimado (a) Gestión Humana</p>
+            <p>CYC SERVICES S.A.S.</p>
             <p>
-                Por medio de la presente, me dirijo a usted para solicitar un período de vacaciones
-                desde el <strong>{{ vacation.start_date }}</strong> hasta el <strong>{{ vacation.end_date }}</strong>.
+                Por la presente le solicito se me conceda {{ vacation.duration }} días de mi periodo vacacional
+                comprendido para el año {{ vacation.start_date|date:"Y" }},
             </p>
             <p>
-                He asegurado que todas mis tareas y responsabilidades estarán debidamente gestionadas
-                durante mi ausencia. También estoy disponible para brindar cualquier asistencia adicional
-                que sea necesaria para garantizar una transición sin problemas antes de mi salida.
+                Los días tomados serán a partir del {{ vacation.start_date }} hasta el día {{ vacation.end_date }}, para
+                retomar a mis labores el día (fecha en la cual volverás a tu trabajo).
             </p>
             <p>
                 Agradezco de antemano su atención a esta solicitud y quedo a la espera de su aprobación.

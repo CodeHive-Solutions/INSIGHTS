@@ -1,5 +1,6 @@
 """This file contains the tests for the vacation model."""
 
+from datetime import datetime
 from hierarchy.models import Area
 from freezegun import freeze_time
 from services.tests import BaseTestCase
@@ -9,7 +10,7 @@ from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.db.models import Q
-from .utils import is_working_day, get_working_days
+from .utils import is_working_day, get_working_days, get_return_date
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
 
@@ -40,6 +41,13 @@ class WorkingDayTestCase(TestCase):
         # The 8th is a holiday
         self.assertEqual(get_working_days("2024-01-01", "2024-01-09", True), 6)
         self.assertEqual(get_working_days("2024-01-01", "2024-01-19", True), 15)
+
+    def test_get_return_date(self):
+        """Test the get_return_date function."""
+        self.assertEqual(get_return_date("2024-08-30", False), datetime(2024, 9, 2))
+        self.assertEqual(get_return_date("2024-08-30", True), datetime(2024, 8, 31))
+        self.assertEqual(get_return_date("2024-09-06", False), datetime(2024, 9, 9))
+        self.assertEqual(get_return_date("2024-12-31", True), datetime(2025, 1, 2))
 
 
 class VacationRequestModelTestCase(BaseTestCase):

@@ -3,8 +3,8 @@
 import logging
 from django.core.cache import cache
 from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page, cache_control
 from django.utils.cache import get_cache_key
-from django.views.decorators.cache import cache_page
 from rest_framework import renderers
 from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 from rest_framework import viewsets
@@ -15,6 +15,8 @@ from .serializers import SGCFileSerializer, SGCAreaSerializer
 
 logger = logging.getLogger("requests")
 
+CACHE_DURATION = 60 * 15  # 15 minutes
+
 
 class SGCFileViewSet(viewsets.ModelViewSet):
     """ViewSet for the SGC class"""
@@ -24,7 +26,8 @@ class SGCFileViewSet(viewsets.ModelViewSet):
     # renderer_classes = [renderers.BrowsableAPIRenderer]
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
-    @method_decorator(cache_page(60 * 15, key_prefix="sgc"))
+    # @method_decorator(cache_control(private=True, max_age=CACHE_DURATION))
+    @method_decorator(cache_page(CACHE_DURATION, key_prefix="sgc"))
     def list(self, request, *args, **kwargs):
         """List the objects"""
         response = super().list(request, *args, **kwargs)

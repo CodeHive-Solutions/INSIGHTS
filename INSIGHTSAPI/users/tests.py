@@ -188,8 +188,8 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(
             response.data,
             [
-                {"id": demo_user_1.pk, "name": demo_user_1.get_full_name()},
                 {"id": demo_user_2.pk, "name": demo_user_2.get_full_name()},
+                {"id": demo_user_1.pk, "name": demo_user_1.get_full_name()},
             ],
         )
 
