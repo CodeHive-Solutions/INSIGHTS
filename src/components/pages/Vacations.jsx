@@ -353,7 +353,7 @@ export const Vacations = () => {
             width: 150,
             type: "actions",
             cellClassName: "actions",
-            getActions: (row) => {
+            getActions: ({ row }) => {
                 return [
                     <Tooltip title="Ver carta de solicitud de vacaciones" arrow>
                         <GridActionsCellItem

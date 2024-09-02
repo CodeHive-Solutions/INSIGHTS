@@ -179,7 +179,7 @@ export const Payslips = () => {
             width: 100,
             type: "actions",
             cellClassName: "actions",
-            getActions: (GridRowParams) => {
+            getActions: ({id}) => {
                 return [
                     <Tooltip title="Reenviar" arrow>
                         <GridActionsCellItem
@@ -188,7 +188,7 @@ export const Payslips = () => {
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => handleOpenDialogPayslip(GridRowParams.id)}
+                            onClick={() => handleOpenDialogPayslip(id)}
                         />
                     </Tooltip>,
                 ];
