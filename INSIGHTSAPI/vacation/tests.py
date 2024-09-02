@@ -265,20 +265,36 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    # def test_vacation_owner_cancel(self):
-    #     """Test the owner cancelling a vacation."""
-    #     self.vacation_request["user"] = self.test_user
-    #     self.vacation_request["uploaded_by"] = self.user
-    #     vacation_object = VacationRequest.objects.create(**self.vacation_request)
-    #     response = self.client.patch(
-    #         reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-    #         {"status": "CANCELADA"},
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-    #     self.assertEqual(response.data["status"], "CANCELADA")
+    def test_vacation_owner_cancel(self):
+        """Test the owner cancelling a vacation."""
+        self.vacation_request["user"] = self.user
+        self.vacation_request["uploaded_by"] = self.test_user
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"status": "CANCELADA"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["status"], "CANCELADA")
 
-    def test_vacation_owner_cancel_no_owner(self):
-        """Test the owner cancelling a vacation without being the owner."""
+    def test_vacation_owner_cancel_approved(self):
+        """Test the owner cancelling an approved vacation."""
+        self.vacation_request["user"] = self.user
+        self.vacation_request["uploaded_by"] = self.test_user
+        self.vacation_request["manager_approbation"] = True
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"status": "CANCELADA"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.data["non_field_errors"][0],
+            "No puedes cancelar una solicitud aprobada.",
+        )
+
+    def test_vacation_cancel_no_owner(self):
+        """Test cancelling a vacation without being the owner."""
         self.vacation_request["user"] = self.test_user
         self.vacation_request["uploaded_by"] = self.test_user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)

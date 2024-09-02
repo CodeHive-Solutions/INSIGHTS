@@ -29,12 +29,13 @@ class VacationRequest(models.Model):
             ("PENDIENTE", "PENDIENTE"),
             ("APROBADA", "APROBADA"),
             ("RECHAZADA", "RECHAZADA"),
-            # ("CANCELADA", "CANCELADA"),
+            ("CANCELADA", "CANCELADA"),
         ],
         max_length=100,
         default="PENDIENTE",
     )
     comment = models.TextField(null=True, blank=True)
+    # this column is deprecated, but needs to be kept for backwards compatibility
     uploaded_by = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="uploaded_requests"
     )
@@ -106,7 +107,7 @@ class VacationRequest(models.Model):
 
                 Lamentamos informarte que tu solicitud de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")} ha sido rechazada.
 
-                Nos vimos en la necesidad de tomar esta difícil decisión debido a: {self.comment}.
+                Nos vimos en la necesidad de tomar esta decisión debido a: {self.comment}.
 
                 Habla con tu gerente o con el departamento de Recursos Humanos si tienes alguna pregunta o necesitas más información. Recuerda que puedes volver a enviar tu solicitud en otro momento.
 
@@ -123,25 +124,23 @@ class VacationRequest(models.Model):
                 f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido rechazada.",
                 self.user,
             )
-        # elif self.status == "CANCELADA":
-        #     message = f"""
-        #         Hola {self.user.get_full_name()} 👋,
+        elif self.status == "CANCELADA":
+            message = f"""
+                Hola {self.user.get_full_name()} 👋,
 
-        #         Hemos recibido tu solicitud de cancelación de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")}.
+                Has cancelado tu solicitud de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")}.
 
-        #         Si tienes alguna pregunta o necesitas más información, no dudes en contactarnos.
-
-        #         Saludos cordiales,
-        #         """
-        #     send_mail(
-        #         "Solicitud de cancelación de vacaciones",
-        #         message,
-        #         None,
-        #         [str(self.user.email)],
-        #     )
-        #     create_notification(
-        #         f"Solicitud de vacaciones cancelada",
-        #         f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido cancelada.",
-        #         self.user,
-        #     )
+                Saludos cordiales,
+                """
+            send_mail(
+                "Solicitud de cancelación de vacaciones",
+                message,
+                None,
+                [str(self.user.email)],
+            )
+            create_notification(
+                f"Solicitud de vacaciones cancelada",
+                f"Tu solicitud de vacaciones del {self.start_date} al {self.end_date} ha sido cancelada.",
+                self.user,
+            )
         super().save(*args, **kwargs)

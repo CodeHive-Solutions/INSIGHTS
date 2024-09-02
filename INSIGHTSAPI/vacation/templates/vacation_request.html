@@ -90,25 +90,27 @@
     <div class="card">
         <div class="content">
             <p>{{ vacation.created_at|date }}</p>
+            <br>
             <p>Estimado (a) Gestión Humana</p>
             <p>CYC SERVICES S.A.S.</p>
+            <br>
             <p>
                 Por la presente le solicito se me conceda {{ vacation.duration }} días de mi periodo vacacional
                 comprendido para el año {{ vacation.start_date|date:"Y" }},
             </p>
             <p>
                 Los días tomados serán a partir del {{ vacation.start_date }} hasta el día {{ vacation.end_date }}, para
-                retomar a mis labores el día (fecha en la cual volverás a tu trabajo).
+                retomar a mis labores el día {{ vacation.return_date }}.
             </p>
             <p>
-                Agradezco de antemano su atención a esta solicitud y quedo a la espera de su aprobación.
+                Quedo agradecido(a) ante su pronta respuesta.
             </p>
             <div class="signature">
                 <p>Atentamente,</p>
                 <p><strong>{{ vacation.user }}</strong></p>
-                <p>{{ vacation.user.job_title }}</p>
+                <p>{{ vacation.user.job_position }}</p>
             </div>
-            <div class="signature-line">
+            <!-- <div class="signature-line">
                 <table>
                     <td>
                         _____________________________________<br>
@@ -121,10 +123,7 @@
                         <i>Gerente de Gestión Humana</i>
                     </td>
                 </table>
-            </div>
-        </div>
-        <div class="footer">
-            <p>Este documento es confidencial y para uso exclusivo del destinatario.</p>
+            </div> -->
         </div>
     </div>
 </body>
