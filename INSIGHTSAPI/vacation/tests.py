@@ -1,5 +1,6 @@
 """This file contains the tests for the vacation model."""
 
+from datetime import datetime
 from hierarchy.models import Area
 from freezegun import freeze_time
 from services.tests import BaseTestCase
@@ -9,7 +10,7 @@ from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.db.models import Q
-from .utils import is_working_day, get_working_days
+from .utils import is_working_day, get_working_days, get_return_date
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
 
@@ -40,6 +41,13 @@ class WorkingDayTestCase(TestCase):
         # The 8th is a holiday
         self.assertEqual(get_working_days("2024-01-01", "2024-01-09", True), 6)
         self.assertEqual(get_working_days("2024-01-01", "2024-01-19", True), 15)
+
+    def test_get_return_date(self):
+        """Test the get_return_date function."""
+        self.assertEqual(get_return_date("2024-08-30", False), datetime(2024, 9, 2))
+        self.assertEqual(get_return_date("2024-08-30", True), datetime(2024, 8, 31))
+        self.assertEqual(get_return_date("2024-09-06", False), datetime(2024, 9, 9))
+        self.assertEqual(get_return_date("2024-12-31", True), datetime(2025, 1, 2))
 
 
 class VacationRequestModelTestCase(BaseTestCase):
@@ -257,20 +265,36 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    # def test_vacation_owner_cancel(self):
-    #     """Test the owner cancelling a vacation."""
-    #     self.vacation_request["user"] = self.test_user
-    #     self.vacation_request["uploaded_by"] = self.user
-    #     vacation_object = VacationRequest.objects.create(**self.vacation_request)
-    #     response = self.client.patch(
-    #         reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-    #         {"status": "CANCELADA"},
-    #     )
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-    #     self.assertEqual(response.data["status"], "CANCELADA")
+    def test_vacation_owner_cancel(self):
+        """Test the owner cancelling a vacation."""
+        self.vacation_request["user"] = self.user
+        self.vacation_request["uploaded_by"] = self.test_user
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"status": "CANCELADA"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.assertEqual(response.data["status"], "CANCELADA")
 
-    def test_vacation_owner_cancel_no_owner(self):
-        """Test the owner cancelling a vacation without being the owner."""
+    def test_vacation_owner_cancel_approved(self):
+        """Test the owner cancelling an approved vacation."""
+        self.vacation_request["user"] = self.user
+        self.vacation_request["uploaded_by"] = self.test_user
+        self.vacation_request["manager_approbation"] = True
+        vacation_object = VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.patch(
+            reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
+            {"status": "CANCELADA"},
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
+        self.assertEqual(
+            response.data["non_field_errors"][0],
+            "No puedes cancelar una solicitud aprobada.",
+        )
+
+    def test_vacation_cancel_no_owner(self):
+        """Test cancelling a vacation without being the owner."""
         self.vacation_request["user"] = self.test_user
         self.vacation_request["uploaded_by"] = self.test_user
         vacation_object = VacationRequest.objects.create(**self.vacation_request)

@@ -80,8 +80,8 @@ const UploadFiles = () => {
                 path = `${getApiUrl().apiUrl}files/robinson-list/`;
             } else if (selectedFile.name.toUpperCase().includes("BIRTHDAYS")) {
                 path = `${getApiUrl(true).apiUrl}massive-update`;
-                // } else if (selectedFile.name.toUpperCase().includes("PUNTOS-CYC")) {
-                //     path = `${getApiUrl().apiUrl}users/upload-points/`;
+            } else if (selectedFile.name.toUpperCase().includes("PUNTOS-CYC")) {
+                path = `${getApiUrl().apiUrl}users/upload-points/`;
             } else {
                 showSnack("error", "La nomenclatura del archivo no es correcta.");
                 setLoading(false);

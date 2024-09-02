@@ -286,6 +286,21 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
                 return super().partial_update(request, *args, **kwargs)
+        if (
+            "status" in request.data
+            and request.user == self.get_object().user
+            and request.data["status"] == "CANCELADA"
+        ):
+            if self.get_object().manager_approbation:
+                return Response(
+                    {
+                        "detail": "No puedes cancelar una solicitud de vacaciones aprobada."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            else:
+                return super().partial_update(request, *args, **kwargs)
+
         return Response(
             {"detail": "You do not have permission to perform this action."},
             status=status.HTTP_403_FORBIDDEN,

@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import { handleError } from "../../assets/handleError";
-
+import { CustomNoResultsOverlay } from "../../assets/CustomNoResultsOverlay";
 // Material-UI
 import { Container, Typography, Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
@@ -113,6 +113,7 @@ export const EmploymentCertification = () => {
                 </Typography>
                 <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
                     <DataGrid
+                        loading={rows.length === 0}
                         initialState={{
                             sorting: {
                                 sortModel: [{ field: "created_at", sort: "desc" }],
@@ -120,16 +121,21 @@ export const EmploymentCertification = () => {
                         }}
                         columns={columns}
                         rows={rows}
+                        slots={{ toolbar: GridToolbar, noResultsOverlay: CustomNoResultsOverlay }}
                         slotProps={{
                             toolbar: {
+                                showQuickFilter: true,
                                 csvOptions: {
                                     fileName: "employment-certifications",
                                     delimiter: ";",
                                     utf8WithBom: true,
                                 },
                             },
+                            loadingOverlay: {
+                                variant: "skeleton",
+                                noRowsVariant: "skeleton",
+                            },
                         }}
-                        slots={{ toolbar: GridToolbar }}
                     ></DataGrid>
                 </Box>
             </Container>

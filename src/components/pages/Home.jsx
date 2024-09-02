@@ -17,31 +17,25 @@ import cake from "../../images/birthdays/cake.png";
 import ceroDiscrimination from "../../images/home-carousel/cero-discrimination.png";
 import AvatarImage from "../../images/home-carousel/avatar.jpg";
 import securityPractices from "../../images/home-carousel/security-practices.png";
-import security from "../../images/home-carousel/security.png";
 import differentiationMatrices from "../../images/home-carousel/differentiation-matrices.png";
-import principles from "../../images/home-carousel/principles.png";
 import points from "../../images/home-carousel/points.png";
 import water from "../../images/home-carousel/water.png";
-import waterConsumed from "../../images/home-carousel/water-consumed.png";
 import socialMedia from "../../images/home-carousel/social-media.png";
 import mapProcess from "../../images/home-carousel/process-map.png";
 import coexistence from "../../images/home-carousel/coexistence.png";
-import trivia from "../../images/home-carousel/trivia.png";
+import brothers from "../../images/home-carousel/brothers.png";
 
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: brothers },
     { image: coexistence },
-    { image: trivia },
     { image: mapProcess },
     { image: points },
     { image: water },
-    { image: waterConsumed },
     { image: socialMedia },
-    { image: principles },
     { image: differentiationMatrices },
-    { image: security },
     { image: securityPractices },
     { image: ceroDiscrimination },
 ];

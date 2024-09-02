@@ -3,9 +3,12 @@
 import os
 import ldap  # type: ignore
 import random
+from notifications.models import Notification
 from services.tests import BaseTestCase
 from users.models import User
 from hierarchy.models import Area
+from django.contrib.auth.models import Permission
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.conf import settings
 from django.urls import reverse
@@ -107,7 +110,6 @@ class LDAPAuthenticationTest(TestCase):
             first_name="Administrador",
             last_name="",
         )
-        # print(User.objects.first())
         response = self.client.post(reverse("obtain-token"), data)
         self.assertEqual(response.status_code, 200, response.data)
 
@@ -137,6 +139,11 @@ class LDAPAuthenticationTest(TestCase):
 
 
 class UserTestCase(BaseTestCase):
+
+    def setUp(self):
+        """Sets up the test client."""
+        super().setUp()
+        self.user.user_permissions.add(Permission.objects.get(codename="upload_points"))
 
     def test_get_full_name(self):
         """Tests that the full name is returned correctly."""
@@ -176,7 +183,6 @@ class UserTestCase(BaseTestCase):
         demo_user_2 = self.create_demo_user()
         demo_user_2.area = Area.objects.get_or_create(name="Demo")[0]
         demo_user_2.save()
-        # print(User.objects.filter(area__manager=self.user))
         response = self.client.get(reverse("get_subordinates"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
@@ -250,6 +256,18 @@ class UserTestCase(BaseTestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, str(data["correo"]).upper())
 
+    def test_update_user_mail_invalid(self):
+        """Tests that the update_user endpoint returns an error if the email is invalid."""
+        data = {"correo": "test@invalid"}
+        self.user.cedula = 1001185389
+        self.user.save()
+        response = self.client.patch(reverse("update_profile"), data)
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(
+            response.data["error"],
+            "El correo ingresado no es válido, por favor verifica e intenta de nuevo.",
+        )
+
     def test_user_creation(self):
         """Tests that the user creation works as expected."""
         user = User.objects.create(
@@ -263,3 +281,90 @@ class UserTestCase(BaseTestCase):
             User.objects.get(pk=user.pk).company_email,
             os.environ["EMAIL_FOR_TEST"].upper(),
         )
+
+    def test_get_points(self):
+        """Tests that the get_points endpoint works as expected."""
+        self.create_demo_user()
+        self.user.points = 100
+        self.user.save()
+        response = self.client.get(reverse("get_points"))
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(len(response.data), len(User.objects.all()))
+        self.assertEqual(response.data[0]["points"], 100)
+
+    def test_get_points_unauthenticated(self):
+        """Tests that the get_points endpoint returns an error if the user is not authenticated."""
+        self.client.logout()
+        response = self.client.get(reverse("get_points"))
+        self.assertEqual(response.status_code, 401)
+
+    def test_upload_points(self):
+        """Tests that the upload_points endpoint works as expected."""
+        self.create_demo_user(1001185386)
+        self.create_demo_user(1001185390)
+        content = "cedula;puntos\n1001185386;100\n1001185390;200"
+        file = SimpleUploadedFile("points.csv", content.encode("utf-8"))
+        response = self.client.post(reverse("upload_points"), {"file": file})
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(User.objects.get(cedula=1001185386).points, 100)
+        self.assertEqual(User.objects.get(cedula=1001185390).points, 200)
+
+    def test_upload_points_unauthenticated(self):
+        """Tests that the upload_points endpoint returns an error if the user is not authenticated."""
+        self.client.logout()
+        response = self.client.post(reverse("upload_points"))
+        self.assertEqual(response.status_code, 401)
+
+    def test_upload_points_wrong_file(self):
+        """Tests that the upload_points endpoint returns an error if the file is not a CSV."""
+        file = SimpleUploadedFile("points.xlsx", b"")
+        response = self.client.post(reverse("upload_points"), {"file": file})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data["error"],
+            "El archivo debe ser un archivo CSV, por favor verifica e intenta de nuevo.",
+        )
+
+    def test_upload_points_wrong_columns(self):
+        """Tests that the upload_points endpoint returns an error if the file does not have the correct columns."""
+        content = "cedula;score\n1001185386;100\n1001185390;20"
+        file = SimpleUploadedFile("points.csv", content.encode("utf-8"))
+        response = self.client.post(reverse("upload_points"), {"file": file})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data["error"],
+            "El archivo debe tener dos columnas llamadas 'cedula' y 'puntos', por favor verifica e intenta de nuevo.",
+        )
+
+    def test_upload_points_user_not_found(self):
+        """Tests that the upload_points endpoint returns an error if the user is not found."""
+        self.create_demo_user(1001185386)
+        content = "cedula;puntos\n1001185386;100\n1001185391;200"
+        file = SimpleUploadedFile("points.csv", content.encode("utf-8"))
+        response = self.client.post(reverse("upload_points"), {"file": file})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data["error"],
+            "Algunos usuarios no fueron encontrados",
+        )
+        self.assertEqual(response.data["errors"], ["1001185391"])
+        self.assertEqual(Notification.objects.count(), 1)
+
+    def test_upload_points_not_perm(self):
+        """Tests that the upload_points endpoint returns an error if the user does not have the permission."""
+        self.user.user_permissions.clear()
+        content = "cedula;puntos,1001185386;100,1001185390;200"
+        file = SimpleUploadedFile("points.csv", content.encode("utf-8"))
+        response = self.client.post(reverse("upload_points"), {"file": file})
+        self.assertEqual(response.status_code, 403)
+
+    def test_upload_points_read_file(self):
+        """Tests that the upload_points endpoint reads the file correctly."""
+        self.create_demo_user(1001185386)
+        self.create_demo_user(1001185390)
+        with open("utils/excels/puntos-cyc.csv", "rb") as f:
+            file = SimpleUploadedFile("points.csv", f.read())
+            response = self.client.post(reverse("upload_points"), {"file": file})
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(User.objects.get(cedula=1001185386).points, 133)
+        self.assertEqual(User.objects.get(cedula=1001185390).points, 20)

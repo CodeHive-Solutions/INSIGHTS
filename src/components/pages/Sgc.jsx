@@ -8,6 +8,7 @@ import { Formik, Form, useField } from "formik";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi";
 import { handleError } from "../../assets/handleError";
+import { CustomNoResultsOverlay } from "../../assets/CustomNoResultsOverlay";
 
 // Material-UI
 import { Container, Box, Button, Typography, TextField, Dialog, DialogContent, DialogTitle, MenuItem, styled, Tooltip } from "@mui/material";
@@ -500,11 +501,19 @@ export const Sgc = () => {
                 </Typography>
                 <Box sx={{ height: "80vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
                     <DataGrid
+                        loading={rows.length === 0}
                         columns={columns}
                         rows={rows}
                         editMode="row"
                         slots={{
                             toolbar: CustomToolbar,
+                            noResultsOverlay: CustomNoResultsOverlay,
+                        }}
+                        slotProps={{
+                            loadingOverlay: {
+                                variant: "skeleton",
+                                noRowsVariant: "skeleton",
+                            },
                         }}
                         rowModesModel={rowModesModel}
                         onRowEditStop={handleRowEditStop}
