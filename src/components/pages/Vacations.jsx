@@ -362,7 +362,10 @@ export const Vacations = () => {
                             sx={{
                                 color: "primary.main",
                             }}
-                            onClick={() => window.open(`${getApiUrl().apiUrl}${row.request_file}`, "_blank")}
+                            onClick={() => {
+                                const requestFile = row.request_file.replace(/^\//, "");
+                                window.open(`${apiUrl}.${requestFile}`, "_blank");
+                            }}
                         />
                     </Tooltip>,
                 ];
