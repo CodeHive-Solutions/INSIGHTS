@@ -287,7 +287,7 @@ const VacationsRequest = ({ openVacation, setOpenVacation, getVacations }) => {
         formData.append("user", valueAutocomplete.id);
 
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}vacation/request/`, {
+            const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
                 method: "POST",
                 credentials: "include",
                 body: formData,
