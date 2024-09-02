@@ -8,6 +8,7 @@ from django.db import connections
 from rest_framework.decorators import api_view
 from django.db.models import Q
 from django.conf import settings
+from django.core.validators import validate_email
 from django.core.mail import mail_admins
 from django.contrib.auth.decorators import permission_required
 from rest_framework.response import Response
@@ -140,6 +141,17 @@ def update_profile(request):
             status=400,
         )
 
+    if "correo" in data["column"]:
+        try:
+            validate_email(data["value"][data["column"].index("correo")])
+        except Exception:
+            return Response(
+                {
+                    "error": "El correo ingresado no es válido, por favor verifica e intenta de nuevo."
+                },
+                status=400,
+            )
+
     if "test" in sys.argv or settings.DEBUG:
         url = "https://staffnet-api-dev.cyc-bpo.com/update"
     else:
@@ -188,7 +200,7 @@ def get_subordinates(request):
         users = User.objects.filter(
             Q(area=request.user.area) | Q(area__manager=request.user),
             Q(job_position__rank__lt=user_rank),
-        ).order_by("first_name", "last_name", "cedula")
+        ).order_by("first_name", "last_name", "id")
     # TODO: Refactor this when the migration of StaffNet is done
     # Check if each user is active in StaffNet
     if "test" not in sys.argv and len(users) > 0:

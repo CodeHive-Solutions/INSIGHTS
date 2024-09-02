@@ -188,8 +188,8 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(
             response.data,
             [
-                {"id": demo_user_2.pk, "name": demo_user_2.get_full_name()},
                 {"id": demo_user_1.pk, "name": demo_user_1.get_full_name()},
+                {"id": demo_user_2.pk, "name": demo_user_2.get_full_name()},
             ],
         )
 
@@ -255,6 +255,18 @@ class UserTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 200, response.data)
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, str(data["correo"]).upper())
+
+    def test_update_user_mail_invalid(self):
+        """Tests that the update_user endpoint returns an error if the email is invalid."""
+        data = {"correo": "test@invalid"}
+        self.user.cedula = 1001185389
+        self.user.save()
+        response = self.client.patch(reverse("update_profile"), data)
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(
+            response.data["error"],
+            "El correo ingresado no es válido, por favor verifica e intenta de nuevo.",
+        )
 
     def test_user_creation(self):
         """Tests that the user creation works as expected."""

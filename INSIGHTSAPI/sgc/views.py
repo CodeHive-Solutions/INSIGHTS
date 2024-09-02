@@ -26,7 +26,6 @@ class SGCFileViewSet(viewsets.ModelViewSet):
     # renderer_classes = [renderers.BrowsableAPIRenderer]
     permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
-    # @method_decorator(cache_control(private=True, max_age=CACHE_DURATION))
     @method_decorator(cache_page(CACHE_DURATION, key_prefix="sgc"))
     def list(self, request, *args, **kwargs):
         """List the objects"""
