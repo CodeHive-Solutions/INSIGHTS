@@ -336,12 +336,12 @@ export const Vacations = () => {
             type: "singleSelect",
             valueOptions: ["PENDIENTE", "APROBADA", "RECHAZADA", "CANCELADA"],
             // return a chip with the status
-            renderCell: (value) => {
-                if (value === "PENDIENTE") {
+            renderCell: (params) => {
+                if (params.value === "PENDIENTE") {
                     return <Chip icon={<PendingIcon />} label="Pendiente" />;
-                } else if (value === "APROBADA") {
+                } else if (params.value === "APROBADA") {
                     return <Chip icon={<CheckCircleIcon />} label="Aprobada" color="success" />;
-                } else if (value === "RECHAZADA") {
+                } else if (params.value === "RECHAZADA") {
                     return <Chip icon={<CancelIcon />} label="Rechazada" color="error" />;
                 }
                 return <Chip icon={<EventBusyIcon />} label="Cancelado" color="warning" />;
