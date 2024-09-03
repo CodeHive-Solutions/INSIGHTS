@@ -10,6 +10,7 @@ from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from django.db.models import Q
+from django.test import override_settings
 from .utils import is_working_day, get_working_days, get_return_date
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
@@ -50,6 +51,7 @@ class WorkingDayTestCase(TestCase):
         self.assertEqual(get_return_date("2024-12-31", True), datetime(2025, 1, 2))
 
 
+@override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
 class VacationRequestModelTestCase(BaseTestCase):
     """Test module for VacationRequest model."""
 
