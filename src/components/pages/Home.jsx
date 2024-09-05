@@ -269,19 +269,6 @@ const Home = () => {
                 </Card>{" "}
             </Box>
             {/* </Grow> */}
-            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: "2rem", gap: "2rem", flexWrap: "wrap" }}>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
-                    <Typography
-                        variant="h4"
-                        color="primary"
-                        id="section1"
-                        sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
-                    >
-                        Beneficios
-                    </Typography>
-                    <CarouselComponent items={benefits} height={"960px"} width={"540px"} />
-                </Box>
-            </Box>
             <Container sx={{ display: "flex", flexDirection: "column", pb: "2rem", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"
@@ -304,6 +291,20 @@ const Home = () => {
                     </video>
                 </Box>
             </Container>
+            <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", p: "2rem", gap: "2rem", flexWrap: "wrap" }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                    <Typography
+                        variant="h4"
+                        color="primary"
+                        id="section1"
+                        sx={{ display: "flex", width: "100%", justifyContent: "center", pt: "1em", fontFamily: "Poppins" }}
+                    >
+                        Beneficios
+                    </Typography>
+                    <CarouselComponent items={benefits} height={"960px"} width={"540px"} />
+                </Box>
+            </Box>
+
             <SnackbarAlert message={message} severity={severity} openSnack={openSnack} closeSnack={handleCloseSnack} />
         </>
     );
