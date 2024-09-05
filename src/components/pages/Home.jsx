@@ -6,6 +6,7 @@ import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { handleError } from "../../assets/handleError";
 import { PersonalInformationContext } from "../../context/PersonalInformation.jsx";
+import { EmblaCarousel } from "../shared/EmblaCarousel.jsx";
 
 // Material-UI
 import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
@@ -163,10 +164,12 @@ const Home = () => {
 
     return (
         <>
-            <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
+            {/* <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} contain={true} height={matches ? "648px" : "480px"} width={matches ? "1152px" : "854px"} />
+            </Box> */}
+            <Box sx={{ height: "900px", mt: "6rem" }}>
+                <EmblaCarousel />
             </Box>
-
             <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"

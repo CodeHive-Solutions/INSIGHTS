@@ -20,6 +20,7 @@
         "@sentry/vite-plugin": "^2.22.3",
         "cally": "^0.7.1",
         "depcheck": "^1.4.7",
+        "embla-carousel-react": "^8.2.1",
         "formik": "^2.4.6",
         "lodash": "^4.17.21",
         "node-fetch": "^3.3.2",
