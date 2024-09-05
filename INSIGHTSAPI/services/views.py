@@ -81,7 +81,6 @@ def trigger_error(request):
 @api_view(["GET"])
 @permission_classes([AllowAny])
 @cache_page(60 * 60 * 24, key_prefix="holidays")
-@cache_control(private=True, max_age=60 * 60 * 24)
 def get_holidays(request, year):
     """Get the holidays of the year."""
     try:
