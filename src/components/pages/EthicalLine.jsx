@@ -43,6 +43,7 @@ const complaintType = [
     { value: "Divulgación Inapropiada de Información", label: "Divulgación Inapropiada de Información" },
     { value: "Ignorar el Canal de Denuncia Ética", label: "Ignorar el Canal de Denuncia Ética" },
     { value: "Falta de Transparencia", label: "Falta de Transparencia" },
+    { value: "Conflicto de Intereses", label: "Conflicto de Intereses" },
 ];
 
 const baseValidationSchema = Yup.object().shape({
