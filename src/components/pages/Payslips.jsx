@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 
 // Libraries
-import * as XLSX from "xlsx";
+import { read, utils } from "xlsx";
+
 import { useNavigate } from "react-router-dom";
 
 // Material-UI
@@ -179,7 +180,7 @@ export const Payslips = () => {
             width: 100,
             type: "actions",
             cellClassName: "actions",
-            getActions: ({id}) => {
+            getActions: ({ id }) => {
                 return [
                     <Tooltip title="Reenviar" arrow>
                         <GridActionsCellItem
@@ -306,10 +307,10 @@ export const Payslips = () => {
 
         reader.onload = (evt) => {
             const bstr = evt.target.result;
-            const workbook = XLSX.read(bstr, { type: "binary" });
+            const workbook = read(bstr, { type: "binary" });
             const worksheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[worksheetName];
-            const data = XLSX.utils.sheet_to_csv(worksheet, { header: 1 });
+            const data = utils.sheet_to_csv(worksheet, { header: 1 });
             setPreviewRows(csvToJSON(data));
         };
 
