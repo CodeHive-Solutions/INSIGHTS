@@ -128,6 +128,16 @@ class VacationRequestSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "No puedes crear una solicitud para este usuario."
                 )
+        else:
+            # Update
+            if (
+                self.instance.manager_approbation
+                and "status" in attrs
+                and attrs["status"] == "CANCELADA"
+            ):
+                raise serializers.ValidationError(
+                    "No puedes cancelar una solicitud que ya ha sido aprobada por tu jefe."
+                )
         return attrs
 
     def create(self, validated_data):

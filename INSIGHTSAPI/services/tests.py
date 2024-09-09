@@ -9,6 +9,7 @@ from datetime import timedelta
 from django.test import TestCase, Client, override_settings
 from django.urls import reverse
 from django.conf import settings
+from django.core.cache import cache
 from users.models import User
 from services.models import Answer
 from hierarchy.models import Area, JobPosition
@@ -140,6 +141,9 @@ class EthicalLineTest(APITestCase):
 class HolidayTest(TestCase):
     """Test for holidays."""
 
+    def setUp(self):
+        cache.clear()
+
     def test_holiday(self):
         """Test that the holiday is a holiday."""
         self.assertTrue(holidays.Colombia().get("2022-01-01"))
@@ -152,7 +156,7 @@ class HolidayTest(TestCase):
         """Test that the holidays are retrieved."""
         response = self.client.get("/services/holidays/2024/")
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.data, holidays.CO(years=range(2024, 2026)).items())
+        self.assertEqual(response.data, list(holidays.CO(years=range(2024, 2026)).items()))
 
 
 class QuestionTest(BaseTestCase):

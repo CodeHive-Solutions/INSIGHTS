@@ -4,6 +4,7 @@ import logging
 import os
 import holidays
 from rest_framework.response import Response
+from django.http import JsonResponse
 from django.views.decorators.cache import cache_page, cache_control
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -88,7 +89,7 @@ def get_holidays(request, year):
     except ValueError:
         return Response({"error": "El año debe ser un número"}, status=400)
     # Get the holidays of the year and the next year
-    holidays_year = holidays.CO(years=range(year, year + 2)).items()
+    holidays_year = list(holidays.CO(years=range(year, year + 2)).items())
     return Response(holidays_year, status=200)
 
 

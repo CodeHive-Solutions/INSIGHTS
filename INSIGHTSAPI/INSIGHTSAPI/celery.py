@@ -10,3 +10,5 @@ app = Celery("INSIGHTSAPI")
 app.config_from_object("django.conf:settings", namespace="CELERY")
 
 app.autodiscover_tasks(["INSIGHTSAPI"])
+
+app.log.setup()
