@@ -364,7 +364,7 @@ export const Vacations = () => {
                             }}
                             onClick={() => {
                                 const requestFile = row.request_file.replace(/^\//, "");
-                                window.open(`${apiUrl}.${requestFile}`, "_blank");
+                                window.open(`${getApiUrl().apiUrl}${requestFile}`, "_blank");
                             }}
                         />
                     </Tooltip>,

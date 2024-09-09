@@ -15,9 +15,9 @@
         "@mui/icons-material": "^5.16.7",
         "@mui/lab": "5.0.0-alpha.173",
         "@mui/material": "^5.16.7",
-        "@mui/x-data-grid": "^7.14.0",
-        "@sentry/react": "^8.27.0",
-        "@sentry/vite-plugin": "^2.22.3",
+        "@mui/x-data-grid": "^7.16.0",
+        "@sentry/react": "^8.29.0",
+        "@sentry/vite-plugin": "^2.22.4",
         "cally": "^0.7.1",
         "depcheck": "^1.4.7",
         "formik": "^2.4.6",
@@ -27,14 +27,15 @@
         "react-dom": "^18.3.1",
         "react-dropzone": "^14.2.3",
         "react-material-ui-carousel": "^3.4.2",
-        "react-router-dom": "^6.26.1",
-        "swiper": "^11.1.11",
+        "react-router-dom": "^6.26.2",
+        "rollup-plugin-visualizer": "^5.12.0",
+        "swiper": "^11.1.12",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
         "yup": "^1.4.0"
     },
     "devDependencies": {
-        "@types/react": "^18.3.4",
+        "@types/react": "^18.3.5",
         "@vitejs/plugin-react": "^4.3.1",
-        "vite": "^5.4.2"
+        "vite": "^5.4.3"
     }
 }
