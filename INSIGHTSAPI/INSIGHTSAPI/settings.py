@@ -92,6 +92,7 @@ INSTALLED_APPS = [
     "employment_management",
     "vacation",
     "notifications",
+    "carousel_image",
 ]
 
 MIDDLEWARE = [
