@@ -26,10 +26,14 @@ import coexistence from "../../images/home-carousel/coexistence.png";
 import brothers from "../../images/home-carousel/brothers.png";
 import electricityCampaign from "../../images/home-carousel/electricity-campaign.png";
 import depression from "../../images/home-carousel/depression.png";
+import lockers from "../../images/home-carousel/lockers.png";
+import passwords from "../../images/home-carousel/password.png";
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
+    { image: lockers },
+    { image: passwords },
     { image: electricityCampaign },
     { image: depression },
     { image: brothers },
