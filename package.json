@@ -21,6 +21,7 @@
         "cally": "^0.7.1",
         "depcheck": "^1.4.7",
         "embla-carousel-autoplay": "^8.2.1",
+        "embla-carousel-class-names": "^8.2.1",
         "embla-carousel-fade": "^8.2.1",
         "embla-carousel-react": "^8.2.1",
         "formik": "^2.4.6",

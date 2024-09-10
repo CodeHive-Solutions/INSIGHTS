@@ -38,6 +38,9 @@ dependencies:
   embla-carousel-autoplay:
     specifier: ^8.2.1
     version: 8.2.1(embla-carousel@8.2.1)
+  embla-carousel-class-names:
+    specifier: ^8.2.1
+    version: 8.2.1(embla-carousel@8.2.1)
   embla-carousel-fade:
     specifier: ^8.2.1
     version: 8.2.1(embla-carousel@8.2.1)
@@ -1713,6 +1716,14 @@ packages:
 
   /embla-carousel-autoplay@8.2.1(embla-carousel@8.2.1):
     resolution: {integrity: sha512-jhE2aNz5pbmICVkz3XyB3uACgkk4YvbnOZeMcoeIMjfycierQvmcice107w73kYaPrQSzCrHLNkKNmq9eA2iOQ==}
+    peerDependencies:
+      embla-carousel: 8.2.1
+    dependencies:
+      embla-carousel: 8.2.1
+    dev: false
+
+  /embla-carousel-class-names@8.2.1(embla-carousel@8.2.1):
+    resolution: {integrity: sha512-wxt06wqIFuT3OnujrLNOStZaPbeExfqfy2rhx1qX2aXVJAY3/Xh6GMTY56srzLqy4Hqjsd3Q0Ykcl5rr6oTA+Q==}
     peerDependencies:
       embla-carousel: 8.2.1
     dependencies:

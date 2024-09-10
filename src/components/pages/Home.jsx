@@ -166,12 +166,12 @@ const Home = () => {
 
     return (
         <>
-            <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
+            {/* <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} contain={true} height={matches ? "648px" : "480px"} width={matches ? "1152px" : "854px"} />
-            </Box>
-            {/* <Box sx={{ mt: "6rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <EmblaCarousel />
             </Box> */}
+            <Box sx={{ mt: "6rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <EmblaCarousel />
+            </Box>
             <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"
