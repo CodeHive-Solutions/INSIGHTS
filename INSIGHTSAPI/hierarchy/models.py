@@ -14,6 +14,11 @@ class Area(models.Model):
         "users.User", on_delete=models.SET_NULL, null=True, related_name="managed_areas"
     )
 
+    class Meta:
+        permissions = [
+            ("manage_area", "Can manage the area"),
+        ]
+
     def __str__(self) -> str:
         """String representation of the model."""
         return self.name

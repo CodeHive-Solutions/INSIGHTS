@@ -18,6 +18,7 @@ Including another URLconf
 from django.conf import settings
 from django.urls import include, path
 from django.contrib import admin
+
 # from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 
@@ -44,6 +45,7 @@ urlpatterns = [
     path("users/", include("users.urls")),
     path("vacation/", include("vacation.urls")),
     path("notifications/", include("notifications.urls")),
+    path("carousel-images/", include("carousel_image.urls")),
 ]
 
 if settings.DEBUG:

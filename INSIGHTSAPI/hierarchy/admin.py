@@ -1,5 +1,6 @@
 from django.contrib import admin
 from users.models import User
+from django.db.models import Q
 from .models import Area, JobPosition
 
 
@@ -26,9 +27,10 @@ class AreaAdmin(admin.ModelAdmin):
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """Customize the queryset for the manager field."""
         if db_field.name == "manager":
-            # Customizing the queryset to show only users with a rank >= 4
+            # Customizing the queryset to show only users with a rank >= 4 or have the manage_area permission
             kwargs["queryset"] = User.objects.filter(
-                job_position__rank__gte=4
+                Q(job_position__rank__gte=4)
+                | Q(user_permissions__codename="manage_area")
             ).order_by("first_name")
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
