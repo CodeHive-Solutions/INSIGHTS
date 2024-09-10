@@ -23,7 +23,6 @@ import water from "../../images/home-carousel/water.png";
 import socialMedia from "../../images/home-carousel/social-media.png";
 import mapProcess from "../../images/home-carousel/process-map.png";
 import coexistence from "../../images/home-carousel/coexistence.png";
-import brothers from "../../images/home-carousel/brothers.png";
 import electricityCampaign from "../../images/home-carousel/electricity-campaign.png";
 import depression from "../../images/home-carousel/depression.png";
 import lockers from "../../images/home-carousel/lockers.png";
@@ -36,7 +35,6 @@ const homeImages = [
     { image: passwords },
     { image: electricityCampaign },
     { image: depression },
-    { image: brothers },
     { image: coexistence },
     { image: mapProcess },
     { image: points },
