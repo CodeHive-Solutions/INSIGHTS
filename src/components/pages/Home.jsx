@@ -6,6 +6,7 @@ import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { handleError } from "../../assets/handleError";
 import { PersonalInformationContext } from "../../context/PersonalInformation.jsx";
+import { EmblaCarousel } from "../shared/EmblaCarousel.jsx";
 
 // Material-UI
 import { Typography, Box, Container, useMediaQuery, Card, List, ListItem, ListItemAvatar, ListItemText, Avatar } from "@mui/material";
@@ -25,15 +26,15 @@ import mapProcess from "../../images/home-carousel/process-map.png";
 import coexistence from "../../images/home-carousel/coexistence.png";
 import electricityCampaign from "../../images/home-carousel/electricity-campaign.png";
 import depression from "../../images/home-carousel/depression.png";
+import passwords from "../../images/home-carousel/passwords.png";
 import lockers from "../../images/home-carousel/lockers.png";
-import passwords from "../../images/home-carousel/password.png";
 
 
 const benefits = [{ image: realBenefit2, title: "Beneficio 2" }];
 
 const homeImages = [
-    { image: lockers },
     { image: passwords },
+    { image: lockers },
     { image: electricityCampaign },
     { image: depression },
     { image: coexistence },
@@ -166,10 +167,12 @@ const Home = () => {
 
     return (
         <>
-            <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
+            {/* <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
                 <CarouselComponent items={homeImages} contain={true} height={matches ? "648px" : "480px"} width={matches ? "1152px" : "854px"} />
+            </Box> */}
+            <Box sx={{ mt: "6rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <EmblaCarousel />
             </Box>
-
             <Container sx={{ display: "flex", flexDirection: "column", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"

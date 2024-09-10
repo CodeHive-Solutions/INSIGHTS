@@ -170,7 +170,7 @@ class VacationRequestModelTestCase(BaseTestCase):
                 Q(user__job_position__rank__lt=self.user.job_position.rank)
                 & Q(user__area=self.user.area)
             )
-        )
+        ).order_by("-created_at")
         serializer = VacationRequestSerializer(vacation_requests, many=True)
         self.assertEqual(response.data, serializer.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -289,10 +289,12 @@ class VacationRequestModelTestCase(BaseTestCase):
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
             {"status": "CANCELADA"},
         )
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.data)
         self.assertEqual(
-            response.data["non_field_errors"][0],
-            "No puedes cancelar una solicitud aprobada.",
+            response.status_code, status.HTTP_400_BAD_REQUEST, response.data
+        )
+        self.assertEqual(
+            str(response.data["non_field_errors"][0]),
+            "No puedes cancelar una solicitud que ya ha sido aprobada por tu jefe.",
         )
 
     def test_vacation_cancel_no_owner(self):
