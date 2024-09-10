@@ -19,7 +19,7 @@ from .serializers import VacationRequestSerializer
 
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
-    queryset = VacationRequest.objects.all().select_related("user", "uploaded_by")
+    queryset = VacationRequest.objects.all().select_related("user", "uploaded_by").order_by("-created_at")
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
 
@@ -291,15 +291,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             and request.user == self.get_object().user
             and request.data["status"] == "CANCELADA"
         ):
-            if self.get_object().manager_approbation:
-                return Response(
-                    {
-                        "detail": "No puedes cancelar una solicitud de vacaciones aprobada."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            else:
-                return super().partial_update(request, *args, **kwargs)
+            return super().partial_update(request, *args, **kwargs)
 
         return Response(
             {"detail": "You do not have permission to perform this action."},

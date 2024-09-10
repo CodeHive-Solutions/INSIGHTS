@@ -20,7 +20,7 @@
         "@sentry/vite-plugin": "^2.22.4",
         "cally": "^0.7.1",
         "depcheck": "^1.4.7",
-        "embla-carousel-react": "^8.2.1",
+        "embla-carousel-autoplay": "^8.2.1",
         "formik": "^2.4.6",
         "lodash": "^4.17.21",
         "node-fetch": "^3.3.2",
@@ -37,6 +37,7 @@
     "devDependencies": {
         "@types/react": "^18.3.5",
         "@vitejs/plugin-react": "^4.3.1",
+        "rollup-plugin-visualizer": "^5.12.0",
         "vite": "^5.4.3"
     }
 }
