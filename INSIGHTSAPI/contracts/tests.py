@@ -14,7 +14,6 @@ from datetime import timedelta
 from .models import Contract
 
 
-# Create your tests here.
 class TestContracts(BaseTestCase):
     """This class defines the tests for the contracts app."""
 
