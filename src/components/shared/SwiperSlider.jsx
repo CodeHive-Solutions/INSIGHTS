@@ -93,7 +93,7 @@ const SwiperSlider = () => {
             className="mySwiper"
         >
             {managersJr.map((manager, index) => (
-                <SwiperSlide key={index}>
+                <SwiperSlide role="listitem" key={index}>
                     <Box
                         sx={{
                             display: "flex",

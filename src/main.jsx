@@ -36,7 +36,6 @@ import InactivityDetector from "./components/shared/InactivityDetector";
 import Vacations from "./components/pages/Vacations";
 import PowerBI from "./components/pages/PowerBI";
 import Points from "./components/pages/Points";
-import { PersonalInformationProvider } from "./context/PersonalInformation";
 
 Sentry.init({
     dsn: "https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840",
@@ -205,13 +204,11 @@ if ("scrollRestoration" in history) {
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-    <PersonalInformationProvider>
-        <React.StrictMode>
-            <ThemeProvider theme={theme}>
-                <CssBaseline>
-                    <RouterProvider router={router} />
-                </CssBaseline>
-            </ThemeProvider>
-        </React.StrictMode>
-    </PersonalInformationProvider>
+    <React.StrictMode>
+        <ThemeProvider theme={theme}>
+            <CssBaseline>
+                <RouterProvider router={router} />
+            </CssBaseline>
+        </ThemeProvider>
+    </React.StrictMode>
 );

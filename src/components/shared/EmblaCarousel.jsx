@@ -13,13 +13,13 @@ export function EmblaCarousel() {
     return (
         <div className="embla" style={{ overflow: "hidden", padding: "2rem" }} ref={emblaRef}>
             <div className="embla__container" style={{ display: "flex", maxWidth: "1280px" }}>
-                <div style={{ flex: "0 0 auto", minWidth: 0, maxWidth: "100%", margin: "20px 20px 0 0" }} className="embla__slide ">
+                <div style={{ flex: "0 0 100%", minWidth: 0, maxWidth: "100%", margin: "20px 20px 0 0" }} className="embla__slide">
                     <img width={"100%"} style={{ borderRadius: "1.8rem" }} src={depression} alt="depression" />
                 </div>
-                <div style={{ flex: "0 0 auto", minWidth: 0, maxWidth: "100%", margin: "20px 20px 0 0" }} className="embla__slide ">
+                <div style={{ flex: "0 0 100%", minWidth: 0, maxWidth: "100%", margin: "20px 20px 0 0" }} className="embla__slide">
                     <img width={"100%"} style={{ borderRadius: "1.8rem" }} src={password} alt="password" />
                 </div>
-                <div style={{ flex: "0 0 auto", minWidth: 0, maxWidth: "100%", margin: "20px 20px 0 0" }} className="embla__slide ">
+                <div style={{ flex: "0 0 100%", minWidth: 0, maxWidth: "100%", margin: "20px 20px 0 0" }} className="embla__slide">
                     <img width={"100%"} style={{ borderRadius: "1.8rem" }} src={water} alt="water" />
                 </div>
             </div>

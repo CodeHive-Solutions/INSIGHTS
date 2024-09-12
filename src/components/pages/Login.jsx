@@ -9,7 +9,6 @@ import * as Sentry from "@sentry/react";
 // Custom Components
 import SnackbarAlert from "../common/SnackBarAlert";
 import { getApiUrl } from "../../assets/getApi.js";
-import { PersonalInformationContext } from "../../context/PersonalInformation";
 
 // Material-UI
 import { Box, Typography, Button, TextField, Link, Alert, Collapse, LinearProgress } from "@mui/material";
@@ -55,7 +54,6 @@ const Login = () => {
     const showAlert = location.state?.showAlert;
     const lastLocationPath = location.state?.lastLocation ? new URL(location.state?.lastLocation).pathname : null;
     const [lastLocation, setLastLocation] = useState(null);
-    const { userInformation, updateUserInformation } = useContext(PersonalInformationContext);
 
     // Use Effect Hook to update localStorage when items state changes
     useEffect(() => {
@@ -117,7 +115,6 @@ const Login = () => {
             }
 
             if (response.status === 200) {
-                updateUserInformation({ permissions: data.permissions, cedula: data.cedula, cargo: data.cargo, email: data.email, rango: data.rango });
                 // Set the item in localStorage
                 localStorage.setItem(
                     "refresh-timer-ls",

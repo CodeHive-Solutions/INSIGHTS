@@ -5,7 +5,6 @@ import { getApiUrl } from "../../assets/getApi.js";
 import CarouselComponent from "../shared/Carousel";
 import SnackbarAlert from "../common/SnackBarAlert";
 import { handleError } from "../../assets/handleError";
-import { PersonalInformationContext } from "../../context/PersonalInformation.jsx";
 import { EmblaCarousel } from "../shared/EmblaCarousel.jsx";
 
 // Material-UI
@@ -54,7 +53,6 @@ const Home = () => {
     const [yesterdayBirthdays, setYesterdayBirthdays] = useState([]);
     const [tomorrowBirthdays, setTomorrowBirthdays] = useState([]);
     const matches = useMediaQuery("(min-width:1025px)");
-    const { userInformation } = useContext(PersonalInformationContext);
 
     const handleCloseSnack = () => setOpenSnack(false);
 
@@ -219,7 +217,6 @@ const Home = () => {
                     ¡Feliz cumpleaños a nuestros queridos colaboradores que nos llenan de alegría y éxito! 🎉🎂{" "}
                 </Typography>
             </Box>
-            {/* <Grow in={inView}> */}
             <Box sx={{ display: "flex", width: "100%", justifyContent: "center", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
                 <Card sx={{ maxWidth: 350, width: 350, height: 700 }}>
                     {yesterdayBirthdays.length === 0 ? (
@@ -273,7 +270,6 @@ const Home = () => {
                     )}
                 </Card>{" "}
             </Box>
-            {/* </Grow> */}
             <Container sx={{ display: "flex", flexDirection: "column", pb: "2rem", gap: "2rem", mt: "2rem" }}>
                 <Typography
                     color="primary"

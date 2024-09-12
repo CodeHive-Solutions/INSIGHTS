@@ -1,11 +1,18 @@
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
-import { visualizer } from 'rollup-plugin-visualizer';
+import { visualizer } from "rollup-plugin-visualizer";
+import { configDefaults } from 'vitest/config';
 
 // import mkcert from 'vite-plugin-mkcert'
 
 export default defineConfig({
+    test: {
+        globals: true, // Use global test functions like describe, test, etc.
+        environment: "jsdom", // Simulates a browser environment for React components
+        setupFiles: "./src/setupTests.js", // Optional, for setup files
+        exclude: [...configDefaults.exclude, "node_modules/"], // Exclude node_modules
+    },
     server: {
         watch: {
             ignored: [
@@ -55,4 +62,3 @@ export default defineConfig({
         },
     },
 });
-

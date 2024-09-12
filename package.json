@@ -4,6 +4,7 @@
     "version": "0.0.0",
     "type": "module",
     "scripts": {
+        "test": "vitest",
         "dev": "vite",
         "build": "vite build",
         "preview": "vite preview",
@@ -33,14 +34,19 @@
         "react-material-ui-carousel": "^3.4.2",
         "react-router-dom": "^6.26.2",
         "rollup-plugin-visualizer": "^5.12.0",
-        "swiper": "^11.1.12",
+        "swiper": "^11.1.14",
         "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz",
         "yup": "^1.4.0"
     },
     "devDependencies": {
+        "@testing-library/jest-dom": "^6.5.0",
+        "@testing-library/react": "^16.0.1",
+        "@testing-library/user-event": "^14.5.2",
         "@types/react": "^18.3.5",
         "@vitejs/plugin-react": "^4.3.1",
+        "jsdom": "^25.0.0",
         "rollup-plugin-visualizer": "^5.12.0",
-        "vite": "^5.4.3"
+        "vite": "^5.4.4",
+        "vitest": "^2.1.0"
     }
 }
