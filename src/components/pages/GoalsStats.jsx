@@ -1,14 +1,21 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from 'react';
 
 // Custom Components
-import SnackbarAlert from "../common/SnackBarAlert";
-import { getApiUrl } from "../../assets/getApi";
-import { useNavigate } from "react-router-dom";
-import { handleError } from "../../assets/handleError";
-import { CustomNoResultsOverlay } from "../../assets/CustomNoResultsOverlay";
+import SnackbarAlert from '../common/SnackBarAlert';
+import { getApiUrl } from '../../assets/getApi';
+import { useNavigate } from 'react-router-dom';
+import { handleError } from '../../assets/handleError';
+import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
 
 // Material-UI
-import { Container, Typography, Box, TextField, MenuItem, Button } from "@mui/material";
+import {
+    Container,
+    Typography,
+    Box,
+    TextField,
+    MenuItem,
+    Button,
+} from '@mui/material';
 import {
     DataGrid,
     GridToolbarContainer,
@@ -17,33 +24,35 @@ import {
     GridToolbarExport,
     GridToolbarDensitySelector,
     GridToolbarQuickFilter,
-} from "@mui/x-data-grid";
+} from '@mui/x-data-grid';
 
 const AnalisisMetas = () => {
     const [openSnack, setOpenSnack] = useState(false);
-    const [severity, setSeverity] = useState("success");
-    const [message, setMessage] = useState("");
+    const [severity, setSeverity] = useState('success');
+    const [message, setMessage] = useState('');
     const [rows, setRows] = useState([]);
     const [yearsArray, setYearsArray] = useState([]);
     const monthRef = useRef();
     const yearRef = useRef();
     const goalType = useRef(null);
     const navigate = useNavigate();
-    const permissions = JSON.parse(localStorage.getItem("permissions"));
+    const permissions = JSON.parse(localStorage.getItem('permissions'));
 
     useEffect(() => {
-        if (!permissions || !permissions.includes("goals.view_goals")) {
-            navigate("/logged/home");
+        if (!permissions || !permissions.includes('goals.view_goals')) {
+            navigate('/logged/home');
         }
     }, []);
 
     const modifyData = (data) => {
         const modifiedData = data.map((row) => {
-            const date_update = row.last_update ? "last_update" : "history_date";
+            const date_update = row.last_update
+                ? 'last_update'
+                : 'history_date';
             if (row.quantity_goal > 999) {
-                const formatter = new Intl.NumberFormat("es-CO", {
-                    style: "currency",
-                    currency: "COP",
+                const formatter = new Intl.NumberFormat('es-CO', {
+                    style: 'currency',
+                    currency: 'COP',
                     minimumFractionDigits: 0,
                     maximumFractionDigits: 0,
                 });
@@ -51,24 +60,30 @@ const AnalisisMetas = () => {
                 const formattedValue = formatter.format(value);
                 row.quantity_goal = formattedValue;
             } else if (row.quantity_goal < 1) {
-                row.quantity_goal = Math.round(row.quantity_goal * 100) + "%";
+                row.quantity_goal = Math.round(row.quantity_goal * 100) + '%';
             }
             return {
                 ...row,
                 [date_update]: row[date_update].substring(0, 10),
-                accepted: row.accepted == 0 ? "Rechazada" : row.accepted == 1 ? "Aceptada" : "En espera",
-                clean_desk: row.clean_desk === "" ? "En Espera" : row.clean_desk,
-                quality: row.quality === "" ? "En Espera" : row.quality,
-                result: row.result === "" ? "En Espera" : row.result,
-                total: row.total === "" ? "En Espera" : row.total,
+                accepted:
+                    row.accepted == 0
+                        ? 'Rechazada'
+                        : row.accepted == 1
+                          ? 'Aceptada'
+                          : 'En espera',
+                clean_desk:
+                    row.clean_desk === '' ? 'En Espera' : row.clean_desk,
+                quality: row.quality === '' ? 'En Espera' : row.quality,
+                result: row.result === '' ? 'En Espera' : row.result,
+                total: row.total === '' ? 'En Espera' : row.total,
                 accepted_execution:
-                    row.total == "" && row.accepted_execution == null
-                        ? ""
+                    row.total == '' && row.accepted_execution == null
+                        ? ''
                         : row.accepted_execution == 0
-                        ? "Rechazada"
-                        : row.accepted_execution == 1
-                        ? "Aceptada"
-                        : "En espera",
+                          ? 'Rechazada'
+                          : row.accepted_execution == 1
+                            ? 'Aceptada'
+                            : 'En espera',
             };
         });
 
@@ -78,8 +93,8 @@ const AnalisisMetas = () => {
     const getGoals = async () => {
         try {
             const response = await fetch(`${getApiUrl().apiUrl}goals`, {
-                method: "GET",
-                credentials: "include",
+                method: 'GET',
+                credentials: 'include',
             });
 
             await handleError(response, showSnack);
@@ -89,7 +104,7 @@ const AnalisisMetas = () => {
                 modifyData(data);
             }
         } catch (error) {
-            if (getApiUrl().environment === "development") {
+            if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
         }
@@ -100,18 +115,22 @@ const AnalisisMetas = () => {
     }, []);
 
     const goalsColumns = [
-        { field: "cedula", headerName: "Cedula", width: 200 },
-        { field: "quantity_goal", headerName: "Meta", width: 240 },
-        { field: "last_update", headerName: "Fecha de modificación", width: 255 },
-        { field: "accepted", headerName: "Aprobación Meta", width: 225 },
+        { field: 'cedula', headerName: 'Cedula', width: 200 },
+        { field: 'quantity_goal', headerName: 'Meta', width: 240 },
         {
-            field: "goal_date",
-            headerName: "Fecha de la meta",
+            field: 'last_update',
+            headerName: 'Fecha de modificación',
+            width: 255,
+        },
+        { field: 'accepted', headerName: 'Aprobación Meta', width: 225 },
+        {
+            field: 'goal_date',
+            headerName: 'Fecha de la meta',
             width: 150,
             sortComparator: (v1, v2) => {
                 // Extraer el mes y el año de los valores
-                const [mes1, año1] = v1.split("-");
-                const [mes2, año2] = v2.split("-");
+                const [mes1, año1] = v1.split('-');
+                const [mes2, año2] = v2.split('-');
                 // Crear un objeto con los nombres de los meses en español y sus números correspondientes
                 const meses = {
                     ENERO: 1,
@@ -149,22 +168,26 @@ const AnalisisMetas = () => {
     ];
 
     const executionColumns = [
-        { field: "cedula", headerName: "Cedula", width: 100 },
-        { field: "quantity_execution", headerName: "Meta", width: 140 },
-        { field: "clean_desk", headerName: "Clean Desk", width: 100 },
-        { field: "quality", headerName: "Calidad", width: 80 },
-        { field: "result", headerName: "Resultado", width: 100 },
-        { field: "total", headerName: "Total", width: 80 },
-        { field: "last_update", headerName: "Fecha de modificación", width: 180 },
-        { field: "accepted_execution", headerName: "Aprobación", width: 170 },
+        { field: 'cedula', headerName: 'Cedula', width: 100 },
+        { field: 'quantity_execution', headerName: 'Meta', width: 140 },
+        { field: 'clean_desk', headerName: 'Clean Desk', width: 100 },
+        { field: 'quality', headerName: 'Calidad', width: 80 },
+        { field: 'result', headerName: 'Resultado', width: 100 },
+        { field: 'total', headerName: 'Total', width: 80 },
         {
-            field: "execution_date",
-            headerName: "Mes de la ejecución",
+            field: 'last_update',
+            headerName: 'Fecha de modificación',
+            width: 180,
+        },
+        { field: 'accepted_execution', headerName: 'Aprobación', width: 170 },
+        {
+            field: 'execution_date',
+            headerName: 'Mes de la ejecución',
             width: 180,
             sortComparator: (v1, v2) => {
                 // Extraer el mes y el año de los valores
-                const [mes1, año1] = v1.split("-");
-                const [mes2, año2] = v2.split("-");
+                const [mes1, año1] = v1.split('-');
+                const [mes2, año2] = v2.split('-');
                 // Crear un objeto con los nombres de los meses en español y sus números correspondientes
                 const meses = {
                     ENERO: 1,
@@ -204,7 +227,7 @@ const AnalisisMetas = () => {
     const [columns, setColumns] = useState(goalsColumns);
 
     const handleCloseSnackbar = (event, reason) => {
-        if (reason === "clickaway") {
+        if (reason === 'clickaway') {
             return;
         }
         setOpenSnack(false);
@@ -218,12 +241,12 @@ const AnalisisMetas = () => {
                 <GridToolbarDensitySelector />
                 <GridToolbarExport
                     csvOptions={{
-                        fileName: "Metas",
-                        delimiter: ";",
+                        fileName: 'Metas',
+                        delimiter: ';',
                         utf8WithBom: true,
                     }}
                 />
-                <Box sx={{ textAlign: "end", flex: "1" }}>
+                <Box sx={{ textAlign: 'end', flex: '1' }}>
                     <GridToolbarQuickFilter />
                 </Box>
             </GridToolbarContainer>
@@ -231,18 +254,18 @@ const AnalisisMetas = () => {
     }
 
     const months = [
-        { value: "ENERO", label: "ENERO" },
-        { value: "FEBRERO", label: "FEBRERO" },
-        { value: "MARZO", label: "MARZO" },
-        { value: "ABRIL", label: "ABRIL" },
-        { value: "MAYO", label: "MAYO" },
-        { value: "JUNIO", label: "JUNIO" },
-        { value: "JULIO", label: "JULIO" },
-        { value: "AGOSTO", label: "AGOSTO" },
-        { value: "SEPTIEMBRE", label: "SEPTIEMBRE" },
-        { value: "OCTUBRE", label: "OCTUBRE" },
-        { value: "NOVIEMBRE", label: "NOVIEMBRE" },
-        { value: "DICIEMBRE", label: "DICIEMBRE" },
+        { value: 'ENERO', label: 'ENERO' },
+        { value: 'FEBRERO', label: 'FEBRERO' },
+        { value: 'MARZO', label: 'MARZO' },
+        { value: 'ABRIL', label: 'ABRIL' },
+        { value: 'MAYO', label: 'MAYO' },
+        { value: 'JUNIO', label: 'JUNIO' },
+        { value: 'JULIO', label: 'JULIO' },
+        { value: 'AGOSTO', label: 'AGOSTO' },
+        { value: 'SEPTIEMBRE', label: 'SEPTIEMBRE' },
+        { value: 'OCTUBRE', label: 'OCTUBRE' },
+        { value: 'NOVIEMBRE', label: 'NOVIEMBRE' },
+        { value: 'DICIEMBRE', label: 'DICIEMBRE' },
     ];
 
     useEffect(() => {
@@ -261,10 +284,13 @@ const AnalisisMetas = () => {
     const handleFilter = async (event) => {
         event.preventDefault();
         try {
-            const response = await fetch(`${getApiUrl().apiUrl}goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`, {
-                method: "GET",
-                credentials: "include",
-            });
+            const response = await fetch(
+                `${getApiUrl().apiUrl}goals/?date=${monthRef.current.value}-${yearRef.current.value}&column=${goalType.current.value}`,
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                }
+            );
 
             await handleError(response, showSnack);
 
@@ -273,19 +299,19 @@ const AnalisisMetas = () => {
 
                 // Create a new columns array based on the initial columns but with the field name changed
                 let currentColumns = [];
-                if (goalType.current.value === "delivery") {
+                if (goalType.current.value === 'delivery') {
                     currentColumns = goalsColumns;
-                } else if (goalType.current.value === "execution") {
+                } else if (goalType.current.value === 'execution') {
                     currentColumns = executionColumns;
                 }
 
                 const updatedColumns = currentColumns.map((column) => {
-                    if (column.field === "last_update") {
+                    if (column.field === 'last_update') {
                         // Change the field and header name for 'last_update' column
                         return {
                             ...column,
-                            field: "history_date",
-                            headerName: "Fecha de modificación",
+                            field: 'history_date',
+                            headerName: 'Fecha de modificación',
                         };
                     }
                     return column; // Keep other columns unchanged
@@ -296,7 +322,7 @@ const AnalisisMetas = () => {
                 modifyData(data);
             }
         } catch (error) {
-            if (getApiUrl().environment === "development") {
+            if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
         }
@@ -305,9 +331,17 @@ const AnalisisMetas = () => {
     const handleTypeGoalChange = (event) => {
         const selectedValue = event.target.value;
         // Perform actions based on the selected value
-        if (selectedValue === "delivery" && monthRef.current.value === "" && yearRef.current.value === "") {
+        if (
+            selectedValue === 'delivery' &&
+            monthRef.current.value === '' &&
+            yearRef.current.value === ''
+        ) {
             setColumns(goalsColumns);
-        } else if (selectedValue === "execution" && monthRef.current.value === "" && yearRef.current.value === "") {
+        } else if (
+            selectedValue === 'execution' &&
+            monthRef.current.value === '' &&
+            yearRef.current.value === ''
+        ) {
             setColumns(executionColumns);
         }
     };
@@ -321,38 +355,69 @@ const AnalisisMetas = () => {
     return (
         <Container
             sx={{
-                mt: "6rem",
+                mt: '6rem',
             }}
         >
-            <Typography sx={{ textAlign: "center", pb: "15px", color: "primary.main" }} variant={"h4"}>
+            <Typography
+                sx={{ textAlign: 'center', pb: '15px', color: 'primary.main' }}
+                variant={'h4'}
+            >
                 Análisis de Metas
             </Typography>
-            <Box sx={{ display: "flex", gap: "2rem", p: "1rem" }}>
+            <Box sx={{ display: 'flex', gap: '2rem', p: '1rem' }}>
                 <Box>
                     <TextField
                         onChange={handleTypeGoalChange}
                         required
                         defaultValue="delivery"
-                        sx={{ width: "10rem" }}
+                        sx={{ width: '10rem' }}
                         size="small"
                         variant="filled"
                         select
                         label="Tipo de meta"
                         inputRef={goalType}
                     >
-                        <MenuItem value={"delivery"}>Entrega</MenuItem>
-                        <MenuItem value={"execution"}>Ejecución</MenuItem>
+                        <MenuItem value={'delivery'}>Entrega</MenuItem>
+                        <MenuItem value={'execution'}>Ejecución</MenuItem>
                     </TextField>
                 </Box>
-                <Box component="form" sx={{ display: "flex", gap: "1rem", justifyContent: "flex-end", width: "100%" }} onSubmit={handleFilter}>
-                    <TextField id="month" label="Mes" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={monthRef}>
+                <Box
+                    component="form"
+                    sx={{
+                        display: 'flex',
+                        gap: '1rem',
+                        justifyContent: 'flex-end',
+                        width: '100%',
+                    }}
+                    onSubmit={handleFilter}
+                >
+                    <TextField
+                        id="month"
+                        label="Mes"
+                        required
+                        defaultValue=""
+                        sx={{ width: '9rem' }}
+                        size="small"
+                        variant="filled"
+                        select
+                        inputRef={monthRef}
+                    >
                         {months.map((option) => (
                             <MenuItem key={option.value} value={option.value}>
                                 {option.label}
                             </MenuItem>
                         ))}
                     </TextField>
-                    <TextField label="Año" required defaultValue="" sx={{ width: "9rem" }} size="small" variant="filled" select inputRef={yearRef}>
+                    <TextField
+                        label="Año"
+                        required
+                        defaultValue=""
+                        sx={{ width: '9rem' }}
+                        size="small"
+                        variant="filled"
+                        select
+                        inputRef={yearRef}
+                    >
                         {yearsArray.map((option) => (
                             <MenuItem key={option.value} value={option.value}>
                                 {option.label}
@@ -364,14 +429,20 @@ const AnalisisMetas = () => {
                     </Button>
                 </Box>
             </Box>
-            <Box sx={{ height: "70vh", boxShadow: "0px 0px 5px 0px #e0e0e0", borderRadius: "10px" }}>
+            <Box
+                sx={{
+                    height: '70vh',
+                    boxShadow: '0px 0px 5px 0px #e0e0e0',
+                    borderRadius: '10px',
+                }}
+            >
                 <DataGrid
                     loading={rows.length === 0}
                     rows={rows}
                     columns={columns}
                     csvOptions={{
-                        fileName: "Metas",
-                        delimiter: ";",
+                        fileName: 'Metas',
+                        delimiter: ';',
                         utf8WithBom: true,
                     }}
                     slots={{
@@ -380,14 +451,19 @@ const AnalisisMetas = () => {
                     }}
                     slotProps={{
                         loadingOverlay: {
-                            variant: "skeleton",
-                            noRowsVariant: "skeleton",
+                            variant: 'skeleton',
+                            noRowsVariant: 'skeleton',
                         },
                     }}
                     getRowId={(row) => row.cedula}
                 />
             </Box>
-            <SnackbarAlert open={openSnack} onClose={handleCloseSnackbar} severity={severity} message={message} />
+            <SnackbarAlert
+                open={openSnack}
+                onClose={handleCloseSnackbar}
+                severity={severity}
+                message={message}
+            />
         </Container>
     );
 };

@@ -1,44 +1,49 @@
-import "./index.css";
-import React, { useEffect } from "react";
+import './index.css';
+import React, { useEffect } from 'react';
 
 // Libraries
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import ReactDOM from "react-dom/client";
-import * as Sentry from "@sentry/react";
-import { useLocation, useNavigationType, createRoutesFromChildren, matchRoutes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import ReactDOM from 'react-dom/client';
+import * as Sentry from '@sentry/react';
+import {
+    useLocation,
+    useNavigationType,
+    createRoutesFromChildren,
+    matchRoutes,
+} from 'react-router-dom';
 
 // Material-UI
-import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from '@mui/material/CssBaseline';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // Custom Components
-import ErrorPage from "./components/pages/ErrorPage";
-import Login from "./components/pages/Login";
-import Home from "./components/pages/Home";
-import Blog from "./components/pages/Blog";
-import Article from "./components/pages/Article";
-import Root from "./components/container/root";
-import About from "./components/pages/About";
-import GoalsStats from "./components/pages/GoalsStats";
-import Sgc from "./components/pages/Sgc";
-import UploadFiles from "./components/pages/UploadFiles";
-import EthicalLine from "./components/pages/EthicalLine";
-import Quality from "./components/pages/Quality";
-import Legal from "./components/pages/Legal";
-import Vacancies from "./components/pages/Vacancies";
-import VacanciesReferred from "./components/pages/VacanciesReferred";
-import RiskEvents from "./components/pages/RiskEvents";
-import Promotions from "./components/pages/Promotions";
-import Payslips from "./components/pages/Payslips";
-import MyPayslips from "./components/pages/MyPayslips";
-import EmploymentCertification from "./components/pages/EmploymentCertification";
-import InactivityDetector from "./components/shared/InactivityDetector";
-import Vacations from "./components/pages/Vacations";
-import PowerBI from "./components/pages/PowerBI";
-import Points from "./components/pages/Points";
+import ErrorPage from './components/pages/ErrorPage';
+import Login from './components/pages/Login';
+import Home from './components/pages/Home';
+import Blog from './components/pages/Blog';
+import Article from './components/pages/Article';
+import Root from './components/container/root';
+import About from './components/pages/About';
+import GoalsStats from './components/pages/GoalsStats';
+import Sgc from './components/pages/Sgc';
+import UploadFiles from './components/pages/UploadFiles';
+import EthicalLine from './components/pages/EthicalLine';
+import Quality from './components/pages/Quality';
+import Legal from './components/pages/Legal';
+import Vacancies from './components/pages/Vacancies';
+import VacanciesReferred from './components/pages/VacanciesReferred';
+import RiskEvents from './components/pages/RiskEvents';
+import Promotions from './components/pages/Promotions';
+import Payslips from './components/pages/Payslips';
+import MyPayslips from './components/pages/MyPayslips';
+import EmploymentCertification from './components/pages/EmploymentCertification';
+import InactivityDetector from './components/shared/InactivityDetector';
+import Vacations from './components/pages/Vacations';
+import PowerBI from './components/pages/PowerBI';
+import Points from './components/pages/Points';
 
 Sentry.init({
-    dsn: "https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840",
+    dsn: 'https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840',
     integrations: [
         // See docs for support of different versions of variation of react router
         // https://docs.sentry.io/platforms/javascript/guides/react/configuration/integrations/react-router/
@@ -71,120 +76,120 @@ Sentry.init({
 const theme = createTheme({
     typography: {
         fontFamily: [
-            "Poppins",
-            "Inter",
-            "Montserrat",
-            "-apple-system",
-            "BlinkMacSystemFont",
+            'Poppins',
+            'Inter',
+            'Montserrat',
+            '-apple-system',
+            'BlinkMacSystemFont',
             '"Segoe UI"',
-            "Roboto",
+            'Roboto',
             '"Helvetica Neue"',
-            "Arial",
-            "sans-serif",
+            'Arial',
+            'sans-serif',
             '"Apple Color Emoji"',
             '"Segoe UI Emoji"',
             '"Segoe UI Symbol"',
-        ].join(","),
+        ].join(','),
     },
     palette: {
         primary: {
-            main: "#0076A8",
+            main: '#0076A8',
         },
         secondary: {
-            main: "#59CBE8",
+            main: '#59CBE8',
         },
         text: {
-            primary: "#131313",
-            secondary: "#999999",
+            primary: '#131313',
+            secondary: '#999999',
         },
     },
 });
 
 const router = createBrowserRouter([
     {
-        path: "/",
+        path: '/',
         element: <Login />,
         errorElement: <ErrorPage isLogin={true} />,
     },
     {
-        path: "ethical-line",
+        path: 'ethical-line',
         element: <EthicalLine />,
     },
     {
-        path: "test",
+        path: 'test',
         element: <InactivityDetector />,
     },
     {
-        path: "/logged",
+        path: '/logged',
         element: <Root />,
         errorElement: <ErrorPage />,
         children: [
             {
-                path: "home",
+                path: 'home',
                 element: <Home />,
             },
             {
-                path: "about-us",
+                path: 'about-us',
                 element: <About />,
             },
             {
-                path: "sgc",
+                path: 'sgc',
                 element: <Sgc />,
             },
             {
-                path: "blog",
+                path: 'blog',
                 element: <Blog />,
             },
             {
-                path: "blog/article/:articleId",
+                path: 'blog/article/:articleId',
                 element: <Article />,
             },
             {
-                path: "vacancies",
+                path: 'vacancies',
                 element: <Vacancies />,
             },
             {
-                path: "upload-files",
+                path: 'upload-files',
                 element: <UploadFiles />,
             },
             {
-                path: "goals-stats",
+                path: 'goals-stats',
                 element: <GoalsStats />,
             },
             {
-                path: "quality",
+                path: 'quality',
                 element: <Quality />,
             },
             {
-                path: "legal",
+                path: 'legal',
                 element: <Legal />,
             },
             {
-                path: "vacancies-referred",
+                path: 'vacancies-referred',
                 element: <VacanciesReferred />,
             },
             {
-                path: "risk-events",
+                path: 'risk-events',
                 element: <RiskEvents />,
             },
             {
-                path: "promotions",
+                path: 'promotions',
                 element: <Promotions />,
             },
             {
-                path: "my-payslips",
+                path: 'my-payslips',
                 element: <MyPayslips />,
             },
             {
-                path: "payslips",
+                path: 'payslips',
                 element: <Payslips />,
             },
             {
-                path: "certifications",
+                path: 'certifications',
                 element: <EmploymentCertification />,
             },
             {
-                path: "vacations",
+                path: 'vacations',
                 element: <Vacations />,
             },
             // {
@@ -192,18 +197,18 @@ const router = createBrowserRouter([
             //     element: <Points />,
             // },
             {
-                path: "test",
+                path: 'test',
                 element: <PowerBI />,
             },
         ],
     },
 ]);
 
-if ("scrollRestoration" in history) {
-    history.scrollRestoration = "manual";
+if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
             <CssBaseline>

@@ -1,29 +1,36 @@
-import { styled, Box } from "@mui/material";
+import { styled, Box } from '@mui/material';
 
-const StyledGridOverlay = styled("div")(({ theme }) => ({
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    "& .no-results-primary": {
-        fill: theme.palette.mode === "light" ? "#AEB8C2" : "#3D4751",
+const StyledGridOverlay = styled('div')(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    '& .no-results-primary': {
+        fill: theme.palette.mode === 'light' ? '#AEB8C2' : '#3D4751',
     },
-    "& .no-results-secondary": {
-        fill: theme.palette.mode === "light" ? "#E8EAED" : "#1D2126",
+    '& .no-results-secondary': {
+        fill: theme.palette.mode === 'light' ? '#E8EAED' : '#1D2126',
     },
-    "& .no-rows-primary": {
-        fill: theme.palette.mode === "light" ? "#AEB8C2" : "#3D4751",
+    '& .no-rows-primary': {
+        fill: theme.palette.mode === 'light' ? '#AEB8C2' : '#3D4751',
     },
-    "& .no-rows-secondary": {
-        fill: theme.palette.mode === "light" ? "#E8EAED" : "#1D2126",
+    '& .no-rows-secondary': {
+        fill: theme.palette.mode === 'light' ? '#E8EAED' : '#1D2126',
     },
 }));
 
 export const CustomNoResultsOverlay = () => {
     return (
         <StyledGridOverlay>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" width={96} viewBox="0 0 523 299" aria-hidden focusable="false">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                width={96}
+                viewBox="0 0 523 299"
+                aria-hidden
+                focusable="false"
+            >
                 <path
                     className="no-results-primary"
                     d="M262 20c-63.513 0-115 51.487-115 115s51.487 115 115 115 115-51.487 115-115S325.513 20 262 20ZM127 135C127 60.442 187.442 0 262 0c74.558 0 135 60.442 135 135 0 74.558-60.442 135-135 135-74.558 0-135-60.442-135-135Z"
@@ -41,7 +48,7 @@ export const CustomNoResultsOverlay = () => {
                     d="M0 43c0-5.523 4.477-10 10-10h100c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 53 0 48.523 0 43ZM0 89c0-5.523 4.477-10 10-10h80c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 99 0 94.523 0 89ZM0 135c0-5.523 4.477-10 10-10h74c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 181c0-5.523 4.477-10 10-10h80c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 227c0-5.523 4.477-10 10-10h100c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM523 227c0 5.523-4.477 10-10 10H413c-5.523 0-10-4.477-10-10s4.477-10 10-10h100c5.523 0 10 4.477 10 10ZM523 181c0 5.523-4.477 10-10 10h-80c-5.523 0-10-4.477-10-10s4.477-10 10-10h80c5.523 0 10 4.477 10 10ZM523 135c0 5.523-4.477 10-10 10h-74c-5.523 0-10-4.477-10-10s4.477-10 10-10h74c5.523 0 10 4.477 10 10ZM523 89c0 5.523-4.477 10-10 10h-80c-5.523 0-10-4.477-10-10s4.477-10 10-10h80c5.523 0 10 4.477 10 10ZM523 43c0 5.523-4.477 10-10 10H413c-5.523 0-10-4.477-10-10s4.477-10 10-10h100c5.523 0 10 4.477 10 10Z"
                 />
             </svg>
-            <Box sx={{ mt: 2, color: "gray" }}>No hay resultados</Box>
+            <Box sx={{ mt: 2, color: 'gray' }}>No hay resultados</Box>
         </StyledGridOverlay>
     );
 };

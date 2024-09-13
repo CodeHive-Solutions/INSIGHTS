@@ -1,4 +1,4 @@
-version: "3.4"
+version: '3.4'
 services:
     vite_docker:
         image: node:alpine
@@ -14,4 +14,4 @@ services:
         tty: true
         environment:
             - CHOKIDAR_USEPOLLING=true
-        command: ["./start.sh"]
+        command: ['./start.sh']

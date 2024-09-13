@@ -1,86 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Solicitud de Vacaciones</title>
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: -100px 10px 0px 10px;
+                font-family: 'Helvetica Neue', Arial, sans-serif;
+                color: #333;
+                line-height: 1.6;
+                text-align: center;
+                align-items: center;
+                font-size: 20px;
+                display: flex;
+                justify-content: center;
+            }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Vacaciones</title>
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: -100px 10px 0px 10px;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            color: #333;
-            line-height: 1.6;
-            text-align: center;
-            align-items: center;
-            font-size: 20px;
-            display: flex;
-            justify-content: center;
-        }
+            #signature-rh {
+                padding-left: 200px;
+            }
 
-        #signature-rh {
-            padding-left: 200px;
-        }
+            .header {
+                margin-top: 80px;
+                margin-bottom: 40px;
+            }
 
-        .header {
-            margin-top: 80px;
-            margin-bottom: 40px;
-        }
+            .header h1 {
+                margin: 0;
+                font-size: 28px;
+                color: #0056b3;
+                letter-spacing: 1px;
+            }
 
-        .header h1 {
-            margin: 0;
-            font-size: 28px;
-            color: #0056b3;
-            letter-spacing: 1px;
-        }
+            .signature {
+                margin-top: 200px;
+                text-align: center;
+            }
 
-        .signature {
-            margin-top: 200px;
-            text-align: center;
-        }
+            .signature p {
+                margin: 5px 0;
+                text-align: left;
+            }
 
-        .signature p {
-            margin: 5px 0;
-            text-align: left;
-        }
+            .footer {
+                margin-top: 20px;
+                font-size: 14px;
+                text-align: center;
+                color: #777;
+            }
+        </style>
+    </head>
 
-        .footer {
-            margin-top: 20px;
-            font-size: 14px;
-            text-align: center;
-            color: #777;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="card">
-        <div class="content">
-            <p>{{ vacation.created_at|date }}</p>
-            <br>
-            <p>Estimado (a) Gestión Humana</p>
-            <p>CYC SERVICES S.A.S.</p>
-            <p>Ref. Solicitud de vacaciones disfrutadas</p>
-            <br>
-            <p>
-                Por la presente le solicito se me conceda {{ vacation.duration }} días de mi periodo vacacional
-                comprendido para el año {{ vacation.start_date|date:"Y" }}.
-            </p>
-            <p>
-                Los días tomados serán a partir del {{ vacation.start_date }} hasta el día {{ vacation.end_date }}, para
-                retomar a mis labores el día {{ vacation.return_date }}.
-            </p>
-            <p>
-                Quedo agradecido(a) ante su pronta respuesta.
-            </p>
-            <div class="signature">
-                <p>Atentamente,</p>
-                <p><strong>{{ vacation.user }}</strong></p>
-                <p>{{ vacation.user.job_position }}</p>
-            </div>
-            <!-- <div class="signature-line">
+    <body>
+        <div class="card">
+            <div class="content">
+                <p>{{ vacation.created_at|date }}</p>
+                <br />
+                <p>Estimado (a) Gestión Humana</p>
+                <p>CYC SERVICES S.A.S.</p>
+                <p>Ref. Solicitud de vacaciones disfrutadas</p>
+                <br />
+                <p>
+                    Por la presente le solicito se me conceda {{
+                    vacation.duration }} días de mi periodo vacacional
+                    comprendido para el año {{ vacation.start_date|date:"Y" }}.
+                </p>
+                <p>
+                    Los días tomados serán a partir del {{ vacation.start_date
+                    }} hasta el día {{ vacation.end_date }}, para retomar a mis
+                    labores el día {{ vacation.return_date }}.
+                </p>
+                <p>Quedo agradecido(a) ante su pronta respuesta.</p>
+                <div class="signature">
+                    <p>Atentamente,</p>
+                    <p><strong>{{ vacation.user }}</strong></p>
+                    <p>{{ vacation.user.job_position }}</p>
+                </div>
+                <!-- <div class="signature-line">
                 <table>
                     <td>
                         _____________________________________<br>
@@ -94,8 +93,7 @@
                     </td>
                 </table>
             </div> -->
+            </div>
         </div>
-    </div>
-</body>
-
+    </body>
 </html>

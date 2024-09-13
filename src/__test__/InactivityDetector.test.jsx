@@ -1,8 +1,8 @@
-import { render } from "@testing-library/react";
-import { vi } from "vitest";
-import InactivityDetector from "../components/shared/InactivityDetector";
+import { render } from '@testing-library/react';
+import { vi } from 'vitest';
+import InactivityDetector from '../components/shared/InactivityDetector';
 
-describe("InactivityDetector Component", () => {
+describe('InactivityDetector Component', () => {
     beforeEach(() => {
         vi.useFakeTimers();
     });
@@ -12,7 +12,7 @@ describe("InactivityDetector Component", () => {
         vi.restoreAllMocks();
     });
 
-    test("calls handleLogout after inactivity period", () => {
+    test('calls handleLogout after inactivity period', () => {
         const handleLogoutMock = vi.fn();
         render(<InactivityDetector handleLogout={handleLogoutMock} />);
 
@@ -22,12 +22,12 @@ describe("InactivityDetector Component", () => {
         expect(handleLogoutMock).toHaveBeenCalledWith(true);
     });
 
-    test("resets inactivity timeout on user activity", () => {
+    test('resets inactivity timeout on user activity', () => {
         const handleLogoutMock = vi.fn();
         render(<InactivityDetector handleLogout={handleLogoutMock} />);
 
         // Simulate user activity
-        window.dispatchEvent(new Event("mousemove"));
+        window.dispatchEvent(new Event('mousemove'));
 
         // Fast-forward time to just before the inactivity timeout
         vi.advanceTimersByTime(149000);
@@ -35,7 +35,7 @@ describe("InactivityDetector Component", () => {
         expect(handleLogoutMock).not.toHaveBeenCalled();
 
         // Simulate more user activity
-        window.dispatchEvent(new Event("keydown"));
+        window.dispatchEvent(new Event('keydown'));
 
         // Fast-forward time again to just before the inactivity timeout
         vi.advanceTimersByTime(149000);
@@ -48,17 +48,31 @@ describe("InactivityDetector Component", () => {
         expect(handleLogoutMock).toHaveBeenCalledWith(true);
     });
 
-    test("cleans up event listeners on unmount", () => {
+    test('cleans up event listeners on unmount', () => {
         const handleLogoutMock = vi.fn();
-        const { unmount } = render(<InactivityDetector handleLogout={handleLogoutMock} />);
+        const { unmount } = render(
+            <InactivityDetector handleLogout={handleLogoutMock} />
+        );
 
-        const removeEventListenerSpy = vi.spyOn(window, "removeEventListener");
+        const removeEventListenerSpy = vi.spyOn(window, 'removeEventListener');
 
         unmount();
 
-        expect(removeEventListenerSpy).toHaveBeenCalledWith("mousemove", expect.any(Function));
-        expect(removeEventListenerSpy).toHaveBeenCalledWith("keydown", expect.any(Function));
-        expect(removeEventListenerSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
-        expect(removeEventListenerSpy).toHaveBeenCalledWith("click", expect.any(Function));
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'mousemove',
+            expect.any(Function)
+        );
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'keydown',
+            expect.any(Function)
+        );
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'scroll',
+            expect.any(Function)
+        );
+        expect(removeEventListenerSpy).toHaveBeenCalledWith(
+            'click',
+            expect.any(Function)
+        );
     });
 });

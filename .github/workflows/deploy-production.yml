@@ -16,10 +16,16 @@ jobs:
             - name: Set up Node.js
               uses: actions/setup-node@v2
               with:
-                  node-version: "18.17.1" # Adjust this to your required Node version
+                  node-version: '18.17.1' # Adjust this to your required Node version
 
             - name: Install Pnpm
               run: npm install -g pnpm
+
+            - name: Format code
+              run: pnpm format
+
+            - name: Lint code
+              run: pnpm oxlint
 
             - name: Install dependencies
               run: pnpm install

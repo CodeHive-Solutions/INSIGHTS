@@ -1,5 +1,3 @@
 {
-    "recommendations": [
-        "formulahendry.vscode-mysql"
-    ]
+    "recommendations": ["formulahendry.vscode-mysql"]
 }

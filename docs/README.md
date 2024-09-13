@@ -4,19 +4,19 @@
 
 ## Table of Contents
 
-- [About](#about)
-- [Technologies](#technologies)
-- [Features](#features)
-- [Usage](#usage)
-    - [Frontend](#frontend)
-        - [Building the frontend](#building-the-frontend)
-        - [File organization](#file-organization)
-        - [Code structure](#code-structure)
-        - [Potential issues](#potential-issues)
-    - [Migration](#migration)
-        - [Frontend](#frontend-1)
-- [Contributing](#contributing)
-- [License](#license)
+-   [About](#about)
+-   [Technologies](#technologies)
+-   [Features](#features)
+-   [Usage](#usage)
+    -   [Frontend](#frontend)
+        -   [Building the frontend](#building-the-frontend)
+        -   [File organization](#file-organization)
+        -   [Code structure](#code-structure)
+        -   [Potential issues](#potential-issues)
+    -   [Migration](#migration)
+        -   [Frontend](#frontend-1)
+-   [Contributing](#contributing)
+-   [License](#license)
 
 ## About
 
@@ -49,21 +49,24 @@ INSIGHTS is the intranet for C&C Services S.A.S, featuring secure login with Act
 ## Installation
 
 ### Frontend:
+
 Pre-requisites:
-- Git
-- Node.js
-- Pnpm
+
+-   Git
+-   Node.js
+-   Pnpm
 
 1. Clone the project repository `git clone https://github.com/CodeHive-Solutions/INSIGHTS.git`
 2. Go to the project directory `cd INSIGHTS`
 3. Install the dependencies by running `pnpm install` (assuming you have pnpm installed)
 
-
 ## Usage
 
 ### Frontend:
+
 Pre-requisites:
-- Access to the server where the project is hosted
+
+-   Access to the server where the project is hosted
 
 1. Access the server via SSH
 2. Go to the project directory `cd /var/www/INSIGHTS`
@@ -73,6 +76,7 @@ Pre-requisites:
 6. To stop the frontend server, press `Ctrl + C`
 
 #### Building the frontend:
+
 1. Access the server via SSH
 2. Go to the project directory `cd /var/www/INSIGHTS`
 3. Run the following command to build the frontend: `pnpm run build && pnpm run postbuild`
@@ -83,18 +87,20 @@ Pre-requisites:
 > Note: The login and other functionalities will not work if the backend is not running, also have in mind that the frontend will point to the development backend server by default unless the frontend URL where is hosted is exactly: `https://intranet.cyc-bpo.com`, this can be change in the `src/assets/getApi.js` file
 
 #### File organization:
-- The frontend code is located in the `/src` directory
-- The main entry point is the `main.js` file
-- The `/images` directory is organized based on the pages where the images are used
-- The components are located in the `/src/components` directory
-- The `/components` directory is organized as follows:
-    - `/common`: Contains common components used throughout the application
-    - `/container`: Contains the main container components
-    - `/pages`: Contains the main pages of the application
-    - `/shared`: Contains shared components used in multiple pages
+
+-   The frontend code is located in the `/src` directory
+-   The main entry point is the `main.js` file
+-   The `/images` directory is organized based on the pages where the images are used
+-   The components are located in the `/src/components` directory
+-   The `/components` directory is organized as follows:
+    -   `/common`: Contains common components used throughout the application
+    -   `/container`: Contains the main container components
+    -   `/pages`: Contains the main pages of the application
+    -   `/shared`: Contains shared components used in multiple pages
 
 #### Code structure:
-- The code in each component is organized into sections (e.g. imports, javascript functions, another JSX elements part of the main component and the main component return statement)
+
+-   The code in each component is organized into sections (e.g. imports, javascript functions, another JSX elements part of the main component and the main component return statement)
 
 Example of a component code structure with a shopping cart component:
 
@@ -105,70 +111,70 @@ import PropTypes from 'prop-types';
 
 // Helper functions
 const calculateTotal = (items) => {
-  return items.reduce((acc, item) => acc + item.price, 0);
+    return items.reduce((acc, item) => acc + item.price, 0);
 };
 
 // Main component function
 const ShoppingCart = ({ initialItems }) => {
-  // State hooks
-  const [items, setItems] = useState(initialItems);
+    // State hooks
+    const [items, setItems] = useState(initialItems);
 
-  // Event handlers
-  const addItem = (item) => {
-    setItems([...items, item]);
-  };
+    // Event handlers
+    const addItem = (item) => {
+        setItems([...items, item]);
+    };
 
-  const removeItem = (index) => {
-    setItems(items.filter((_, i) => i !== index));
-  };
+    const removeItem = (index) => {
+        setItems(items.filter((_, i) => i !== index));
+    };
 
-  // JSX elements part of the main component
-  const renderItems = () => {
-    return items.map((item, index) => (
-      <div key={index}>
-        <span>{item.name}</span>
-        <button onClick={() => removeItem(index)}>Remove</button>
-      </div>
-    ));
-  };
+    // JSX elements part of the main component
+    const renderItems = () => {
+        return items.map((item, index) => (
+            <div key={index}>
+                <span>{item.name}</span>
+                <button onClick={() => removeItem(index)}>Remove</button>
+            </div>
+        ));
+    };
 
-  // Main return statement
-  return (
-    <div>
-      <h1>Shopping Cart</h1>
-      <div>{renderItems()}</div>
-      <h2>Total: ${calculateTotal(items)}</h2>
-      <button onClick={() => addItem({ name: 'NewItem', price: 10 })}>
-        Add Item
-      </button>
-    </div>
-  );
+    // Main return statement
+    return (
+        <div>
+            <h1>Shopping Cart</h1>
+            <div>{renderItems()}</div>
+            <h2>Total: ${calculateTotal(items)}</h2>
+            <button onClick={() => addItem({ name: 'NewItem', price: 10 })}>
+                Add Item
+            </button>
+        </div>
+    );
 };
 
 // Prop types validation
 ShoppingCart.propTypes = {
-  initialItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-      price: PropTypes.number.isRequired,
-    })
-  ).isRequired,
+    initialItems: PropTypes.arrayOf(
+        PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            price: PropTypes.number.isRequired,
+        })
+    ).isRequired,
 };
 
 export default ShoppingCart;
-
 ```
 
 #### Potential issues:
-- If the frontend is not working as expected, check the browser console for any errors
-- If the frontend is not connecting to the backend, check the backend URL in the `getApi.js` file
-- If the frontend is not updating, check the terminal for any errors when running the `pnpm run dev` command
-- If the frontend is not displaying the correct data, check the API response in the browser console
-- If the frontend is not displaying the correct styles, check the CSS files and the Material-UI components
-- If the frontend is not displaying the correct images, check the image paths in the code
-- If the frontend is not displaying the correct components, check the component imports and exports
-- If the frontend is not displaying the correct pages, check the page routes in the `main.js` file
-- If there are issues with the routes, double-check that you built the frontend correctly with the `pnpm run build` and `pnpm run postbuild` commands, this because the `postbuild` script is used to copy the `.htaccess` file to the `/dist` directory (this file is used to handle the routes correctly in the web server)
+
+-   If the frontend is not working as expected, check the browser console for any errors
+-   If the frontend is not connecting to the backend, check the backend URL in the `getApi.js` file
+-   If the frontend is not updating, check the terminal for any errors when running the `pnpm run dev` command
+-   If the frontend is not displaying the correct data, check the API response in the browser console
+-   If the frontend is not displaying the correct styles, check the CSS files and the Material-UI components
+-   If the frontend is not displaying the correct images, check the image paths in the code
+-   If the frontend is not displaying the correct components, check the component imports and exports
+-   If the frontend is not displaying the correct pages, check the page routes in the `main.js` file
+-   If there are issues with the routes, double-check that you built the frontend correctly with the `pnpm run build` and `pnpm run postbuild` commands, this because the `postbuild` script is used to copy the `.htaccess` file to the `/dist` directory (this file is used to handle the routes correctly in the web server)
 
 > Note: If the web server is not working as expected, check the server logs `/var/log/apache2/error.log` for any errors and the status of the web server service `sudo systemctl status apache2` also have in mind that working with React Router (library to handle the routes) and Apache can be tricky, you may need to ensure that your apache configuration file has the following configuration to avoid issues with the routes:
 
@@ -181,10 +187,12 @@ export default ShoppingCart;
 ### Backend:
 
 #### Pre-requisites:
-- Install Python 3.10 or higher and pip
-- Go to the project directory `cd /your/path/INSIGHTS/INSIGHTSAPI`
+
+-   Install Python 3.10 or higher and pip
+-   Go to the project directory `cd /your/path/INSIGHTS/INSIGHTSAPI`
 
 #### Installation:
+
 1. Get the project from the repository `git clone https://github.com/CodeHive-Solutions/INSIGHTS.git`
 2. Go to the API directory `cd INSIGHTS/INSIGHTSAPI`
 3. Install the dependencies by running `pip install -r requirements.txt`
@@ -214,7 +222,9 @@ export default ShoppingCart;
 ## Migration
 
 ### Frontend:
+
 In case you need to migrate the project to another server, follow these steps:
+
 1. Clone the project repository to the new server
 2. Install the dependencies by running `pnpm install` (assuming you have pnpm installed)
 
