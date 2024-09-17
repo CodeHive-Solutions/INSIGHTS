@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 
 // Libraries
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -57,8 +57,6 @@ const Login = () => {
     const [severity, setSeverity] = useState('success');
     const [message, setMessage] = useState();
     const [loadingBar, setLoadingBar] = useState(false);
-    const [openCedula, setOpenCedula] = useState(false);
-    const [disabled, setDisabled] = useState(false);
     const location = useLocation();
     const showAlert = location.state?.showAlert;
     const lastLocationPath = location.state?.lastLocation
@@ -269,7 +267,6 @@ const Login = () => {
                             </Typography>
 
                             <FormikTextField
-                                disabled={disabled}
                                 type="text"
                                 name="username"
                                 label="Usuario de Windows"
@@ -278,7 +275,6 @@ const Login = () => {
                             />
 
                             <FormikTextField
-                                disabled={disabled}
                                 name="password"
                                 label="Contraseña de Windows"
                                 type="password"

@@ -15,7 +15,6 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    DialogContentText,
     DialogActions,
     Button,
     Box,
@@ -63,7 +62,7 @@ export const CalendarMonth = forwardRef(
 );
 
 export const CalendarRange = forwardRef(function CalendarRange(
-    { onChange, showOutsideDays, firstDayOfWeek, isDateDisallowed, ...props },
+    { onChange, showOutsideDays, isDateDisallowed, ...props },
     forwardedRef
 ) {
     const ref = useRef();

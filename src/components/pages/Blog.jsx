@@ -34,8 +34,6 @@ import FolderIcon from '@mui/icons-material/Folder';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 
 const MediaCard = ({ title, subtitle, img, articleId }) => {
-    const [imageLoaded, setImageLoaded] = useState(false);
-
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);

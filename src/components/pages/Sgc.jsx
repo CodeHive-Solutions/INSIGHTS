@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { Fragment, useState, useCallback, useEffect, useRef } from 'react';
 
 // Libraries
 import * as Yup from 'yup';
@@ -232,72 +232,44 @@ export const Sgc = () => {
     };
 
     const processRowUpdate = async (newRow) => {
+        const formData = new FormData();
+        formData.append('area', newRow.area);
+        formData.append('type', newRow.type);
+        formData.append('sub_type', newRow.sub_type);
+        formData.append('name', newRow.name);
+        formData.append('version', newRow.version);
+        console.log(selectedFileUpdate);
         if (selectedFileUpdate) {
-            const formData = new FormData();
             formData.append('file', selectedFileUpdate);
-            formData.append('area', newRow.area);
-            formData.append('type', newRow.type);
-            formData.append('sub_type', newRow.sub_type);
-            formData.append('name', newRow.name);
-            formData.append('version', newRow.version);
+        }
 
-            try {
-                const response = await fetch(
-                    `${getApiUrl().apiUrl}sgc/${newRow.id}/`,
-                    {
-                        method: 'PATCH',
-                        credentials: 'include',
-                        body: formData,
-                    }
+        try {
+            const response = await fetch(
+                `${getApiUrl().apiUrl}sgc/${newRow.id}/`,
+                {
+                    method: 'PATCH',
+                    credentials: 'include',
+                    body: formData,
+                }
+            );
+
+            await handleError(response, showSnack);
+
+            if (response.status === 200) {
+                const data = await response.json();
+                getFiles();
+                showSnack(
+                    'success',
+                    'El archivo ha sido actualizado correctamente.'
                 );
-
-                await handleError(response, showSnack);
-
-                if (response.status === 200) {
-                    const data = await response.json();
-                    getFiles();
-                    showSnack(
-                        'success',
-                        'El archivo ha sido actualizado correctamente.'
-                    );
-                    return data;
-                }
-            } catch (error) {
-                if (getApiUrl().environment === 'development') {
-                    console.error(error);
-                }
+                return data;
             }
-        } else {
-            try {
-                const { file, ...updatedRow } = newRow;
-                const response = await fetch(
-                    `${getApiUrl().apiUrl}sgc/${updatedRow.id}/`,
-                    {
-                        method: 'PATCH',
-                        credentials: 'include',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(updatedRow),
-                    }
-                );
-
-                await handleError(response, showSnack);
-
-                if (response.status === 200) {
-                    const data = await response.json();
-                    getFiles();
-                    showSnack(
-                        'success',
-                        'El registro ha sido actualizado correctamente.'
-                    );
-                    return data;
-                }
-            } catch (error) {
-                if (getApiUrl().environment === 'development') {
-                    console.error(error);
-                }
+        } catch (error) {
+            if (getApiUrl().environment === 'development') {
+                console.error(error);
             }
+        } finally {
+            setSelectedFileUpdate(null);
         }
     };
 
@@ -311,11 +283,11 @@ export const Sgc = () => {
         // setSnackbar({ children: error.message, severity: "error" });
     }, []);
 
-    const handleClickFile = (id) => {
+    const handleClickFile = () => {
         hiddenFileInput.current.click();
     };
 
-    const handleFileChange = (id, event) => {
+    const handleFileChange = (event) => {
         showSnack(
             'info',
             'El archivo ha sido cargado correctamente. Selecciona guardar para actualizar el registro.'
@@ -379,6 +351,9 @@ export const Sgc = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setFileName('Cargar Archivo');
+            setSelectedFile(null);
         }
     };
 
@@ -463,14 +438,12 @@ export const Sgc = () => {
 
                 if (isInEditMode) {
                     return [
-                        <>
+                        <Fragment key={`upload-${GridRowParams.id}`}>
                             <input
                                 type="file"
                                 accept=".docx, .pdf, .xlsx, .pptx, .doc"
                                 ref={hiddenFileInput}
-                                onChange={(event) =>
-                                    handleFileChange(GridRowParams.id, event)
-                                }
+                                onChange={(event) => handleFileChange(event)}
                                 style={{ display: 'none' }}
                             />
                             <GridActionsCellItem
@@ -483,12 +456,15 @@ export const Sgc = () => {
                                     handleClickFile(GridRowParams.id)
                                 }
                             />
-                        </>,
+                        </Fragment>,
                     ];
                 }
 
                 return [
-                    <Tooltip title="Descargar Archivo">
+                    <Tooltip
+                        key={`tooltip-${GridRowParams.id}`}
+                        title="Descargar Archivo"
+                    >
                         <GridActionsCellItem
                             icon={<FileDownloadIcon />}
                             label="download"
@@ -514,13 +490,16 @@ export const Sgc = () => {
             width: 100,
             type: 'actions',
             cellClassName: 'actions',
-            getActions: ({ id }) => {
+            getActions: ({ row }) => {
                 const isInEditMode =
-                    rowModesModel[id]?.mode === GridRowModes.Edit;
+                    rowModesModel[row.id]?.mode === GridRowModes.Edit;
 
                 if (isInEditMode) {
                     return [
-                        <Tooltip title="Guardar Cambios">
+                        <Tooltip
+                            key={`tooltip-${row.id}`}
+                            title="Guardar Cambios"
+                        >
                             <GridActionsCellItem
                                 sx={{
                                     transition: '.3s ease',
@@ -528,15 +507,18 @@ export const Sgc = () => {
                                 }}
                                 icon={<SaveIcon />}
                                 label="Save"
-                                onClick={handleSaveClick(id)}
+                                onClick={handleSaveClick(row.id)}
                             />
                         </Tooltip>,
-                        <Tooltip title="Cancelar Cambios">
+                        <Tooltip
+                            key={`tooltip-${row.id}`}
+                            title="Cancelar Cambios"
+                        >
                             <GridActionsCellItem
                                 icon={<CancelIcon />}
                                 label="Cancel"
                                 className="textPrimary"
-                                onClick={handleCancelClick(id)}
+                                onClick={handleCancelClick(row.id)}
                                 sx={{
                                     transition: '.3s ease',
                                     '&:hover': { color: 'red' },
@@ -548,7 +530,10 @@ export const Sgc = () => {
 
                 if (editPermission && deletePermission) {
                     return [
-                        <Tooltip title="Editar Registro">
+                        <Tooltip
+                            key={`tooltip-${row.id}`}
+                            title="Editar Registro"
+                        >
                             <GridActionsCellItem
                                 sx={{
                                     transition: '.3s ease',
@@ -556,10 +541,13 @@ export const Sgc = () => {
                                 }}
                                 icon={<EditIcon />}
                                 label="Editar"
-                                onClick={handleEditClick(id)}
+                                onClick={handleEditClick(row.id)}
                             />
                         </Tooltip>,
-                        <Tooltip title="Eliminar Registro">
+                        <Tooltip
+                            key={`tooltip-${row.id}`}
+                            title="Eliminar Registro"
+                        >
                             <GridActionsCellItem
                                 sx={{
                                     transition: '.3s ease',
@@ -567,7 +555,7 @@ export const Sgc = () => {
                                 }}
                                 icon={<DeleteIcon />}
                                 label="Eliminar"
-                                onClick={() => handleDeleteClick(id)}
+                                onClick={() => handleDeleteClick(row.id)}
                             />
                         </Tooltip>,
                     ];
@@ -682,7 +670,7 @@ export const Sgc = () => {
                         validationSchema={validationSchema}
                         onSubmit={handleSubmit}
                     >
-                        {(formik) => (
+                        {() => (
                             <Form>
                                 <Box
                                     sx={{

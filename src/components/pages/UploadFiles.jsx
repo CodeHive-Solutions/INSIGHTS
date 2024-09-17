@@ -21,7 +21,6 @@ const UploadFiles = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileName, setFileName] = useState('Example');
     const [loading, setLoading] = useState(false);
-    const [cedula, setCedula] = useState();
     const [severity, setSeverity] = useState('success');
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);

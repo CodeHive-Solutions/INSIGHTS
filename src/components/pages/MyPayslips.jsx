@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 // Material-UI
 import {
@@ -8,14 +8,12 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    TextField,
     Button,
     Collapse,
     Box,
     LinearProgress,
     Fade,
     Alert,
-    styled,
 } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridToolbar } from '@mui/x-data-grid';
 import { handleError } from '../../assets/handleError';
@@ -194,18 +192,16 @@ export const MyPayslips = () => {
             width: 100,
             type: 'actions',
             cellClassName: 'actions',
-            getActions: (GridRowParams) => {
+            getActions: ({ row }) => {
                 return [
-                    <Tooltip title="Reenviar" arrow>
+                    <Tooltip key={`tooltip-${row.id}`} title="Reenviar" arrow>
                         <GridActionsCellItem
                             icon={<ForwardToInboxIcon />}
                             label="resend"
                             sx={{
                                 color: 'primary.main',
                             }}
-                            onClick={() =>
-                                handleOpenDialog(GridRowParams.row.id)
-                            }
+                            onClick={() => handleOpenDialog(row.id)}
                         />
                     </Tooltip>,
                 ];

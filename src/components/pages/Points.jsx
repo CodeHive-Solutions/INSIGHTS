@@ -26,7 +26,7 @@ import { styled } from '@mui/material/styles';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 
 // styled the row with the user's cedula
-const StyledDataGrid = styled(DataGrid)(({ theme }) => ({
+const StyledDataGrid = styled(DataGrid)(() => ({
     '& .super-app-theme--1001185389': {
         backgroundColor: '#cfffe7',
         '&.Mui-selected': {
@@ -40,9 +40,6 @@ export const Points = () => {
     const [severity, setSeverity] = useState('success');
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [openDialogEdit, setOpenDialogEdit] = useState(false);
-    const [disabled, setDisabled] = useState(false);
     const navigate = useNavigate();
     const cedula = JSON.parse(localStorage.getItem('cedula'));
     const permissions = JSON.parse(localStorage.getItem('permissions'));
@@ -89,8 +86,6 @@ export const Points = () => {
     useEffect(() => {
         getPoints();
     }, []);
-
-    const handleOpenDialog = () => setOpenDialog(true);
 
     const showSnack = (severity, message) => {
         setSeverity(severity);

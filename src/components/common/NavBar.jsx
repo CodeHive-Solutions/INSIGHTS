@@ -9,7 +9,6 @@ import SnackbarAlert from './SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import MyAccountDialog from '../shared/MyAccount';
 import InactivityDetector from '../shared/InactivityDetector';
-import VacationsRequest from '../shared/VacationsRequest';
 import Notifications from '../shared/Notifications';
 import { handleError } from '../../assets/handleError';
 
@@ -24,7 +23,6 @@ import {
     IconButton,
     Avatar,
     ListItemIcon,
-    useMediaQuery,
     ListItemText,
     LinearProgress,
     Fade,
@@ -44,9 +42,7 @@ import {
 } from '@mui/material';
 
 // Icons
-import { Logout, Settings } from '@mui/icons-material';
-import RequestPageIcon from '@mui/icons-material/RequestPage';
-import FeedIcon from '@mui/icons-material/Feed';
+import Logout from '@mui/icons-material/Logout';
 import FlagIcon from '@mui/icons-material/Flag';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DriveFileMoveIcon from '@mui/icons-material/DriveFileMove';
@@ -59,10 +55,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import DescriptionIcon from '@mui/icons-material/Description';
 import TopicIcon from '@mui/icons-material/Topic';
-import LuggageIcon from '@mui/icons-material/Luggage';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
-import ExtensionIcon from '@mui/icons-material/Extension';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
 
 // Media
@@ -73,8 +67,6 @@ const Navbar = () => {
     const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [anchorElUtils, setAnchorElUtils] = useState(null);
-    const [anchorElMenu, setAnchorElMenu] = useState(null);
-    const openMenu = Boolean(anchorElMenu);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
     const [severity, setSeverity] = useState('success');
@@ -83,7 +75,6 @@ const Navbar = () => {
     const openUtils = Boolean(anchorElUtils);
     const [openDialog, setOpenDialog] = useState(false);
     const [openAccountDialog, setOpenAccountDialog] = useState(false);
-    const cedula = JSON.parse(localStorage.getItem('cedula'));
     const [openCertification, setOpenCertification] = useState(false);
     const [openCollapseBonuses, setOpenCollapseBonuses] = useState(false);
     const [checked, setChecked] = useState(false);
@@ -173,11 +164,7 @@ const Navbar = () => {
         setAnchorElUtils(event.currentTarget);
     };
 
-    const handleUtilitariosMenuClose = () => {
-        setAnchorElUtils(null);
-    };
-
-    function CustomNavLink({ to, children, onMouseEnter, anchor }) {
+    function CustomNavLink({ to, children }) {
         let match = useMatch(to);
         return (
             <Button
@@ -242,15 +229,6 @@ const Navbar = () => {
 
     const handleOpenCollapseBonuses = () =>
         setOpenCollapseBonuses(!openCollapseBonuses);
-    const handleOpenSnack = () => setOpenSnack(true);
-
-    const handleClickMenu = (event) => {
-        setAnchorElMenu(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setAnchorElMenu(null);
-    };
 
     const handleCloseUtils = () => {
         setAnchorElUtils(null);
@@ -262,10 +240,6 @@ const Navbar = () => {
 
     const handleOpenNotification = (event) => {
         setAnchorNotification(event.currentTarget);
-    };
-
-    const handleClickUtils = (event) => {
-        setAnchorElUtils(event.currentTarget);
     };
 
     const handleClose = () => {
@@ -372,8 +346,6 @@ const Navbar = () => {
         setChecked(event.target.checked);
         handleOpenCollapseBonuses();
     };
-
-    const isMobile = useMediaQuery('(max-width: 600px)');
 
     return (
         <>

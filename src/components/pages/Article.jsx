@@ -21,7 +21,7 @@ import financialHealth1 from '../../images/blog/Salud_financiera_1.png';
 import financialHealth2 from '../../images/blog/Salud_financiera_2.png';
 import elLibertador from '../../images/blog/el-libertador.png';
 import bancoSantander from '../../images/blog/banco-santander.png';
-import cooperativaMinutodeDios from '../../images/blog/cooperativa-minuto-de-dios.png';
+import cooperativaMinutoDeDios from '../../images/blog/cooperativa-minuto-de-dios.png';
 import nuBank from '../../images/blog/nubank.png';
 import carteraPropiaLogo from '../../images/blog/cartera-propia-logo.png';
 import ciberseguridad2 from '../../images/blog/ciberseguridad-2.jpg';
@@ -109,7 +109,7 @@ const ArticlePage = () => {
                         <img
                             style={{ borderRadius: '8px' }}
                             width="400"
-                            src={cooperativaMinutodeDios}
+                            src={cooperativaMinutoDeDios}
                             alt=""
                         />
                     </div>
@@ -154,7 +154,7 @@ const ArticlePage = () => {
                     <p>
                         En la era digital, donde la información es un activo
                         invaluable, la seguridad cibernética se convierte en un
-                        pilar fundamental para emprecomo la nuestra,
+                        pilar fundamental para empresas como la nuestra,
                         comprometida con brindar servicios de calidad y
                         confiabilidad a nuestros clientes. En C&C Services, la
                         protección de los datos y la salvaguardia de la
@@ -213,7 +213,7 @@ const ArticlePage = () => {
                         </li>
                         <li>
                             <strong>
-                                Políticas Rigurode Acceso y Control:
+                                Políticas Rigurosas de Acceso y Control:
                             </strong>{' '}
                             Establecemos controles de acceso estrictos y
                             prácticas de autenticación fuertes para garantizar
@@ -237,7 +237,7 @@ const ArticlePage = () => {
                     <p>
                         En un mundo digital en constante evolución, estamos
                         comprometidos con la mejora continua de nuestras
-                        defencibernéticas. Mantener la seguridad de la
+                        defensas cibernéticas. Mantener la seguridad de la
                         información es un viaje sin fin que requiere adaptación
                         constante y vigilancia.
                     </p>
@@ -315,7 +315,7 @@ const ArticlePage = () => {
                         En la primera etapa, ejecutada durante el 2023, la
                         empresa participó en una consultoría brindada por
                         COLCOB. Esta agremiación, que reúne a las cade cobranzas
-                        más destacadas en Colombia, reconoció a C&C Sevices
+                        más destacadas en Colombia, reconoció a C&C Services
                         entre los 10 primeros lugares en su ranking.
                     </p>
                     <p>
@@ -656,8 +656,6 @@ const ArticlePage = () => {
         return <Typography variant="h4">Article not found</Typography>;
     }
 
-    const contentHtml = { __html: article.content };
-
     return (
         <Container sx={{ height: 'max-content' }}>
             <Box
@@ -701,13 +699,6 @@ const ArticlePage = () => {
                     gap: '2rem',
                 }}
             >
-                {/* <Box sx={{ display: "flex", alignItems: "center", gap: "0.5rem", pt: "2rem" }}>
-                    <Avatar alt="Remy Sharp" src={article.imgAuthor} sx={{ width: 56, height: 56 }} />
-                    <Box>
-                        <Typography>{article.nameAuthor}</Typography>
-                        <Typography sx={{ color: "gray", fontSize: "12px" }}>{article.date}</Typography>
-                    </Box>
-                </Box> */}
                 <Box sx={{ textAlign: 'justify', pt: '2rem' }}>
                     {article.content}
                 </Box>

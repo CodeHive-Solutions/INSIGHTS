@@ -58,7 +58,6 @@ export const Payslips = () => {
     const [loadingPreview, setLoadingPreview] = useState(false);
     const [loading, setLoading] = useState(false);
     const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
-    const [openCollapseEmail, setOpenCollapseEmail] = useState(false);
     const [idPayslip, setIdPayslip] = useState();
     const [disabled, setDisabled] = useState(false);
     const emailRef = useRef();
@@ -196,16 +195,16 @@ export const Payslips = () => {
             width: 100,
             type: 'actions',
             cellClassName: 'actions',
-            getActions: ({ id }) => {
+            getActions: ({ row }) => {
                 return [
-                    <Tooltip title="Reenviar" arrow>
+                    <Tooltip key={`tooltip-${row.id}`} title="Reenviar" arrow>
                         <GridActionsCellItem
                             icon={<ForwardToInboxIcon />}
                             label="resend"
                             sx={{
                                 color: 'primary.main',
                             }}
-                            onClick={() => handleOpenDialogPayslip(id)}
+                            onClick={() => handleOpenDialogPayslip(row.id)}
                         />
                     </Tooltip>,
                 ];
@@ -366,10 +365,6 @@ export const Payslips = () => {
             }
             setLoadingPreview(false);
         }
-    };
-
-    const handleCollapseEmail = () => {
-        setOpenCollapseEmail(!openCollapseEmail);
     };
 
     const handleCloseDialogPayslip = () => {

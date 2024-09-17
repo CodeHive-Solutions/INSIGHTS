@@ -98,7 +98,7 @@ const EthicalLine = () => {
     };
 
     const handleSubmit = async (values) => {
-        let { radio, contact, ...rest } = values;
+        let { contact, ...rest } = values;
 
         // Remove the contact field if it's empty
         if (contact === '') {

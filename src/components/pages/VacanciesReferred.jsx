@@ -26,9 +26,6 @@ export const VacanciesReferred = () => {
     const [severity, setSeverity] = useState('success');
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
-    const [openDialog, setOpenDialog] = useState(false);
-    const [openDialogEdit, setOpenDialogEdit] = useState(false);
-    const [disabled, setDisabled] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
 
@@ -65,8 +62,6 @@ export const VacanciesReferred = () => {
     useEffect(() => {
         getVacanciesReferred();
     }, []);
-
-    const handleOpenDialog = () => setOpenDialog(true);
 
     const showSnack = (severity, message) => {
         setSeverity(severity);

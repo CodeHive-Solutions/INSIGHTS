@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLocation, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Custom Components
 import { getApiUrl } from '../../assets/getApi.js';
@@ -8,18 +8,7 @@ import { handleError } from '../../assets/handleError';
 import { EmblaCarousel } from '../shared/EmblaCarousel.jsx';
 
 // Material-UI
-import {
-    Typography,
-    Box,
-    Container,
-    useMediaQuery,
-    Card,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Avatar,
-} from '@mui/material';
+import { Typography, Box, Container, useMediaQuery, Card } from '@mui/material';
 
 // Media
 import realBenefit2 from '../../images/benefits/benefit-1.png';
@@ -161,33 +150,6 @@ const Home = () => {
         getBirthdaysId();
         window.scrollTo(0, 0);
     }, []);
-
-    const noBirthdays = (message) => {
-        return (
-            <Box
-                sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100%',
-                }}
-            >
-                <Typography
-                    sx={{
-                        color: 'gray',
-                        display: 'flex',
-                        width: '100%',
-                        justifyContent: 'center',
-                        fontWeight: 500,
-                        fontSize: '16px',
-                        textAlign: 'center',
-                    }}
-                >
-                    {message}
-                </Typography>
-            </Box>
-        );
-    };
 
     return (
         <>

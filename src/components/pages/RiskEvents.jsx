@@ -28,7 +28,6 @@ import {
     GridToolbarContainer,
     GridToolbarExport,
     GridToolbarQuickFilter,
-    GridToolbarColumnsButton,
     GridToolbarDensitySelector,
     GridActionsCellItem,
     GridToolbarFilterButton,
@@ -699,11 +698,11 @@ export const RiskEvent = () => {
         width: 100,
         type: 'actions',
         cellClassName: 'actions',
-        getActions: ({ id }) => {
+        getActions: ({ row }) => {
             return [
-                <Tooltip title="Mas Detalles">
+                <Tooltip key={`tooltip-${row.id}`} title="Mas Detalles">
                     <GridActionsCellItem
-                        onClick={() => getDetails(id)}
+                        onClick={() => getDetails(row.id)}
                         sx={{
                             transition: '.3s ease',
                             '&:hover': { color: 'primary.main' },
@@ -712,7 +711,7 @@ export const RiskEvent = () => {
                         label="Detalles"
                     />
                 </Tooltip>,
-                <Tooltip title="Eliminar Registro">
+                <Tooltip key={`tooltip-${row.id}`} title="Eliminar Registro">
                     <GridActionsCellItem
                         sx={{
                             transition: '.3s ease',
@@ -720,7 +719,7 @@ export const RiskEvent = () => {
                         }}
                         icon={<DeleteIcon />}
                         label="Eliminar"
-                        onClick={() => handleDeleteClick(id)}
+                        onClick={() => handleDeleteClick(row.id)}
                     />
                 </Tooltip>,
             ];

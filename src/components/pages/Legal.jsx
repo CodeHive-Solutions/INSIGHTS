@@ -24,7 +24,6 @@ import {
     Tooltip,
     Divider,
     Chip,
-    styled,
 } from '@mui/material';
 import {
     DataGrid,
@@ -324,39 +323,6 @@ const initialInputs = [
 
     { name: 'renovation_date', label: 'Renovación del contrato', type: 'date' },
 ];
-
-const CustomNoRowsOverlay = () => {
-    return (
-        <StyledGridOverlay>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                width={96}
-                viewBox="0 0 452 257"
-                aria-hidden
-                focusable="false"
-            >
-                <path
-                    className="no-rows-primary"
-                    d="M348 69c-46.392 0-84 37.608-84 84s37.608 84 84 84 84-37.608 84-84-37.608-84-84-84Zm-104 84c0-57.438 46.562-104 104-104s104 46.562 104 104-46.562 104-104 104-104-46.562-104-104Z"
-                />
-                <path
-                    className="no-rows-primary"
-                    d="M308.929 113.929c3.905-3.905 10.237-3.905 14.142 0l63.64 63.64c3.905 3.905 3.905 10.236 0 14.142-3.906 3.905-10.237 3.905-14.142 0l-63.64-63.64c-3.905-3.905-3.905-10.237 0-14.142Z"
-                />
-                <path
-                    className="no-rows-primary"
-                    d="M308.929 191.711c-3.905-3.906-3.905-10.237 0-14.142l63.64-63.64c3.905-3.905 10.236-3.905 14.142 0 3.905 3.905 3.905 10.237 0 14.142l-63.64 63.64c-3.905 3.905-10.237 3.905-14.142 0Z"
-                />
-                <path
-                    className="no-rows-secondary"
-                    d="M0 10C0 4.477 4.477 0 10 0h380c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 20 0 15.523 0 10ZM0 59c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10C4.477 69 0 64.523 0 59ZM0 106c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 153c0-5.523 4.477-10 10-10h195.5c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 200c0-5.523 4.477-10 10-10h203c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10ZM0 247c0-5.523 4.477-10 10-10h231c5.523 0 10 4.477 10 10s-4.477 10-10 10H10c-5.523 0-10-4.477-10-10Z"
-                />
-            </svg>
-            <Box sx={{ mt: 2, color: 'gray' }}>Sin resultados</Box>
-        </StyledGridOverlay>
-    );
-};
 
 export const Legal = () => {
     const initialValues = {
@@ -665,7 +631,7 @@ export const Legal = () => {
         }
     };
 
-    const FormikTextField = ({ label, type, options, rows, ...props }) => {
+    const FormikTextField = ({ label, type, rows, ...props }) => {
         const [field, meta] = useField(props);
         const errorText = meta.error && meta.touched ? meta.error : '';
         const textFieldProps = {
@@ -725,11 +691,11 @@ export const Legal = () => {
         width: 100,
         type: 'actions',
         cellClassName: 'actions',
-        getActions: ({ id }) => {
+        getActions: ({ row }) => {
             return [
-                <Tooltip title="Mas Detalles">
+                <Tooltip key={`tooltip-${row.id}`} title="Mas Detalles">
                     <GridActionsCellItem
-                        onClick={() => getDetails(id)}
+                        onClick={() => getDetails(row.id)}
                         sx={{
                             transition: '.3s ease',
                             '&:hover': { color: 'primary.main' },
@@ -738,7 +704,7 @@ export const Legal = () => {
                         label="Detalles"
                     />
                 </Tooltip>,
-                <Tooltip title="Eliminar Registro">
+                <Tooltip key={`tooltip-${row.id}`} title="Eliminar Registro">
                     <GridActionsCellItem
                         sx={{
                             transition: '.3s ease',
@@ -746,7 +712,7 @@ export const Legal = () => {
                         }}
                         icon={<DeleteIcon />}
                         label="Eliminar"
-                        onClick={() => handleDeleteClick(id)}
+                        onClick={() => handleDeleteClick(row.id)}
                     />
                 </Tooltip>,
             ];

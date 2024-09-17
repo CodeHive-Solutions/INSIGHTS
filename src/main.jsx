@@ -40,7 +40,6 @@ import EmploymentCertification from './components/pages/EmploymentCertification'
 import InactivityDetector from './components/shared/InactivityDetector';
 import Vacations from './components/pages/Vacations';
 import PowerBI from './components/pages/PowerBI';
-import Points from './components/pages/Points';
 
 Sentry.init({
     dsn: 'https://5c6491f1c851a0f106e61adad4c4d46c@o4507664328359936.ingest.us.sentry.io/4507664339107840',
@@ -63,9 +62,6 @@ Sentry.init({
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for tracing.
     tracesSampleRate: 1.0,
-
-    // Set `tracePropagationTargets` to control for which URLs trace propagation should be enabled
-    tracePropagationTargets: [/^\//, /^https:\/\/yourserver\.io\/api/],
 
     // Capture Replay for 10% of all sessions,
     // plus for 100% of sessions with an error

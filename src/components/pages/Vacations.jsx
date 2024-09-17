@@ -1,15 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 
-// Libraries
-import { useNavigate } from 'react-router-dom';
-
 // Material-UI
 import {
     Container,
     Box,
     Button,
     Typography,
-    styled,
     LinearProgress,
     Fade,
     Tooltip,
@@ -459,8 +455,13 @@ export const Vacations = () => {
             cellClassName: 'actions',
             getActions: ({ row }) => {
                 return [
-                    <Tooltip title="Ver carta de solicitud de vacaciones" arrow>
+                    <Tooltip
+                        key={`tooltip-${row.id}`}
+                        title="Ver carta de solicitud de vacaciones"
+                        arrow
+                    >
                         <GridActionsCellItem
+                            key={`open-letter-${row.id}`}
                             icon={<FileOpenIcon />}
                             label="open-letter"
                             sx={{

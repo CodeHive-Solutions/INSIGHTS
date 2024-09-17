@@ -34,7 +34,6 @@ const Vacancies = () => {
     const [openSnack, setOpenSnack] = useState(false);
     const [message, setMessage] = useState('');
     const [severity, setSeverity] = useState('success');
-    const [image, setImage] = useState();
     const [vacancyId, setVacancyId] = useState();
     const [openCollapse, setOpenCollapse] = useState(false);
     const [openAddVacancy, setOpenAddVacancy] = useState(false);
