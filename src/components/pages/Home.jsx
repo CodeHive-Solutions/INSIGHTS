@@ -158,7 +158,8 @@ const Home = () => {
 			</Box> */}
             <Box
                 sx={{
-                    mt: '6rem',
+                    mt: '4rem',
+                    p: '2rem',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',

@@ -59,11 +59,17 @@ const baseValidationSchema = Yup.object().shape({
     complaint: Yup.string().required('Campo requerido'),
     description: Yup.string().required('Campo requerido'),
     radio: Yup.string().required('Campo requerido'),
-    contact: Yup.string().when('radio', {
-        is: 'si',
-        then: () => Yup.string().required('Campo requerido'),
-        otherwise: () => Yup.string().notRequired(),
-    }),
+    contact: Yup.string().test(
+        'is-required-if-si',
+        'Campo requerido',
+        function (value) {
+            const { radio } = this.parent; // Access the radio value
+            if (radio === 'si') {
+                return !!value; // Check if value is present
+            }
+            return true; // Not required if radio is not 'si'
+        }
+    ),
 });
 
 const baseInitialValues = {
@@ -82,7 +88,7 @@ const EthicalLine = () => {
     const navigate = useNavigate();
 
     const FormikError = ({ name }) => {
-        const [field, meta] = useField(name);
+        const [meta] = useField(name);
         const errorText = meta.error && meta.touched ? meta.error : '';
         return errorText ? (
             <FormHelperText error>{errorText}</FormHelperText>
@@ -342,7 +348,7 @@ const EthicalLine = () => {
                                 />
 
                                 <FormControl>
-                                    <FormLabel id="radio" for="radio">
+                                    <FormLabel id="radio" htmlFor="radio">
                                         ¿Desea proveer algún método de contacto
                                         para mantenerlo informado del caso?
                                     </FormLabel>
