@@ -28,10 +28,14 @@ class AreaAdmin(admin.ModelAdmin):
         """Customize the queryset for the manager field."""
         if db_field.name == "manager":
             # Customizing the queryset to show only users with a rank >= 4 or have the manage_area permission
-            kwargs["queryset"] = User.objects.filter(
-                Q(job_position__rank__gte=4)
-                | Q(user_permissions__codename="manage_area")
-            ).order_by("first_name")
+            kwargs["queryset"] = (
+                User.objects.filter(
+                    Q(job_position__rank__gte=4)
+                    | Q(user_permissions__codename="manage_area")
+                )
+                .distinct()
+                .order_by("first_name")
+            )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
