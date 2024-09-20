@@ -43,6 +43,7 @@ const AddImagesCarouselDialog = ({
     setOpenAddDialog,
     currentImages,
     getCarouselImages,
+    setImages,
 }) => {
     const [image, setImage] = useState([]);
     const [openSnack, setOpenSnack] = useState(false);
@@ -95,7 +96,7 @@ const AddImagesCarouselDialog = ({
             await handleError(response, showSnack);
 
             if (response.status === 201) {
-                getCarouselImages();
+                getCarouselImages(setImages, showSnack);
                 showSnack('success', 'Imagen añadida correctamente');
             }
         } catch (error) {
@@ -181,14 +182,17 @@ const AddImagesCarouselDialog = ({
                             required
                             label="Posición"
                             variant="outlined"
+                            defaultValue={1}
                             sx={{ width: '550px', mb: '1rem' }}
                         >
                             {currentImages.map((image, index) => (
-                                <MenuItem key={index} value={index}>
+                                <MenuItem key={index} value={index + 1}>
                                     {index + 1}
                                 </MenuItem>
                             ))}
-                            <MenuItem value={1}>test</MenuItem>
+                            <MenuItem value={currentImages.length + 1}>
+                                Ultima posición
+                            </MenuItem>
                         </TextField>
                         <FilePond
                             required
@@ -202,7 +206,7 @@ const AddImagesCarouselDialog = ({
                                     fileItems.map((fileItem) => fileItem.file)
                                 );
                             }}
-                            labelIdle='Arrastra y suelta tu imagen o <span class="filepond--label-action"> Busca en tu equipo</span>'
+                            labelIdle="Arrastra y suelta tu imagen o busca en tu equipo"
                         />
                     </Box>
                 </DialogContent>

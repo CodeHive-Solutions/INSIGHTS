@@ -2,6 +2,7 @@
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 import { useState, useEffect } from 'react';
+import { DotButton, useDotButton } from './EmblaCarouselDotButton';
 
 // Custom Functions and Components
 import { getApiUrl } from '../../assets/getApi';
@@ -9,9 +10,8 @@ import { handleError } from '../../assets/handleError';
 import AddImagesCarouselDialog from './AddImagesCarouselDialog';
 import SnackbarAlert from '../common/SnackBarAlert';
 
-// Iconsg
+// Icons
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import EditIcon from '@mui/icons-material/Edit';
 import AddIcon from '@mui/icons-material/Add';
 
 // Material-UI
@@ -34,9 +34,7 @@ const getCarouselImages = async (setImages, showSnack) => {
 
         if (response.status === 200) {
             const data = await response.json();
-
             setImages(data);
-            console.log(data);
         }
     } catch (error) {
         if (getApiUrl().environment === 'development') {
@@ -87,6 +85,7 @@ export function EmblaCarousel() {
     const [severity, setSeverity] = useState('success');
     const [message, setMessage] = useState('');
     const [openSnack, setOpenSnack] = useState(false);
+    const permissions = JSON.parse(localStorage.getItem('permissions'));
 
     useEffect(() => {
         getCarouselImages(setImages);
@@ -98,9 +97,12 @@ export function EmblaCarousel() {
         setOpenSnack(true);
     };
 
-    const [emblaRef] = useEmblaCarousel({ loop: true }, [
+    const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
         Autoplay({ delay: 4000, stopOnInteraction: false }),
     ]);
+
+    const { selectedIndex, scrollSnaps, onDotButtonClick } =
+        useDotButton(emblaApi);
 
     return (
         <Box>
@@ -108,6 +110,7 @@ export function EmblaCarousel() {
                 openSnack={openSnack}
                 message={message}
                 severity={severity}
+                closeSnack={() => setOpenSnack(false)}
             ></SnackbarAlert>
             <AddImagesCarouselDialog
                 openAddDialog={openAddDialog}
@@ -115,16 +118,14 @@ export function EmblaCarousel() {
                 currentImages={images}
                 getCarouselImages={getCarouselImages}
                 showSnack={showSnack}
+                setImages={setImages}
             />
             <div
                 className="embla"
                 style={{ overflow: 'hidden' }}
                 ref={emblaRef}
             >
-                <div
-                    className="embla__container"
-                    style={{ display: 'flex', maxWidth: '1280px' }}
-                >
+                <div className="embla__container" style={{ display: 'flex' }}>
                     {images.map((image, index) => (
                         <Box
                             key={index}
@@ -146,27 +147,34 @@ export function EmblaCarousel() {
                                     right: '1rem',
                                 }}
                             >
-                                <IconButton
-                                    onClick={() =>
-                                        deleteCarouselImage(
-                                            image.id,
-                                            showSnack,
-                                            setImages
-                                        )
-                                    }
-                                    sx={IconButtonsStyle}
-                                >
-                                    <DeleteForeverIcon />
-                                </IconButton>
-                                <IconButton sx={IconButtonsStyle}>
-                                    <EditIcon />
-                                </IconButton>
-                                <IconButton
-                                    onClick={() => setOpenAddDialog(true)}
-                                    sx={IconButtonsStyle}
-                                >
-                                    <AddIcon />
-                                </IconButton>
+                                {permissions &&
+                                permissions.includes(
+                                    'carousel_image.add_banner'
+                                ) ? (
+                                    <IconButton
+                                        onClick={() => setOpenAddDialog(true)}
+                                        sx={IconButtonsStyle}
+                                    >
+                                        <AddIcon />
+                                    </IconButton>
+                                ) : null}
+                                {permissions &&
+                                permissions.includes(
+                                    'carousel_image.delete_banner'
+                                ) ? (
+                                    <IconButton
+                                        onClick={() =>
+                                            deleteCarouselImage(
+                                                image.id,
+                                                showSnack,
+                                                setImages
+                                            )
+                                        }
+                                        sx={IconButtonsStyle}
+                                    >
+                                        <DeleteForeverIcon />
+                                    </IconButton>
+                                ) : null}
                             </Box>
                             <img
                                 width={'100%'}
@@ -175,6 +183,19 @@ export function EmblaCarousel() {
                                 alt={image.title}
                             />
                         </Box>
+                    ))}
+                </div>
+                <div className="embla__dots">
+                    {scrollSnaps.map((_, index) => (
+                        <DotButton
+                            key={index}
+                            onClick={() => onDotButtonClick(index)}
+                            className={'embla__dot'.concat(
+                                index === selectedIndex
+                                    ? ' embla__dot--selected'
+                                    : ''
+                            )}
+                        />
                     ))}
                 </div>
             </div>

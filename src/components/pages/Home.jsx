@@ -27,10 +27,16 @@ import electricityCampaign from '../../images/home-carousel/electricity-campaign
 import depression from '../../images/home-carousel/depression.png';
 import passwords from '../../images/home-carousel/password.png';
 import lockers from '../../images/home-carousel/lockers.png';
+import valentine from '../../images/home-carousel/valentine.png';
+import valentine2 from '../../images/home-carousel/valentine-2.png';
+import valentine3 from '../../images/home-carousel/valentine-3.png';
 
 const benefits = [{ image: realBenefit2, title: 'Beneficio 2' }];
 
 const homeImages = [
+    { image: valentine },
+    { image: valentine2 },
+    { image: valentine3 },
     { image: passwords },
     { image: lockers },
     { image: electricityCampaign },
@@ -153,12 +159,25 @@ const Home = () => {
 
     return (
         <>
-            {/* <Box sx={{ display: "flex", mt: "5.5rem", px: "2rem", textAlign: "center", justifyContent: "center" }}>
-				<CarouselComponent items={homeImages} contain={true} height={matches ? "648px" : "480px"} width={matches ? "1152px" : "854px"} />
-			</Box> */}
+            {/* <Box
+                sx={{
+                    display: 'flex',
+                    mt: '5.5rem',
+                    px: '2rem',
+                    textAlign: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <CarouselComponent
+                    items={homeImages}
+                    contain={true}
+                    height={matches ? '648px' : '480px'}
+                    width={matches ? '1152px' : '854px'}
+                />
+            </Box> */}
             <Box
                 sx={{
-                    mt: '4rem',
+                    mt: '2rem',
                     p: '2rem',
                     display: 'flex',
                     alignItems: 'center',
