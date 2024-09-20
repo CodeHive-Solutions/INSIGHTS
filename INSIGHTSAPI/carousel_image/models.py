@@ -17,3 +17,7 @@ class Banner(models.Model):
                 order=models.F("order") + 1
             )
         super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        Banner.objects.filter(order__gt=self.order).update(order=models.F("order") - 1)
+        return super().delete(*args, **kwargs)

@@ -28,7 +28,11 @@ def login_staffnet():
     else:
         url = "https://staffnet-api.cyc-bpo.com/login"
     response = requests.post(url, json=data)
-    if response.status_code != 200 or "StaffNet" not in response.cookies:
+    if (
+        response.status_code != 200
+        or "StaffNet" not in response.cookies
+        and os.environ.get("StaffNetToken")
+    ):
         logger.error("Error logging in StaffNet: {}".format(response.text))
         mail_admins(
             "Error logging in StaffNet",
