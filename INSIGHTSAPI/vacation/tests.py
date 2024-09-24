@@ -600,3 +600,16 @@ class VacationRequestModelTestCase(BaseTestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response["Content-Type"], "application/pdf")
+
+    def test_get_manage_multiple_children(self):
+        """Test managing multiple children."""
+        self.vacation_request["user"] = self.test_user
+        self.vacation_request["uploaded_by"] = self.test_user
+        self.test_user.area.parent = self.user.area
+        self.test_user.area.save()
+        VacationRequest.objects.create(**self.vacation_request)
+        response = self.client.get(
+            reverse("vacation-list"),
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
