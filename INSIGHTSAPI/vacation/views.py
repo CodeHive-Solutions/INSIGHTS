@@ -19,7 +19,11 @@ from .serializers import VacationRequestSerializer
 
 
 class VacationRequestViewSet(viewsets.ModelViewSet):
-    queryset = VacationRequest.objects.all().select_related("user", "uploaded_by").order_by("-created_at")
+    queryset = (
+        VacationRequest.objects.all()
+        .select_related("user", "uploaded_by")
+        .order_by("-created_at")
+    )
     serializer_class = VacationRequestSerializer
     permission_classes = [IsAuthenticated]
 
@@ -126,14 +130,31 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             queryset = self.queryset.all()
         # Check if the user has employee management permissions
         elif request.user.job_position.rank >= 2:
-            queryset = self.queryset.filter(
-                (Q(uploaded_by=request.user) | Q(user=request.user))
-                | (Q(user__area__manager=request.user))
-                | (
-                    Q(user__job_position__rank__lt=request.user.job_position.rank)
-                    & Q(user__area=request.user.area)
+            children = self.request.user.area.get_children()
+            # Check if the user is a manager
+            if children and request.user.area.manager == request.user:
+                queryset = self.queryset.filter(
+                    # Check if was uploaded by the user or if the user is the owner
+                    (Q(uploaded_by=request.user) | Q(user=request.user))
+                    # Check if the user is a manager of the area
+                    | (Q(user__area__manager=request.user))
+                    # Check if the user is a manager of a child area
+                    | (Q(user__area__in=children))
+                    | (
+                        Q(user__job_position__rank__lt=request.user.job_position.rank)
+                        & Q(user__area=request.user.area)
+                    )
                 )
-            )
+            else:
+                queryset = self.queryset.filter(
+                    Q(uploaded_by=request.user)
+                    | Q(user=request.user)
+                    | (Q(user__area__manager=request.user))
+                    | (
+                        Q(user__job_position__rank__lt=request.user.job_position.rank)
+                        & Q(user__area=request.user.area)
+                    )
+                )
         # The user is a regular employee
         else:
             queryset = self.queryset.filter(

@@ -58,3 +58,6 @@ dist-bu/
 .env.sentry-build-plugin
 
 backup*
+
+# Coverage files
+.coverage

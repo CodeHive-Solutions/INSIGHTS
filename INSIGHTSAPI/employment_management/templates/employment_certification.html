@@ -1,111 +1,166 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet"> -->
+        <title>Employment Certification</title>
+    </head>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 2%, 10%, 10%, 10%;
+            padding: 0;
+            font-size: 22px;
+            text-align: justify;
+        }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet"> -->
-    <title>Employment Certification</title>
-</head>
-<style>
-    body {
-        font-family: "Arial", sans-serif;
-        margin: 2%, 10%, 10%, 10%;
-        padding: 0;
-        font-size: 22px;
-        text-align: justify;
-    }
+        h1 {
+            text-align: center;
+            margin: 0;
+        }
 
-    h1 {
-        text-align: center;
-        margin: 0;
-    }
+        h2 {
+            margin-top: 0%;
+            margin-bottom: 10%;
+        }
 
-    h2 {
-        margin-top: 0%;
-        margin-bottom: 10%;
-    }
+        h4,
+        h5 {
+            text-align: center;
+            margin-top: 0%;
+            margin-bottom: 5%;
+        }
 
-    h4,
-    h5 {
-        text-align: center;
-        margin-top: 0%;
-        margin-bottom: 5%;
-    }
+        h6 {
+            margin-left: 15%;
+            font-weight: normal;
+            color: rgba(0, 0, 0, 0.5);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
 
-    h6 {
-        margin-left: 15%;
-        font-weight: normal;
-        color: rgba(0, 0, 0, 0.5);
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
-    }
+        .background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/png;base64,{{ logo_cyc }}');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: -1;
+            opacity: 0.2;
+        }
 
-    .background-image {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url('data:image/png;base64,{{ logo_cyc }}');
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-        z-index: -1;
-        opacity: 0.2;
-    }
+        .center {
+            text-align: center;
+        }
+    </style>
 
-    .center {
-        text-align: center;
-    }
-
-    
-</style>
-</head>
-
-<body>
-    <div id="logo_bpo" style="padding: 0rem 5rem; justify-content: space-between; display: flex; text-align: end;">
-        <div style="text-align: start;">
-            <img src="data:image/png;base64,{{ logo_vertical }}" alt="Logo" width="150px">
+    <body>
+        <div
+            id="logo_bpo"
+            style="
+                padding: 0rem 5rem;
+                justify-content: space-between;
+                display: flex;
+                text-align: end;
+            "
+        >
+            <div style="text-align: start">
+                <img
+                    src="data:image/png;base64,{{ logo_vertical }}"
+                    alt="Logo"
+                    width="150px"
+                />
+            </div>
+            <div style="text-align: left; padding-top: 5rem">
+                <p
+                    style="
+                        font-size: 14px;
+                        color: lightgray;
+                        border-left: 2px solid lightgray;
+                        margin-top: 0;
+                        padding-left: 1rem;
+                    "
+                    class="text"
+                >
+                    www.cyc-bpo.com<br />
+                    info@cyc-bpo.com<br />
+                    PBX: (57 +601) 746 11 66<br />
+                    Bogotá D.C.<br />
+                </p>
+            </div>
         </div>
-        <div style="text-align: left; padding-top: 5rem;">
-            <p style="font-size: 14px; color: lightgray; border-left: 2px solid lightgray; margin-top: 0; padding-left: 1rem;" class="text">
-                www.cyc-bpo.com<br>
-                info@cyc-bpo.com<br>
-                PBX: (57 +601) 746 11 66<br>
-                Bogotá D.C.<br>
+
+        <div class="background-image"></div>
+        <div style="padding: 0rem 5rem">
+            <h1 style="font-size: xx-large; font-weight: 600">
+                C&C SERVICES S.A.S
+            </h1>
+            <h4 style="font-size: x-large; font-weight: 600">
+                NIT 900008653-0
+            </h4>
+            <h2 style="font-size: x-large; font-weight: 600" class="center">
+                Certifica:
+            </h2>
+            <p>
+                Que el/la señor(a)
+                <span class="bold">{{user.get_full_name_reversed}}</span> quien
+                se identifica con cédula de ciudadanía No.
+                <span class="bold">{{user.cedula}}</span> de
+                <span>{{user_data.expedition_city}} </span> labora en esta
+                compañía y sus condiciones son las siguientes:
+            </p>
+            <p>
+                TIPO DE CONTRATO:
+                <span class="bold">{{user_data.contract_type}}</span>
+            </p>
+            <p>
+                FECHA DE INGRESO:
+                <span class="bold">{{user_data.start_date}}</span>
+            </p>
+            <p>CARGO: <span class="bold">{{user_data.position}}</span></p>
+            <p>
+                SALARIO:
+                <span class="bold">
+                    {{user_data.salary_text}} (${{user_data.salary_number}})
+                    mensuales.</span
+                >
+            </p>
+            {% if bonus %}
+            <p>
+                Bonificaciones promedio de los últimos {{bonus}} meses:
+                {{bonus_text}} (${{ bonus_amount }})
+            </p>
+            {% endif %}
+            <p>
+                Esta certificación se expide el día {{user_data.today}} a
+                solicitud del interesado y con destino a quien interese.
+            </p>
+            <p>Atentamente,</p>
+            <img
+                src="data:image/png;base64,{{ payroll_signature }}"
+                alt="Signature"
+                width="25%"
+                height="25%"
+            />
+            <p style="margin-bottom: 0" class="bold">
+                ANDRES LEONARDO CASTRO R.
+            </p>
+            <p style="margin-top: 0" class="bold">
+                Director de Nómina y Administración de Personal
+            </p>
+            <p>
+                <i>
+                    <h6>
+                        *Para validar la información envía un correo a:
+                        <span class="bold">certificaciones@cyc-bpo.com</span>.
+                        Certificado: <b>CTL-{{id}}</b>
+                    </h6>
+                </i>
             </p>
         </div>
-    </div>
-
-    <div class="background-image"></div>
-    <div style="padding: 0rem 5rem">
-        <h1 style="font-size: xx-large; font-weight: 600;">C&C SERVICES S.A.S</h1>
-        <h4 style="font-size: x-large; font-weight: 600;">NIT 900008653-0</h4>
-        <p>
-        <h2 style="font-size: x-large; font-weight: 600;" class="center">Certifica: </h2>
-        </p>
-        <p>Que el/la señor(a) <span class="bold">{{user.get_full_name_reversed}}</span> quien se identifica con cédula de
-            ciudadanía No. <span class="bold">{{user.cedula}}</span> de <span>{{user_data.expedition_city}} </span> labora en esta
-            compañía y sus condiciones son las siguientes:</p>
-        <p>TIPO DE CONTRATO: <span class="bold">{{user_data.contract_type}}</span></p>
-        <p>FECHA DE INGRESO: <span class="bold">{{user_data.start_date}}</span></p>
-        <p>CARGO: <span class="bold">{{user_data.position}}</span></p>
-        <p>SALARIO: <span class="bold"> {{user_data.salary_text}} (${{user_data.salary_number}}) mensuales.</span></p>
-        {% if bonus %}
-            <p>Bonificaciones promedio de los últimos {{bonus}} meses: {{bonus_text}} (${{ bonus_amount }})</p>
-        {% endif %}
-        <p>Esta certificación se expide el día {{user_data.today}} a solicitud del interesado y con destino a quien
-            interese.</p>
-        <p>Atentamente,</p>
-        <img src="data:image/png;base64,{{ payroll_signature }}" alt="Signature" width="25%" height="25%">
-        <p style="margin-bottom: 0;" class="bold">ANDRES LEONARDO CASTRO R.</p>
-        <p style="margin-top: 0;" class="bold">Director de Nómina y Administración de Personal</p>
-        <p><i> 
-                <h6>*Para validar la información envía un correo a: <span
-                        class="bold">certificaciones@cyc-bpo.com</span>. Certificado: <b>CTL-{{id}}</b>
-                </h6>
-            </i></p>
-    </div>
-</body>
-
+    </body>
 </html>

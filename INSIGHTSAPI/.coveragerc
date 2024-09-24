@@ -1,0 +1,31 @@
+[run]
+# Omit the virtual environment and migration files from coverage
+omit =
+    */migrations/*
+    */tests/*
+    */settings.py
+    */wsgi.py
+    */asgi.py
+    */manage.py
+    */__init__.py
+
+branch = True
+
+[report]
+# Exclude common patterns you don't want included in coverage results
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    def __str__
+    if __name__ == .__main__.:
+    raise NotImplementedError
+    if settings.DEBUG
+
+# Sort the report by missed lines, to see which files need more coverage
+sort = misses
+
+# Report a failure if coverage falls below 80%
+fail_under = 80
+
+[html]
+directory = coverage_html_report

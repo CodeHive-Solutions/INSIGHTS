@@ -7,9 +7,8 @@ from .views import (
     trigger_error,
     get_holidays,
     save_answer,
-    check_answered
+    check_answered,
 )
-from .test_endpoint import test_endpoint
 
 
 urlpatterns = [
@@ -19,5 +18,3 @@ urlpatterns = [
     path("save-answer/", save_answer, name="save_answer"),
     path("check-answered/", check_answered, name="check_answered"),
 ]
-if settings.DEBUG:
-    urlpatterns.append(path("test-endpoint/", test_endpoint, name="test_endpoint"))

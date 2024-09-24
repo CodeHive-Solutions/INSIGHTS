@@ -53,10 +53,3 @@ class CookieJWTAuthentication(JWTAuthentication):
             return None
         validated_token = self.get_validated_token(raw_token)
         return self.get_user(validated_token), validated_token
-
-
-def always_true(user):
-    """This function always return True"""
-    if user:
-        return True
-    return False

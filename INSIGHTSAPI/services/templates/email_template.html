@@ -1,49 +1,73 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 1.6; padding: 0; margin: 0; border: 1px; margin: auto; text-align: center;">
-    <table style="width: 80%; border-collapse: collapse;">
-        <tr>
-            <th colspan="2" style="padding: 10px;  text-align: center;">
-                <h1>{{title}}</h1>
-            </th>
-        </tr>
-        <tr>
-            <td colspan="2" style="padding: 20px; border-bottom: 2px solid #ddd;">
-                {% if safe_mode %}
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body
+        style="
+            font-family: Montserrat, sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            border: 1px;
+            margin: auto;
+            text-align: center;
+        "
+    >
+        <table style="width: 80%; border-collapse: collapse">
+            <tr>
+                <th colspan="2" style="padding: 10px; text-align: center">
+                    <h1>{{title}}</h1>
+                </th>
+            </tr>
+            <tr>
+                <td
+                    colspan="2"
+                    style="padding: 20px; border-bottom: 2px solid #ddd"
+                >
+                    {% if safe_mode %}
                     <p>{{ message}}</p>
-                {% else %}
+                    {% else %}
                     <p>{{ message | safe }}</p>
-                {% endif %}
-            </td>
-        </tr>
-        <tr id="contact-info">
-            <td style="padding: 10px; width: 35%;">
-                <img src="https://raw.githubusercontent.com/CodeHive-Solutions/INSIGHTS/a79b9187f5eb34bf1e41111c9f957ed4f75842ba/INSIGHTSAPI/static/images/Logo_cyc_text.png" width="100%">
-            </td>
-            <td style="padding: 20px;">
-                <strong>C&C SERVICES S.A.S</strong> <br>
-                https://cyc-bpo.com/ <br>
-                PBX: (601)7461166-Ext: 8081 <br>
-                Calle 19 #3-16 | Piso 3-CC Barichara <br>
-                Bogotá D.C.-Colombia
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" style="padding: 10px; font-size: 12px;">
-                <strong>Aviso de confidencialidad:</strong><br>
-                Este correo electrónico y cualquier archivo adjunto son confidenciales y pueden contener información privilegiada. Si usted no es el destinatario correcto, por favor notifique al remitente respondiendo este mensaje y elimine inmediatamente este correo electrónico y cualquier archivo adjunto de su sistema. Si está usted recibiendo este correo electrónico por error, no debe copiar este mensaje o divulgar su contenido a ninguna persona.
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" style="padding: 10px; font-size: 12px;">
-                Mensaje generado automáticamente, por favor no responder.
-            </td>
-        </tr>
-    </table>
-</body>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr id="contact-info">
+                <td style="padding: 10px; width: 35%">
+                    <img
+                        src="https://raw.githubusercontent.com/CodeHive-Solutions/INSIGHTS/a79b9187f5eb34bf1e41111c9f957ed4f75842ba/INSIGHTSAPI/static/images/Logo_cyc_text.png"
+                        width="100%"
+                    />
+                </td>
+                <td style="padding: 20px">
+                    <strong>C&C SERVICES S.A.S</strong> <br />
+                    https://cyc-bpo.com/ <br />
+                    PBX: (601)7461166-Ext: 8081 <br />
+                    Calle 19 #3-16 | Piso 3-CC Barichara <br />
+                    Bogotá D.C.-Colombia
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding: 10px; font-size: 12px">
+                    <strong>Aviso de confidencialidad:</strong><br />
+                    Este correo electrónico y cualquier archivo adjunto son
+                    confidenciales y pueden contener información privilegiada.
+                    Si usted no es el destinatario correcto, por favor notifique
+                    al remitente respondiendo este mensaje y elimine
+                    inmediatamente este correo electrónico y cualquier archivo
+                    adjunto de su sistema. Si está usted recibiendo este correo
+                    electrónico por error, no debe copiar este mensaje o
+                    divulgar su contenido a ninguna persona.
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="padding: 10px; font-size: 12px">
+                    Mensaje generado automáticamente, por favor no responder.
+                </td>
+            </tr>
+        </table>
+    </body>
 </html>

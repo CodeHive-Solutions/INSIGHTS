@@ -1,10 +1,20 @@
 // Material-UI
-import { Snackbar, Alert, Button } from "@mui/material";
+import { Snackbar, Alert, Button } from '@mui/material';
 
-const SnackbarAlert = ({ message, severity, openSnack, closeSnack, action }) => {
+const SnackbarAlert = ({
+    message,
+    severity,
+    openSnack,
+    closeSnack,
+    action,
+}) => {
     if (!action) {
         return (
-            <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={openSnack} onClose={closeSnack}>
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                open={openSnack}
+                onClose={closeSnack}
+            >
                 <Alert onClose={closeSnack} severity={severity}>
                     {message}
                 </Alert>
@@ -12,7 +22,11 @@ const SnackbarAlert = ({ message, severity, openSnack, closeSnack, action }) => 
         );
     } else {
         return (
-            <Snackbar anchorOrigin={{ vertical: "top", horizontal: "center" }} open={openSnack} onClose={closeSnack}>
+            <Snackbar
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                open={openSnack}
+                onClose={closeSnack}
+            >
                 <Alert
                     onClose={closeSnack}
                     severity={severity}
