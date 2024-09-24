@@ -2,9 +2,25 @@ import { render, screen, fireEvent, within } from '@testing-library/react';
 import AddImagesCarouselDialog from '../components/shared/AddImagesCarouselDialog';
 import { getApiUrl } from '../assets/getApi';
 import { handleError } from '../assets/handleError';
+import { vi } from 'vitest';
 
 vi.mock('../assets/getApi');
 vi.mock('../assets/handleError');
+vi.mock('react-filepond', () => {
+    console.log('FilePond mock executed');
+    return {
+        __esModule: true,
+        default: vi.fn(() => (
+            <input
+                accept="image/*"
+                multiple
+                name="filepond-test"
+                type="file"
+                data-testid="filepond-input"
+            />
+        )),
+    };
+});
 
 describe('AddImagesCarouselDialog Component', () => {
     const mockSetOpenAddDialog = vi.fn();
@@ -41,26 +57,24 @@ describe('AddImagesCarouselDialog Component', () => {
         getApiUrl.mockReturnValue({ apiUrl: 'http://localhost/' });
         handleError.mockResolvedValue();
 
+        screen.debug();
         render(<AddImagesCarouselDialog {...defaultProps} />);
 
         // Simulate opening the dropdown
         const positionInput = screen.getByLabelText(/Posición/i);
-        fireEvent.mouseDown(positionInput); // Open the dropdown
+        fireEvent.mouseDown(positionInput);
 
-        // Find the dropdown list within the document
         const listbox = within(screen.getByRole('listbox'));
-
-        // Select the first option (value "1")
         const firstOption = listbox.getByText('1');
         fireEvent.click(firstOption);
 
-        // Simulate adding an image
-        const fileInput = screen.getByLabelText(
-            /Arrastra y suelta tu imagen o busca en tu equipo/i
-        );
+        // Directly access the input using container.querySelector
+        const fileInput = screen.getByTestId('filepond-input'); // Use testid from the mock
+
         const file = new File(['dummy content'], 'example.png', {
             type: 'image/png',
         });
+
         fireEvent.change(fileInput, { target: { files: [file] } });
 
         // Submit the form
