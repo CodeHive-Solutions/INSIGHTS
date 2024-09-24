@@ -96,8 +96,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -144,8 +144,11 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
 SECURE_HSTS_SECONDS = 3600
+SECURE_BROWSER_XSS_FILTER = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
 
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 CORS_ALLOW_CREDENTIALS = True

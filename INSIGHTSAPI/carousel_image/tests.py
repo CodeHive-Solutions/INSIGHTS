@@ -2,13 +2,21 @@ from services.tests import BaseTestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import Permission
+from django.test import override_settings
+from django.conf import settings
 from .models import Banner
 
 
 # Create your tests here.
+# @override_settings(MEDIA_ROOT=settings.BASE_DIR / "carousel_image" / "test")
+@override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
 class BannerTestCase(BaseTestCase):
     def setUp(self):
         super().setUp()
+        with open("test/Test_image.png", "rb") as image_data:
+            self.image = SimpleUploadedFile(
+                "test.jpg", image_data.read(), content_type="image/jpg"
+            )
         self.banner = Banner.objects.create(
             title="Test Banner",
             link="https://www.google.com",
