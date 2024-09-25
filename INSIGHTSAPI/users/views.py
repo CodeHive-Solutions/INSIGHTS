@@ -38,8 +38,9 @@ def login_staffnet():
             "Error logging in StaffNet",
             "Error logging in StaffNet: {}".format(response.text),
         )
-        # delete the token to try to login again
-        del os.environ["StaffNetToken"]
+        if os.environ.get("StaffNetToken"):
+            # delete the token to try to login again
+            del os.environ["StaffNetToken"]
         return None
     os.environ["StaffNetToken"] = response.cookies["StaffNet"]
     return True
