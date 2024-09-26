@@ -36,7 +36,10 @@ import SnackbarAlert from '../common/SnackBarAlert';
 import PayslipsPreview from './PayslipsPreview.jsx';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 // Icons
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
@@ -57,6 +60,7 @@ export const Payslips = () => {
     const [previewRows, setPreviewRows] = useState([]);
     const [loadingPreview, setLoadingPreview] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingRows, setLoadingRows] = useState(false);
     const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
     const [idPayslip, setIdPayslip] = useState();
     const [disabled, setDisabled] = useState(false);
@@ -70,6 +74,7 @@ export const Payslips = () => {
     }, []);
 
     const getPayslips = async () => {
+        setLoadingRows(true);
         try {
             const response = await fetch(`${getApiUrl().apiUrl}payslips/`, {
                 method: 'GET',
@@ -86,6 +91,8 @@ export const Payslips = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoadingRows(false);
         }
     };
 
@@ -471,7 +478,7 @@ export const Payslips = () => {
                     }}
                 >
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loadingRows}
                         initialState={{
                             sorting: {
                                 sortModel: [
@@ -482,6 +489,7 @@ export const Payslips = () => {
                         slots={{
                             toolbar: CustomToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             loadingOverlay: {

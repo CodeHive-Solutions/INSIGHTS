@@ -8,7 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 // Material-UI
 import {
@@ -393,6 +396,7 @@ export const Legal = () => {
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
     const [disabled, setDisabled] = useState(false);
     const [inputs, setInputs] = useState(initialInputs);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const [newInitialValues, setNewInitialValues] = useState(initialValues);
@@ -407,6 +411,7 @@ export const Legal = () => {
     }, []);
 
     const getPolicies = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`${getApiUrl().apiUrl}contracts/`, {
                 method: 'GET',
@@ -423,6 +428,8 @@ export const Legal = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -748,12 +755,13 @@ export const Legal = () => {
                     }}
                 >
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loading}
                         columns={columns}
                         rows={rows}
                         slots={{
                             toolbar: CustomToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             loadingOverlay: {

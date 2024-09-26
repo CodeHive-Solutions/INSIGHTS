@@ -5,7 +5,10 @@ import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { useNavigate } from 'react-router-dom';
 import { handleError } from '../../assets/handleError';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 // Material-UI
 import {
@@ -32,6 +35,7 @@ const AnalisisMetas = () => {
     const [message, setMessage] = useState('');
     const [rows, setRows] = useState([]);
     const [yearsArray, setYearsArray] = useState([]);
+    const [loading, setLoading] = useState(false);
     const monthRef = useRef();
     const yearRef = useRef();
     const goalType = useRef(null);
@@ -91,6 +95,7 @@ const AnalisisMetas = () => {
     };
 
     const getGoals = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`${getApiUrl().apiUrl}goals`, {
                 method: 'GET',
@@ -107,6 +112,8 @@ const AnalisisMetas = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -437,7 +444,7 @@ const AnalisisMetas = () => {
                 }}
             >
                 <DataGrid
-                    loading={rows.length === 0}
+                    loading={loading}
                     rows={rows}
                     columns={columns}
                     csvOptions={{
@@ -448,6 +455,7 @@ const AnalisisMetas = () => {
                     slots={{
                         toolbar: CustomToolbar,
                         noResultsOverlay: CustomNoResultsOverlay,
+                        noRowsOverlay: CustomNoRowsOverlay,
                     }}
                     slotProps={{
                         loadingOverlay: {

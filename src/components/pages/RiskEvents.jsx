@@ -9,7 +9,10 @@ import * as Yup from 'yup';
 import { getApiUrl } from '../../assets/getApi';
 import SnackbarAlert from '../common/SnackBarAlert';
 import { handleError } from '../../assets/handleError';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 // Material-UI
 import Container from '@mui/material/Container';
@@ -74,6 +77,7 @@ export const RiskEvent = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [openDialogEdit, setOpenDialogEdit] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
 
@@ -88,6 +92,7 @@ export const RiskEvent = () => {
     }, []);
 
     const getOperationalRisk = async () => {
+        setLoading(true);
         try {
             const response = await fetch(
                 `${getApiUrl().apiUrl}operational-risk/`,
@@ -107,6 +112,8 @@ export const RiskEvent = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -751,12 +758,13 @@ export const RiskEvent = () => {
                     }}
                 >
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loading}
                         columns={columns}
                         rows={rows}
                         slots={{
                             toolbar: CustomToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             loadingOverlay: {

@@ -7,7 +7,6 @@ import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orien
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
-import FilePondPluginFileMetadata from 'filepond-plugin-file-metadata';
 
 // Material-UI
 import {
@@ -36,7 +35,7 @@ import SnackbarAlert from '../common/SnackBarAlert';
 registerPlugin(
     FilePondPluginImageExifOrientation,
     FilePondPluginImagePreview,
-    FilePondPluginFileValidateType,
+    FilePondPluginFileValidateType
 );
 
 const AddImagesCarouselDialog = ({

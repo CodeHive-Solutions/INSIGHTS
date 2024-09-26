@@ -7,18 +7,18 @@ import { vi } from 'vitest';
 vi.mock('../assets/getApi');
 vi.mock('../assets/handleError');
 vi.mock('react-filepond', () => {
-    console.log('FilePond mock executed');
     return {
         __esModule: true,
-        default: vi.fn(() => (
+        FilePond: vi.fn(() => (
             <input
                 accept="image/*"
                 multiple
-                name="filepond-test"
+                name="filepond"
                 type="file"
                 data-testid="filepond-input"
             />
         )),
+        registerPlugin: vi.fn(),
     };
 });
 

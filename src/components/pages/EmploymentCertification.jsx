@@ -7,7 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
+
 // Material-UI
 import { Container, Typography, Box } from '@mui/material';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -17,6 +21,7 @@ export const EmploymentCertification = () => {
     const [severity, setSeverity] = useState('success');
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
 
@@ -33,6 +38,7 @@ export const EmploymentCertification = () => {
     }, []);
 
     const getEmploymentCertifications = async () => {
+        setLoading(true);
         try {
             const response = await fetch(
                 `${getApiUrl().apiUrl}employment-management/get-employment-certifications`,
@@ -52,6 +58,8 @@ export const EmploymentCertification = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -146,7 +154,7 @@ export const EmploymentCertification = () => {
                     }}
                 >
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loading}
                         initialState={{
                             sorting: {
                                 sortModel: [
@@ -159,6 +167,7 @@ export const EmploymentCertification = () => {
                         slots={{
                             toolbar: GridToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             toolbar: {

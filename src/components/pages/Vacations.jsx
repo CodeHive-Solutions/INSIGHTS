@@ -33,7 +33,10 @@ import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
 import VacationsRequest from '../shared/VacationsRequest.jsx';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 // Icons
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
@@ -51,6 +54,7 @@ export const Vacations = () => {
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const [openVacation, setOpenVacation] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingRows, setLoadingRows] = useState(false);
     const [openDialogPayslip, setOpenDialogPayslip] = useState(false);
     const [vacationId, setVacationId] = useState();
     const [disabled, setDisabled] = useState(false);
@@ -69,6 +73,7 @@ export const Vacations = () => {
     const [approvalType, setApprovalType] = useState('');
 
     const getVacations = async () => {
+        setLoadingRows(true);
         try {
             const response = await fetch(`${getApiUrl().apiUrl}vacation/`, {
                 method: 'GET',
@@ -85,6 +90,8 @@ export const Vacations = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoadingRows(false);
         }
     };
 
@@ -653,7 +660,7 @@ export const Vacations = () => {
                 </Typography>
                 <Box sx={{ height: '80vh' }}>
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loadingRows}
                         getRowHeight={() => 'auto'}
                         initialState={{
                             sorting: {
@@ -665,6 +672,7 @@ export const Vacations = () => {
                         slots={{
                             toolbar: CustomToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             loadingOverlay: {

@@ -7,7 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 // Material-UI
 import { Container, Box, Typography } from '@mui/material';
@@ -26,6 +29,7 @@ export const VacanciesReferred = () => {
     const [severity, setSeverity] = useState('success');
     const [message, setMessage] = useState();
     const [openSnack, setOpenSnack] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const permissions = JSON.parse(localStorage.getItem('permissions'));
 
@@ -37,6 +41,7 @@ export const VacanciesReferred = () => {
     }, []);
 
     const getVacanciesReferred = async () => {
+        setLoading(true);
         try {
             const response = await fetch(
                 `${getApiUrl().apiUrl}vacancy/reference/`,
@@ -56,6 +61,8 @@ export const VacanciesReferred = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -144,12 +151,13 @@ export const VacanciesReferred = () => {
                     }}
                 >
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loading}
                         columns={columns}
                         rows={rows}
                         slots={{
                             toolbar: CustomToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             loadingOverlay: {

@@ -30,10 +30,12 @@ import lockers from '../../images/home-carousel/lockers.png';
 import valentine from '../../images/home-carousel/valentine.png';
 import valentine2 from '../../images/home-carousel/valentine-2.png';
 import valentine3 from '../../images/home-carousel/valentine-3.png';
+import halloween from '../../images/home-carousel/halloween.png';
 
 const benefits = [{ image: realBenefit2, title: 'Beneficio 2' }];
 
 const homeImages = [
+    { image: halloween },
     { image: valentine },
     { image: valentine2 },
     { image: valentine3 },
@@ -159,7 +161,7 @@ const Home = () => {
 
     return (
         <>
-            {/* <Box
+            <Box
                 sx={{
                     display: 'flex',
                     mt: '5.5rem',
@@ -174,8 +176,8 @@ const Home = () => {
                     height={matches ? '648px' : '480px'}
                     width={matches ? '1152px' : '854px'}
                 />
-            </Box> */}
-            <Box
+            </Box>
+            {/* <Box
                 sx={{
                     mt: '2rem',
                     p: '2rem',
@@ -185,7 +187,7 @@ const Home = () => {
                 }}
             >
                 <EmblaCarousel />
-            </Box>
+            </Box> */}
             <Container
                 sx={{
                     display: 'flex',

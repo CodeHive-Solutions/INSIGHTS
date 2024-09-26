@@ -8,7 +8,10 @@ import { Formik, Form, useField } from 'formik';
 import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
 import { handleError } from '../../assets/handleError';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 // Material-UI
 import {
@@ -124,6 +127,7 @@ export const Sgc = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [selectedFileUpdate, setSelectedFileUpdate] = useState(null);
     const [fileName, setFileName] = useState('Cargar Archivo');
+    const [loading, setLoading] = useState(false);
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const editPermission = permissions.includes('sgc.change_sgcfile');
     const deletePermission = permissions.includes('sgc.delete_sgcfile');
@@ -133,6 +137,7 @@ export const Sgc = () => {
     }, []);
 
     const getFiles = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`${getApiUrl().apiUrl}sgc/`, {
                 method: 'GET',
@@ -149,6 +154,8 @@ export const Sgc = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -622,13 +629,14 @@ export const Sgc = () => {
                     }}
                 >
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loading}
                         columns={columns}
                         rows={rows}
                         editMode="row"
                         slots={{
                             toolbar: CustomToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             loadingOverlay: {

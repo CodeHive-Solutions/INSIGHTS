@@ -219,8 +219,7 @@ const Vacancies = () => {
         }
     };
 
-    const handleOpenVacancy = (img, vacancyName, vacancyId) => {
-        setImage(img);
+    const handleOpenVacancy = (vacancyId) => {
         setVacancyId(vacancyId);
         setOpenVacancy(true);
     };
@@ -342,13 +341,7 @@ const Vacancies = () => {
                                         transform: 'scale(1.05)',
                                     },
                                 }}
-                                onClick={() =>
-                                    handleOpenVacancy(
-                                        vacancy.image,
-                                        vacancy.vacancy_name,
-                                        vacancy.id
-                                    )
-                                }
+                                onClick={() => handleOpenVacancy(vacancy.id)}
                             >
                                 {inactivatePermission && (
                                     <IconButton

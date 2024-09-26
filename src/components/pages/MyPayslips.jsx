@@ -24,7 +24,10 @@ import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 // Custom Components
 import SnackbarAlert from '../common/SnackBarAlert';
 import { getApiUrl } from '../../assets/getApi';
-import { CustomNoResultsOverlay } from '../../assets/CustomNoResultsOverlay';
+import {
+    CustomNoResultsOverlay,
+    CustomNoRowsOverlay,
+} from '../../assets/CustomDataGridOverlays';
 
 export const MyPayslips = () => {
     const [rows, setRows] = useState([]);
@@ -36,6 +39,7 @@ export const MyPayslips = () => {
     const [paySlipId, setPaySlipId] = useState(null);
     const [disabled, setDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [loadingRows, setLoadingRows] = useState(false);
     const currentEmail = JSON.parse(localStorage.getItem('email'));
     const permissions = JSON.parse(localStorage.getItem('permissions'));
     const cedula = JSON.parse(localStorage.getItem('cedula'));
@@ -45,6 +49,7 @@ export const MyPayslips = () => {
     }, []);
 
     const getPayslips = async () => {
+        setLoadingRows(true);
         try {
             const response = await fetch(`${getApiUrl().apiUrl}payslips/`, {
                 method: 'GET',
@@ -71,6 +76,8 @@ export const MyPayslips = () => {
             if (getApiUrl().environment === 'development') {
                 console.error(error);
             }
+        } finally {
+            setLoadingRows(false);
         }
     };
 
@@ -320,7 +327,7 @@ export const MyPayslips = () => {
                     }}
                 >
                     <DataGrid
-                        loading={rows.length === 0}
+                        loading={loadingRows}
                         initialState={{
                             sorting: {
                                 sortModel: [
@@ -331,6 +338,7 @@ export const MyPayslips = () => {
                         slots={{
                             toolbar: GridToolbar,
                             noResultsOverlay: CustomNoResultsOverlay,
+                            noRowsOverlay: CustomNoRowsOverlay,
                         }}
                         slotProps={{
                             toolbar: {
