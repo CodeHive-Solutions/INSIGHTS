@@ -21,7 +21,7 @@ from .models import Vacancy, Reference
 class VacancyViewSet(viewsets.ModelViewSet):
     """ViewSet for the Vacancy model"""
 
-    queryset = Vacancy.objects.all()
+    queryset = Vacancy.objects.all().order_by("-id")
     serializer_class = VacancySerializer
     permission_classes = [IsAuthenticated, DjangoModelViewPermissionsNotDelete]
 

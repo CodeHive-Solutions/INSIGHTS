@@ -11,29 +11,29 @@ from .models import Banner
 # @override_settings(MEDIA_ROOT=settings.BASE_DIR / "carousel_image" / "test")
 @override_settings(DEFAULT_FILE_STORAGE="django.core.files.storage.InMemoryStorage")
 class BannerTestCase(BaseTestCase):
-    def setUp(self):
-        super().setUp()
-        with open("test/Test_image.png", "rb") as image_data:
-            self.image = SimpleUploadedFile(
+
+    def get_test_image(self, name="Test_image.png"):
+        """Helper method to return a fresh SimpleUploadedFile object."""
+        with open(settings.BASE_DIR / "static" / "test" / name, "rb") as image_data:
+            return SimpleUploadedFile(
                 "test.jpg", image_data.read(), content_type="image/jpg"
             )
+
+    def setUp(self):
+        super().setUp()
         self.banner = Banner.objects.create(
             title="Test Banner",
             link="https://www.google.com",
-            image="carousel_images/banners/test.jpg",
+            image=self.get_test_image(),
             order=1,
         )
         self.user.user_permissions.add(Permission.objects.get(codename="add_banner"))
-        with open("static/test/Logo_cyc.png", "rb") as image_data:
-            self.image = SimpleUploadedFile(
-                "test3.jpg", image_data.read(), content_type="image/jpg"
-            )
 
     def test_get_banner(self):
         Banner.objects.create(
             title="Test Banner 2",
             link="https://www.google.com",
-            image="carousel_images/banners/test2.jpg",
+            image=self.get_test_image("Test_image2.png"),
             order=2,
         )
         response = self.client.get(reverse("banners-list"))
@@ -46,7 +46,7 @@ class BannerTestCase(BaseTestCase):
         data = {
             "title": "Test Banner 3",
             "link": "https://www.google.com",
-            "image": self.image,
+            "image": self.get_test_image(),
             "order": 2,
         }
         response = self.client.post(reverse("banners-list"), data)
@@ -59,7 +59,7 @@ class BannerTestCase(BaseTestCase):
         banner2 = Banner.objects.create(
             title="Test Banner 2",
             link="https://www.google.com",
-            image="carousel_images/banners/test2.jpg",
+            image=self.get_test_image("Test_image2.png"),
             order=2,
         )
         response = self.client.post(
@@ -67,7 +67,7 @@ class BannerTestCase(BaseTestCase):
             {
                 "title": "Test Banner 3",
                 "link": "https://www.google.com",
-                "image": self.image,
+                "image": self.get_test_image(),
                 "order": 2,
             },
         )
@@ -79,7 +79,7 @@ class BannerTestCase(BaseTestCase):
         banner2 = Banner.objects.create(
             title="Test Banner 2",
             link="https://www.google.com",
-            image="carousel_images/banners/test2.jpg",
+            image=self.get_test_image("Test_image2.png"),
             order=2,
         )
         response = self.client.post(
@@ -87,7 +87,7 @@ class BannerTestCase(BaseTestCase):
             {
                 "title": "Test Banner 3",
                 "link": "https://www.google.com",
-                "image": self.image,
+                "image": self.get_test_image(),
                 "order": 2,
             },
         )
@@ -100,7 +100,7 @@ class BannerTestCase(BaseTestCase):
         banner2 = Banner.objects.create(
             title="Test Banner 2",
             link="https://www.google.com",
-            image="carousel_images/banners/test2.jpg",
+            image=self.get_test_image("Test_image2.png"),
             order=2,
         )
         response = self.client.post(
@@ -108,7 +108,7 @@ class BannerTestCase(BaseTestCase):
             {
                 "title": "Test Banner 3",
                 "link": "https://www.google.com",
-                "image": self.image,
+                "image": self.get_test_image(),
                 "order": 3,
             },
         )
@@ -120,7 +120,7 @@ class BannerTestCase(BaseTestCase):
         create_banner = Banner.objects.create(
             title="Test Banner 2",
             link="https://www.google.com",
-            image="carousel_images/banners/test2.jpg",
+            image=self.get_test_image("Test_image2.png"),
             order=2,
         )
         self.user.user_permissions.add(Permission.objects.get(codename="delete_banner"))

@@ -108,7 +108,7 @@ def update_profile(request):
         if not login_staffnet():
             return Response(
                 {
-                    "error": "Encontramos un error actualizando tu perfil, por favor intenta más tarde."
+                    "error": "Encontramos un error actualizando tu perfil, por favor intenta después."
                 },
                 status=500,
             )
