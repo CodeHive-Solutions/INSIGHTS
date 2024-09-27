@@ -72,7 +72,7 @@ class LDAPAuthenticationTest(TestCase):
         """Tests that the login endpoint works as expected."""
         if called:
             username = "staffnet"
-            password = os.environ["StaffNetLDAP"]
+            password = os.environ["StaffNetLDAP"] + "12"
             data = {
                 "username": username,
                 "password": password,
@@ -92,6 +92,10 @@ class LDAPAuthenticationTest(TestCase):
                 self.assertEqual(user.last_name, "LDAP")
                 self.assertEqual(user.job_position.name, "Administrador")
                 self.assertEqual(user.job_position.rank, 9)
+                self.assertEqual(user.area.name, "Administrador")
+                self.assertEqual(user.area.manager, user)
+                print(user.last_login)
+                self.assertIsNotNone(user.last_login)
             else:
                 self.fail("User not created.")
             return response

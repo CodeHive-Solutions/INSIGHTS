@@ -49,7 +49,6 @@ class User(AbstractUser):
     )
     points = models.IntegerField(default=0)
     date_joined = None
-    last_login = None
 
     @property
     def is_active(self):
