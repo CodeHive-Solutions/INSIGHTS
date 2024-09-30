@@ -45,11 +45,14 @@ class Banner(models.Model):
         )  # Save image in .webp format with quality 85
 
         # Set the new image filename with a .webp extension
-        image_name, _ = os.path.splitext(self.image.name)
+        image_name, _ = os.path.basename(self.image.name).rsplit(".", 1)
         webp_image_name = image_name + ".webp"
+        original_image_path = self.image.path
 
         # Save the converted image back to the image field
         self.image.save(webp_image_name, ContentFile(img_io.getvalue()), save=False)
 
         # Save the model again to persist the changes
         super().save()
+        if os.path.exists(original_image_path):
+            os.remove(original_image_path)

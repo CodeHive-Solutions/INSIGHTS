@@ -1,3 +1,4 @@
+from PIL import Image
 from services.tests import BaseTestCase
 from django.urls import reverse
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -53,6 +54,49 @@ class BannerTestCase(BaseTestCase):
         self.assertEqual(response.status_code, 201, response.data)
         get_banners = self.client.get(reverse("banners-list"))
         self.assertEqual(len(get_banners.data), 2)
+
+    def test_image_size(self):
+        data = {
+            "title": "Test Banner 3",
+            "link": "https://www.google.com",
+            "image": self.get_test_image("Test_banner.jpg"),
+            "order": 2,
+        }
+        response = self.client.post(reverse("banners-list"), data)
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(Banner.objects.count(), 2)
+        print(
+            "height",
+            Banner.objects.get(id=response.data["id"]).image.height,
+            "width",
+            Banner.objects.get(id=response.data["id"]).image.width,
+        )
+        self.assertEqual(Banner.objects.get(id=response.data["id"]).image.width, 1280)
+        self.assertEqual(Banner.objects.get(id=response.data["id"]).image.height, 720)
+        try:
+            img = Image.open(Banner.objects.get(id=response.data["id"]).image)
+            img.verify()
+        except Exception as e:
+            self.fail("Image is not valid")
+
+    def test_convert_to_webp(self):
+        data = {
+            "title": "Test Banner 3",
+            "link": "https://www.google.com",
+            "image": self.get_test_image("Test_banner.jpg"),
+            "order": 2,
+        }
+        response = self.client.post(reverse("banners-list"), data)
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(Banner.objects.count(), 2)
+        self.assertTrue(
+            Banner.objects.get(id=response.data["id"]).image.name.endswith(".webp")
+        )
+        try:
+            img = Image.open(Banner.objects.get(id=response.data["id"]).image)
+            img.verify()
+        except Exception as e:
+            self.fail("Image is not valid")
 
     def test_update_banner_order(self):
         self.user.user_permissions.add(Permission.objects.get(codename="change_banner"))

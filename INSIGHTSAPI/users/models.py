@@ -2,6 +2,7 @@
 
 import logging
 import random
+from datetime import datetime
 from django.contrib.auth.models import AbstractUser
 from django.core.mail import mail_admins
 from django.db import connections
@@ -86,6 +87,11 @@ class User(AbstractUser):
                 f"{capitalize_name(self.last_name)} {capitalize_name(self.first_name)}"
             )
         return self.first_name
+
+    def set_last_login(self):
+        """Set the last login of the user."""
+        self.last_login = datetime.now()
+        self.save()
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""

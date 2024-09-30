@@ -1,7 +1,6 @@
 """Views for the api_token app."""
 
 from django.conf import settings
-from django.contrib.auth import login
 from django.contrib.auth import logout
 from rest_framework.decorators import api_view
 from rest_framework.decorators import permission_classes
@@ -51,6 +50,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             response.data["cargo"] = user.job_position.name
             response.data["email"] = user.email
             response.data["rango"] = user.job_position.rank
+            user.set_last_login()
         return response
 
 
