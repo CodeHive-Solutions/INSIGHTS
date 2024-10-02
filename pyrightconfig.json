@@ -1,4 +1,0 @@
-{
-    // The response.data check of the response object have a bad interpretation, the linter expect a HttpResponse object, but it is a DRF Response object
-    "reportAttributeAccessIssue": "none"
-}

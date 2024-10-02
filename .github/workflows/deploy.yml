@@ -1,48 +1,51 @@
 name: Deploy React App
 
 on:
-    push:
-        branches:
-            - dev # Adjust this to your main branch
+  push:
+    branches:
+      - dev # Adjust this to your main branch
 
 jobs:
-    deploy:
-        runs-on: dev
+  deploy:
+    runs-on: dev
+    defaults:
+      run:
+        working-directory: ./frontend
 
-        steps:
-            - name: Checkout repository
-              uses: actions/checkout@v2
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v2
-              with:
-                  node-version: '18.17.1' # Adjust this to your required Node version
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "18.17.1" # Adjust this to your required Node version
 
-            - name: Install Pnpm
-              run: npm install -g pnpm
+      - name: Install Pnpm
+        run: npm install -g pnpm
 
-            - name: Install dependencies
-              run: pnpm install
+      - name: Install dependencies
+        run: pnpm install
 
-            - name: Format code
-              run: pnpm format
+      - name: Format code
+        run: pnpm format
 
-            - name: Lint code
-              run: pnpm oxlint
+      - name: Lint code
+        run: pnpm oxlint
 
-            - name: Run tests
-              run: pnpm run test
+      - name: Run tests
+        run: pnpm run test
 
-            - name: Build project
-              env:
-                  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-              run: NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+      - name: Build project
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+        run: NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
 
-            - name: Postbuild project
-              run: pnpm run postbuild
+      - name: Postbuild project
+        run: pnpm run postbuild
 
-            - name: Deploy to server
-              run: |
-                  rm -rf /var/www/INSIGHTS/dist/*
-                  cp -r ./dist/* /var/www/INSIGHTS/dist
-                  sudo systemctl restart nginx
+      - name: Deploy to server
+        run: |
+          rm -rf /var/www/INSIGHTS/frontend/dist/*
+          cp -r ./frontend/dist/* /var/www/INSIGHTS/frontend/dist
+          sudo systemctl restart nginx
