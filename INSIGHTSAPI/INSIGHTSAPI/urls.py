@@ -46,6 +46,7 @@ urlpatterns = [
     path("vacation/", include("vacation.urls")),
     path("notifications/", include("notifications.urls")),
     path("carousel-images/", include("carousel_image.urls")),
+    path("coexistence-committee/", include("coexistence_committee.urls")),
 ]
 
 if settings.DEBUG:

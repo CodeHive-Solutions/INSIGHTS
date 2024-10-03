@@ -93,6 +93,7 @@ INSTALLED_APPS = [
     "vacation",
     "notifications",
     "carousel_image",
+    "coexistence_committee",
 ]
 
 MIDDLEWARE = [
