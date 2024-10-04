@@ -1,6 +1,8 @@
 from django.contrib import admin
-from users.models import User
 from django.db.models import Q
+
+from users.models import User
+
 from .models import Area, JobPosition
 
 
@@ -62,8 +64,5 @@ class JobPositionAdmin(admin.ModelAdmin):
         "name",
         "rank",
     )
-    search_fields = (
-        "name",
-        "description",
-    )
+    search_fields = ("name",)
     ordering = ("-rank",)

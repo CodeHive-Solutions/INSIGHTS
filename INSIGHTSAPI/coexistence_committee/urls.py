@@ -7,9 +7,9 @@ from .views import ComplaintViewSet, ReasonListView
 
 router = DefaultRouter()
 
-router.register("complaints/", ComplaintViewSet, basename="complaint")
-# router.register("reasons/", ReasonListView.as_view(), basename="reason")
+router.register("complaints", ComplaintViewSet, basename="complaint")
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("reasons/", ReasonListView.as_view(), name="reason-list"),
 ]

@@ -15,7 +15,8 @@ class ComplaintViewTest(BaseTestCase):
     def setUp(self):
         """Set up the test case."""
         super().setUp()
-        self.user.groups.add(Group.objects.get(name="coexistence_committee"))
+        self.group = Group.objects.create(name="coexistence_committee")
+        self.user.groups.add(self.group)
         self.reason = Reason.objects.create(
             reason="Test", attendant=self.user.job_position
         )
@@ -52,7 +53,7 @@ class ComplaintViewTest(BaseTestCase):
 
     def test_get_complaints_no_permission(self):
         """Test get complaints without permission."""
-        self.user.groups.remove("coexistence_committee")
+        self.user.groups.remove(self.group)
         response = self.client.get(reverse("complaint-list"))
         self.assertEqual(response.status_code, 403, response.data)
 
