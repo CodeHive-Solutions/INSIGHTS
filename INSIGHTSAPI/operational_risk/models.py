@@ -1,4 +1,5 @@
 """Models for operational risk app."""
+
 from django.db import models
 
 
@@ -50,6 +51,7 @@ class ProductLine(models.Model):
     def __str__(self):
         """Return the name of the product line."""
         return str(self.name)
+
 
 class Events(models.Model):
     """Model definition for operational events."""

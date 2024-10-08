@@ -1,6 +1,8 @@
 from django.contrib import admin
-from users.models import User
 from django.db.models import Q
+
+from users.models import User
+
 from .models import Area, JobPosition
 
 
@@ -10,6 +12,20 @@ def upper_case_name(obj):
     if obj.manager:
         return obj.manager.get_full_name() + " - " + obj.manager.job_position.name
     return ""
+
+
+class ChildAreaInline(admin.TabularInline):
+    """Inline admin for displaying child areas."""
+
+    model = Area
+    fk_name = "parent"  # Specifies that the parent field links the child areas
+    extra = 0  # No extra empty forms in the inline by default
+    max_num = 0  # Do not allow adding more child areas
+    fields = ("name", "manager")  # Fields to display for the child areas
+    readonly_fields = ("name", "manager")  # Make these fields read-only
+    show_change_link = True  # Show a link to the child area's change page
+    can_delete = False  # Do not allow deleting child areas from the parent area
+    ordering = ("name",)  # Order the child areas by name
 
 
 @admin.register(Area)
@@ -23,6 +39,7 @@ class AreaAdmin(admin.ModelAdmin):
         "manager__last_name",
     )
     ordering = ("name",)
+    inlines = [ChildAreaInline]
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         """Customize the queryset for the manager field."""
@@ -47,8 +64,5 @@ class JobPositionAdmin(admin.ModelAdmin):
         "name",
         "rank",
     )
-    search_fields = (
-        "name",
-        "description",
-    )
+    search_fields = ("name",)
     ordering = ("-rank",)

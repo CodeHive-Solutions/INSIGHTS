@@ -1,22 +1,21 @@
 """This module contains the PQRS viewset."""
 
-import sys
 import logging
-from rest_framework import viewsets
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from django.core.mail import EmailMessage
-from django.core.mail import mail_admins
+import sys
+
 from django.conf import settings
-from .models import Complaint, Congratulation, Suggestion, Other
+from django.core.mail import EmailMessage, mail_admins
+from rest_framework import status, viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+from .models import Complaint, Congratulation, Other, Suggestion
 from .serializers import (
     ComplaintSerializer,
     CongratulationSerializer,
-    SuggestionSerializer,
     OtherSerializer,
+    SuggestionSerializer,
 )
-
 
 logger = logging.getLogger("requests")
 
@@ -45,19 +44,19 @@ class NoGetModelViewSet(viewsets.ModelViewSet):
         if not "description" in self.request.data:
             return Response({"error": "La descripción es requerida"}, status=400)
         response = super().create(request, *args, **kwargs)
-        
+
         if response.status_code == status.HTTP_201_CREATED:
             options = {
                 "TEST": settings.EMAIL_FOR_TEST,
                 "EJECUTIVO": "PABLO.CASTANEDA@CYC-BPO.COM",
                 "GERENCIA GENERAL": "CESAR.GARZON@CYC-BPO.COM",
-                "GERENCIA DE RIESGO Y CONTROL INTERNO": "MARIO.GIRON@CYC-BPO.COM",
+                "GERENCIA DE RIESGO Y CONTROL INTERNO": "ANGELICA.RINCON@CYC-BPO.COM",
                 "GERENCIA GESTIÓN HUMANA": "JEANNETH.PINZON@CYC-BPO.COM",
                 "GERENCIA DE PLANEACIÓN": "ANGELA.DURAN@CYC-BPO.COM",
                 "GERENCIA ADMINISTRATIVA": "MELIDA.SANDOVAL@CYC-BPO.COM",
                 "GERENCIA DE LEGAL Y RIESGO": "DIEGO.GONZALEZ@CYC-BPO.COM",
                 "GERENCIA DE OPERACIONES": "ADRIANA.PAEZ@CYC-BPO.COM",
-                "GERENCIA DE MERCADEO": "HECTOR.SOTELO@CYC-BPO.COM",
+                "RECURSOS FÍSICOS": "",
             }
             email = options.get(self.request.data["area"].upper())
             if not email:

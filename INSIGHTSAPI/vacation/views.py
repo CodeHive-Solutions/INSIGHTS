@@ -167,10 +167,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         # Check if the user is updating the hr_approbation field
         if "manager_approbation" in request.data:
             # Check if the user is a manager
-            if (
-                request.user.job_position.rank >= 5
-                or request.user.cedula == "1022370826"
-            ):
+            if request.user.job_position.rank >= 5:
                 if self.get_object().manager_approbation is not None:
                     return Response(
                         {"detail": "No puedes modificar esta solicitud."},

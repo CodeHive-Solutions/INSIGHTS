@@ -1,19 +1,21 @@
 """This file contains the tests for the vacation model."""
 
 from datetime import datetime
-from hierarchy.models import Area
-from freezegun import freeze_time
-from services.tests import BaseTestCase
-from rest_framework import status
-from django.test import TestCase
+
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.urls import reverse
 from django.db.models import Q
-from django.test import override_settings
-from .utils import is_working_day, get_working_days, get_return_date
+from django.test import TestCase, override_settings
+from django.urls import reverse
+from freezegun import freeze_time
+from rest_framework import status
+
+from hierarchy.models import Area
+from services.tests import BaseTestCase
+
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
+from .utils import get_return_date, get_working_days, is_working_day
 
 
 class WorkingDayTestCase(TestCase):

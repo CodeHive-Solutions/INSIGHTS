@@ -2,12 +2,14 @@
 
 import logging
 import random
-from django.contrib.auth.models import AbstractUser
-from django.core.mail import mail_admins
-from django.db import connections
-from django.db import models
+from datetime import datetime
+
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.core.mail import mail_admins
+from django.db import connections, models
+
 from hierarchy.models import Area, JobPosition
 
 logger = logging.getLogger("exceptions")
@@ -28,9 +30,6 @@ class User(AbstractUser):
     cedula = models.CharField(max_length=20, null=False, blank=False, unique=True)
     username = models.CharField(max_length=150, null=True, blank=True, unique=True)
     last_name = models.CharField(max_length=30, null=True, blank=True)
-    # profile_picture = models.ImageField(
-    #     upload_to="images/pictures/", validators=[validate_file_extension]
-    # )
     email = models.EmailField(null=True, blank=True)
     company_email = models.EmailField(null=True, blank=True)
     area = models.ForeignKey(
@@ -49,7 +48,6 @@ class User(AbstractUser):
     )
     points = models.IntegerField(default=0)
     date_joined = None
-    last_login = None
 
     @property
     def is_active(self):
@@ -87,6 +85,11 @@ class User(AbstractUser):
                 f"{capitalize_name(self.last_name)} {capitalize_name(self.first_name)}"
             )
         return self.first_name
+
+    def set_last_login(self):
+        """Set the last login of the user."""
+        self.last_login = datetime.now()
+        self.save()
 
     def save(self, *args, **kwargs):
         """Create a user in the database."""

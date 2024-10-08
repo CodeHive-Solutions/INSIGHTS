@@ -18,6 +18,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.data and "access" in response.data:
+            username = str(request.data["username"]).upper().strip()
+            user = User.objects.get(username=username)
             if settings.DEBUG:
                 samesite = "None"
                 path = None
@@ -43,13 +45,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 samesite=samesite,
                 path=path,
             )
-            username = str(request.data["username"]).upper().strip()
-            user = User.objects.get(username=username)
             response.data["permissions"] = user.get_all_permissions()
             response.data["cedula"] = user.cedula
             response.data["cargo"] = user.job_position.name
             response.data["email"] = user.email
             response.data["rango"] = user.job_position.rank
+            user.set_last_login()
         return response
 
 

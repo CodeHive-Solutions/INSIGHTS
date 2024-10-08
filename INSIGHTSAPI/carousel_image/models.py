@@ -1,8 +1,9 @@
 import os
+from io import BytesIO
+
+from django.core.files.base import ContentFile
 from django.db import models
 from PIL import Image
-from io import BytesIO
-from django.core.files.base import ContentFile
 
 
 class Banner(models.Model):
@@ -22,7 +23,7 @@ class Banner(models.Model):
             )
         super().save(*args, **kwargs)
         if self.image:
-            self.resize_and_convert_to_webp()
+            self.convert_to_webp()
 
     def delete(self, *args, **kwargs):
         Banner.objects.filter(order__gt=self.order).update(order=models.F("order") - 1)
@@ -30,13 +31,9 @@ class Banner(models.Model):
         self.image.delete(save=False)
         return super().delete(*args, **kwargs)
 
-    def resize_and_convert_to_webp(self):
+    def convert_to_webp(self):
         img = Image.open(self.image)
         img = img.convert("RGB")  # Ensure it's in RGB mode (necessary for .webp)
-
-        # Resize the image if it exceeds the max width and height
-        max_width, max_height = 1280, 720
-        img.thumbnail((max_width, max_height))  # Maintain aspect ratio and resize
 
         # Create a BytesIO buffer to store the converted image
         img_io = BytesIO()
@@ -45,11 +42,14 @@ class Banner(models.Model):
         )  # Save image in .webp format with quality 85
 
         # Set the new image filename with a .webp extension
-        image_name, _ = os.path.splitext(self.image.name)
+        image_name, _ = os.path.basename(self.image.name).rsplit(".", 1)
         webp_image_name = image_name + ".webp"
+        original_image_path = self.image.path
 
         # Save the converted image back to the image field
         self.image.save(webp_image_name, ContentFile(img_io.getvalue()), save=False)
 
         # Save the model again to persist the changes
         super().save()
+        if os.path.exists(original_image_path):
+            os.remove(original_image_path)

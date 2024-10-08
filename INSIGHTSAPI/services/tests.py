@@ -1,18 +1,20 @@
 """Test for services. """
 
 import os
-import requests
-import holidays
-from typing import Optional
-from rest_framework.test import APITestCase
 from datetime import timedelta
-from django.test import TestCase, Client, override_settings
-from django.urls import reverse
+from typing import Optional
+
+import holidays
+import requests
 from django.conf import settings
 from django.core.cache import cache
-from users.models import User
-from services.models import Answer
+from django.test import Client, TestCase, override_settings
+from django.urls import reverse
+from rest_framework.test import APITestCase
+
 from hierarchy.models import Area, JobPosition
+from services.models import Answer
+from users.models import User
 
 
 class BaseTestCase(APITestCase):
@@ -156,7 +158,9 @@ class HolidayTest(TestCase):
         """Test that the holidays are retrieved."""
         response = self.client.get("/services/holidays/2024/")
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.data, list(holidays.CO(years=range(2024, 2026)).items()))
+        self.assertEqual(
+            response.data, list(holidays.CO(years=range(2024, 2026)).items())
+        )
 
 
 class QuestionTest(BaseTestCase):

@@ -1,7 +1,6 @@
 """ Test for PQRS view. """
 from hierarchy.models import Area
 from services.tests import BaseTestCase
-from users.models import User
 
 
 # Create your tests here.
