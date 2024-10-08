@@ -52,6 +52,8 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         sst_mails = [
             user.email for user in User.objects.filter(groups__name="SST") if user.email
         ]
+        if not sst_mails:
+            return Response({"error": "No hay usuarios en el grupo SST"}, status=500)
 
         send_mail(
             "New complaint",

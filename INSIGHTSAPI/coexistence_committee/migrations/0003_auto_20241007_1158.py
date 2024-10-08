@@ -29,6 +29,7 @@ def create_default_groups(apps, schema_editor):
         ).first()
         if hr_manager and sst_manager:
             hr_manager.groups.add(sst)
+            sst_manager.groups.add(sst)
         else:
             if not "test" in sys.argv:
                 print("User not found for HR Manager or SST Manager")

@@ -1,6 +1,7 @@
 """This module represents the pqrs models. """
-from django.db import models
+
 from django.core.exceptions import ValidationError
+from django.db import models
 
 
 def validate_max_length_1000(value):
