@@ -2,8 +2,9 @@ from django.contrib.auth.models import Group
 from django.urls import reverse
 
 from services.tests import BaseTestCase
+from users.models import User
 
-from .models import Complaint, Reason
+from .models import Complaint
 
 
 # Create your tests here.
@@ -15,11 +16,10 @@ class ComplaintViewTest(BaseTestCase):
     def setUp(self):
         """Set up the test case."""
         super().setUp()
-        self.group = Group.objects.create(name="coexistence_committee")
+        # This group is created in the migration 0003_auto_20241007_1158.py
+        self.group = Group.objects.get(name="coexistence_committee")
         self.user.groups.add(self.group)
-        self.reason = Reason.objects.create(
-            reason="Test", attendant=self.user.job_position
-        )
+        self.reason = "Test"
         self.complaint = Complaint.objects.create(
             reason=self.reason, description="Test1"
         )
@@ -29,7 +29,7 @@ class ComplaintViewTest(BaseTestCase):
         response = self.client.post(
             reverse("complaint-list"),
             {
-                "reason": self.reason.pk,
+                "reason": self.reason,
                 "description": "Test1",
             },
         )
@@ -37,7 +37,7 @@ class ComplaintViewTest(BaseTestCase):
 
     def test_get_complaints(self):
         """Test get complaints."""
-        Complaint.objects.create(reason=Reason.objects.first(), description="Test2")
+        Complaint.objects.create(reason="Test2", description="Test2")
         response = self.client.get(reverse("complaint-list"))
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(len(response.data), 2)
@@ -56,26 +56,3 @@ class ComplaintViewTest(BaseTestCase):
         self.user.groups.remove(self.group)
         response = self.client.get(reverse("complaint-list"))
         self.assertEqual(response.status_code, 403, response.data)
-
-
-class ReasonViewTest(BaseTestCase):
-    """Test for Reason view."""
-
-    def setUp(self):
-        """Set up the test case."""
-        super().setUp()
-        self.reason = Reason.objects.create(
-            reason="Test", attendant=self.user.job_position
-        )
-
-    def test_get_reasons(self):
-        """Test get reasons."""
-        demo_user = self.create_demo_user()
-        Reason.objects.create(reason="Test2", attendant=demo_user.job_position)
-        response = self.client.get(reverse("reason-list"))
-        self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]["reason"], "Test")
-        self.assertEqual(response.data[1]["reason"], "Test2")
-        self.assertEqual(response.data[0]["attendant"], self.user.job_position.pk)
-        self.assertEqual(response.data[1]["attendant"], demo_user.job_position.pk)

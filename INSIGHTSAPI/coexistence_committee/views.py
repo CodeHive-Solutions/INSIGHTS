@@ -1,10 +1,12 @@
+from django.core.mail import send_mail
 from rest_framework import viewsets
-from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Complaint, Reason
-from .serializers import ComplaintSerializer, ReasonSerializer
+from users.models import User
+
+from .models import Complaint
+from .serializers import ComplaintSerializer
 
 
 # Create your views here.
@@ -42,10 +44,19 @@ class ComplaintViewSet(viewsets.ModelViewSet):
         response = super().retrieve(request, *args, **kwargs)
         return response
 
+    def create(self, request, *args, **kwargs):
+        """This method is used to create a complaint."""
+        # When a complaint is created, an email is sent to the attendant
+        response = super().create(request, *args, **kwargs)
+        complaint = response.data
+        sst_mails = [
+            user.email for user in User.objects.filter(groups__name="SST") if user.email
+        ]
 
-class ReasonListView(ListAPIView):
-    """A view for viewing reasons."""
-
-    serializer_class = ReasonSerializer
-    queryset = Reason.objects.all()
-    permission_classes = [IsAuthenticated]
+        send_mail(
+            "New complaint",
+            f"New complaint with reason: {complaint['reason']}",
+            None,
+            sst_mails,
+        )
+        return response

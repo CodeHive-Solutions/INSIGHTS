@@ -8,7 +8,7 @@ import users.models
 
 class Migration(migrations.Migration):
 
-    replaces = [('users', '0001_initial'), ('users', '0002_user_password'), ('users', '0003_alter_user_managers'), ('users', '0004_alter_user_managers'), ('users', '0005_remove_user_cedula'), ('users', '0006_user_cedula')]
+    # replaces = [('users', '0001_initial'), ('users', '0002_user_password'), ('users', '0003_alter_user_managers'), ('users', '0004_alter_user_managers'), ('users', '0005_remove_user_cedula'), ('users', '0006_user_cedula')]
 
     initial = True
 
