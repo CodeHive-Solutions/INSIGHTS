@@ -4,50 +4,33 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 
-def validate_max_length_1000(value):
+def validate_max_length_2000(value):
     """Validate the max length of the description field."""
     if len(value) > 2000:
         raise ValidationError("The maximum length is 2000 characters.")
 
 
-# Create your models here.
-class Complaint(models.Model):
-    """This class represents the complaint model."""
+class Management(models.Model):
+    """This class represents the management model."""
 
-    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
-    description = models.TextField(validators=[validate_max_length_1000])
+    # Can't use ForeignKey because the Area model need be refactored in the migration to StaffNet
+    area = models.CharField(max_length=50)
+    attendant = models.ForeignKey("users.User", on_delete=models.PROTECT)
+
+    def __str__(self):
+        """Return the string representation of the model."""
+        return self.area
+
+
+class PQRS(models.Model):
+    """This class represents the PQRS model."""
+
+    management = models.ForeignKey(Management, on_delete=models.PROTECT)
+    reason = models.CharField(max_length=50)
+    description = models.TextField(validators=[validate_max_length_2000])
     created_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=50, default="PENDING")
-    resolution_date = models.DateTimeField(null=True)
-    user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
+    user = models.ForeignKey("users.User", on_delete=models.PROTECT)
 
-
-class Congratulation(models.Model):
-    """This class represents the congratulation model."""
-
-    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
-    description = models.TextField(validators=[validate_max_length_1000])
-    created_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
-
-
-class Suggestion(models.Model):
-    """This class represents the suggestion model."""
-
-    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
-    description = models.TextField(validators=[validate_max_length_1000])
-    created_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=50, default="PENDING")
-    resolution_date = models.DateTimeField(null=True)
-    user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
-
-
-class Other(models.Model):
-    """This class represents the other model."""
-
-    area = models.ForeignKey("hierarchy.Area", on_delete=models.DO_NOTHING)
-    description = models.TextField(validators=[validate_max_length_1000])
-    created_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=50, default="PENDING")
-    resolution_date = models.DateTimeField(null=True)
-    user = models.ForeignKey("users.User", on_delete=models.DO_NOTHING)
+    def __str__(self):
+        """Return the string representation of the model."""
+        return f"{self.reason} - {self.user}"

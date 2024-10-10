@@ -17,10 +17,17 @@ class Payslip(models.Model):
     days = models.IntegerField()
     biweekly_period = models.DecimalField(max_digits=12, decimal_places=2)
     transport_allowance = models.DecimalField(max_digits=12, decimal_places=2)
+    bearing = models.DecimalField(max_digits=12, decimal_places=2)
     surcharge_night_shift_hours = models.DecimalField(max_digits=12, decimal_places=1)
-    surcharge_night_shift_allowance = models.DecimalField(max_digits=12, decimal_places=2)
-    surcharge_night_shift_holiday_hours = models.DecimalField(max_digits=12, decimal_places=1)
-    surcharge_night_shift_holiday_allowance = models.DecimalField(max_digits=12, decimal_places=2)
+    surcharge_night_shift_allowance = models.DecimalField(
+        max_digits=12, decimal_places=2
+    )
+    surcharge_night_shift_holiday_hours = models.DecimalField(
+        max_digits=12, decimal_places=1
+    )
+    surcharge_night_shift_holiday_allowance = models.DecimalField(
+        max_digits=12, decimal_places=2
+    )
     surcharge_holiday_hours = models.DecimalField(max_digits=12, decimal_places=1)
     surcharge_holiday_allowance = models.DecimalField(max_digits=12, decimal_places=2)
     bonus_paycheck = models.DecimalField(max_digits=12, decimal_places=2)

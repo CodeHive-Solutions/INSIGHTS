@@ -2,10 +2,11 @@
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.urls import reverse
 from django.test import override_settings
-from services.tests import BaseTestCase
+from django.urls import reverse
 from payslip.models import Payslip
+from services.tests import BaseTestCase
+
 from .models import EmploymentCertification
 
 
@@ -28,6 +29,7 @@ class EmploymentCertificationTest(BaseTestCase):
             "days": 15,
             "biweekly_period": 15,
             "transport_allowance": 150000,
+            "bearing": 300000,
             "surcharge_night_shift_hours": 10,
             "surcharge_night_shift_allowance": 150000,
             "surcharge_night_shift_holiday_hours": 10,
@@ -92,7 +94,9 @@ class EmploymentCertificationTest(BaseTestCase):
         self.assertEqual(response.status_code, 200, response.content)
         self.assertEqual(EmploymentCertification.objects.count(), 1)
 
-    def test_create_and_send_another_employment_certification_with_months_and_identification(self):
+    def test_create_and_send_another_employment_certification_with_months_and_identification(
+        self,
+    ):
         """Tests that the user can get the employment certification with months and identification."""
         get_permission = Permission.objects.get(codename="get_employment_certification")
         self.user.user_permissions.add(get_permission)
@@ -144,9 +148,12 @@ class EmploymentCertificationTest(BaseTestCase):
         self.assertEqual(len(response.data), EmploymentCertification.objects.count())
         self.assertEqual(response.data[0]["cedula"], self.user.cedula)
         self.assertEqual(response.data[0]["position"], self.payslip_data["job_title"])
-        self.assertEqual(response.data[0]["salary"], str(self.payslip_data["salary"]) + ".00")
         self.assertEqual(
-            response.data[0]["bonuses"], str(self.payslip_data["bonus_paycheck"]) + ".00"
+            response.data[0]["salary"], str(self.payslip_data["salary"]) + ".00"
+        )
+        self.assertEqual(
+            response.data[0]["bonuses"],
+            str(self.payslip_data["bonus_paycheck"]) + ".00",
         )
         self.assertEqual(response.data[0]["contract_type"], "Contrato de trabajo")
         self.assertEqual(response.data[0]["expedition_city"], "Bogotá")
