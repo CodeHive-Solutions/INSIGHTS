@@ -1,17 +1,20 @@
 """Views for the payslip."""
 
-import logging
 import base64
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
-from rest_framework.decorators import api_view
-from users.models import User
-from django.db import connections
+import logging
+
 from django.conf import settings
-from .tasks import send_email_with_attachment
+from django.db import connections
+from rest_framework import viewsets
+from rest_framework.decorators import api_view
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
+from rest_framework.response import Response
+
+from users.models import User
+
 from .models import Payslip
 from .serializers import PayslipSerializer
+from .tasks import send_email_with_attachment
 
 logger = logging.getLogger("requests")
 
@@ -90,10 +93,10 @@ class PayslipViewSet(viewsets.ModelViewSet):
             if line.startswith(";;") or line == "":
                 continue
             data = line.split(";")
-            if len(data) != 28:
+            if len(data) != 29:
                 return Response(
                     {
-                        "Error": f"El archivo no tiene la cantidad de columnas requeridas de 28, tiene {len(data)}",
+                        "Error": f"El archivo debe tener 29 columnas, el subido tiene {len(data)}",
                     },
                     status=400,
                 )
@@ -134,6 +137,7 @@ class PayslipViewSet(viewsets.ModelViewSet):
                         )
             payslip = PayslipSerializer(
                 data={
+                    # Basic information
                     "title": data[0],
                     "identification": identification,
                     "name": name,
@@ -142,30 +146,34 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     "salary": convert_numeric_value(data[5]),
                     "days": data[6],
                     "biweekly_period": convert_numeric_value(data[7]),
+                    # Earnings
                     "transport_allowance": convert_numeric_value(data[8]),
-                    "surcharge_night_shift_hours": convert_numeric_value(data[9]),
-                    "surcharge_night_shift_allowance": convert_numeric_value(data[10]),
+                    "bearing": convert_numeric_value(data[9]),
+                    "surcharge_night_shift_hours": convert_numeric_value(data[10]),
+                    "surcharge_night_shift_allowance": convert_numeric_value(data[11]),
                     "surcharge_night_shift_holiday_hours": convert_numeric_value(
-                        data[11]
-                    ),
-                    "surcharge_night_shift_holiday_allowance": convert_numeric_value(
                         data[12]
                     ),
-                    "surcharge_holiday_hours": convert_numeric_value(data[13]),
-                    "surcharge_holiday_allowance": convert_numeric_value(data[14]),
-                    "bonus_paycheck": convert_numeric_value(data[15]),
-                    "biannual_bonus": convert_numeric_value(data[16]),
-                    "severance": convert_numeric_value(data[17]),
-                    "gross_earnings": convert_numeric_value(data[18]),
-                    "healthcare_contribution": convert_numeric_value(data[19]),
-                    "pension_contribution": convert_numeric_value(data[20]),
-                    "tax_withholding": convert_numeric_value(data[21]),
-                    "additional_deductions": convert_numeric_value(data[22]),
-                    "apsalpen": convert_numeric_value(data[23]),
-                    "solidarity_fund_percentage": convert_numeric_value(data[24]),
-                    "solidarity_fund": convert_numeric_value(data[25]),
-                    "total_deductions": convert_numeric_value(data[26]),
-                    "net_pay": convert_numeric_value(data[27]),
+                    "surcharge_night_shift_holiday_allowance": convert_numeric_value(
+                        data[13]
+                    ),
+                    "surcharge_holiday_hours": convert_numeric_value(data[14]),
+                    "surcharge_holiday_allowance": convert_numeric_value(data[15]),
+                    "bonus_paycheck": convert_numeric_value(data[16]),
+                    "biannual_bonus": convert_numeric_value(data[17]),
+                    "severance": convert_numeric_value(data[18]),
+                    "gross_earnings": convert_numeric_value(data[19]),
+                    # Deductions
+                    "healthcare_contribution": convert_numeric_value(data[20]),
+                    "pension_contribution": convert_numeric_value(data[21]),
+                    "tax_withholding": convert_numeric_value(data[22]),
+                    "additional_deductions": convert_numeric_value(data[23]),
+                    "apsalpen": convert_numeric_value(data[24]),
+                    "solidarity_fund_percentage": convert_numeric_value(data[25]),
+                    "solidarity_fund": convert_numeric_value(data[26]),
+                    "total_deductions": convert_numeric_value(data[27]),
+                    # Final pay and contact
+                    "net_pay": convert_numeric_value(data[28]),
                     "email": email,
                 }
             )

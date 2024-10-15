@@ -1,6 +1,5 @@
 from django.contrib.auth.models import Group
 from django.urls import reverse
-
 from services.tests import BaseTestCase
 from users.models import User
 
@@ -18,7 +17,9 @@ class ComplaintViewTest(BaseTestCase):
         super().setUp()
         # This group is created in the migration 0003_auto_20241007_1158.py
         self.group = Group.objects.get(name="coexistence_committee")
+        self.sst = Group.objects.get(name="sst")
         self.user.groups.add(self.group)
+        self.user.groups.add(self.sst)
         self.reason = "Test"
         self.complaint = Complaint.objects.create(
             reason=self.reason, description="Test1"

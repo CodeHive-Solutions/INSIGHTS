@@ -1,8 +1,10 @@
 """Test for payslip. """
 
-from services.tests import BaseTestCase
 from django.conf import settings
 from django.contrib.auth.models import Permission
+
+from services.tests import BaseTestCase
+
 from .models import Payslip
 
 
@@ -26,6 +28,7 @@ class PayslipTest(BaseTestCase):
             "days": 15,
             "biweekly_period": 15,
             "transport_allowance": 150000,
+            "bearing": 300000,
             "surcharge_night_shift_hours": 15,
             "surcharge_night_shift_allowance": 150000,
             "surcharge_night_shift_holiday_hours": 15,
@@ -95,10 +98,13 @@ class PayslipTest(BaseTestCase):
         self.assertEqual(response.data["days"], 16)
         self.assertEqual(response.data["biweekly_period"], "14113661.00")
         self.assertEqual(response.data["transport_allowance"], "22000.00")
+        self.assertEqual(response.data["bearing"], "44000.00")
         self.assertEqual(response.data["surcharge_night_shift_hours"], "15.0")
         self.assertEqual(response.data["surcharge_night_shift_allowance"], "140000.00")
         self.assertEqual(response.data["surcharge_night_shift_holiday_hours"], "17.4")
-        self.assertEqual(response.data["surcharge_night_shift_holiday_allowance"], "180000.00")
+        self.assertEqual(
+            response.data["surcharge_night_shift_holiday_allowance"], "180000.00"
+        )
         self.assertEqual(response.data["surcharge_holiday_hours"], "20.0")
         self.assertEqual(response.data["surcharge_holiday_allowance"], "250000.00")
         self.assertEqual(response.data["bonus_paycheck"], "0.00")
@@ -155,7 +161,9 @@ class PayslipTest(BaseTestCase):
         )
         self.assertEqual(
             response.data,
-            {"Error": "El archivo no tiene la cantidad de columnas requeridas de 28, tiene 2"},
+            {
+                "Error": "El archivo debe tener 29 columnas, el subido tiene 2",
+            },
         )
 
     def test_upload_without_permission(self):

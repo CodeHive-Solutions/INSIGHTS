@@ -176,6 +176,14 @@
                                             ${{ payslip.transport_allowance }}
                                         </td>
                                     </tr>
+                                    { % if payslip.meal_allowance % }
+                                    <tr>
+                                        <td>Rodamiento</td>
+                                        <td style="border-left: solid 1px #ccc">
+                                            ${{ payslip.fuel_allowance }}
+                                        </td>
+                                    </tr>
+                                    { % endif % }
                                     <tr>
                                         <td>Comision</td>
                                         <td style="border-left: solid 1px #ccc">
@@ -239,8 +247,7 @@
                                     <tr>
                                         <td>Aportes Salud</td>
                                         <td style="border-left: solid 1px #ccc">
-                                            ${{ payslip.healthcare_contribution
-                                            }}
+                                            ${{ payslip.healthcare_contribution}}
                                         </td>
                                     </tr>
                                     <tr>

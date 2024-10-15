@@ -1,20 +1,10 @@
 """This module defines the url patterns for the pqrs app."""
-from django.urls import include, path
-from rest_framework.routers import DefaultRouter
-from .views import (
-    ComplaintViewSet,
-    CongratulationViewSet,
-    SuggestionViewSet,
-    OtherViewSet,
-)
 
-router = DefaultRouter()
+from django.urls import path
 
-router.register("complaints", ComplaintViewSet, basename="complaint")
-router.register("congratulations", CongratulationViewSet, basename="congratulation")
-router.register("suggestions", SuggestionViewSet, basename="suggestion")
-router.register("others", OtherViewSet, basename="other")
+from .views import ManagementListView, PQRSViewSet
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("management/", ManagementListView.as_view(), name="management"),
+    path("pqrs/", PQRSViewSet.as_view(), name="pqrs"),
 ]

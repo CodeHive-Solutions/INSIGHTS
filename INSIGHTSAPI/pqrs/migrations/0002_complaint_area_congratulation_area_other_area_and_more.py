@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='complaint',
             name='description',
-            field=models.TextField(validators=[pqrs.models.validate_max_length_1000]),
+            field=models.TextField(validators=[pqrs.models.validate_max_length_2000]),
         ),
         migrations.AlterField(
             model_name='complaint',
@@ -50,12 +50,12 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='congratulation',
             name='description',
-            field=models.TextField(validators=[pqrs.models.validate_max_length_1000]),
+            field=models.TextField(validators=[pqrs.models.validate_max_length_2000]),
         ),
         migrations.AlterField(
             model_name='other',
             name='description',
-            field=models.TextField(validators=[pqrs.models.validate_max_length_1000]),
+            field=models.TextField(validators=[pqrs.models.validate_max_length_2000]),
         ),
         migrations.AlterField(
             model_name='other',
@@ -65,7 +65,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='suggestion',
             name='description',
-            field=models.TextField(validators=[pqrs.models.validate_max_length_1000]),
+            field=models.TextField(validators=[pqrs.models.validate_max_length_2000]),
         ),
         migrations.AlterField(
             model_name='suggestion',

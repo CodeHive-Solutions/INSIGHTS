@@ -1,23 +1,22 @@
 """This view allow to upload an Excel file with the goals of the staff and save them in the db."""
 
+import locale
 import logging
 import re
-import locale
+
 from django.core.exceptions import ValidationError
+from django.core.mail import get_connection, send_mail
 from django.db import transaction
-from django.db.models import Q, Subquery, Max
+from django.db.models import Max, Q, Subquery
 from django.utils import timezone
 from openpyxl import load_workbook
 from rest_framework import status as framework_status
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.core.mail import send_mail
-from django.core.mail import get_connection
 
 from services.permissions import CustomizableGetDjangoModelViewPermissions
 
-
-from .models import Goals, TableInfo, HistoricalGoals
+from .models import Goals, HistoricalGoals, TableInfo
 from .serializers import GoalSerializer
 
 logger = logging.getLogger("requests")
@@ -305,8 +304,19 @@ class GoalsViewSet(viewsets.ModelViewSet):
         coordinator = self.request.GET.get("coordinator", None)
         date = self.request.GET.get("date", None)
         column = self.request.GET.get("column", None)
+        campaign = self.request.GET.get("campaign", None)
         if coordinator is not None:
             return self.queryset.filter(coordinator=coordinator)
+        elif campaign is not None and date is not None and column is not None:
+            if column == "delivery":
+                column_name = "goal_date"
+            elif column == "execution":
+                column_name = "execution_date"
+            else:
+                return self.queryset.none()
+            return self.queryset.filter(
+                Q(campaign_goal=campaign) & Q(**{f"{column_name}": date.upper()})
+            )
         elif date is not None and column is not None:
             if column == "delivery":
                 column_name = "goal_date"
