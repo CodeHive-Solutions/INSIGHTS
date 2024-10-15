@@ -1,14 +1,15 @@
 """This module contains the tests for the goals app."""
 
 import openpyxl
-from django.db.models import Q
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.utils import timezone
+from django.db.models import Q
 from django.urls import reverse
-from services.tests import BaseTestCase
+from django.utils import timezone
 from rest_framework import status
+
+from services.tests import BaseTestCase
 from users.models import User
 
 from .models import Goals, TableInfo
@@ -260,6 +261,13 @@ class GoalAPITestCase(BaseTestCase):
         self.assertEqual(response.data["cedula"], "1192792468")  # type: ignore
         self.assertEqual(len(response.data), 28)  # type: ignore
         self.assertIn("ENERO-2022", response.data.get("execution_date"))  # type: ignore
+
+    def test_get_campaigns(self):
+        """Test the get-campaigns view."""
+        self.test_claro_upload()
+        response = self.client.get("/goals/?campaign=CLARO")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 110)
 
     def test_patch_goal_delivery(self):
         """Test the update-goal view."""
