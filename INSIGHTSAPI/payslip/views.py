@@ -46,7 +46,7 @@ def send_payslip(payslips):
             {"error": "Ocurrió un error al enviar los desprendibles de nomina"},
             status=500,
         )
-    return Response({"message": "Desprendibles de nomina enviados"}, status=201)
+    return Response({"message": "Desprendibles de nomina enviados"}, status=200)
 
 
 @api_view(["POST"])

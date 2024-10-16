@@ -1,4 +1,7 @@
 """This file contains the models for the goals app."""
+
+from typing import Iterable
+
 from django.db import models
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
@@ -37,6 +40,18 @@ class Goals(models.Model):
     status_execution = models.BooleanField(default=None, null=True)
     last_update = models.DateTimeField(auto_now=True)
     history = HistoricalRecords(excluded_fields=["last_update"])
+
+    def save(self, *args, **kwargs):
+        for field in self._meta.fields:
+            # Check if the field is a CharField or TextField
+            if (
+                isinstance(field, (models.CharField, models.TextField))
+                and field.name != "password"
+                and self.__dict__[field.name]
+                and isinstance(getattr(self, field.attname), str)
+            ):
+                setattr(self, field.attname, getattr(self, field.attname).upper())
+        super(Goals, self).save(*args, **kwargs)
 
     def pre_create_historical_record(self):
         """This method is used to save the date of the historical record."""

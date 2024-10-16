@@ -176,14 +176,14 @@
                                             ${{ payslip.transport_allowance }}
                                         </td>
                                     </tr>
-                                    { % if payslip.meal_allowance % }
+                                    {{ % if payslip.bearing % }}
                                     <tr>
                                         <td>Rodamiento</td>
                                         <td style="border-left: solid 1px #ccc">
-                                            ${{ payslip.fuel_allowance }}
+                                            ${{ payslip.bearing }}
                                         </td>
                                     </tr>
-                                    { % endif % }
+                                    {{ % endif % }}
                                     <tr>
                                         <td>Comision</td>
                                         <td style="border-left: solid 1px #ccc">

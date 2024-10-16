@@ -315,7 +315,8 @@ class GoalsViewSet(viewsets.ModelViewSet):
             else:
                 return self.queryset.none()
             return self.queryset.filter(
-                Q(campaign_goal=campaign) & Q(**{f"{column_name}": date.upper()})
+                Q(campaign_goal=campaign.upper())
+                & Q(**{f"{column_name}": date.upper()})
             )
         elif date is not None and column is not None:
             if column == "delivery":
@@ -739,3 +740,4 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 {"message": "Excel no encontrado."},
                 status=framework_status.HTTP_400_BAD_REQUEST,
             )
+

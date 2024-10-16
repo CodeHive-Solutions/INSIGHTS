@@ -1,14 +1,14 @@
 """This file contains the tests for the Celery app. """
 
 from celery import current_app
-from django.test import TestCase
 from django.conf import settings
-from django.core.mail import get_connection
-from django.test import override_settings
-from django.core.mail import EmailMessage
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage, get_connection, send_mail
+from django.test import TestCase, override_settings
 from django.urls import reverse
+
 from INSIGHTSAPI.tasks import add_numbers
+from payslip.models import Payslip
+from payslip.views import send_payslip
 
 
 class CeleryTestCase(TestCase):
@@ -28,6 +28,45 @@ class CeleryTestCase(TestCase):
 
         task_result = result.get(timeout=5)
         self.assertEqual(task_result, 7)
+
+    # Check if the task is able to be executed
+    def test_send_payslip_task(self):
+        """Test if the tasks are working."""
+        data = {
+            "title": "title",
+            "identification": "identification",
+            "name": "name",
+            "area": "area",
+            "job_title": "job_title",
+            "salary": 1000000,
+            "days": 15,
+            "biweekly_period": 15,
+            "transport_allowance": 150000,
+            "bearing": 300000,
+            "surcharge_night_shift_hours": 15,
+            "surcharge_night_shift_allowance": 150000,
+            "surcharge_night_shift_holiday_hours": 15,
+            "surcharge_night_shift_holiday_allowance": 150000,
+            "surcharge_holiday_hours": 15,
+            "surcharge_holiday_allowance": 150000,
+            "bonus_paycheck": 150000,
+            "biannual_bonus": 150000,
+            "severance": 150000,
+            "gross_earnings": 1000000,
+            "healthcare_contribution": 150000,
+            "pension_contribution": 150000,
+            "tax_withholding": 150000,
+            "additional_deductions": 150000,
+            "apsalpen": 150000,
+            "solidarity_fund_percentage": 0.015,
+            "solidarity_fund": 150000,
+            "total_deductions": 150000,
+            "net_pay": 150000,
+        }
+        payslip = Payslip(**data)
+        response = send_payslip([payslip])
+        print(response)
+        self.assertEqual(response.status_code, 200)
 
 
 @override_settings(
