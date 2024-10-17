@@ -9,7 +9,6 @@ from django.db import migrations
 def create_default_managements(apps, schema_editor):
     # Get models through the `apps` registry to ensure consistency
     Management = apps.get_model("pqrs", "Management")
-    Area = apps.get_model("hierarchy", "Area")
     User = apps.get_model("users", "User")
     general_manager = User.objects.filter(job_position__name="GERENTE GENERAL").first()
     risk_manager = User.objects.filter(
@@ -25,9 +24,45 @@ def create_default_managements(apps, schema_editor):
         job_position__name="GERENTE ADMINISTRATIVA"
     ).first()
     legal_manager = User.objects.filter(job_position__name="GERENTE DE LEGAL").first()
-    physical_manager = User.objects.filter(
-        job_position__name="GERENTE DE INFRAESTRUCTURA"
+    physical_resources_manager = User.objects.filter(
+        job_position__name="DIRECTOR(A) DE RECURSOS FISICOS"
     ).first()
+    it_manager = User.objects.filter(
+        job_position__name="GERENTE JR. DE MESA DE SERVICIO"
+    ).first()
+    operations_manager = User.objects.filter(
+        job_position__name="GERENTE DE OPERACIONES"
+    ).first()
+    managers = {
+        "Gerencia General": general_manager,
+        "Gerencia de Riesgo y Control Interno": risk_manager,
+        "Gerencia de Gestión Humana": hr_manager,
+        "Gerencia de Planeación": planning_manager,
+        "Gerencia Administrativa": administration_manager,
+        "Gerencia de Legal": legal_manager,
+        "Recursos Físicos": physical_resources_manager,
+        "Gerencia de Tecnología": it_manager,
+        "Gerencia de Operaciones": operations_manager,
+    }
+    if not all(managers.values()):
+        if not "test" in sys.argv:
+            mail_admins(
+                "Error en la creación de gerentes por defecto",
+                f"No se encontraron todos los gerentes por defecto. \n {managers}",
+            )
+            print(
+                f"\nNo se encontraron todos los gerentes por defecto. \n {managers}",
+            )
+    Management.objects.bulk_create(
+        [
+            Management(
+                area=area_name,
+                attendant_id=manager.pk,
+            )
+            for area_name, manager in managers.items()
+            if manager
+        ]
+    )
 
 
 class Migration(migrations.Migration):

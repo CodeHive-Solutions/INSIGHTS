@@ -46,7 +46,7 @@ def send_payslip(payslips):
             {"error": "Ocurrió un error al enviar los desprendibles de nomina"},
             status=500,
         )
-    return Response({"message": "Desprendibles de nomina enviados"}, status=200)
+    return Response({"message": "Desprendibles de nomina enviados"}, status=201)
 
 
 @api_view(["POST"])
@@ -58,7 +58,10 @@ def resend_payslip(request, pk):
         )
     if "email" in request.data:
         payslip.email = request.data["email"]
-    return send_payslip([payslip])
+    response = send_payslip([payslip])
+    if response.status_code == 201:
+        return Response({"message": "Desprendible de nomina enviado"}, status=200)
+    return response
 
 
 class PayslipViewSet(viewsets.ModelViewSet):
@@ -115,8 +118,6 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     if cursor.description and row:
                         columns = [col[0] for col in cursor.description]
                         result_dict = dict(zip(columns, row))
-                        # print(result_dict)
-                        # print(type(result_dict["apellidos"]))
                         User.objects.create(
                             username=result_dict["usuario_windows"],
                             cedula=result_dict["cedula"],
@@ -131,9 +132,9 @@ class PayslipViewSet(viewsets.ModelViewSet):
                     else:
                         return Response(
                             {
-                                "Error": "No se encontró el usuario, asegúrate de que esta registrado en StaffNet",
-                                "cedula": data[1],
+                                "Error": f"No se encontró el usuario {data[1]}, asegúrate de que esta registrado en StaffNet",
                             },
+                            status=400,
                         )
             payslip = PayslipSerializer(
                 data={

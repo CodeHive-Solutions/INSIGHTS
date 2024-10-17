@@ -236,7 +236,7 @@ class PayslipTest(BaseTestCase):
         )
         self.assertEqual(
             response.status_code,
-            201,
+            200,
             response.data,
         )
-        self.assertEqual(response.data["message"], "Desprendibles de nomina enviados")
+        self.assertEqual(response.data["message"], "Desprendible de nomina enviado")
