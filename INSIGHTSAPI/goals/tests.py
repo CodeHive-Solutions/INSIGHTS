@@ -145,7 +145,7 @@ class GoalAPITestCase(BaseTestCase):
         self.test_metas_upload(called=True)
         # See if there are goals created
         number_goals = Goals.objects.all().count()
-        self.assertTrue(number_goals > 0)
+        self.assertTrue(number_goals > 0) 
         # put accepted to True and accepted_at to now() to Goals
         Goals.objects.all().update(accepted=True, accepted_at=timezone.now())
         # Read the file again and upload it

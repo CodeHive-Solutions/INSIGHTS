@@ -1,19 +1,20 @@
 import base64
-import pdfkit
 import datetime
+
+import pdfkit
+from django.core.mail import mail_admins, send_mail
+from django.db.models import Q
+from django.http import HttpResponse
+from django.template.loader import render_to_string
 from django.utils import timezone
-from rest_framework import status
-from rest_framework import viewsets
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.decorators import action
+
 from notifications.utils import create_notification
-from django.http import HttpResponse
-from django.db.models import Q
-from django.core.mail import mail_admins
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
 from users.models import User
+
 from .models import VacationRequest
 from .serializers import VacationRequestSerializer
 
@@ -316,6 +317,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             status=status.HTTP_403_FORBIDDEN,
         )
 
+    # Example link: http://localhost:8000/vacation/1/get-pdf/
     @action(detail=True, methods=["get"], url_path="get-pdf", url_name="get-pdf")
     def generate_pdf(self, request, pk=None):
         context = {
@@ -327,12 +329,13 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         }
         # Import the html template
         rendered_template = render_to_string(
-            "vacation_request.html",
+            "vacation_response.html",
             context,
         )
         # PDF options
         options = {
             "page-size": "Letter",
+            "orientation": "portrait",
             "encoding": "UTF-8",
             "margin-top": "0mm",
             "margin-right": "0mm",

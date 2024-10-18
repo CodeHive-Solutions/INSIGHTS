@@ -1,11 +1,15 @@
 """This module contains the model for the vacation request """
 
+import pdfkit
+from django.conf import settings
+from django.core.mail import EmailMessage, send_mail
 from django.db import models
-from django.core.mail import send_mail
-from users.models import User
-from notifications.utils import create_notification
-from vacation.utils import get_return_date
+from django.template.loader import render_to_string
 from django.utils import timezone
+
+from notifications.utils import create_notification
+from users.models import User
+from vacation.utils import get_return_date
 
 
 class VacationRequest(models.Model):
@@ -144,3 +148,52 @@ class VacationRequest(models.Model):
                 self.user,
             )
         super().save(*args, **kwargs)
+
+    def send_approval_email_with_pdf(self):
+        # Render the vacation request details in a PDF
+        pdf = self.generate_pdf()
+
+        # Create the email message
+        subject = "Your Vacation Request Has Been Approved"
+        message = (
+            f"Dear {self.user.get_full_name()},\n\n"
+            "Your vacation request from {self.start_date} to {self.end_date} has been approved.\n"
+            "Please find the attached document with the details of your vacation.\n\n"
+            "Best regards,\nYour Company"
+        )
+
+        email = EmailMessage(
+            subject, message, settings.DEFAULT_FROM_EMAIL, [str(self.user.email)]
+        )
+
+        # Attach the generated PDF
+        email.attach(
+            filename="vacation_request.pdf", content=pdf, mimetype="application/pdf"
+        )
+
+        # Send the email
+        email.send()
+
+    def generate_pdf(self):
+        # Create context for the PDF
+        context = {
+            "vacation": self,
+        }
+
+        # Render the HTML template to a string
+        rendered_html = render_to_string("vacation_response.html", context)
+
+        # PDF options
+        options = {
+            "page-size": "Letter",
+            "encoding": "UTF-8",
+            "margin-top": "0mm",
+            "margin-right": "0mm",
+            "margin-bottom": "0mm",
+            "margin-left": "0mm",
+        }
+
+        # Generate the PDF from HTML
+        pdf = pdfkit.from_string(rendered_html, False, options=options)
+
+        return pdf

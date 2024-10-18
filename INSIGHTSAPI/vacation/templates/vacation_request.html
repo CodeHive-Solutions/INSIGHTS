@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8" />
@@ -8,70 +8,92 @@
             html,
             body {
                 height: 100%;
-                margin: -100px 10px 0px 10px;
+                margin: 0;
+                padding: 0;
                 font-family: 'Helvetica Neue', Arial, sans-serif;
                 color: #333;
                 line-height: 1.6;
-                text-align: center;
-                align-items: center;
-                font-size: 20px;
+                background-color: #f0f4f8;
                 display: flex;
                 justify-content: center;
+                align-items: center;
             }
 
-            #signature-rh {
-                padding-left: 200px;
+            .card {
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                padding: 40px;
+                {% comment %} max-width: 600px; {% endcomment %}
+                height: 90%;
+                width: 80%;
+                /* Ensure the card grows vertically when content is too short */
+                min-height: 300px;
+                box-sizing: border-box;
             }
 
             .header {
-                margin-top: 80px;
-                margin-bottom: 40px;
+                margin-bottom: 30px;
+                text-align: center;
             }
 
             .header h1 {
                 margin: 0;
-                font-size: 28px;
-                color: #0056b3;
+                font-size: 40px;
+                color: #2c3e50;
                 letter-spacing: 1px;
             }
 
+            .content {
+                text-align: left;
+                font-size: 20px;
+            }
+
             .signature {
-                margin-top: 200px;
-                text-align: center;
+                margin-top: 40px;
+                text-align: left;
             }
 
             .signature p {
                 margin: 5px 0;
-                text-align: left;
             }
 
             .footer {
                 margin-top: 20px;
                 font-size: 14px;
                 text-align: center;
-                color: #777;
+                color: #7f8c8d;
+            }
+
+            .highlight {
+                color: #3498db;
+                font-weight: bold;
+            }
+
+            .date {
+                color: #7f8c8d;
+                font-style: italic;
             }
         </style>
     </head>
 
     <body>
         <div class="card">
+            <div class="header">
+                <h1>Solicitud de Vacaciones</h1>
+            </div>
             <div class="content">
-                <p>{{ vacation.created_at|date }}</p>
-                <br />
+                <p class="date">{{ vacation.created_at|date }}</p>
                 <p>Estimado (a) Gestión Humana</p>
                 <p>CYC SERVICES S.A.S.</p>
-                <p>Ref. Solicitud de vacaciones disfrutadas</p>
-                <br />
+                <p><strong>Ref. Solicitud de vacaciones disfrutadas</strong></p>
                 <p>
-                    Por la presente le solicito se me conceda {{
-                    vacation.duration }} días de mi periodo vacacional
-                    comprendido para el año {{ vacation.start_date|date:"Y" }}.
+                    Por la presente le solicito se me conceda <span class="highlight">{{ vacation.duration }} días</span> de mi periodo vacacional 
+                    comprendido para el año <span class="highlight">{{ vacation.start_date|date:"Y" }}</span>.
                 </p>
                 <p>
-                    Los días tomados serán a partir del {{ vacation.start_date
-                    }} hasta el día {{ vacation.end_date }}, para retomar a mis
-                    labores el día {{ vacation.return_date }}.
+                    Los días tomados serán a partir del <span class="highlight">{{ vacation.start_date }}</span> hasta el día <span class="highlight">{{ vacation.end_date }}</span>, 
+                    para retomar a mis labores el día <span class="highlight">{{ vacation.return_date }}</span>.
                 </p>
                 <p>Quedo agradecido(a) ante su pronta respuesta.</p>
                 <div class="signature">
@@ -79,21 +101,10 @@
                     <p><strong>{{ vacation.user }}</strong></p>
                     <p>{{ vacation.user.job_position }}</p>
                 </div>
-                <!-- <div class="signature-line">
-                <table>
-                    <td>
-                        _____________________________________<br>
-                        GARZON NAVAS CESAR ALBERTO <br>
-                        <i>Gerente General</i>
-                    </td>
-                    <td id="signature-rh">
-                        _____________________________________<br>
-                        PINZON MARTINEZ JEANNETH OTILIA<br>
-                        <i>Gerente de Gestión Humana</i>
-                    </td>
-                </table>
-            </div> -->
             </div>
+            {% comment %} <div class="footer">
+                <p>Este documento es generado automáticamente. No requiere firma ni sello.</p>
+            </div> {% endcomment %}
         </div>
     </body>
 </html>

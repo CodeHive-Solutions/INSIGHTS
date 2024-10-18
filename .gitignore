@@ -34,6 +34,8 @@ WSGI
 *.csv
 *.xlsx
 *.xl*
+# Don't ignore the test files
+!INSIGHTSAPI/utils/excels/*.csv
 venv
 .venv
 media/

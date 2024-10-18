@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Respuesta a Solicitud de Vacaciones</title>
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0;
+                padding: 20px;
+                font-family: 'Helvetica Neue', Arial, sans-serif;
+                color: #333;
+                line-height: 1.6;
+                background-color: #f0f4f8;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .card {
+                background-color: #ffffff;
+                border-radius: 8px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                padding: 40px;
+                height: 90%;
+                width: 90%;
+            }
+
+            .header {
+                margin-bottom: 30px;
+                text-align: center;
+            }
+
+            .header h1 {
+                margin: 0;
+                font-size: 28px;
+                color: #2c3e50;
+                letter-spacing: 1px;
+            }
+
+            .content {
+                text-align: left;
+                font-size: 16px;
+            }
+
+            .approval {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-bottom: 20px;
+                color: #27ae60;
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .approval-icon {
+                width: 30px;
+                height: 30px;
+                margin-right: 10px;
+                fill: currentColor;
+            }
+
+            .date {
+                color: #7f8c8d;
+                font-style: italic;
+                text-align: right;
+                margin-bottom: 20px;
+            }
+
+            .highlight {
+                color: #3498db;
+                font-weight: bold;
+            }
+
+            .signature {
+                margin-top: 40px;
+            }
+
+            .footer {
+                margin-top: 30px;
+                text-align: center;
+            }
+
+            .button {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #3498db;
+                color: #ffffff;
+                text-decoration: none;
+                border-radius: 5px;
+                transition: background-color 0.3s;
+            }
+
+            .button:hover {
+                background-color: #2980b9;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="card">
+            <div class="header">
+                <h1>Respuesta a Solicitud de Vacaciones</h1>
+            </div>
+            <div class="content">
+                <div class="approval">
+                    <svg class="approval-icon" viewBox="0 0 20 20">
+                        <path d="M10 0C4.477 0 0 4.477 0 10c0 5.523 4.477 10 10 10s10-4.477 10-10c0-5.523-4.477-10-10-10zm5.293 7.293l-6 6c-.39.39-1.024.39-1.414 0l-3-3c-.39-.39-.39-1.024 0-1.414.39-.39 1.024-.39 1.414 0L8 10.586l5.293-5.293c.39-.39 1.024-.39 1.414 0 .39.39.39 1.024 0 1.414z"/>
+                    </svg>
+                    Solicitud Aprobada
+                </div>
+                <p class="date">{{ current_date }}</p>
+                <p>Estimado(a) <span class="highlight">{{ vacation.user }}</span>,</p>
+                <p>
+                    Nos complace informarle que su solicitud de vacaciones realizada el {{ vacation.created_at|date }}
+                     ha sido aprobada. Los detalles de su periodo vacacional son los siguientes:
+                </p>
+                <ul>
+                    <li>Fecha de inicio: <span class="highlight">{{ vacation.start_date }}</span></li>
+                    <li>Fecha de finalización: <span class="highlight">{{ vacation.end_date }}</span></li>
+                    <li>Fecha de reincorporación: <span class="highlight">{{ vacation.return_date }}</span></li>
+                    <li>Dias utilizados: <span class="highlight">{{ vacation.duration }}</span></li>
+                </ul>
+                <p>
+                    Por favor, asegúrese de completar todas las tareas pendientes y de informar a su equipo sobre su ausencia. Si tiene alguna pregunta o necesita realizar algún cambio, no dude en contactarnos.
+                </p>
+                <p>
+                    Le deseamos unas excelentes vacaciones.
+                </p>
+                <div class="signature">
+                    <p>
+                        JEANNETH PINZON MARTINEZ<br>
+                        Gerente Gestión Humana<br>
+                        CYC SERVICES S.A.S.<br>
+                    </p>
+                </div>
+            </div>
+            {% comment %} <div class="footer">
+                <a href="#" class="button">Descargar PDF</a>
+            </div> {% endcomment %}
+        </div>
+    </body>
+</html>

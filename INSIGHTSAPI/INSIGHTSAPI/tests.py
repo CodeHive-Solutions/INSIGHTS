@@ -65,7 +65,6 @@ class CeleryTestCase(TestCase):
         }
         payslip = Payslip(**data)
         response = send_payslip([payslip])
-        print(response)
         self.assertEqual(response.status_code, 201)
 
 
