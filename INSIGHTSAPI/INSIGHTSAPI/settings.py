@@ -10,15 +10,15 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-import sys
 import os
 import ssl
-import ldap
-from datetime import timedelta, datetime
-from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
-from dotenv import load_dotenv
+import sys
+from datetime import datetime, timedelta
 from pathlib import Path
 
+import ldap
+from django_auth_ldap.config import LDAPSearch, LDAPSearchUnion
+from dotenv import load_dotenv
 
 ENV_PATH = Path("/var/env/INSIGHTS.env")
 
@@ -141,13 +141,15 @@ REST_FRAMEWORK = {
 
 if not "test" in sys.argv:
     SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-SECURE_HSTS_SECONDS = 3600
 SECURE_BROWSER_XSS_FILTER = True
+SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+# This tell to Django that is behind a proxy
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 
@@ -232,22 +234,6 @@ DATABASES = {
         "NAME": "staffnet",
         "TEST": {"MIRROR": "staffnet"},
     },
-    # 'llamadas': {  # MySQL too old
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'HOST': '172.16.0.9',
-    #     'PORT': '3306',
-    #     'USER': 'blacklistuser',
-    #     # 'PASSWORD': os.environ['black_list_pass'],
-    #     'PASSWORD': 'a4dnAGc-',
-    #     'NAME': 'asteriskdb',
-    # }
-    # 'intranet': { # MySQL too old
-    #     "user": "root",
-    #     "password": os.environ["LEYES"],
-    #     "host": "172.16.0.6",
-    #     "port": "3306",
-    #     "database": "userscyc",
-    #  }
 }
 
 # Password validation

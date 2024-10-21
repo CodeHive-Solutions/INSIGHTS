@@ -1,5 +1,7 @@
 """This module contains the model for the vacation request """
 
+from datetime import datetime
+
 import pdfkit
 from django.conf import settings
 from django.core.mail import EmailMessage, send_mail
@@ -22,11 +24,13 @@ class VacationRequest(models.Model):
     end_date = models.DateField()
     sat_is_working = models.BooleanField(default=True)
     request_file = models.FileField(upload_to="files/vacation_requests/")
-    manager_approbation = models.BooleanField(null=True, blank=True)
+    boss_is_approved = models.BooleanField(null=True, blank=True)
+    boss_approved_at = models.DateTimeField(null=True, blank=True)
+    manager_is_approved = models.BooleanField(null=True, blank=True)
     manager_approved_at = models.DateTimeField(null=True, blank=True)
-    hr_approbation = models.BooleanField(null=True, blank=True)
+    hr_is_approved = models.BooleanField(null=True, blank=True)
     hr_approved_at = models.DateTimeField(null=True, blank=True)
-    payroll_approbation = models.BooleanField(null=True, blank=True)
+    payroll_is_approved = models.BooleanField(null=True, blank=True)
     payroll_approved_at = models.DateTimeField(null=True, blank=True)
     status = models.CharField(
         choices=[
@@ -49,7 +53,7 @@ class VacationRequest(models.Model):
         """Meta class for the vacation request model."""
 
         permissions = [
-            ("payroll_approbation", "Can approve payroll"),
+            ("payroll_approval", "Can approve payroll"),
         ]
 
     @property
@@ -68,9 +72,9 @@ class VacationRequest(models.Model):
     def save(self, *args, **kwargs):
         """Override the save method to update status and create notifications."""
         approbation_fields = {
-            "manager_approbation": "manager_approved_at",
-            "hr_approbation": "hr_approved_at",
-            "payroll_approbation": "payroll_approved_at",
+            "manager_is_approved": "manager_approved_at",
+            "hr_is_approved": "hr_approved_at",
+            "payroll_is_approved": "payroll_approved_at",
         }
 
         for field, approved_at in approbation_fields.items():
@@ -88,23 +92,7 @@ class VacationRequest(models.Model):
                 f"Tus vacaciones del {self.start_date} al {self.end_date} han sido aprobadas. Esperamos que las disfrutes ⛱!.",
                 self.user,
             )
-            message = f"""
-                Hola {self.user.get_full_name()} 👋,
-
-                Nos complace informarte que tu solicitud de vacaciones del {self.start_date.strftime("%d de %B del %Y")} al {self.end_date.strftime("%d de %B del %Y")} ha sido aprobada. 
-
-                Esperamos que disfrutes de este merecido descanso y que regreses con energías renovadas. Si necesitas alguna información adicional o asistencia durante tus vacaciones, no dudes en contactarnos.
-
-                ¡Te deseamos unas vacaciones maravillosas y relajantes! ⛱
-
-                Saludos cordiales,
-                """
-            send_mail(
-                "Vacaciones aprobadas",
-                message,
-                None,
-                [str(self.user.email)],
-            )
+            self.send_approval_email_with_pdf()
         elif self.status == "RECHAZADA":
             message = f"""
                 Hola {self.user.get_full_name()} 👋,
@@ -154,12 +142,12 @@ class VacationRequest(models.Model):
         pdf = self.generate_pdf()
 
         # Create the email message
-        subject = "Your Vacation Request Has Been Approved"
+        subject = "Solicitud de vacaciones aprobada"
         message = (
-            f"Dear {self.user.get_full_name()},\n\n"
-            "Your vacation request from {self.start_date} to {self.end_date} has been approved.\n"
-            "Please find the attached document with the details of your vacation.\n\n"
-            "Best regards,\nYour Company"
+            f"Hola {self.user.get_full_name()} 👋,\n\n"
+            "Nos complace informarte que tu solicitud de vacaciones ha sido aprobada.\n\n"
+            f"Por favor revisa el archivo adjunto para más detalles sobre tus vacaciones del {self.start_date.strftime('%d de %B del %Y')} al {self.end_date.strftime('%d de %B del %Y')}.\n\n"
+            "¡Esperamos que disfrutes tus vacaciones! 🏖️\n\n"
         )
 
         email = EmailMessage(
@@ -168,7 +156,9 @@ class VacationRequest(models.Model):
 
         # Attach the generated PDF
         email.attach(
-            filename="vacation_request.pdf", content=pdf, mimetype="application/pdf"
+            filename="Solicitud de vacaciones.pdf",
+            content=pdf,
+            mimetype="application/pdf",
         )
 
         # Send the email
@@ -186,6 +176,7 @@ class VacationRequest(models.Model):
         # PDF options
         options = {
             "page-size": "Letter",
+            "orientation": "Portrait",
             "encoding": "UTF-8",
             "margin-top": "0mm",
             "margin-right": "0mm",

@@ -64,7 +64,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.user.job_position.rank = 2
         self.user.job_position.save()
         pdf = SimpleUploadedFile("test.pdf", b"file_content")
-        self.permission = Permission.objects.get(codename="payroll_approbation")
+        self.permission = Permission.objects.get(codename="payroll_approval")
         self.vacation_request = {
             "user": self.test_user.pk,
             "start_date": "2024-01-02",
@@ -74,14 +74,14 @@ class VacationRequestModelTestCase(BaseTestCase):
 
     def test_vacation_create(self):
         """Test creating a vacation endpoint."""
-        self.vacation_request["hr_approbation"] = True  # This is just a check
+        self.vacation_request["hr_is_approved"] = True  # This is just a check
         self.vacation_request["mon_to_sat"] = False
         response = self.client.post(
             reverse("vacation-list"),
             self.vacation_request,
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        self.assertEqual(response.data["hr_approbation"], None)
+        self.assertEqual(response.data["hr_is_approved"], None)
 
     def test_vacation_create_no_mon_to_sat(self):
         """Test creating a vacation without mon_to_sat."""
@@ -285,7 +285,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         """Test the owner cancelling an approved vacation."""
         self.vacation_request["user"] = self.user
         self.vacation_request["uploaded_by"] = self.test_user
-        self.vacation_request["manager_approbation"] = True
+        self.vacation_request["manager_is_approved"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
@@ -319,10 +319,10 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"manager_approbation": True},
+            {"manager_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertTrue(response.data["manager_approbation"])
+        self.assertTrue(response.data["manager_is_approved"])
         vacation_object.refresh_from_db()
         self.assertIsNotNone(vacation_object.manager_approved_at)
 
@@ -335,10 +335,10 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"manager_approbation": False},
+            {"manager_is_approved": False},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertFalse(response.data["manager_approbation"])
+        self.assertFalse(response.data["manager_is_approved"])
         self.assertEqual(response.data["status"], "RECHAZADA")
         vacation_object.refresh_from_db()
         self.assertIsNotNone(vacation_object.manager_approved_at)
@@ -350,7 +350,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"manager_approbation": True},
+            {"manager_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
@@ -361,14 +361,14 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.vacation_request["user"] = self.test_user
         admin = self.create_demo_user_admin()
         self.vacation_request["uploaded_by"] = admin
-        self.vacation_request["manager_approbation"] = True
+        self.vacation_request["manager_is_approved"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"hr_approbation": True},
+            {"hr_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertTrue(response.data["hr_approbation"])
+        self.assertTrue(response.data["hr_is_approved"])
         vacation_object.refresh_from_db()
         self.assertIsNotNone(vacation_object.hr_approved_at)
 
@@ -378,14 +378,14 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.user.job_position.save()
         self.vacation_request["user"] = self.test_user
         self.vacation_request["uploaded_by"] = self.user
-        self.vacation_request["manager_approbation"] = True
+        self.vacation_request["manager_is_approved"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"hr_approbation": False},
+            {"hr_is_approved": False},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertFalse(response.data["hr_approbation"])
+        self.assertFalse(response.data["hr_is_approved"])
         self.assertEqual(response.data["status"], "RECHAZADA")
         vacation_object.refresh_from_db()
         self.assertIsNotNone(vacation_object.hr_approved_at)
@@ -399,7 +399,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"hr_approbation": True},
+            {"hr_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
@@ -410,7 +410,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"hr_approbation": True},
+            {"hr_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
@@ -419,14 +419,14 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.user.user_permissions.add(self.permission)
         self.vacation_request["user"] = self.test_user
         self.vacation_request["uploaded_by"] = self.user
-        self.vacation_request["hr_approbation"] = True
+        self.vacation_request["hr_is_approved"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"payroll_approbation": True},
+            {"payroll_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertTrue(response.data["payroll_approbation"])
+        self.assertTrue(response.data["payroll_is_approved"])
         vacation_object.refresh_from_db()
         self.assertIsNotNone(vacation_object.payroll_approved_at)
 
@@ -435,14 +435,14 @@ class VacationRequestModelTestCase(BaseTestCase):
         self.user.user_permissions.add(self.permission)
         self.vacation_request["user"] = self.test_user
         self.vacation_request["uploaded_by"] = self.user
-        self.vacation_request["hr_approbation"] = True
+        self.vacation_request["hr_is_approved"] = True
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"payroll_approbation": False},
+            {"payroll_is_approved": False},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
-        self.assertFalse(response.data["payroll_approbation"])
+        self.assertFalse(response.data["payroll_is_approved"])
         self.assertEqual(response.data["status"], "RECHAZADA")
         vacation_object.refresh_from_db()
         self.assertIsNotNone(vacation_object.payroll_approved_at)
@@ -455,7 +455,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"payroll_approbation": True},
+            {"payroll_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 
@@ -466,7 +466,7 @@ class VacationRequestModelTestCase(BaseTestCase):
         vacation_object = VacationRequest.objects.create(**self.vacation_request)
         response = self.client.patch(
             reverse("vacation-detail", kwargs={"pk": vacation_object.pk}),
-            {"payroll_approbation": True},
+            {"payroll_is_approved": True},
         )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN, response.data)
 

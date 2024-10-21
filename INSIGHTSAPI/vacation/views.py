@@ -2,6 +2,8 @@ import base64
 import datetime
 
 import pdfkit
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import AnonymousUser
 from django.core.mail import mail_admins, send_mail
 from django.db.models import Q
 from django.http import HttpResponse
@@ -127,7 +129,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         if request.user.job_position.name == "GERENTE DE GESTION HUMANA":
             queryset = self.queryset.all()
         # Check if the user is in payroll
-        elif request.user.has_perm("vacation.payroll_approbation"):
+        elif request.user.has_perm("vacation.payroll_approval"):
             queryset = self.queryset.all()
         # Check if the user has employee management permissions
         elif request.user.job_position.rank >= 2:
@@ -165,11 +167,16 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def partial_update(self, request, *args, **kwargs):
-        # Check if the user is updating the hr_approbation field
-        if "manager_approbation" in request.data:
+        if isinstance(request.user, AnonymousUser):
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        # Check if the user is updating the hr_is_approved field
+        if "boss_is_approved" in request.data:
             # Check if the user is a manager
-            if request.user.job_position.rank >= 5:
-                if self.get_object().manager_approbation is not None:
+            if request.user.job_position.rank >= 2:
+                if self.get_object().boss_is_approved is not None:
                     return Response(
                         {"detail": "No puedes modificar esta solicitud."},
                         status=status.HTTP_400_BAD_REQUEST,
@@ -178,7 +185,80 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 if (
                     response.status_code == status.HTTP_200_OK
                     and response.data
-                    and response.data["manager_approbation"]
+                    and response.data["boss_is_approved"]
+                ):
+                    manager_user = request.user.area.manager
+                    if not manager_user:
+                        mail_admins(
+                            f"No hay usuarios con el cargo de GERENTE para el área {request.user.area}",
+                            f"No hay usuarios con el cargo de GERENTE para el área {request.user.area}",
+                        )
+                        return response
+                    create_notification(
+                        "Una solicitud necesita tu aprobación",
+                        f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
+                        manager_user,
+                    )
+                    hr_message = f"""
+                        Hola {hr_user.get_full_name()} 👋,
+
+                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+
+                        Ahora esta a la espera de tu aprobación. Por favor revisa la solicitud y apruébala si estas de acuerdo con las fechas solicitadas.
+                    """
+                    send_mail(
+                        "Solicitud de vacaciones aprobada por un gerente",
+                        hr_message,
+                        None,
+                        [str(hr_user.company_email)],
+                    )
+                    payroll_user = User.objects.filter(
+                        user_permissions__codename="payroll_is_approved"
+                    ).first()
+                    if not payroll_user:
+                        mail_admins(
+                            "No hay usuarios con el permiso de payroll_is_approved",
+                            "No hay usuarios con el permiso de payroll_is_approved",
+                        )
+                        return response
+                    create_notification(
+                        "Una solicitud de vacaciones ha sido aprobada por un gerente",
+                        f"La solicitud de vacaciones de {response.data['user']} ha sido aprobada por {request.user.get_full_name()}. Ahora sera revisada por la Gerencia de Recursos Humanos.",
+                        payroll_user,
+                    )
+                    payroll_message = f"""
+                        Hola {payroll_user.get_full_name()} 👋,
+
+                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
+
+                        Ahora esta a la espera de la aprobación de la Gerencia de Recursos Humanos.
+                    """
+                    send_mail(
+                        "Una solicitud de vacaciones ha sido aprobada por un gerente",
+                        payroll_message,
+                        None,
+                        [str(payroll_user.company_email)],
+                    )
+                return response
+
+            else:
+                return Response(
+                    {"detail": f"You do not have permission to perform this action."},
+                    status=status.HTTP_403_FORBIDDEN,
+                )
+        elif "manager_is_approved" in request.data:
+            # Check if the user is a manager
+            if request.user.job_position.rank >= 5:
+                if self.get_object().manager_is_approved is not None:
+                    return Response(
+                        {"detail": "No puedes modificar esta solicitud."},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+                response = super().partial_update(request, *args, **kwargs)
+                if (
+                    response.status_code == status.HTTP_200_OK
+                    and response.data
+                    and response.data["manager_is_approved"]
                 ):
                     hr_user = User.objects.filter(
                         job_position__name="GERENTE DE GESTION HUMANA"
@@ -208,12 +288,12 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         [str(hr_user.company_email)],
                     )
                     payroll_user = User.objects.filter(
-                        user_permissions__codename="payroll_approbation"
+                        user_permissions__codename="payroll_is_approved"
                     ).first()
                     if not payroll_user:
                         mail_admins(
-                            "No hay usuarios con el permiso de payroll_approbation",
-                            "No hay usuarios con el permiso de payroll_approbation",
+                            "No hay usuarios con el permiso de payroll_is_approved",
+                            "No hay usuarios con el permiso de payroll_is_approved",
                         )
                         return response
                     create_notification(
@@ -241,13 +321,13 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     {"detail": f"You do not have permission to perform this action."},
                     status=status.HTTP_403_FORBIDDEN,
                 )
-        elif "hr_approbation" in request.data:
+        elif "hr_is_approved" in request.data:
             # Check if the user is an HR and that the manager has already approved the request
             if (
                 request.user.job_position.name == "GERENTE DE GESTION HUMANA"
-                and self.get_object().manager_approbation
+                and self.get_object().manager_is_approved
             ):
-                if self.get_object().hr_approbation is not None:
+                if self.get_object().hr_is_approved is not None:
                     return Response(
                         {"detail": "No puedes modificar esta solicitud."},
                         status=status.HTTP_400_BAD_REQUEST,
@@ -256,15 +336,15 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 if (
                     response.status_code == status.HTTP_200_OK
                     and response.data
-                    and response.data["hr_approbation"]
+                    and response.data["hr_is_approved"]
                 ):
                     payroll_user = User.objects.filter(
-                        user_permissions__codename="payroll_approbation"
+                        user_permissions__codename="payroll_approval"
                     ).first()
                     if not payroll_user:
                         mail_admins(
-                            "No hay usuarios con el permiso de payroll_approbation",
-                            "No hay usuarios con el permiso de payroll_approbation",
+                            "No hay usuarios con el permiso de payroll_approval",
+                            "No hay usuarios con el permiso de payroll_approval",
                         )
                         return response
                     create_notification(
@@ -293,13 +373,13 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                     },
                     status=status.HTTP_403_FORBIDDEN,
                 )
-        elif "payroll_approbation" in request.data:
+        elif "payroll_is_approved" in request.data:
             # Check if the user is in payroll and that the HR has already approved the request
             if (
-                request.user.has_perm("vacation.payroll_approbation")
-                and self.get_object().hr_approbation
+                request.user.has_perm("vacation.payroll_approval")
+                and self.get_object().hr_is_approved
             ):
-                if self.get_object().payroll_approbation is not None:
+                if self.get_object().payroll_is_approved is not None:
                     return Response(
                         {"detail": "No puedes modificar esta solicitud."},
                         status=status.HTTP_400_BAD_REQUEST,
@@ -329,7 +409,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
         }
         # Import the html template
         rendered_template = render_to_string(
-            "vacation_response.html",
+            "vacation_request.html",
             context,
         )
         # PDF options

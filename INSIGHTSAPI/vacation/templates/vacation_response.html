@@ -7,14 +7,13 @@
         <style>
             html,
             body {
-                height: 100%;
                 margin: 0;
                 padding: 20px;
                 font-family: 'Helvetica Neue', Arial, sans-serif;
                 color: #333;
                 line-height: 1.6;
                 background-color: #f0f4f8;
-                display: flex;
+                display: block;
                 justify-content: center;
                 align-items: center;
             }
@@ -24,7 +23,7 @@
                 border-radius: 8px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 padding: 40px;
-                height: 90%;
+                height: 80%;
                 width: 90%;
             }
 
@@ -35,14 +34,14 @@
 
             .header h1 {
                 margin: 0;
-                font-size: 28px;
+                font-size: 40px;
                 color: #2c3e50;
                 letter-spacing: 1px;
             }
 
             .content {
                 text-align: left;
-                font-size: 16px;
+                font-size: 20px;
             }
 
             .approval {
@@ -83,19 +82,21 @@
                 text-align: center;
             }
 
-            .button {
-                display: inline-block;
-                padding: 10px 20px;
-                background-color: #3498db;
-                color: #ffffff;
-                text-decoration: none;
-                border-radius: 5px;
-                transition: background-color 0.3s;
-            }
+            {% comment %} @media print {
+                html, body {
+                    height: auto; /* Reset height */
+                    display: block; /* Reset the flexbox layout */
+                    padding: 0; /* Adjust padding as necessary */
+                }
+                .card {
+                    margin: 0;
+                    padding: 20px;
+                    width: 100%; /* Ensure the card takes up the full width */
+                    height: auto; /* Reset height for better PDF rendering */
+                    background-color: #ffffff;
+                }
+            } {% endcomment %}
 
-            .button:hover {
-                background-color: #2980b9;
-            }
         </style>
     </head>
 
@@ -137,9 +138,6 @@
                     </p>
                 </div>
             </div>
-            {% comment %} <div class="footer">
-                <a href="#" class="button">Descargar PDF</a>
-            </div> {% endcomment %}
         </div>
     </body>
 </html>

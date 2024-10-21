@@ -1,11 +1,14 @@
 """Serializers for the vacation app."""
 
 from datetime import datetime
-from rest_framework import serializers
-from users.models import User
 from distutils.util import strtobool
-from .utils import is_working_day, get_working_days
+
+from rest_framework import serializers
+
+from users.models import User
+
 from .models import VacationRequest
+from .utils import get_working_days, is_working_day
 
 
 class VacationRequestSerializer(serializers.ModelSerializer):
@@ -28,11 +31,11 @@ class VacationRequestSerializer(serializers.ModelSerializer):
             "end_date",
             "request_file",
             "created_at",
-            "manager_approbation",
+            "manager_is_approved",
             "manager_approved_at",
-            "hr_approbation",
+            "hr_is_approved",
             "hr_approved_at",
-            "payroll_approbation",
+            "payroll_is_approved",
             "payroll_approved_at",
             "uploaded_by",
             "status",
@@ -131,7 +134,7 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         else:
             # Update
             if (
-                self.instance.manager_approbation
+                self.instance.manager_is_approved
                 and "status" in attrs
                 and attrs["status"] == "CANCELADA"
             ):
@@ -142,10 +145,10 @@ class VacationRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create the vacation request."""
-        # Remove the approbation fields from the validated data
-        validated_data.pop("hr_approbation", None)
-        validated_data.pop("payroll_approbation", None)
-        validated_data.pop("manager_approbation", None)
+        # Remove the is_approved fields from the validated data
+        validated_data.pop("hr_is_approved", None)
+        validated_data.pop("payroll_is_approved", None)
+        validated_data.pop("manager_is_approved", None)
         validated_data["uploaded_by"] = self.context["request"].user
         vacation_request = super().create(validated_data)
         return vacation_request
@@ -153,11 +156,11 @@ class VacationRequestSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Update the vacation request."""
         allowed_fields = [
-            "manager_approbation",
+            "manager_is_approved",
             "manager_approved_at",
-            "hr_approbation",
+            "hr_is_approved",
             "hr_approved_at",
-            "payroll_approbation",
+            "payroll_is_approved",
             "payroll_approved_at",
             "status",
             "comment",

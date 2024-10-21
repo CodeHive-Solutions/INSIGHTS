@@ -1,110 +1,67 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Solicitud de Vacaciones</title>
-        <style>
-            html,
-            body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
-                font-family: 'Helvetica Neue', Arial, sans-serif;
-                color: #333;
-                line-height: 1.6;
-                background-color: #f0f4f8;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Solicitud de Vacaciones</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				line-height: 1.6;
+				color: #333;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+			}
+			.header {
+				text-align: right;
+				margin-bottom: 20px;
+			}
+			.content {
+				margin-bottom: 20px;
+			}
+			.signature {
+				margin-top: 40px;
+			}
+			.signature-line {
+				border-bottom: 1px solid #000;
+				width: 200px;
+				height: 20px;
+				margin-bottom: 5px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<p>Fecha de envío de la solicitud: {{ fecha_solicitud }}</p>
+		</div>
 
-            .card {
-                background-color: #ffffff;
-                border-radius: 8px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                padding: 40px;
-                {% comment %} max-width: 600px; {% endcomment %}
-                height: 90%;
-                width: 80%;
-                /* Ensure the card grows vertically when content is too short */
-                min-height: 300px;
-                box-sizing: border-box;
-            }
+		<div class="content">
+			<p>Estimado(a) {{ nombre_destinatario }},</p>
 
-            .header {
-                margin-bottom: 30px;
-                text-align: center;
-            }
+			<p>
+				Mediante la presente carta, yo, {{ nombre_solicitante }} identificado(a) con la cédula de ciudadanía {{ numero_cedula }} y ocupando el cargo en la empresa de {{
+				cargo_empresa }}, me permito solicitar {{ dias_vacaciones }} días de vacaciones, que corresponden al período del año {{ año }}.
+			</p>
 
-            .header h1 {
-                margin: 0;
-                font-size: 40px;
-                color: #2c3e50;
-                letter-spacing: 1px;
-            }
+			<p>
+				Me remito con respeto a mi jefe inmediato {{ nombre_jefe_inmediato }} para informar que los días para este periodo serán a partir del {{ fecha_inicio_vacaciones
+				}} hasta el día {{ fecha_fin_vacaciones }}, para retomar a mis labores el día {{ fecha_retorno_trabajo }}.
+			</p>
 
-            .content {
-                text-align: left;
-                font-size: 20px;
-            }
+			<p>
+				Decido notificar mi solicitud con antelación con el fin de realizar los cambios o acuerdos correspondientes para el normal funcionamiento de las actividades
+				empresariales en mi ausencia.
+			</p>
 
-            .signature {
-                margin-top: 40px;
-                text-align: left;
-            }
+			<p>Quedo agradecido(a) ante su pronta respuesta.</p>
+		</div>
 
-            .signature p {
-                margin: 5px 0;
-            }
-
-            .footer {
-                margin-top: 20px;
-                font-size: 14px;
-                text-align: center;
-                color: #7f8c8d;
-            }
-
-            .highlight {
-                color: #3498db;
-                font-weight: bold;
-            }
-
-            .date {
-                color: #7f8c8d;
-                font-style: italic;
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="card">
-            <div class="header">
-                <h1>Solicitud de Vacaciones</h1>
-            </div>
-            <div class="content">
-                <p class="date">{{ vacation.created_at|date }}</p>
-                <p>Estimado (a) Gestión Humana</p>
-                <p>CYC SERVICES S.A.S.</p>
-                <p><strong>Ref. Solicitud de vacaciones disfrutadas</strong></p>
-                <p>
-                    Por la presente le solicito se me conceda <span class="highlight">{{ vacation.duration }} días</span> de mi periodo vacacional 
-                    comprendido para el año <span class="highlight">{{ vacation.start_date|date:"Y" }}</span>.
-                </p>
-                <p>
-                    Los días tomados serán a partir del <span class="highlight">{{ vacation.start_date }}</span> hasta el día <span class="highlight">{{ vacation.end_date }}</span>, 
-                    para retomar a mis labores el día <span class="highlight">{{ vacation.return_date }}</span>.
-                </p>
-                <p>Quedo agradecido(a) ante su pronta respuesta.</p>
-                <div class="signature">
-                    <p>Atentamente,</p>
-                    <p><strong>{{ vacation.user }}</strong></p>
-                    <p>{{ vacation.user.job_position }}</p>
-                </div>
-            </div>
-            {% comment %} <div class="footer">
-                <p>Este documento es generado automáticamente. No requiere firma ni sello.</p>
-            </div> {% endcomment %}
-        </div>
-    </body>
+		<div class="signature">
+			<p>Atentamente:</p>
+			<div class="signature-line"></div>
+			<p>{{ nombre_solicitante }}</p>
+			<p>C.C {{ numero_cedula }}</p>
+		</div>
+	</body>
 </html>
