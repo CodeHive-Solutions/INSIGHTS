@@ -210,7 +210,7 @@ EMAILS_ETHICAL_LINE = [
 
 # This is the email where the test emails are going to be sent
 EMAIL_FOR_TEST = os.getenv("EMAIL_FOR_TEST", "").upper()
-# This cedula need to be in the StaffNet database it's used in many tests
+# This cédula need to be in the StaffNet database it's used in many tests
 TEST_CEDULA = os.environ["TEST_CEDULA"]
 
 # Database

@@ -199,46 +199,6 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                         f"{request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data['user']}. Ahora necesita tu aprobación.",
                         manager_user,
                     )
-                    hr_message = f"""
-                        Hola {hr_user.get_full_name()} 👋,
-
-                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
-
-                        Ahora esta a la espera de tu aprobación. Por favor revisa la solicitud y apruébala si estas de acuerdo con las fechas solicitadas.
-                    """
-                    send_mail(
-                        "Solicitud de vacaciones aprobada por un gerente",
-                        hr_message,
-                        None,
-                        [str(hr_user.company_email)],
-                    )
-                    payroll_user = User.objects.filter(
-                        user_permissions__codename="payroll_is_approved"
-                    ).first()
-                    if not payroll_user:
-                        mail_admins(
-                            "No hay usuarios con el permiso de payroll_is_approved",
-                            "No hay usuarios con el permiso de payroll_is_approved",
-                        )
-                        return response
-                    create_notification(
-                        "Una solicitud de vacaciones ha sido aprobada por un gerente",
-                        f"La solicitud de vacaciones de {response.data['user']} ha sido aprobada por {request.user.get_full_name()}. Ahora sera revisada por la Gerencia de Recursos Humanos.",
-                        payroll_user,
-                    )
-                    payroll_message = f"""
-                        Hola {payroll_user.get_full_name()} 👋,
-
-                        {request.user.get_full_name()} ha aprobado la solicitud de vacaciones de {response.data["user"]} la cual fue solicitada para el {datetime.datetime.strptime(response.data["start_date"], "%Y-%m-%d").strftime("%d de %B del %Y")} al {datetime.datetime.strptime(response.data["end_date"], "%Y-%m-%d").strftime("%d de %B del %Y")}.
-
-                        Ahora esta a la espera de la aprobación de la Gerencia de Recursos Humanos.
-                    """
-                    send_mail(
-                        "Una solicitud de vacaciones ha sido aprobada por un gerente",
-                        payroll_message,
-                        None,
-                        [str(payroll_user.company_email)],
-                    )
                 return response
 
             else:
@@ -248,7 +208,10 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
                 )
         elif "manager_is_approved" in request.data:
             # Check if the user is a manager
-            if request.user.job_position.rank >= 5:
+            if (
+                request.user.job_position.rank >= 5
+                and self.get_object().boss_is_approved
+            ):
                 if self.get_object().manager_is_approved is not None:
                     return Response(
                         {"detail": "No puedes modificar esta solicitud."},

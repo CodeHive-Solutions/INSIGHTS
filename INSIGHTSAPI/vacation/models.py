@@ -1,7 +1,5 @@
 """This module contains the model for the vacation request """
 
-from datetime import datetime
-
 import pdfkit
 from django.conf import settings
 from django.core.mail import EmailMessage, send_mail
@@ -72,11 +70,13 @@ class VacationRequest(models.Model):
     def save(self, *args, **kwargs):
         """Override the save method to update status and create notifications."""
         approbation_fields = {
+            "boss_is_approved": "boss_approved_at",
             "manager_is_approved": "manager_approved_at",
             "hr_is_approved": "hr_approved_at",
             "payroll_is_approved": "payroll_approved_at",
         }
 
+        # Set the time of approval
         for field, approved_at in approbation_fields.items():
             approbation = getattr(self, field)
             if approbation is not None:

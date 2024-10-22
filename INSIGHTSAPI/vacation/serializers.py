@@ -134,21 +134,22 @@ class VacationRequestSerializer(serializers.ModelSerializer):
         else:
             # Update
             if (
-                self.instance.manager_is_approved
+                self.instance.boss_is_approved
                 and "status" in attrs
                 and attrs["status"] == "CANCELADA"
             ):
                 raise serializers.ValidationError(
-                    "No puedes cancelar una solicitud que ya ha sido aprobada por tu jefe."
+                    "No puedes cancelar una solicitud que ya ha recibido aprobación."
                 )
         return attrs
 
     def create(self, validated_data):
         """Create the vacation request."""
         # Remove the is_approved fields from the validated data
+        validated_data.pop("boss_is_approved", None)
+        validated_data.pop("manager_is_approved", None)
         validated_data.pop("hr_is_approved", None)
         validated_data.pop("payroll_is_approved", None)
-        validated_data.pop("manager_is_approved", None)
         validated_data["uploaded_by"] = self.context["request"].user
         vacation_request = super().create(validated_data)
         return vacation_request
@@ -156,12 +157,11 @@ class VacationRequestSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Update the vacation request."""
         allowed_fields = [
+            "boss_is_approved",
             "manager_is_approved",
-            "manager_approved_at",
             "hr_is_approved",
-            "hr_approved_at",
             "payroll_is_approved",
-            "payroll_approved_at",
+            # Status can only be updated to CANCELADA
             "status",
             "comment",
         ]
