@@ -310,14 +310,44 @@ class GoalsViewSet(viewsets.ModelViewSet):
         elif campaign is not None and date is not None and column is not None:
             if column == "delivery":
                 column_name = "goal_date"
+                campaign_type = "campaign_goal"
             elif column == "execution":
                 column_name = "execution_date"
+                campaign_type = "campaign_execution"
             else:
                 return self.queryset.none()
-            return self.queryset.filter(
-                Q(campaign_goal=campaign.upper())
-                & Q(**{f"{column_name}": date.upper()})
+            filter_params = {f"{column_name}": date.upper()}
+            latest_history_dates = (
+                HistoricalGoals.objects.filter(Q(**filter_params))
+                .values("cedula")
+                .annotate(max_history_date=Max("history_date"))
             )
+            # Filter records with the latest history_date
+            if column == "delivery":
+                history_goals = HistoricalGoals.objects.filter(
+                    Q(
+                        history_date__in=Subquery(
+                            latest_history_dates.values("max_history_date")
+                        )
+                    )
+                    & Q(campaign_goal=campaign.upper())
+                    & Q(cedula__in=latest_history_dates.values("cedula"))
+                )
+            else:
+                history_goals = HistoricalGoals.objects.filter(
+                    Q(
+                        history_date__in=Subquery(
+                            latest_history_dates.values("max_history_date")
+                        )
+                    )
+                    & Q(campaign_execution=campaign.upper())
+                    & Q(cedula__in=latest_history_dates.values("cedula"))
+                )
+            return history_goals
+            # return self.queryset.filter(
+            #     Q(campaign_goal=campaign.upper())
+            #     & Q(**{f"{column_name}": date.upper()})
+            # )
         elif date is not None and column is not None:
             if column == "delivery":
                 column_name = "goal_date"
@@ -740,4 +770,3 @@ class GoalsViewSet(viewsets.ModelViewSet):
                 {"message": "Excel no encontrado."},
                 status=framework_status.HTTP_400_BAD_REQUEST,
             )
-

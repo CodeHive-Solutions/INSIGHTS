@@ -376,7 +376,7 @@ class VacationRequestViewSet(viewsets.ModelViewSet):
             context,
         )
         # PDF options
-        options = {
+        options = { 
             "page-size": "Letter",
             "orientation": "portrait",
             "encoding": "UTF-8",
